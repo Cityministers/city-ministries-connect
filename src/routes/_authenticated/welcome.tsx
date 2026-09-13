@@ -51,9 +51,31 @@ function WelcomePage() {
   const [preview, setPreview] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [photoFailed, setPhotoFailed] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  function choosePhoto(file: File | null) {
+    setPhotoFailed(false);
+    setError(null);
+    if (!file) return;
+    const problem = checkImageFile(file);
+    if (problem) {
+      setError(problem);
+      return;
+    }
+    if (preview) URL.revokeObjectURL(preview);
+    setPhoto(file);
+    setPreview(URL.createObjectURL(file));
+  }
+
+  function clearPhoto() {
+    if (preview) URL.revokeObjectURL(preview);
+    setPhoto(null);
+    setPreview(null);
+    setPhotoFailed(false);
+    setError(null);
+  }
+
+  async function finish(withPhoto: boolean) {
     setError(null);
     if (name.trim().length < 2) {
       setError("Please add the name your neighbors will see.");
@@ -66,17 +88,25 @@ function WelcomePage() {
     setBusy(true);
     try {
       let avatarPath: string | undefined;
-      if (photo) {
-        const { data: userData } = await supabase.auth.getUser();
-        const uid = userData.user?.id;
-        if (!uid) throw new Error("Please sign in again.");
-        const ext = photo.name.split(".").pop()?.toLowerCase() ?? "jpg";
-        const path = `${uid}/avatar-${crypto.randomUUID()}.${ext}`;
-        const { error: upErr } = await supabase.storage
-          .from("ministry-avatars")
-          .upload(path, photo, { upsert: true, contentType: photo.type });
-        if (upErr) throw new Error(upErr.message);
-        avatarPath = path;
+      if (photo && withPhoto) {
+        try {
+          const { data: userData } = await supabase.auth.getUser();
+          const uid = userData.user?.id;
+          if (!uid) throw new Error("Please sign in again.");
+          const upload = await shrinkImage(photo);
+          const ext = upload.type === "image/jpeg" ? "jpg" : (upload.name.split(".").pop()?.toLowerCase() ?? "jpg");
+          const path = `${uid}/avatar-${crypto.randomUUID()}.${ext}`;
+          const { error: upErr } = await supabase.storage
+            .from("ministry-avatars")
+            .upload(path, upload, { upsert: true, contentType: upload.type });
+          if (upErr) throw new Error(upErr.message);
+          avatarPath = path;
+        } catch (err) {
+          setPhotoFailed(true);
+          setError(friendlyUploadError(err));
+          setBusy(false);
+          return;
+        }
       }
       await save({
         data: {
@@ -88,10 +118,19 @@ function WelcomePage() {
       });
       void navigate({ to: next ?? "/" });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong.");
+      setError(
+        err instanceof Error && err.message
+          ? err.message
+          : "We couldn't save your details. Check your connection and try again.",
+      );
     } finally {
       setBusy(false);
     }
+  }
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    void finish(true);
   }
 
   return (
