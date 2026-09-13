@@ -161,9 +161,6 @@ function WelcomePage() {
                     <label className="cursor-pointer text-sm font-semibold text-lemon hover:text-lemon/80">
                       Change photo
                       <input
-                        ref={(el) => {
-                          if (el) el.value = "";
-                        }}
                         type="file"
                         accept="image/*"
                         className="sr-only"
