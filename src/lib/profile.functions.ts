@@ -92,7 +92,8 @@ export const completeOnboarding = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => onboardingInput.parse(data))
   .handler(async ({ data, context }) => {
-    const patch: ProfileUpdate = {
+    const patch: ProfileUpdate & { id: string } = {
+      id: context.userId,
       display_name: data.displayName,
       city: data.city,
       zip: data.zip,
@@ -100,13 +101,18 @@ export const completeOnboarding = createServerFn({ method: "POST" })
     };
     if (data.avatarPath) patch["avatar_url"] = data.avatarPath;
 
-    const { error } = await context.supabase
+    // Upsert: a member row may not exist yet for accounts created before the
+    // signup trigger, and an update on a missing row would silently do nothing.
+    const { data: saved, error } = await context.supabase
       .from("profiles")
-      .update(patch)
-      .eq("id", context.userId);
+      .upsert(patch, { onConflict: "id" })
+      .select("id")
+      .maybeSingle();
     if (error) throw new Error(error.message);
+    if (!saved) throw new Error("We couldn't save your details. Please try again.");
     return { ok: true };
   });
+
 
 export const deleteMyAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
