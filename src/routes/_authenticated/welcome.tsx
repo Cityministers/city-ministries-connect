@@ -4,6 +4,12 @@ import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { BrandLogo } from "@/components/BrandLogo";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  checkImageFile,
+  friendlyUploadError,
+  MAX_IMAGE_LABEL,
+  shrinkImage,
+} from "@/lib/photo";
 import { completeOnboarding } from "@/lib/profile.functions";
 
 export const Route = createFileRoute("/_authenticated/welcome")({
