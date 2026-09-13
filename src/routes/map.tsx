@@ -213,7 +213,9 @@ function MapPage() {
                 type="button"
                 onClick={() => setMode(m)}
                 className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
-                  mode === m ? "bg-lemon text-ink" : "text-mist"
+                  mode === m
+                    ? "bg-ink text-sand ring-1 ring-mist/20"
+                    : "text-mist hover:text-sand"
                 }`}
               >
                 {m === "view" ? "In this view" : "Nearest to me"}
