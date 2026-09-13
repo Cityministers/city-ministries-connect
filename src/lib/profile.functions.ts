@@ -35,6 +35,18 @@ export const getMyProfile = createServerFn({ method: "GET" })
     };
   });
 
+/** The city and ZIP saved on the profile, used as the "home" distances are measured from. */
+export const getMyPlace = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<{ city: string; zip: string }> => {
+    const { data } = await context.supabase
+      .from("profiles")
+      .select("city, zip")
+      .eq("id", context.userId)
+      .maybeSingle();
+    return { city: data?.city ?? "", zip: data?.zip ?? "" };
+  });
+
 const updateInput = z.object({
   displayName: z.string().trim().max(60).optional(),
   avatarPath: z.string().trim().max(300).optional(),

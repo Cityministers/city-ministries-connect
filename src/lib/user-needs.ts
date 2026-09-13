@@ -25,6 +25,7 @@ export function toNeed(dto: UserNeedDTO, index: number): Ministry {
     city: dto.city,
     zip: dto.zip,
     distanceMi: 0.5,
+    ...(dto.lat != null && dto.lng != null ? { lat: dto.lat, lng: dto.lng } : {}),
     ...(photo ? { avatarUrl: photo } : {}),
     ...(dto.gallery.length > 0 ? { gallery: dto.gallery } : {}),
     custom: true,

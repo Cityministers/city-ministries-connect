@@ -74,6 +74,9 @@ export type Ministry = {
   zip: string;
   /** Illustrative distance from the searched place, in miles. */
   distanceMi: number;
+  /** Real map coordinates, looked up from the post's city and ZIP. */
+  lat?: number;
+  lng?: number;
   media?: string;
   mediaAlt?: string;
   /** Extra photos and video the poster attached. */
