@@ -83,10 +83,14 @@ function NeedsPage() {
     () => all.filter((m) => matchesPlace(m, placeQuery) && matchesText(m, query)),
     [all, placeQuery, query],
   );
-  // The map keeps every need on the canvas; the place search glides there instead of filtering.
+  // The map keeps every need on it; the place search moves the map instead of filtering.
   const onMap = useMemo(() => all.filter((m) => matchesText(m, query)), [all, query]);
-  const layout = useMemo(() => layoutMap(onMap), [onMap]);
-  const district = useMemo(() => findDistrict(layout, placeQuery), [layout, placeQuery]);
+  const center = usePlaceCenter(placeQuery);
+  const { origin } = useHomePoint(true, center);
+  const [bounds, setBounds] = useState<MapBounds | null>(null);
+  const [pending, setPending] = useState<MapBounds | null>(null);
+  const moved = pending !== null && pending !== bounds;
+  const { points, list: inViewList } = useMapPosts(onMap, origin, bounds, "view");
   const active = all.find((m) => m.id === activeId);
 
   const toggleView = () => {
