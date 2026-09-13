@@ -82,6 +82,14 @@ function CreateMinistryPage() {
   const preset = prefill.icon ? ministries.find((m) => m.id === prefill.icon) : undefined;
 
   function pickPhoto(next: File | null) {
+    if (next) {
+      const problem = checkImageFile(next);
+      if (problem) {
+        setError(problem);
+        return;
+      }
+    }
+    setError(null);
     setFile(next);
     setPreview(next ? URL.createObjectURL(next) : null);
   }

@@ -86,6 +86,14 @@ function PostNeedPage() {
   }, []);
 
   function pickPhoto(next: File | null) {
+    if (next) {
+      const problem = checkImageFile(next);
+      if (problem) {
+        setError(problem);
+        return;
+      }
+    }
+    setError(null);
     setFile(next);
     setPreview(next ? URL.createObjectURL(next) : null);
     if (next) setCategory(null);
