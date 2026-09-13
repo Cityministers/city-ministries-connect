@@ -7,6 +7,8 @@ export type MapPoint = {
   title: string;
   /** Pin colour, matching the post's tone. */
   color: string;
+  /** Raw SVG markup for the post's icon, drawn white inside the pin. */
+  glyph?: string;
   owned?: boolean;
   highlight?: boolean;
 };
