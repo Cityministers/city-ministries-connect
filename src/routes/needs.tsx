@@ -89,8 +89,18 @@ function NeedsPage() {
   const [bounds, setBounds] = useState<MapBounds | null>(null);
   const [pending, setPending] = useState<MapBounds | null>(null);
   const moved = pending !== null && pending !== bounds;
-  const { points, list: inViewList } = useMapPosts(onMap, origin, bounds, "view");
+  const { points, list: inViewList } = useMapPosts(
+    onMap,
+    origin,
+    bounds,
+    "view",
+    session?.user?.id ?? null,
+    highlightId,
+  );
   const active = all.find((m) => m.id === activeId);
+  // A freshly created need sits in the middle of the screen while it glows.
+  const spotlight = highlightId ? points.find((p) => p.id === highlightId) : undefined;
+  const mapCenter = spotlight ? { lat: spotlight.lat, lng: spotlight.lng } : center;
 
   const toggleView = () => {
     void navigate({
