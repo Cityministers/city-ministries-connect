@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, List, Search } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { AccountMenu } from "@/components/AccountMenu";
 import { BrandLogo } from "@/components/BrandLogo";
 import { SiteNav } from "@/components/SiteNav";
@@ -58,11 +58,8 @@ function MapPage() {
   );
   const session = useSession();
 
-  useEffect(() => {
-    if (!highlightId) return;
-    const t = setTimeout(() => setHighlightId(null), 20000);
-    return () => clearTimeout(t);
-  }, [highlightId]);
+  // The glow stays until the visitor taps another post — no timer.
+
 
   const fetchUserMinistries = useServerFn(listUserMinistries);
   const { data: userPosts } = useQuery({
@@ -88,6 +85,10 @@ function MapPage() {
     highlightId,
   );
   const active = all.find((m) => m.id === activeId);
+  // A freshly created post sits in the middle of the screen while it glows.
+  const spotlight = highlightId ? points.find((p) => p.id === highlightId) : undefined;
+  const mapCenter = spotlight ? { lat: spotlight.lat, lng: spotlight.lng } : center;
+
 
   return (
     <div className="flex min-h-dvh flex-col bg-ink font-body text-sand antialiased">
@@ -182,10 +183,10 @@ function MapPage() {
         <div className="relative">
           <LiveMap
             points={points}
-            center={center}
+            center={mapCenter}
             onSelect={(id) => {
               setActiveId(id);
-              if (id === highlightId) setHighlightId(null);
+              if (id !== highlightId) setHighlightId(null);
             }}
             onBoundsChange={(b) => {
               setPending(b);
@@ -238,7 +239,10 @@ function MapPage() {
             <li key={m.id}>
               <button
                 type="button"
-                onClick={() => setActiveId(m.id)}
+                onClick={() => {
+                  setActiveId(m.id);
+                  if (m.id !== highlightId) setHighlightId(null);
+                }}
                 className="flex w-full items-center gap-3 rounded-2xl bg-ink-soft p-3 text-left ring-1 ring-mist/10 transition hover:ring-mist/30"
               >
                 {m.avatarUrl ? (

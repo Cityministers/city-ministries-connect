@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export type MapPoint = {
   id: string;
@@ -98,6 +98,7 @@ function pinIcon(
   highlight: boolean,
   glyph: string | undefined,
   title: string,
+  phase = 0,
 ): PinIcon {
   const ring = owned || highlight ? "#e8c45c" : color;
   const stroke = owned || highlight ? 3 : 2;
@@ -109,7 +110,19 @@ function pinIcon(
   const svgWidth = Math.max(180, pillWidth + 24);
   const cx = svgWidth / 2;
   const markerScale = 150 / 180; // keep the original 180×90 pin size proportional
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${svgWidth}" height="90" viewBox="0 0 ${svgWidth} 90">
+  // A soft gold halo marks a post that was just created, breathing between two sizes.
+  const glow = highlight
+    ? `<circle cx="${cx}" cy="24" r="${phase ? 33 : 27}" fill="none" stroke="#e8c45c" stroke-width="${
+        phase ? 5 : 8
+      }" stroke-opacity="${phase ? 0.22 : 0.4}" filter="url(#cmGlow)"/>
+       <circle cx="${cx}" cy="24" r="${phase ? 26 : 24}" fill="#e8c45c" fill-opacity="0.12"/>`
+    : "";
+  const defs = highlight
+    ? `<defs><filter id="cmGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"/></filter></defs>`
+    : "";
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${svgWidth}" height="104" viewBox="0 -14 ${svgWidth} 104">
+    ${defs}
+    ${glow}
     <ellipse cx="${cx}" cy="54" rx="8" ry="3" fill="rgba(0,0,0,.45)"/>
     <path d="M${cx} 52 L${cx - 7} 43h14z" fill="${ring}"/>
     <rect x="${cx - 21}" y="3" width="42" height="42" rx="13" fill="#171320" stroke="${ring}" stroke-width="${stroke}"/>
@@ -119,10 +132,11 @@ function pinIcon(
   </svg>`;
   return {
     url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`,
-    scaledSize: new window.google.maps.Size(svgWidth * markerScale, 90 * markerScale),
-    anchor: new window.google.maps.Point(cx * markerScale, 44 * markerScale),
+    scaledSize: new window.google.maps.Size(svgWidth * markerScale, 104 * markerScale),
+    anchor: new window.google.maps.Point(cx * markerScale, 58 * markerScale),
   };
 }
+
 
 export function LiveMap({
   points,
@@ -184,6 +198,18 @@ export function LiveMap({
     map.panTo(center);
   }, [center.lat, center.lng]);
 
+  // Breathe the halo on a freshly created post.
+  const hasHighlight = points.some((p) => p.highlight);
+  const [phase, setPhase] = useState(0);
+  useEffect(() => {
+    if (!hasHighlight) {
+      setPhase(0);
+      return;
+    }
+    const t = window.setInterval(() => setPhase((v) => (v ? 0 : 1)), 750);
+    return () => window.clearInterval(t);
+  }, [hasHighlight]);
+
   // Reconcile pins.
   useEffect(() => {
     let raf = 0;
@@ -201,12 +227,22 @@ export function LiveMap({
         }
       }
       for (const p of points) {
-        const icon = pinIcon(p.color, Boolean(p.owned), Boolean(p.highlight), p.glyph, p.title);
+        const icon = pinIcon(
+          p.color,
+          Boolean(p.owned),
+          Boolean(p.highlight),
+          p.glyph,
+          p.title,
+          phase,
+        );
+        // A highlighted post always sits above its neighbours until it is dismissed.
+        const zIndex = p.highlight ? 100000 : Math.round(1000 - p.lat * 10);
         const existing = markers.current.get(p.id);
         if (existing) {
           existing.setPosition({ lat: p.lat, lng: p.lng });
           existing.setIcon(icon);
           existing.setTitle(p.title);
+          existing.setZIndex(zIndex);
           continue;
         }
         const marker = new window.google.maps.Marker({
@@ -214,6 +250,8 @@ export function LiveMap({
           position: { lat: p.lat, lng: p.lng },
           title: p.title,
           icon,
+          zIndex,
+
           optimized: false,
         });
         marker.addListener("click", () => selectRef.current(p.id));
@@ -222,7 +260,7 @@ export function LiveMap({
     };
     sync();
     return () => window.clearTimeout(raf);
-  }, [points]);
+  }, [points, phase]);
 
   // Tidy up every pin when the map leaves the screen.
   useEffect(() => {

@@ -10,7 +10,7 @@ import {
   Search,
   ThumbsUp,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { LiveMap, type MapBounds } from "@/components/LiveMap";
 import { useHomePoint, useMapPosts, usePlaceCenter } from "@/lib/use-map-view";
 import { MinistryPost } from "@/components/MinistryPost";
@@ -67,11 +67,8 @@ function NeedsPage() {
   );
   const isMap = view !== "list";
 
-  useEffect(() => {
-    if (!highlightId) return;
-    const t = setTimeout(() => setHighlightId(null), 20000);
-    return () => clearTimeout(t);
-  }, [highlightId]);
+  // The glow stays until the visitor taps another post — no timer.
+
 
   const fetchNeeds = useServerFn(listUserNeeds);
   const { data: needs } = useQuery({
@@ -92,8 +89,18 @@ function NeedsPage() {
   const [bounds, setBounds] = useState<MapBounds | null>(null);
   const [pending, setPending] = useState<MapBounds | null>(null);
   const moved = pending !== null && pending !== bounds;
-  const { points, list: inViewList } = useMapPosts(onMap, origin, bounds, "view");
+  const { points, list: inViewList } = useMapPosts(
+    onMap,
+    origin,
+    bounds,
+    "view",
+    session?.user?.id ?? null,
+    highlightId,
+  );
   const active = all.find((m) => m.id === activeId);
+  // A freshly created need sits in the middle of the screen while it glows.
+  const spotlight = highlightId ? points.find((p) => p.id === highlightId) : undefined;
+  const mapCenter = spotlight ? { lat: spotlight.lat, lng: spotlight.lng } : center;
 
   const toggleView = () => {
     void navigate({
@@ -217,10 +224,10 @@ function NeedsPage() {
             <div className="relative">
               <LiveMap
                 points={points}
-                center={center}
+                center={mapCenter}
                 onSelect={(id) => {
                   setActiveId(id);
-                  if (id === highlightId) setHighlightId(null);
+                  if (id !== highlightId) setHighlightId(null);
                 }}
                 onBoundsChange={(b) => {
                   setPending(b);
@@ -252,7 +259,10 @@ function NeedsPage() {
               <li key={m.id}>
                 <button
                   type="button"
-                  onClick={() => setActiveId(m.id)}
+                  onClick={() => {
+                    setActiveId(m.id);
+                    if (m.id !== highlightId) setHighlightId(null);
+                  }}
                   className="flex w-full items-start gap-3 rounded-2xl bg-ink-soft p-3 text-left ring-1 ring-mist/15 transition hover:ring-mist/35 sm:p-4"
                 >
                   {m.avatarUrl ? (
