@@ -171,19 +171,19 @@ function AuthPage() {
       </header>
 
       <main className="mx-auto w-full max-w-md flex-1 px-4 py-8">
-        <h1 className="mb-6 text-center text-3xl font-semibold text-sand sm:text-4xl">
+        <h1 className="mb-6 text-center text-2xl font-semibold text-sand sm:text-3xl">
           {isSignUp ? "Create your account" : "Sign in"}
         </h1>
 
         <button
           type="button"
           onClick={() => void handleGoogle()}
-          className="mb-6 inline-flex w-full items-center justify-center gap-3 rounded-full bg-sand px-6 py-4 text-xl font-semibold text-ink transition hover:opacity-90 sm:text-2xl"
+          className="mb-6 inline-flex w-full items-center justify-center gap-3 rounded-full bg-ink-soft px-6 py-4 text-lg font-semibold text-sand ring-1 ring-mist/20 transition hover:bg-ink-soft/80 hover:ring-mist/30 sm:text-xl"
         >
           Continue with Google
         </button>
 
-        <div className="mb-6 flex items-center gap-3 text-lg uppercase tracking-[0.2em] text-mist/80 sm:text-xl">
+        <div className="mb-6 flex items-center gap-3 text-base uppercase tracking-[0.2em] text-mist/80 sm:text-lg">
           <span className="h-px flex-1 bg-mist/25" />
           or use email
           <span className="h-px flex-1 bg-mist/25" />
@@ -191,10 +191,10 @@ function AuthPage() {
 
         <form className="flex flex-col gap-4" onSubmit={(e) => void handleSubmit(e)}>
           {isSignUp && (
-            <label className="flex flex-col gap-2 text-xl text-sand sm:text-2xl">
+            <label className="flex flex-col gap-2 text-lg text-sand sm:text-xl">
               Your name
               <input
-                className="rounded-xl bg-ink-soft px-5 py-4 text-xl text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50 sm:text-2xl"
+                className="rounded-xl bg-ink-soft px-5 py-4 text-lg text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50 sm:text-xl"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 maxLength={60}
@@ -202,10 +202,10 @@ function AuthPage() {
               />
             </label>
           )}
-          <label className="flex flex-col gap-2 text-xl text-sand sm:text-2xl">
+          <label className="flex flex-col gap-2 text-lg text-sand sm:text-xl">
             Email
             <input
-              className="rounded-xl bg-ink-soft px-5 py-4 text-xl text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50 sm:text-2xl"
+              className="rounded-xl bg-ink-soft px-5 py-4 text-lg text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50 sm:text-xl"
               type="email"
               required
               value={email}
@@ -214,10 +214,10 @@ function AuthPage() {
               autoComplete="email"
             />
           </label>
-          <label className="flex flex-col gap-2 text-xl text-sand sm:text-2xl">
+          <label className="flex flex-col gap-2 text-lg text-sand sm:text-xl">
             Password
             <input
-              className="rounded-xl bg-ink-soft px-5 py-4 text-xl text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50 sm:text-2xl"
+              className="rounded-xl bg-ink-soft px-5 py-4 text-lg text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50 sm:text-xl"
               type="password"
               required
               minLength={6}
@@ -228,7 +228,7 @@ function AuthPage() {
           </label>
 
           {isSignUp && (
-            <label className="mt-1 flex items-start gap-4 rounded-xl bg-ink-soft/60 px-5 py-4 text-lg text-mist/80 ring-1 ring-mist/15 sm:text-xl">
+            <label className="mt-1 flex items-start gap-4 rounded-xl bg-ink-soft/60 px-5 py-4 text-base text-mist/80 ring-1 ring-mist/15 sm:text-lg">
               <input
                 type="checkbox"
                 checked={agreed}
@@ -249,12 +249,12 @@ function AuthPage() {
           )}
 
           {error && (
-            <p className="rounded-lg bg-rose/15 px-4 py-3 text-lg text-rose ring-1 ring-rose/30 sm:text-xl">
+            <p className="rounded-lg bg-rose/15 px-4 py-3 text-base text-rose ring-1 ring-rose/30 sm:text-lg">
               {error}
             </p>
           )}
           {message && (
-            <p className="rounded-lg bg-lemon/10 px-4 py-3 text-lg text-lemon ring-1 ring-lemon/30 sm:text-xl">
+            <p className="rounded-lg bg-lemon/10 px-4 py-3 text-base text-lemon ring-1 ring-lemon/30 sm:text-lg">
               {message}
             </p>
           )}
@@ -262,7 +262,7 @@ function AuthPage() {
           <button
             type="submit"
             disabled={busy || (isSignUp && !agreed)}
-            className="mt-2 inline-flex items-center justify-center gap-3 rounded-full bg-lemon px-6 py-4 text-2xl font-semibold text-ink transition-transform hover:-translate-y-0.5 disabled:opacity-60"
+            className="mt-2 inline-flex items-center justify-center gap-3 rounded-full bg-lemon px-6 py-4 text-xl font-semibold text-ink transition-transform hover:-translate-y-0.5 disabled:opacity-60"
           >
             {busy && <Loader2 className="size-7 animate-spin" aria-hidden="true" />}
             {isSignUp ? "Create account" : "Sign in"}
@@ -270,7 +270,7 @@ function AuthPage() {
         </form>
 
         {!isSignUp && (
-          <p className="mt-6 text-center text-lg text-mist/70 sm:text-xl">
+          <p className="mt-6 text-center text-base text-mist/70 sm:text-lg">
             <button
               type="button"
               onClick={() => void handleForgot()}
@@ -283,7 +283,7 @@ function AuthPage() {
         )}
 
 
-        <p className="mt-8 text-center text-lg text-mist/70 sm:text-xl">
+        <p className="mt-8 text-center text-base text-mist/70 sm:text-lg">
           {isSignUp ? "Already have an account?" : "New here?"}{" "}
           <button
             type="button"
