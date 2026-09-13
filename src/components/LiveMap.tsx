@@ -198,6 +198,18 @@ export function LiveMap({
     map.panTo(center);
   }, [center.lat, center.lng]);
 
+  // Breathe the halo on a freshly created post.
+  const hasHighlight = points.some((p) => p.highlight);
+  const [phase, setPhase] = useState(0);
+  useEffect(() => {
+    if (!hasHighlight) {
+      setPhase(0);
+      return;
+    }
+    const t = window.setInterval(() => setPhase((v) => (v ? 0 : 1)), 750);
+    return () => window.clearInterval(t);
+  }, [hasHighlight]);
+
   // Reconcile pins.
   useEffect(() => {
     let raf = 0;
@@ -215,12 +227,22 @@ export function LiveMap({
         }
       }
       for (const p of points) {
-        const icon = pinIcon(p.color, Boolean(p.owned), Boolean(p.highlight), p.glyph, p.title);
+        const icon = pinIcon(
+          p.color,
+          Boolean(p.owned),
+          Boolean(p.highlight),
+          p.glyph,
+          p.title,
+          phase,
+        );
+        // A highlighted post always sits above its neighbours until it is dismissed.
+        const zIndex = p.highlight ? 100000 : Math.round(1000 - p.lat * 10);
         const existing = markers.current.get(p.id);
         if (existing) {
           existing.setPosition({ lat: p.lat, lng: p.lng });
           existing.setIcon(icon);
           existing.setTitle(p.title);
+          existing.setZIndex(zIndex);
           continue;
         }
         const marker = new window.google.maps.Marker({
@@ -228,6 +250,8 @@ export function LiveMap({
           position: { lat: p.lat, lng: p.lng },
           title: p.title,
           icon,
+          zIndex,
+
           optimized: false,
         });
         marker.addListener("click", () => selectRef.current(p.id));
