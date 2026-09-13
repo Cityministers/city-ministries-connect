@@ -241,7 +241,7 @@ function MapPage() {
                   </span>
                 )}
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate font-heading text-base text-sand">{m.label}</span>
+                  <span className="block truncate font-heading text-lg text-sand sm:text-base">{m.label}</span>
                   <span className="block truncate text-xs text-mist/70">
                     {m.city}
                     {m.zip ? ` ${m.zip}` : ""}
