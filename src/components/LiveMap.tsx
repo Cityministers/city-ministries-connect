@@ -80,22 +80,33 @@ const DARK_STYLE: google.maps.MapTypeStyle[] = [
  * A dark rounded-square badge holding the ministry's own icon in white,
  * ringed in the post's jewel tone — the same pin language as the splash map.
  */
+function escapeXml(value: string): string {
+  return value.replace(/[<>&"']/g, (c) =>
+    c === "<" ? "&lt;" : c === ">" ? "&gt;" : c === "&" ? "&amp;" : c === '"' ? "&quot;" : "&apos;",
+  );
+}
+
 function pinIcon(
   color: string,
   owned: boolean,
   highlight: boolean,
   glyph: string | undefined,
+  title: string,
 ): string {
   const ring = owned || highlight ? "#e8c45c" : color;
   const stroke = owned || highlight ? 3 : 2;
   const inner =
     glyph ??
     `<circle cx="0" cy="0" r="7" fill="${color}" transform="translate(11,11)"/>`;
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="58" viewBox="0 0 48 58">
-    <ellipse cx="24" cy="54" rx="8" ry="3" fill="rgba(0,0,0,.45)"/>
-    <path d="M24 52 17 43h14z" fill="${ring}"/>
-    <rect x="3" y="3" width="42" height="42" rx="13" fill="#171320" stroke="${ring}" stroke-width="${stroke}"/>
-    <g transform="translate(13,13)" fill="none" stroke="#ffffff">${inner}</g>
+  const text = escapeXml(title.length > 22 ? `${title.slice(0, 21)}\u2026` : title);
+  const pillWidth = Math.max(54, Math.min(168, text.length * 7.2 + 18));
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="180" height="86" viewBox="0 0 180 86">
+    <ellipse cx="90" cy="54" rx="8" ry="3" fill="rgba(0,0,0,.45)"/>
+    <path d="M90 52 83 43h14z" fill="${ring}"/>
+    <rect x="69" y="3" width="42" height="42" rx="13" fill="#171320" stroke="${ring}" stroke-width="${stroke}"/>
+    <g transform="translate(79,13)" fill="none" stroke="#ffffff">${inner}</g>
+    <rect x="${90 - pillWidth / 2}" y="58" width="${pillWidth}" height="22" rx="11" fill="#171320" fill-opacity="0.92" stroke="${ring}" stroke-opacity="0.5"/>
+    <text x="90" y="73" text-anchor="middle" font-family="Karla, system-ui, sans-serif" font-size="12" fill="#f4f1ea">${text}</text>
   </svg>`;
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }
@@ -178,9 +189,9 @@ export function LiveMap({
       }
       for (const p of points) {
         const icon = {
-          url: pinIcon(p.color, Boolean(p.owned), Boolean(p.highlight), p.glyph),
-          scaledSize: new window.google.maps.Size(40, 48),
-          anchor: new window.google.maps.Point(20, 48),
+          url: pinIcon(p.color, Boolean(p.owned), Boolean(p.highlight), p.glyph, p.title),
+          scaledSize: new window.google.maps.Size(150, 72),
+          anchor: new window.google.maps.Point(75, 44),
         };
         const existing = markers.current.get(p.id);
         if (existing) {
