@@ -263,21 +263,3 @@
   }
 }
 
-/* Quiet Google Maps attribution so it blends into the dark basemap.
-   Google requires the logo, Terms, and Map data links to remain visible
-   and clickable; we only reduce their brightness/contrast. */
-.cm-live-map .gm-style-cc,
-.cm-live-map .gm-style > .gmnoprint,
-.cm-live-map .gm-style a[target="_blank"],
-.cm-live-map .gm-style img[src*="google"],
-.cm-live-map .gm-style img[src*="gstatic"] {
-  filter: brightness(0.55) contrast(0.9) !important;
-  opacity: 0.8 !important;
-}
-
-.cm-live-map .gm-style a[target="_blank"]:hover,
-.cm-live-map .gm-style img[src*="google"]:hover,
-.cm-live-map .gm-style img[src*="gstatic"]:hover {
-  filter: brightness(0.8) contrast(0.95) !important;
-  opacity: 1 !important;
-}
