@@ -171,14 +171,14 @@ function AuthPage() {
       </header>
 
       <main className="mx-auto w-full max-w-md flex-1 px-4 py-8">
-        <h1 className="mb-6 text-center text-3xl font-semibold text-sand sm:text-4xl">
+        <h1 className="mb-6 text-center text-2xl font-semibold text-sand sm:text-3xl">
           {isSignUp ? "Create your account" : "Sign in"}
         </h1>
 
         <button
           type="button"
           onClick={() => void handleGoogle()}
-          className="mb-6 inline-flex w-full items-center justify-center gap-3 rounded-full bg-sand px-6 py-4 text-xl font-semibold text-ink transition hover:opacity-90 sm:text-2xl"
+          className="mb-6 inline-flex w-full items-center justify-center gap-3 rounded-full bg-ink-soft px-6 py-4 text-lg font-semibold text-sand ring-1 ring-mist/20 transition hover:bg-ink-soft/80 hover:ring-mist/30 sm:text-xl"
         >
           Continue with Google
         </button>
