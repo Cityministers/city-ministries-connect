@@ -183,7 +183,7 @@ function AuthPage() {
           Continue with Google
         </button>
 
-        <div className="mb-6 flex items-center gap-3 text-lg uppercase tracking-[0.2em] text-mist/80 sm:text-xl">
+        <div className="mb-6 flex items-center gap-3 text-base uppercase tracking-[0.2em] text-mist/80 sm:text-lg">
           <span className="h-px flex-1 bg-mist/25" />
           or use email
           <span className="h-px flex-1 bg-mist/25" />
@@ -191,10 +191,10 @@ function AuthPage() {
 
         <form className="flex flex-col gap-4" onSubmit={(e) => void handleSubmit(e)}>
           {isSignUp && (
-            <label className="flex flex-col gap-2 text-xl text-sand sm:text-2xl">
+            <label className="flex flex-col gap-2 text-lg text-sand sm:text-xl">
               Your name
               <input
-                className="rounded-xl bg-ink-soft px-5 py-4 text-xl text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50 sm:text-2xl"
+                className="rounded-xl bg-ink-soft px-5 py-4 text-lg text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50 sm:text-xl"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 maxLength={60}
@@ -202,10 +202,10 @@ function AuthPage() {
               />
             </label>
           )}
-          <label className="flex flex-col gap-2 text-xl text-sand sm:text-2xl">
+          <label className="flex flex-col gap-2 text-lg text-sand sm:text-xl">
             Email
             <input
-              className="rounded-xl bg-ink-soft px-5 py-4 text-xl text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50 sm:text-2xl"
+              className="rounded-xl bg-ink-soft px-5 py-4 text-lg text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50 sm:text-xl"
               type="email"
               required
               value={email}
@@ -214,10 +214,10 @@ function AuthPage() {
               autoComplete="email"
             />
           </label>
-          <label className="flex flex-col gap-2 text-xl text-sand sm:text-2xl">
+          <label className="flex flex-col gap-2 text-lg text-sand sm:text-xl">
             Password
             <input
-              className="rounded-xl bg-ink-soft px-5 py-4 text-xl text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50 sm:text-2xl"
+              className="rounded-xl bg-ink-soft px-5 py-4 text-lg text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50 sm:text-xl"
               type="password"
               required
               minLength={6}
