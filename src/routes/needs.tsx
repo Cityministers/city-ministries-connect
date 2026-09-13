@@ -178,58 +178,36 @@ function NeedsPage() {
       <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 py-5 sm:px-6">
         {isMap ? (
           <>
-            <PanMap
-              width={layout.width}
-              height={layout.height}
-              background={cityMap}
-              {...(district ? { target: { x: district.cx, y: district.cy } } : {})}
-              label="Needs map. Drag to move around and see other ZIP codes."
-              className="map-fade h-[70dvh] min-h-[360px] w-full"
-            >
-              {layout.pins.map(({ ministry: m, x, y }, i) => (
+            <div className="relative">
+              <LiveMap
+                points={points}
+                center={center}
+                onSelect={(id) => {
+                  setActiveId(id);
+                  if (id === highlightId) setHighlightId(null);
+                }}
+                onBoundsChange={(b) => {
+                  setPending(b);
+                  setBounds((prev) => prev ?? b);
+                }}
+                label="Needs map. Drag to explore other neighborhoods."
+                className="map-fade h-[60dvh] min-h-[320px] w-full"
+              />
+              {moved && (
                 <button
-                  key={m.id}
                   type="button"
-                  onPointerDown={(event) => event.stopPropagation()}
-                  onClick={() => {
-                    setActiveId(m.id);
-                    if (m.id === highlightId) setHighlightId(null);
-                  }}
-                  className={`pin-drop absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer p-2 ${
-                    m.id === highlightId ? "pin-pulse" : ""
-                  }`}
-                  style={{ left: x, top: y, animationDelay: `${Math.min(i, 12) * 60}ms` }}
-                  aria-label={`Open ${m.label}`}
+                  onClick={() => setBounds(pending)}
+                  className="absolute left-1/2 top-3 z-10 -translate-x-1/2 rounded-full bg-lemon px-4 py-2 text-sm font-semibold text-ink shadow-lg"
                 >
-                  {m.avatarUrl ? (
-                    <div className="mx-auto size-16 overflow-hidden rounded-xl ring-1 ring-mist/25 shadow-[0_8px_20px_-6px_rgba(0,0,0,.8)] transition-transform hover:-translate-y-1 sm:size-20">
-                      <img
-                        src={m.avatarUrl}
-                        alt={`${m.label} — ${m.poster.name}`}
-                        className="size-full object-cover"
-                        draggable={false}
-                      />
-                    </div>
-                  ) : (
-                    <div
-                      className={`mx-auto grid size-16 place-items-center rounded-xl ring-1 shadow-[0_8px_20px_-6px_rgba(0,0,0,.8)] transition-transform hover:-translate-y-1 sm:size-20 ${toneStyles[m.tone]}`}
-                    >
-                      <m.icon className="size-7 sm:size-8" aria-hidden="true" />
-                    </div>
-                  )}
-                  <span className="mx-auto mt-2 line-clamp-2 block w-[190px] rounded-xl bg-ink-soft/95 px-2 py-1 text-center text-base font-semibold leading-tight text-sand ring-1 ring-mist/25">
-                    {m.label}
-                  </span>
+                  Search this area
                 </button>
-              ))}
-            </PanMap>
-            {layout.pins.length === 0 && (
+              )}
+            </div>
+            <p className="mt-3 text-center text-[10px] font-medium uppercase tracking-[0.2em] text-mist/40">
+              {inViewList.length} needs in this view
+            </p>
+            {points.length === 0 && (
               <p className="mt-3 text-center text-sm text-mist/80">No needs posted yet.</p>
-            )}
-            {highlightId && layout.pins.some((p) => p.ministry.id === highlightId) && (
-              <p className="mt-3 text-center text-sm font-semibold text-lemon">
-                Your need is live here
-              </p>
             )}
           </>
         ) : (
