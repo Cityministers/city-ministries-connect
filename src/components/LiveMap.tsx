@@ -201,11 +201,7 @@ export function LiveMap({
         }
       }
       for (const p of points) {
-        const icon = {
-          url: pinIcon(p.color, Boolean(p.owned), Boolean(p.highlight), p.glyph, p.title),
-          scaledSize: new window.google.maps.Size(150, 72),
-          anchor: new window.google.maps.Point(75, 44),
-        };
+        const icon = pinIcon(p.color, Boolean(p.owned), Boolean(p.highlight), p.glyph, p.title);
         const existing = markers.current.get(p.id);
         if (existing) {
           existing.setPosition({ lat: p.lat, lng: p.lng });
