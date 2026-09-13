@@ -231,7 +231,7 @@ function NeedsPage() {
                 <button
                   type="button"
                   onClick={() => setBounds(pending)}
-                  className="absolute left-1/2 top-3 z-10 -translate-x-1/2 rounded-full bg-lemon px-4 py-2 text-sm font-semibold text-ink shadow-lg"
+                  className="absolute left-1/2 top-3 z-10 -translate-x-1/2 rounded-full bg-ink-soft px-4 py-2 text-sm font-semibold text-sand shadow-lg ring-1 ring-mist/25 transition hover:bg-ink-soft/80 hover:ring-mist/40"
                 >
                   Search this area
                 </button>
