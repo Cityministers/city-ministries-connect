@@ -211,7 +211,7 @@ function AuthPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               maxLength={255}
-              autoComplete="email"
+              autoComplete="off"
             />
           </label>
           <label className="flex flex-col gap-2 text-lg text-sand sm:text-xl">
