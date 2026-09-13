@@ -235,7 +235,7 @@ function MinistryMindsetPage() {
             rel="noopener noreferrer"
             className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full bg-youversion px-5 py-3 text-base font-semibold text-white transition-transform hover:-translate-y-0.5 sm:w-auto sm:self-start sm:px-6 sm:text-lg"
           >
-            Read more on this on YouVersion
+            Read in context on YouVersion
           </a>
           <h3 className="mt-10 flex items-center gap-2 font-display text-2xl text-sand sm:text-3xl">
             <BookOpen className="size-6 text-lemon" aria-hidden="true" />
@@ -252,7 +252,7 @@ function MinistryMindsetPage() {
             rel="noopener noreferrer"
             className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full bg-youversion px-5 py-3 text-base font-semibold text-white transition-transform hover:-translate-y-0.5 sm:w-auto sm:self-start sm:px-6 sm:text-lg"
           >
-            Read more on this on YouVersion
+            Read in context on YouVersion
           </a>
         </section>
 
@@ -293,7 +293,7 @@ function MinistryMindsetPage() {
             rel="noopener noreferrer"
             className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full bg-youversion px-5 py-3 text-base font-semibold text-white transition-transform hover:-translate-y-0.5 sm:w-auto sm:self-start sm:px-6 sm:text-lg"
           >
-            Read more on this on YouVersion
+            Read in context on YouVersion
           </a>
           <h3 className="mt-10 flex items-center gap-2 font-display text-2xl text-sand sm:text-3xl">
             <BookOpen className="size-6 text-lemon" aria-hidden="true" />
@@ -310,7 +310,7 @@ function MinistryMindsetPage() {
             rel="noopener noreferrer"
             className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full bg-youversion px-5 py-3 text-base font-semibold text-white transition-transform hover:-translate-y-0.5 sm:w-auto sm:self-start sm:px-6 sm:text-lg"
           >
-            Read more on this on YouVersion
+            Read in context on YouVersion
           </a>
         </section>
 
