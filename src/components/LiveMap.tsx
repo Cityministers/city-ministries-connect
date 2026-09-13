@@ -86,29 +86,42 @@ function escapeXml(value: string): string {
   );
 }
 
+type PinIcon = {
+  url: string;
+  scaledSize: google.maps.Size;
+  anchor: google.maps.Point;
+};
+
 function pinIcon(
   color: string,
   owned: boolean,
   highlight: boolean,
   glyph: string | undefined,
   title: string,
-): string {
+): PinIcon {
   const ring = owned || highlight ? "#e8c45c" : color;
   const stroke = owned || highlight ? 3 : 2;
   const inner =
     glyph ??
     `<circle cx="0" cy="0" r="7" fill="${color}" transform="translate(11,11)"/>`;
-  const text = escapeXml(title.length > 20 ? `${title.slice(0, 19)}\u2026` : title);
-  const pillWidth = Math.max(60, Math.min(174, text.length * 8.2 + 20));
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="180" height="90" viewBox="0 0 180 90">
-    <ellipse cx="90" cy="54" rx="8" ry="3" fill="rgba(0,0,0,.45)"/>
-    <path d="M90 52 83 43h14z" fill="${ring}"/>
-    <rect x="69" y="3" width="42" height="42" rx="13" fill="#171320" stroke="${ring}" stroke-width="${stroke}"/>
-    <g transform="translate(79,13)" fill="none" stroke="#ffffff">${inner}</g>
-    <rect x="${90 - pillWidth / 2}" y="58" width="${pillWidth}" height="26" rx="13" fill="#171320" fill-opacity="0.92" stroke="${ring}" stroke-opacity="0.5"/>
-    <text x="90" y="76" text-anchor="middle" font-family="Karla, system-ui, sans-serif" font-size="14" font-weight="600" fill="#f4f1ea">${text}</text>
+  const text = escapeXml(title);
+  const pillWidth = Math.max(72, Math.min(232, text.length * 8.4 + 24));
+  const svgWidth = Math.max(180, pillWidth + 24);
+  const cx = svgWidth / 2;
+  const markerScale = 150 / 180; // keep the original 180×90 pin size proportional
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${svgWidth}" height="90" viewBox="0 0 ${svgWidth} 90">
+    <ellipse cx="${cx}" cy="54" rx="8" ry="3" fill="rgba(0,0,0,.45)"/>
+    <path d="M${cx} 52 L${cx - 7} 43h14z" fill="${ring}"/>
+    <rect x="${cx - 21}" y="3" width="42" height="42" rx="13" fill="#171320" stroke="${ring}" stroke-width="${stroke}"/>
+    <g transform="translate(${cx - 11},13)" fill="none" stroke="#ffffff">${inner}</g>
+    <rect x="${cx - pillWidth / 2}" y="58" width="${pillWidth}" height="26" rx="13" fill="#171320" fill-opacity="0.92" stroke="${ring}" stroke-opacity="0.5"/>
+    <text x="${cx}" y="76" text-anchor="middle" font-family="Karla, system-ui, sans-serif" font-size="14" font-weight="600" fill="#f4f1ea">${text}</text>
   </svg>`;
-  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+  return {
+    url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`,
+    scaledSize: new window.google.maps.Size(svgWidth * markerScale, 90 * markerScale),
+    anchor: new window.google.maps.Point(cx * markerScale, 44 * markerScale),
+  };
 }
 
 export function LiveMap({
