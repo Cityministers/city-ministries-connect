@@ -116,7 +116,9 @@ function WelcomePage() {
           ...(avatarPath ? { avatarPath } : {}),
         },
       });
-      void navigate({ to: next ?? "/" });
+      const destination = next && !next.startsWith("/welcome") ? next : "/map";
+      void navigate({ to: destination });
+
     } catch (err) {
       setError(
         err instanceof Error && err.message
