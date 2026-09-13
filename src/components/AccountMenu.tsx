@@ -64,7 +64,7 @@ export function AccountMenu() {
     return (
       <Link
         to="/auth"
-        className="inline-flex min-h-10 items-center gap-1.5 rounded-full bg-lemon px-4 py-2 text-sm font-bold text-ink transition hover:-translate-y-0.5"
+        className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-slate-lighter bg-slate px-4 py-2 text-sm font-bold text-sand transition hover:bg-slate-light"
       >
         <UserRound className="size-4" aria-hidden="true" />
         Start
