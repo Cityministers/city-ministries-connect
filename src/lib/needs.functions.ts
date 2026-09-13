@@ -126,6 +126,8 @@ export const listUserNeeds = createServerFn({ method: "GET" }).handler(
       description: r.description,
       city: r.city,
       zip: r.zip ?? "",
+      lat: r.lat ?? placed.get(r.id)?.lat ?? null,
+      lng: r.lng ?? placed.get(r.id)?.lng ?? null,
       photoUrl: r.avatar_url ? (urlByPath.get(r.avatar_url) ?? null) : null,
       gallery: (galleryByRow.get(r.id) ?? [])
         .map((g) => ({ url: urlByPath.get(g.path) ?? "", kind: g.kind }))
