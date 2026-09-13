@@ -167,70 +167,98 @@ function MapPage() {
 
       {/* Map */}
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 pt-2 pb-5 sm:px-6 sm:pt-3 sm:pb-8">
-        <PanMap
-          width={layout.width}
-          height={layout.height}
-          background={cityMap}
-          {...(district ? { target: { x: district.cx, y: district.cy } } : {})}
-          label="Ministry map. Drag to move around and see other ZIP codes."
-          className="map-fade h-[70dvh] min-h-[360px] w-full"
-        >
-          {layout.pins.map(({ ministry: m, x, y }, i) => {
-            const isOwned = m.ownerId === session?.user?.id;
-            return (
+        <div className="relative">
+          <LiveMap
+            points={points}
+            center={center}
+            onSelect={(id) => {
+              setActiveId(id);
+              if (id === highlightId) setHighlightId(null);
+            }}
+            onBoundsChange={(b) => {
+              setPending(b);
+              setBounds((prev) => prev ?? b);
+            }}
+            label="Ministry map. Drag to explore other neighborhoods."
+            className="map-fade h-[60dvh] min-h-[320px] w-full"
+          />
+          {moved && (
+            <button
+              type="button"
+              onClick={() => setBounds(pending)}
+              className="absolute left-1/2 top-3 z-10 -translate-x-1/2 rounded-full bg-lemon px-4 py-2 text-sm font-semibold text-ink shadow-lg"
+            >
+              Search this area
+            </button>
+          )}
+        </div>
+
+        <div className="mt-3 flex items-center justify-between gap-3">
+          <div className="flex rounded-full bg-ink-soft p-1 ring-1 ring-mist/15">
+            {(["view", "near"] as const).map((m) => (
               <button
-                key={m.id}
+                key={m}
                 type="button"
-                onPointerDown={(event) => event.stopPropagation()}
-                onClick={() => {
-                  setActiveId(m.id);
-                  if (m.id === highlightId) setHighlightId(null);
-                }}
-                className={`pin-drop absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer p-2 ${
-                  m.id === highlightId ? "pin-pulse" : ""
-                } ${isOwned ? "pin-owned" : ""}`}
-                style={{ left: x, top: y, animationDelay: `${Math.min(i, 12) * 60}ms` }}
-                aria-label={`Open ${isOwned ? "your " : ""}${m.label} post`}
+                onClick={() => setMode(m)}
+                className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                  mode === m ? "bg-lemon text-ink" : "text-mist"
+                }`}
               >
-                {m.avatarUrl ? (
-                  <div className="relative mx-auto size-16 overflow-hidden rounded-xl ring-1 ring-mist/30 shadow-[0_8px_20px_-6px_rgba(0,0,0,.8)] transition-transform hover:-translate-y-1 sm:size-20">
-                    <img
-                      src={m.avatarUrl}
-                      alt={`${m.label} — ${m.poster.name}`}
-                      className="size-full object-cover"
-                      draggable={false}
-                    />
-                  </div>
-                ) : (
-                  <div
-                    className={`relative mx-auto grid size-16 place-items-center rounded-xl ring-1 shadow-[0_8px_20px_-6px_rgba(0,0,0,.8)] transition-transform hover:-translate-y-1 sm:size-20 ${toneStyles[m.tone]}`}
-                  >
-                    <m.icon className="size-7 sm:size-8" aria-hidden="true" />
-                  </div>
-                )}
-                {isOwned && (
-                  <span className="absolute -right-1 -top-1 rounded-full bg-lemon px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-ink shadow-md ring-1 ring-lemon/50">
-                    Yours
-                  </span>
-                )}
-                <span className="mx-auto mt-2 line-clamp-2 block w-[190px] rounded-xl bg-ink/90 px-2 py-1 text-center text-base font-semibold leading-tight text-sand ring-1 ring-mist/20">
-                  {m.label}
-                </span>
+                {m === "view" ? "In this view" : "Nearest to me"}
               </button>
-            );
-          })}
-        </PanMap>
-        {layout.pins.length === 0 && (
-          <p className="mt-3 text-center text-sm text-mist/80">No ministries posted yet.</p>
-        )}
-        {highlightId && layout.pins.some((p) => p.ministry.id === highlightId) && (
-          <p className="mt-3 text-center text-sm font-semibold text-lemon">
-            Your ministry is live here
+            ))}
+          </div>
+          <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-mist/40">
+            {list.length} ministries
+          </p>
+        </div>
+
+        {!hasHome && (
+          <p className="mt-2 text-xs text-mist/70">
+            Add your ZIP code on your profile to see how far each ministry is from you.
           </p>
         )}
-        <p className="mt-3 text-center text-[10px] font-medium uppercase tracking-[0.2em] text-mist/40">
-          {nearby.length} ministries near {location}
-        </p>
+
+        <ul className="mt-3 space-y-2">
+          {list.map(({ post: m, distance }) => (
+            <li key={m.id}>
+              <button
+                type="button"
+                onClick={() => setActiveId(m.id)}
+                className="flex w-full items-center gap-3 rounded-2xl bg-ink-soft p-3 text-left ring-1 ring-mist/10 transition hover:ring-mist/30"
+              >
+                {m.avatarUrl ? (
+                  <img
+                    src={m.avatarUrl}
+                    alt=""
+                    className="size-12 shrink-0 rounded-xl object-cover ring-1 ring-mist/20"
+                  />
+                ) : (
+                  <span
+                    className={`grid size-12 shrink-0 place-items-center rounded-xl ring-1 ${toneStyles[m.tone]}`}
+                  >
+                    <m.icon className="size-5" aria-hidden="true" />
+                  </span>
+                )}
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate font-heading text-base text-sand">{m.label}</span>
+                  <span className="block truncate text-xs text-mist/70">
+                    {m.city}
+                    {m.zip ? ` ${m.zip}` : ""}
+                  </span>
+                </span>
+                <span className="shrink-0 rounded-full bg-ink px-2.5 py-1 text-xs font-semibold text-lemon ring-1 ring-lemon/30">
+                  {distance}
+                </span>
+              </button>
+            </li>
+          ))}
+          {list.length === 0 && (
+            <li className="rounded-2xl bg-ink-soft p-4 text-center text-sm text-mist/70">
+              No ministries in this area yet — drag the map to look around.
+            </li>
+          )}
+        </ul>
 
         {active && <MinistryPost ministry={active} onClose={() => setActiveId(null)} />}
       </main>
