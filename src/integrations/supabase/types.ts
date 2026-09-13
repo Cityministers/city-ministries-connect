@@ -142,6 +142,39 @@ export type Database = {
         }
         Relationships: []
       }
+      geo_cache: {
+        Row: {
+          city: string
+          created_at: string
+          id: string
+          lat: number | null
+          lng: number | null
+          place_key: string
+          updated_at: string
+          zip: string
+        }
+        Insert: {
+          city?: string
+          created_at?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          place_key: string
+          updated_at?: string
+          zip?: string
+        }
+        Update: {
+          city?: string
+          created_at?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          place_key?: string
+          updated_at?: string
+          zip?: string
+        }
+        Relationships: []
+      }
       gift_references: {
         Row: {
           code: string
@@ -408,6 +441,8 @@ export type Database = {
           gallery: Json
           icon_id: string | null
           id: string
+          lat: number | null
+          lng: number | null
           owner_id: string
           short_title: string
           status: string
@@ -423,6 +458,8 @@ export type Database = {
           gallery?: Json
           icon_id?: string | null
           id?: string
+          lat?: number | null
+          lng?: number | null
           owner_id: string
           short_title: string
           status?: string
@@ -438,6 +475,8 @@ export type Database = {
           gallery?: Json
           icon_id?: string | null
           id?: string
+          lat?: number | null
+          lng?: number | null
           owner_id?: string
           short_title?: string
           status?: string
@@ -456,6 +495,8 @@ export type Database = {
           description: string
           gallery: Json
           id: string
+          lat: number | null
+          lng: number | null
           owner_id: string
           short_title: string
           status: string
@@ -471,6 +512,8 @@ export type Database = {
           description: string
           gallery?: Json
           id?: string
+          lat?: number | null
+          lng?: number | null
           owner_id: string
           short_title: string
           status?: string
@@ -486,6 +529,8 @@ export type Database = {
           description?: string
           gallery?: Json
           id?: string
+          lat?: number | null
+          lng?: number | null
           owner_id?: string
           short_title?: string
           status?: string
