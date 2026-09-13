@@ -41,7 +41,7 @@ export const Route = createFileRoute("/ministries")({
 function MinistriesPage() {
   const { place } = Route.useSearch();
   const navigate = Route.useNavigate();
-  const [placeQuery, setPlaceQuery] = useState(place ?? "Portland, OR 97006");
+  const [placeQuery, setPlaceQuery] = useState(place ?? "Portland, OR 97209");
   const [query, setQuery] = useState("");
   const [activeId, setActiveId] = useState<string | null>(null);
 
