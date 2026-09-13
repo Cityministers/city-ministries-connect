@@ -154,16 +154,24 @@ function PostNeedPage() {
     try {
       let avatarPath = "";
       if (file) {
-        const { data: userData } = await supabase.auth.getUser();
-        const uid = userData.user?.id;
-        if (!uid) throw new Error("Please sign in again.");
-        const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-        const path = `${uid}/need-${Date.now()}.${ext}`;
-        const { error: upErr } = await supabase.storage
-          .from("ministry-avatars")
-          .upload(path, file, { upsert: true });
-        if (upErr) throw new Error(upErr.message);
-        avatarPath = path;
+        try {
+          const { data: userData } = await supabase.auth.getUser();
+          const uid = userData.user?.id;
+          if (!uid) throw new Error("Please sign in again.");
+          const upload = await shrinkImage(file);
+          const ext =
+            upload.type === "image/jpeg" ? "jpg" : (upload.name.split(".").pop()?.toLowerCase() ?? "jpg");
+          const path = `${uid}/need-${Date.now()}.${ext}`;
+          const { error: upErr } = await supabase.storage
+            .from("ministry-avatars")
+            .upload(path, upload, { upsert: true, contentType: upload.type });
+          if (upErr) throw new Error(upErr.message);
+          avatarPath = path;
+        } catch (err) {
+          setError(friendlyUploadError(err));
+          setBusy(false);
+          return;
+        }
       }
 
       const gallery = await uploadMedia(media, "need");

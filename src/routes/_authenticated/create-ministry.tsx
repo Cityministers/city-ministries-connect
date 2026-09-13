@@ -126,16 +126,24 @@ function CreateMinistryPage() {
     try {
       let avatarPath = "";
       if (file && !preset) {
-        const { data: userData } = await supabase.auth.getUser();
-        const uid = userData.user?.id;
-        if (!uid) throw new Error("Please sign in again.");
-        const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-        const path = `${uid}/${crypto.randomUUID()}.${ext}`;
-        const { error: uploadError } = await supabase.storage
-          .from("ministry-avatars")
-          .upload(path, file, { upsert: false, contentType: file.type });
-        if (uploadError) throw new Error(uploadError.message);
-        avatarPath = path;
+        try {
+          const { data: userData } = await supabase.auth.getUser();
+          const uid = userData.user?.id;
+          if (!uid) throw new Error("Please sign in again.");
+          const upload = await shrinkImage(file);
+          const ext =
+            upload.type === "image/jpeg" ? "jpg" : (upload.name.split(".").pop()?.toLowerCase() ?? "jpg");
+          const path = `${uid}/${crypto.randomUUID()}.${ext}`;
+          const { error: uploadError } = await supabase.storage
+            .from("ministry-avatars")
+            .upload(path, upload, { upsert: false, contentType: upload.type });
+          if (uploadError) throw new Error(uploadError.message);
+          avatarPath = path;
+        } catch (err) {
+          setError(friendlyUploadError(err));
+          setBusy(false);
+          return;
+        }
       }
 
       const gallery = await uploadMedia(media, "ministry");
