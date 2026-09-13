@@ -70,11 +70,23 @@ function MapPage() {
   });
 
   const all = useMemo(() => (userPosts ?? []).map(toMinistry), [userPosts]);
-  const layout = useMemo(() => layoutMap(all), [all]);
-  const district = useMemo(() => findDistrict(layout, location), [layout, location]);
+  const center = usePlaceCenter(location);
+  const { origin, hasHome } = useHomePoint(Boolean(session), center);
 
+  const [mode, setMode] = useState<"view" | "near">("view");
+  const [bounds, setBounds] = useState<MapBounds | null>(null);
+  const [pending, setPending] = useState<MapBounds | null>(null);
+  const moved = mode === "view" && pending !== null && pending !== bounds;
+
+  const { points, list } = useMapPosts(
+    all,
+    origin,
+    mode === "view" ? bounds : null,
+    mode,
+    session?.user?.id ?? null,
+    highlightId,
+  );
   const active = all.find((m) => m.id === activeId);
-  const nearby = all.filter((m) => matchesPlace(m, location));
 
   return (
     <div className="flex min-h-dvh flex-col bg-ink font-body text-sand antialiased">
