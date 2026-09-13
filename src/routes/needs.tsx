@@ -14,6 +14,7 @@ import { useEffect, useMemo, useState } from "react";
 import { LiveMap, type MapBounds } from "@/components/LiveMap";
 import { useHomePoint, useMapPosts, usePlaceCenter } from "@/lib/use-map-view";
 import { MinistryPost } from "@/components/MinistryPost";
+import { Button } from "@/components/ui/button";
 import { toneStyles } from "@/data/ministries";
 import { listUserNeeds } from "@/lib/needs.functions";
 import { matchesPlace, matchesText } from "@/lib/place";
@@ -174,6 +175,36 @@ function NeedsPage() {
               placeholder="Search needs, places, people"
               aria-label="Search needs"
             />
+          </div>
+          <div className="grid w-full grid-cols-3 gap-2" aria-label="Map post controls">
+            <Button
+              asChild
+              className="h-10 rounded-full bg-tone-emerald/15 px-2 text-sm font-semibold text-tone-emerald shadow-none ring-1 ring-tone-emerald/45 hover:bg-tone-emerald/25 sm:px-5"
+            >
+              <Link to="/post-need" aria-label="Create a need post">
+                Create Post
+              </Link>
+            </Button>
+            <Button
+              asChild
+              className="h-10 rounded-full bg-tone-cyan/15 px-2 text-sm font-semibold text-tone-cyan shadow-none ring-1 ring-tone-cyan/45 hover:bg-tone-cyan/25 sm:px-5"
+            >
+              <Link to="/map" search={{ place: placeQuery }}>
+                Ministries
+              </Link>
+            </Button>
+            <Button
+              asChild
+              className="h-10 rounded-full bg-lemon px-2 text-sm font-semibold text-ink shadow-none ring-1 ring-lemon/60 hover:bg-lemon/90 sm:px-5"
+            >
+              <Link
+                to="/needs"
+                search={{ ...(placeQuery ? { place: placeQuery } : {}) }}
+                aria-current="page"
+              >
+                Needs
+              </Link>
+            </Button>
           </div>
         </div>
       </header>
