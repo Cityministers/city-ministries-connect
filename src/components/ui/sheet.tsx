@@ -63,7 +63,7 @@ const SheetContent = React.forwardRef<
     <SheetPrimitive.Content ref={ref} className={cn(sheetVariants({ side }), className)} {...props}>
       <SheetPrimitive.Close
         aria-label="Close menu"
-        className="absolute right-4 top-4 grid size-12 place-items-center rounded-full bg-sand text-ink shadow-lg ring-1 ring-mist/30 transition-all duration-200 hover:bg-sand/90 active:scale-90 focus:outline-none focus:ring-2 focus:ring-sand/50 disabled:pointer-events-none"
+        className="absolute right-4 top-4 grid size-12 place-items-center rounded-full bg-slate text-white shadow-lg ring-1 ring-white/20 transition-all duration-200 hover:bg-slate-light active:scale-90 focus:outline-none focus:ring-2 focus:ring-white/40 disabled:pointer-events-none"
       >
         <X className="size-6" strokeWidth={2.5} />
       </SheetPrimitive.Close>
