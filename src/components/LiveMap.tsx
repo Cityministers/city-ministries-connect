@@ -178,9 +178,9 @@ export function LiveMap({
       }
       for (const p of points) {
         const icon = {
-          url: pinIcon(p.color, Boolean(p.owned), Boolean(p.highlight)),
-          scaledSize: new window.google.maps.Size(36, 43),
-          anchor: new window.google.maps.Point(18, 43),
+          url: pinIcon(p.color, Boolean(p.owned), Boolean(p.highlight), p.glyph),
+          scaledSize: new window.google.maps.Size(40, 48),
+          anchor: new window.google.maps.Point(20, 48),
         };
         const existing = markers.current.get(p.id);
         if (existing) {
