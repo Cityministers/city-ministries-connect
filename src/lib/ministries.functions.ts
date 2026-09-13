@@ -12,6 +12,8 @@ export type UserMinistryDTO = {
   description: string;
   city: string;
   zip: string;
+  lat: number | null;
+  lng: number | null;
   photoUrl: string | null;
   /** Pre-made ministry id when the post was started from our list; its icon is used on the map. */
   iconId: string | null;
@@ -45,10 +47,32 @@ export const listUserMinistries = createServerFn({ method: "GET" }).handler(
     const supabase = publicClient();
     const { data, error } = await supabase
       .from("user_ministries")
-      .select("id, owner_id, short_title, title, description, city, zip, avatar_url, icon_id, gallery")
+      .select(
+        "id, owner_id, short_title, title, description, city, zip, lat, lng, avatar_url, icon_id, gallery",
+      )
       .order("updated_at", { ascending: false })
       .limit(200);
     if (error || !data) return [];
+
+    // Posts are placed on the map from their city/ZIP the first time they're listed.
+    const placed = new Map<string, { lat: number; lng: number }>();
+    const unplaced = data.filter((r) => r.lat == null || r.lng == null);
+    if (unplaced.length > 0) {
+      const { geocodePlaces, placeKey } = await import("./geocode.server");
+      const found = await geocodePlaces(
+        unplaced.map((r) => ({ city: r.city ?? "", zip: r.zip ?? "" })),
+      );
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      for (const r of unplaced) {
+        const point = found.get(placeKey(r.city ?? "", r.zip ?? ""));
+        if (!point) continue;
+        placed.set(r.id, point);
+        await supabaseAdmin
+          .from("user_ministries")
+          .update({ lat: point.lat, lng: point.lng })
+          .eq("id", r.id);
+      }
+    }
 
     const ownerIds = [...new Set(data.map((r) => r.owner_id))];
     const { data: profiles } = await supabase
