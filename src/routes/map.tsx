@@ -7,6 +7,7 @@ import { AccountMenu } from "@/components/AccountMenu";
 import { BrandLogo } from "@/components/BrandLogo";
 import { SiteNav } from "@/components/SiteNav";
 import { MinistryPost } from "@/components/MinistryPost";
+import { Button } from "@/components/ui/button";
 import { toneStyles } from "@/data/ministries";
 import { LiveMap, type MapBounds } from "@/components/LiveMap";
 import { useSession } from "@/hooks/useSession";
@@ -146,21 +147,32 @@ function MapPage() {
             </Link>
           </div>
 
-          {/* Row 3: needs actions */}
-          <div className="flex w-full flex-row gap-2">
-            <Link
-              to="/post-need"
-              className="inline-flex flex-1 items-center justify-center rounded-full bg-tone-emerald/15 px-4 py-2.5 text-sm font-semibold text-tone-emerald ring-1 ring-tone-emerald/45 transition hover:bg-tone-emerald/25 active:translate-y-0.5 sm:flex-initial"
+          {/* Row 3: create + map type */}
+          <div className="grid w-full grid-cols-3 gap-2" aria-label="Map post controls">
+            <Button
+              asChild
+              className="h-10 rounded-full bg-tone-emerald/15 px-2 text-sm font-semibold text-tone-emerald shadow-none ring-1 ring-tone-emerald/45 hover:bg-tone-emerald/25 sm:px-5"
             >
-              Post a Need
-            </Link>
-            <Link
-              to="/needs"
-              search={{ place: location }}
-              className="inline-flex flex-1 items-center justify-center rounded-full bg-tone-indigo/15 px-4 py-2.5 text-sm font-semibold text-tone-indigo ring-1 ring-tone-indigo/45 transition hover:bg-tone-indigo/25 active:translate-y-0.5 sm:flex-initial"
+              <Link to="/start" aria-label="Create a ministry post">
+                Create Post
+              </Link>
+            </Button>
+            <Button
+              asChild
+              className="h-10 rounded-full bg-lemon px-2 text-sm font-semibold text-ink shadow-none ring-1 ring-lemon/60 hover:bg-lemon/90 sm:px-5"
             >
-              View Needs
-            </Link>
+              <Link to="/map" search={{ place: location }} aria-current="page">
+                Ministries
+              </Link>
+            </Button>
+            <Button
+              asChild
+              className="h-10 rounded-full bg-tone-indigo/15 px-2 text-sm font-semibold text-tone-indigo shadow-none ring-1 ring-tone-indigo/45 hover:bg-tone-indigo/25 sm:px-5"
+            >
+              <Link to="/needs" search={{ place: location }}>
+                Needs
+              </Link>
+            </Button>
           </div>
         </div>
       </header>
