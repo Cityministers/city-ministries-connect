@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { toneStyles } from "@/data/ministries";
 import { listUserNeeds } from "@/lib/needs.functions";
 import { matchesPlace, matchesText } from "@/lib/place";
+import { useSession } from "@/hooks/useSession";
 import { toNeed } from "@/lib/user-needs";
 
 export const Route = createFileRoute("/needs")({
@@ -86,7 +87,8 @@ function NeedsPage() {
   // The map keeps every need on it; the place search moves the map instead of filtering.
   const onMap = useMemo(() => all.filter((m) => matchesText(m, query)), [all, query]);
   const center = usePlaceCenter(placeQuery);
-  const { origin } = useHomePoint(true, center);
+  const session = useSession();
+  const { origin } = useHomePoint(Boolean(session), center);
   const [bounds, setBounds] = useState<MapBounds | null>(null);
   const [pending, setPending] = useState<MapBounds | null>(null);
   const moved = pending !== null && pending !== bounds;
