@@ -260,7 +260,7 @@ export function LiveMap({
     };
     sync();
     return () => window.clearTimeout(raf);
-  }, [points]);
+  }, [points, phase]);
 
   // Tidy up every pin when the map leaves the screen.
   useEffect(() => {
