@@ -159,7 +159,7 @@ function MapPage() {
             </Button>
             <Button
               asChild
-              className="h-10 rounded-full bg-lemon px-2 text-sm font-semibold text-ink shadow-none ring-1 ring-lemon/60 hover:bg-lemon/90 sm:px-5"
+              className="h-10 rounded-full bg-tone-cyan/25 px-2 text-sm font-semibold text-tone-cyan shadow-none ring-1 ring-tone-cyan/55 hover:bg-tone-cyan/35 sm:px-5"
             >
               <Link to="/map" search={{ place: location }} aria-current="page">
                 Ministries
