@@ -158,7 +158,7 @@ function WelcomePage() {
               className="rounded-xl bg-ink px-4 py-3 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Joseph Draper"
+              placeholder="Apostle Paul"
             />
           </label>
 
