@@ -193,7 +193,7 @@ function HomePage() {
                       rel="noopener noreferrer"
                       className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-youversion px-5 py-3 text-base font-semibold text-white transition-transform hover:-translate-y-0.5 sm:w-auto sm:self-start sm:px-6 sm:text-lg"
                     >
-                      Read more on topic on YouVersion
+                      Read in context on YouVersion
                     </a>
                     <Link
                       to="/create-ministry"
