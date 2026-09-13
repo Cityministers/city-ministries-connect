@@ -40,6 +40,9 @@ export function useHomePoint(signedIn: boolean, fallback: LatLng) {
     queryFn: () => fetchPlace(),
     enabled: signedIn,
     staleTime: Infinity,
+    retry: false,
+    // A signed-out or expired session must not break the map.
+    throwOnError: false,
   });
 
   const homeQuery = [place?.city, place?.zip].filter(Boolean).join(" ").trim();
