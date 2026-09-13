@@ -223,7 +223,7 @@ function AuthPage() {
               minLength={6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              autoComplete={isSignUp ? "new-password" : "current-password"}
+              autoComplete="off"
             />
           </label>
 
