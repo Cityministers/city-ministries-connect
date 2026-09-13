@@ -67,11 +67,8 @@ function NeedsPage() {
   );
   const isMap = view !== "list";
 
-  useEffect(() => {
-    if (!highlightId) return;
-    const t = setTimeout(() => setHighlightId(null), 20000);
-    return () => clearTimeout(t);
-  }, [highlightId]);
+  // The glow stays until the visitor taps another post — no timer.
+
 
   const fetchNeeds = useServerFn(listUserNeeds);
   const { data: needs } = useQuery({
