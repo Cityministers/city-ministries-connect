@@ -195,7 +195,7 @@ function NeedsPage() {
             </Button>
             <Button
               asChild
-              className="h-10 rounded-full bg-lemon px-2 text-sm font-semibold text-ink shadow-none ring-1 ring-lemon/60 hover:bg-lemon/90 sm:px-5"
+              className="h-10 rounded-full bg-tone-indigo/25 px-2 text-sm font-semibold text-tone-indigo shadow-none ring-1 ring-tone-indigo/55 hover:bg-tone-indigo/35 sm:px-5"
             >
               <Link
                 to="/needs"
