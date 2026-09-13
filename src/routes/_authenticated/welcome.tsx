@@ -149,7 +149,7 @@ function WelcomePage() {
           Just three quick things so neighbors know who you are and where you serve.
         </p>
 
-        <form className="mt-6 flex flex-col gap-4" onSubmit={(e) => void handleSubmit(e)}>
+        <form className="mt-6 flex flex-col gap-4" onSubmit={handleSubmit}>
           <label className="flex flex-col gap-1.5 text-base text-mist/80">
             Your name
             <input
@@ -183,62 +183,58 @@ function WelcomePage() {
 
           <div className="flex flex-col gap-2 text-base text-mist/80">
             <span>Photo (optional)</span>
-            <div className="flex flex-col items-center gap-3 rounded-2xl bg-ink-soft/40 p-4 ring-1 ring-mist/15">
+            <div className="flex flex-col items-center gap-4 rounded-2xl bg-ink-soft/40 p-5 ring-1 ring-mist/15">
               {preview ? (
                 <>
                   <img
                     src={preview}
                     alt="Your photo preview"
-                    className="size-24 rounded-full object-cover ring-2 ring-mist/20"
+                    className="size-44 rounded-full object-cover ring-2 ring-mist/25 sm:size-52"
                   />
-                  <div className="flex items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (preview) URL.revokeObjectURL(preview);
-                        setPhoto(null);
-                        setPreview(null);
-                      }}
-                      className="text-sm font-semibold text-rose-300 hover:text-rose-200"
-                    >
-                      Remove photo
-                    </button>
-                    <label className="cursor-pointer text-sm font-semibold text-lemon hover:text-lemon/80">
+                  <div className="flex w-full flex-col gap-2 sm:flex-row">
+                    <label className="inline-flex flex-1 cursor-pointer items-center justify-center rounded-full bg-ink px-5 py-3 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft">
                       Change photo
                       <input
                         type="file"
                         accept="image/*"
                         className="sr-only"
-                        onChange={(e) => {
-                          const f = e.target.files?.[0] ?? null;
-                          if (preview) URL.revokeObjectURL(preview);
-                          setPhoto(f);
-                          setPreview(f ? URL.createObjectURL(f) : null);
-                        }}
+                        onChange={(e) => choosePhoto(e.target.files?.[0] ?? null)}
                       />
                     </label>
+                    <button
+                      type="button"
+                      onClick={clearPhoto}
+                      className="inline-flex flex-1 items-center justify-center rounded-full px-5 py-3 text-base font-semibold text-rose-300 ring-1 ring-rose-300/30 transition hover:bg-rose-300/10"
+                    >
+                      Remove photo
+                    </button>
                   </div>
                 </>
               ) : (
-                <label className="flex w-full cursor-pointer flex-col items-center gap-2 rounded-xl border-2 border-dashed border-mist/30 px-4 py-6 text-center transition hover:border-mist/50 hover:bg-ink-soft/40">
-                  <span className="text-base font-semibold text-sand">Choose a photo</span>
-                  <span className="text-sm text-mist/60">Tap to upload from your device</span>
+                <label className="flex w-full cursor-pointer flex-col items-center gap-2 rounded-xl border-2 border-dashed border-mist/30 px-4 py-8 text-center transition hover:border-mist/50 hover:bg-ink-soft/40">
+                  <span className="text-lg font-semibold text-sand">Choose a photo</span>
+                  <span className="text-sm text-mist/60">
+                    Tap to upload from your device — up to {MAX_IMAGE_LABEL}
+                  </span>
                   <input
                     type="file"
                     accept="image/*"
                     className="sr-only"
-                    onChange={(e) => {
-                      const f = e.target.files?.[0] ?? null;
-                      setPhoto(f);
-                      setPreview(f ? URL.createObjectURL(f) : null);
-                    }}
+                    onChange={(e) => choosePhoto(e.target.files?.[0] ?? null)}
                   />
                 </label>
               )}
             </div>
           </div>
 
-          {error && <p className="text-sm text-rose-300">{error}</p>}
+          {error && (
+            <div
+              role="alert"
+              className="rounded-xl bg-rose-500/10 px-4 py-3 text-base text-rose-200 ring-1 ring-rose-400/40"
+            >
+              {error}
+            </div>
+          )}
 
           <button
             type="submit"
@@ -248,6 +244,17 @@ function WelcomePage() {
             {busy && <Loader2 className="size-5 animate-spin" aria-hidden="true" />}
             Finish setup
           </button>
+
+          {photoFailed && (
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => void finish(false)}
+              className="inline-flex items-center justify-center rounded-full px-6 py-3 text-base font-semibold text-sand ring-1 ring-mist/30 transition hover:bg-ink-soft disabled:opacity-60"
+            >
+              Finish without a photo
+            </button>
+          )}
         </form>
       </main>
     </div>
