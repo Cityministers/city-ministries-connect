@@ -229,7 +229,7 @@ export function LiveMap({
       ref={hostRef}
       role="application"
       aria-label={label}
-      className={`overflow-hidden rounded-2xl bg-ink-soft ring-1 ring-mist/15 ${className}`}
+      className={`cm-live-map overflow-hidden rounded-2xl bg-ink-soft ring-1 ring-mist/15 ${className}`}
     />
   );
 }
