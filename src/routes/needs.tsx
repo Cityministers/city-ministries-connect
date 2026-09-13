@@ -10,7 +10,7 @@ import {
   Search,
   ThumbsUp,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { LiveMap, type MapBounds } from "@/components/LiveMap";
 import { useHomePoint, useMapPosts, usePlaceCenter } from "@/lib/use-map-view";
 import { MinistryPost } from "@/components/MinistryPost";
@@ -224,10 +224,10 @@ function NeedsPage() {
             <div className="relative">
               <LiveMap
                 points={points}
-                center={center}
+                center={mapCenter}
                 onSelect={(id) => {
                   setActiveId(id);
-                  if (id === highlightId) setHighlightId(null);
+                  if (id !== highlightId) setHighlightId(null);
                 }}
                 onBoundsChange={(b) => {
                   setPending(b);
@@ -259,7 +259,10 @@ function NeedsPage() {
               <li key={m.id}>
                 <button
                   type="button"
-                  onClick={() => setActiveId(m.id)}
+                  onClick={() => {
+                    setActiveId(m.id);
+                    if (m.id !== highlightId) setHighlightId(null);
+                  }}
                   className="flex w-full items-start gap-3 rounded-2xl bg-ink-soft p-3 text-left ring-1 ring-mist/15 transition hover:ring-mist/35 sm:p-4"
                 >
                   {m.avatarUrl ? (
