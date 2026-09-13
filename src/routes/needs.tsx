@@ -11,7 +11,8 @@ import {
   ThumbsUp,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import cityMap from "@/assets/city-map.jpg";
+import { LiveMap, type MapBounds } from "@/components/LiveMap";
+import { useHomePoint, useMapPosts, usePlaceCenter } from "@/lib/use-map-view";
 import { MinistryPost } from "@/components/MinistryPost";
 import { toneStyles } from "@/data/ministries";
 import { listUserNeeds } from "@/lib/needs.functions";
