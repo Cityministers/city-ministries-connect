@@ -28,6 +28,7 @@ export function toMinistry(dto: UserMinistryDTO, index: number): Ministry {
     city: dto.city,
     zip: dto.zip,
     distanceMi: 0.5,
+    ...(dto.lat != null && dto.lng != null ? { lat: dto.lat, lng: dto.lng } : {}),
     // With a pre-made ministry icon, the drawn icon is the pin; the photo stays for the poster card.
     ...(photo && !preset ? { avatarUrl: photo } : {}),
     ...(dto.gallery.length > 0 ? { gallery: dto.gallery } : {}),
