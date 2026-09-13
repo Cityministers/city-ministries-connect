@@ -12,6 +12,8 @@ export type UserNeedDTO = {
   description: string;
   city: string;
   zip: string;
+  lat: number | null;
+  lng: number | null;
   photoUrl: string | null;
   gallery: { url: string; kind: "image" | "video" }[];
   category: string | null;
