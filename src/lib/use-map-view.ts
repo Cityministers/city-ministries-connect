@@ -6,6 +6,7 @@ import type { MapBounds, MapPoint } from "@/components/LiveMap";
 import { lookupPlace } from "@/lib/geo.functions";
 import { getMyPlace } from "@/lib/profile.functions";
 import { toneHex } from "@/lib/map-tones";
+import { iconMarkup } from "@/lib/map-icon";
 import { formatMiles, milesBetween, spread, type LatLng } from "@/lib/distance";
 
 /** Downtown Portland, used until a real place is known. */
@@ -78,6 +79,7 @@ export function useMapPosts(
       lng: at.lng,
       title: post.label,
       color: toneHex[post.tone],
+      glyph: iconMarkup(post.icon),
       owned: Boolean(ownerId && post.ownerId === ownerId),
       highlight: post.id === highlightId,
     }));

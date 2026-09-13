@@ -7,6 +7,8 @@ export type MapPoint = {
   title: string;
   /** Pin colour, matching the post's tone. */
   color: string;
+  /** Raw SVG markup for the post's icon, drawn white inside the pin. */
+  glyph?: string;
   owned?: boolean;
   highlight?: boolean;
 };
@@ -74,14 +76,26 @@ const DARK_STYLE: google.maps.MapTypeStyle[] = [
   { featureType: "administrative", elementType: "geometry.stroke", stylers: [{ color: "#433c5c" }] },
 ];
 
-function pinIcon(color: string, owned: boolean, highlight: boolean): string {
-  const ring = owned || highlight ? "#e8c45c" : "#2b2438";
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="44" height="52" viewBox="0 0 44 52">
-    <g>
-      <ellipse cx="22" cy="48" rx="7" ry="3" fill="rgba(0,0,0,.45)"/>
-      <path d="M22 47c0-9 12-13 12-25a12 12 0 1 0-24 0c0 12 12 16 12 25z" fill="${ring}"/>
-      <circle cx="22" cy="21" r="8.5" fill="${color}"/>
-    </g>
+/**
+ * A dark rounded-square badge holding the ministry's own icon in white,
+ * ringed in the post's jewel tone — the same pin language as the splash map.
+ */
+function pinIcon(
+  color: string,
+  owned: boolean,
+  highlight: boolean,
+  glyph: string | undefined,
+): string {
+  const ring = owned || highlight ? "#e8c45c" : color;
+  const stroke = owned || highlight ? 3 : 2;
+  const inner =
+    glyph ??
+    `<circle cx="0" cy="0" r="7" fill="${color}" transform="translate(11,11)"/>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="58" viewBox="0 0 48 58">
+    <ellipse cx="24" cy="54" rx="8" ry="3" fill="rgba(0,0,0,.45)"/>
+    <path d="M24 52 17 43h14z" fill="${ring}"/>
+    <rect x="3" y="3" width="42" height="42" rx="13" fill="#171320" stroke="${ring}" stroke-width="${stroke}"/>
+    <g transform="translate(13,13)" fill="none" stroke="#ffffff">${inner}</g>
   </svg>`;
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }
@@ -164,9 +178,9 @@ export function LiveMap({
       }
       for (const p of points) {
         const icon = {
-          url: pinIcon(p.color, Boolean(p.owned), Boolean(p.highlight)),
-          scaledSize: new window.google.maps.Size(36, 43),
-          anchor: new window.google.maps.Point(18, 43),
+          url: pinIcon(p.color, Boolean(p.owned), Boolean(p.highlight), p.glyph),
+          scaledSize: new window.google.maps.Size(40, 48),
+          anchor: new window.google.maps.Point(20, 48),
         };
         const existing = markers.current.get(p.id);
         if (existing) {
