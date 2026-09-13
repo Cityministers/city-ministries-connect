@@ -85,6 +85,10 @@ function MapPage() {
     highlightId,
   );
   const active = all.find((m) => m.id === activeId);
+  // A freshly created post sits in the middle of the screen while it glows.
+  const spotlight = highlightId ? points.find((p) => p.id === highlightId) : undefined;
+  const mapCenter = spotlight ? { lat: spotlight.lat, lng: spotlight.lng } : center;
+
 
   return (
     <div className="flex min-h-dvh flex-col bg-ink font-body text-sand antialiased">
