@@ -6,15 +6,13 @@ import { useEffect, useMemo, useState } from "react";
 import { AccountMenu } from "@/components/AccountMenu";
 import { BrandLogo } from "@/components/BrandLogo";
 import { SiteNav } from "@/components/SiteNav";
-import cityMap from "@/assets/city-map.jpg";
 import { MinistryPost } from "@/components/MinistryPost";
 import { toneStyles } from "@/data/ministries";
-import { PanMap } from "@/components/PanMap";
-import { findDistrict, layoutMap } from "@/lib/map-layout";
+import { LiveMap, type MapBounds } from "@/components/LiveMap";
 import { useSession } from "@/hooks/useSession";
 import { listUserMinistries } from "@/lib/ministries.functions";
-import { matchesPlace } from "@/lib/place";
 import { toMinistry } from "@/lib/user-ministries";
+import { useHomePoint, useMapPosts, usePlaceCenter } from "@/lib/use-map-view";
 
 export const Route = createFileRoute("/map")({
   validateSearch: (search: Record<string, unknown>): { place?: string; new?: string } => {
