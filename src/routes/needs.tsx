@@ -18,8 +18,6 @@ import { toneStyles } from "@/data/ministries";
 import { listUserNeeds } from "@/lib/needs.functions";
 import { matchesPlace, matchesText } from "@/lib/place";
 import { toNeed } from "@/lib/user-needs";
-import { PanMap } from "@/components/PanMap";
-import { findDistrict, layoutMap } from "@/lib/map-layout";
 
 export const Route = createFileRoute("/needs")({
   validateSearch: (search: Record<string, unknown>): { place?: string; view?: string; new?: string } => {
