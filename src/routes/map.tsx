@@ -51,7 +51,7 @@ export const Route = createFileRoute("/map")({
 function MapPage() {
   const { place, new: freshId } = Route.useSearch();
   const navigate = Route.useNavigate();
-  const [location, setLocation] = useState(place ?? "Portland, OR 97006");
+  const [location, setLocation] = useState(place ?? "Portland, OR 97209");
   const [activeId, setActiveId] = useState<string | null>(null);
   const [highlightId, setHighlightId] = useState<string | null>(
     freshId ? `user-${freshId}` : null,

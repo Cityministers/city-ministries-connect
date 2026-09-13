@@ -59,7 +59,7 @@ export const Route = createFileRoute("/needs")({
 function NeedsPage() {
   const { place, view, new: freshId } = Route.useSearch();
   const navigate = Route.useNavigate();
-  const [placeQuery, setPlaceQuery] = useState(place ?? "Portland, OR 97006");
+  const [placeQuery, setPlaceQuery] = useState(place ?? "Portland, OR 97209");
   const [query, setQuery] = useState("");
   const [activeId, setActiveId] = useState<string | null>(null);
   const [highlightId, setHighlightId] = useState<string | null>(
