@@ -28,6 +28,7 @@ import {
   uploadMedia,
   type MediaPreview,
 } from "@/lib/media-upload";
+import { checkImageFile, friendlyUploadError, shrinkImage } from "@/lib/photo";
 
 export const Route = createFileRoute("/_authenticated/post-need")({
   head: () => ({

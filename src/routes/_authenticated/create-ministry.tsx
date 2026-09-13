@@ -18,6 +18,7 @@ import {
   uploadMedia,
   type MediaPreview,
 } from "@/lib/media-upload";
+import { checkImageFile, friendlyUploadError, shrinkImage } from "@/lib/photo";
 
 type CreateSearch = {
   short?: string | undefined;
