@@ -228,7 +228,7 @@ function AuthPage() {
           </label>
 
           {isSignUp && (
-            <label className="mt-1 flex items-start gap-4 rounded-xl bg-ink-soft/60 px-5 py-4 text-lg text-mist/80 ring-1 ring-mist/15 sm:text-xl">
+            <label className="mt-1 flex items-start gap-4 rounded-xl bg-ink-soft/60 px-5 py-4 text-base text-mist/80 ring-1 ring-mist/15 sm:text-lg">
               <input
                 type="checkbox"
                 checked={agreed}
@@ -249,12 +249,12 @@ function AuthPage() {
           )}
 
           {error && (
-            <p className="rounded-lg bg-rose/15 px-4 py-3 text-lg text-rose ring-1 ring-rose/30 sm:text-xl">
+            <p className="rounded-lg bg-rose/15 px-4 py-3 text-base text-rose ring-1 ring-rose/30 sm:text-lg">
               {error}
             </p>
           )}
           {message && (
-            <p className="rounded-lg bg-lemon/10 px-4 py-3 text-lg text-lemon ring-1 ring-lemon/30 sm:text-xl">
+            <p className="rounded-lg bg-lemon/10 px-4 py-3 text-base text-lemon ring-1 ring-lemon/30 sm:text-lg">
               {message}
             </p>
           )}
@@ -262,7 +262,7 @@ function AuthPage() {
           <button
             type="submit"
             disabled={busy || (isSignUp && !agreed)}
-            className="mt-2 inline-flex items-center justify-center gap-3 rounded-full bg-lemon px-6 py-4 text-2xl font-semibold text-ink transition-transform hover:-translate-y-0.5 disabled:opacity-60"
+            className="mt-2 inline-flex items-center justify-center gap-3 rounded-full bg-lemon px-6 py-4 text-xl font-semibold text-ink transition-transform hover:-translate-y-0.5 disabled:opacity-60"
           >
             {busy && <Loader2 className="size-7 animate-spin" aria-hidden="true" />}
             {isSignUp ? "Create account" : "Sign in"}
@@ -270,7 +270,7 @@ function AuthPage() {
         </form>
 
         {!isSignUp && (
-          <p className="mt-6 text-center text-lg text-mist/70 sm:text-xl">
+          <p className="mt-6 text-center text-base text-mist/70 sm:text-lg">
             <button
               type="button"
               onClick={() => void handleForgot()}
@@ -283,7 +283,7 @@ function AuthPage() {
         )}
 
 
-        <p className="mt-8 text-center text-lg text-mist/70 sm:text-xl">
+        <p className="mt-8 text-center text-base text-mist/70 sm:text-lg">
           {isSignUp ? "Already have an account?" : "New here?"}{" "}
           <button
             type="button"
