@@ -7,7 +7,13 @@ import {
   type GiftReference,
 } from "@/lib/gift-references.functions";
 
-export default function AskFriends({ onAddGifts }: { onAddGifts: (gifts: string[]) => void }) {
+export default function AskFriends({
+  onAddGifts,
+  showHeading = true,
+}: {
+  onAddGifts: (gifts: string[]) => void;
+  showHeading?: boolean;
+}) {
   const create = useServerFn(createGiftReference);
   const list = useServerFn(listGiftReferences);
 
@@ -67,17 +73,19 @@ export default function AskFriends({ onAddGifts }: { onAddGifts: (gifts: string[
 
   return (
     <div className="rounded-2xl bg-ink-soft/40 p-4 ring-1 ring-mist/15">
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        aria-expanded={open}
-        className="flex w-full items-center gap-3 text-left"
-      >
-        <Users className="size-5 text-lemon" aria-hidden="true" />
-        <span className="text-lg font-semibold text-sand">
-          What's my Spiritual gift ask friends and family
-        </span>
-      </button>
+      {showHeading && (
+        <button
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          aria-expanded={open}
+          className="flex w-full items-center gap-3 text-left"
+        >
+          <Users className="size-5 text-lemon" aria-hidden="true" />
+          <span className="text-lg font-semibold text-sand">
+            Ask friends, family and church leaders
+          </span>
+        </button>
+      )}
 
       {open && (
         <div className="mt-4 flex flex-col gap-5">
