@@ -214,7 +214,7 @@ function parseChildren(text: string) {
 export const Route = createFileRoute("/shape")({
   ssr: false,
   validateSearch: (search: Record<string, unknown>): { step?: string } => {
-    const requestedStep = typeof search.step === "string" ? search.step : undefined;
+    const requestedStep = typeof search["step"] === "string" ? search["step"] : undefined;
     return requestedStep && steps.some((item) => item.id === requestedStep)
       ? { step: requestedStep }
       : {};
