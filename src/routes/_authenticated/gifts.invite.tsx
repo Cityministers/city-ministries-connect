@@ -112,10 +112,10 @@ function GiftsInvitePage() {
         )}
 
         <Link
-          to="/gifts/list"
+          to="/gifts"
           className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full bg-lemon px-6 py-4 text-lg font-semibold text-ink transition active:translate-y-0.5"
         >
-          Choose my gifts
+          Return to the gifts plan
           <ArrowRight className="size-5" aria-hidden="true" />
         </Link>
       </main>
