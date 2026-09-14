@@ -791,7 +791,6 @@ function ShapePage() {
             value={answers.transcripts[current.id] ?? ""}
             onText={applyTranscript}
             onNext={next}
-            onSaveExit={saveAndExit}
             maxSeconds={current.id === "freetalk" ? 300 : 90}
           />
           {current.fields.map((field, i) => (

@@ -9,7 +9,6 @@ type Props = {
   value: string;
   onText: (text: string) => void;
   onNext?: (() => void) | undefined;
-  onSaveExit?: (() => void) | undefined;
   maxSeconds?: number;
 };
 
@@ -70,7 +69,6 @@ export default function VoiceAnswer({
   value,
   onText,
   onNext,
-  onSaveExit,
   maxSeconds = 90,
 }: Props) {
   const transcribe = useServerFn(transcribeAnswer);
