@@ -30,6 +30,7 @@ import {
   type ShapeAnswers,
 } from "@/data/shape";
 import {
+  deleteShapeProfile,
   generateMinistrySuggestions,
   getShapeAccess,
   getShapeProfile,
