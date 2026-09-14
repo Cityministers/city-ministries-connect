@@ -586,7 +586,7 @@ function ShapePage() {
   async function startOver() {
     setBusy(true);
     try {
-      await remove({ data: undefined });
+      await remove();
     } catch {
       // Even if the server delete fails, reset locally so the user can continue.
     } finally {
