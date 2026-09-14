@@ -1,5 +1,5 @@
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowRight, Loader2, Mic, RotateCcw, Square } from "lucide-react";
+import { ArrowRight, Loader2, Mic, Pencil, RotateCcw, Square } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { transcribeAnswer } from "@/lib/transcribe.functions";
 
@@ -75,6 +75,7 @@ export default function VoiceAnswer({
 }: Props) {
   const transcribe = useServerFn(transcribeAnswer);
 
+  const [mode, setMode] = useState<"voice" | "write">("voice");
   const [recording, setRecording] = useState(false);
   const [seconds, setSeconds] = useState(0);
   const [level, setLevel] = useState(0);
