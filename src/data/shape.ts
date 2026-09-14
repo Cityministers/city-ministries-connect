@@ -136,6 +136,36 @@ export const SPIRITUAL_GIFTS = [
   "Music / worship",
 ] as const;
 
+/** The fuller list of Biblical gifts used on the /gifts pages. */
+export const BIBLICAL_GIFTS = [
+  "Helping",
+  "Faith",
+  "Discernment of Spirits",
+  "Mercy",
+  "Prayer",
+  "Giving",
+  "Administration",
+  "Leading",
+  "Word of Knowledge",
+  "Encouragement",
+  "Exhortation",
+  "Music",
+  "Dance",
+  "Artistic Skills",
+  "Craftsmanship",
+  "Apostleship",
+  "Service",
+  "Teaching",
+  "Preaching",
+  "Leadership",
+  "Evangelism",
+  "Prophecy",
+  "Miracles",
+  "Tongues",
+  "Interpretation of Tongues",
+  "Healing",
+] as const;
+
 export const steps: Step[] = [
   {
     id: "place",
