@@ -835,12 +835,12 @@ function ShapePage() {
         </div>
       )}
 
-      <div className="mt-8 flex items-stretch gap-3">
+      <div className="mt-8 flex items-center justify-center gap-3">
         <button
           type="button"
           onClick={saveAndExit}
           disabled={busy}
-          className="inline-flex min-h-[3.5rem] shrink-0 items-center justify-center rounded-full bg-ink-soft px-5 py-3 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft/80 disabled:opacity-60"
+          className="inline-flex h-11 items-center justify-center rounded-full border border-sand/20 bg-sand/5 px-5 text-sm font-medium text-sand transition hover:bg-sand/10 disabled:opacity-60"
         >
           Save &amp; exit
         </button>
@@ -848,9 +848,9 @@ function ShapePage() {
           type="button"
           onClick={() => void next()}
           disabled={busy}
-          className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-lemon px-6 py-4 text-lg font-semibold text-ink transition-transform hover:-translate-y-0.5 disabled:opacity-60"
+          className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-ember px-8 text-sm font-semibold text-ink shadow-ember/20 transition hover:shadow-ember/30 active:scale-[0.98] disabled:opacity-60"
         >
-          {busy && <Loader2 className="size-5 animate-spin" aria-hidden="true" />}
+          {busy && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}
           {isLast ? "Show my ministry ideas" : "Next"}
         </button>
       </div>
@@ -859,7 +859,7 @@ function ShapePage() {
         type="button"
         onClick={() => setShowStartOverConfirm(true)}
         disabled={busy}
-        className="mt-4 inline-flex min-h-11 w-full items-center justify-center text-base font-semibold text-rose/80 underline underline-offset-4 transition hover:text-rose disabled:opacity-60"
+        className="mt-4 inline-flex min-h-11 w-full items-center justify-center text-xs font-medium uppercase tracking-widest text-rose/60 transition hover:text-rose disabled:opacity-60"
       >
         Start over
       </button>
