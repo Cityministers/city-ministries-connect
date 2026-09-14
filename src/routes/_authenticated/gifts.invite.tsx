@@ -1,7 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, ArrowRight, HeartHandshake, Link2, Users } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AskFriends from "@/components/AskFriends";
+import { emptyAnswers, type ShapeAnswers } from "@/data/shape";
+import { getShapeProfile, saveShapeProfile } from "@/lib/shape.functions";
 
 export const Route = createFileRoute("/_authenticated/gifts/invite")({
   head: () => ({
@@ -25,7 +28,33 @@ export const Route = createFileRoute("/_authenticated/gifts/invite")({
 });
 
 function GiftsInvitePage() {
+  const load = useServerFn(getShapeProfile);
+  const save = useServerFn(saveShapeProfile);
+  const [answers, setAnswers] = useState<ShapeAnswers | null>(null);
   const [addedGifts, setAddedGifts] = useState<string[]>([]);
+
+  useEffect(() => {
+    let alive = true;
+    void load()
+      .then((result) => {
+        if (alive) setAnswers({ ...emptyAnswers, ...(result.answers ?? {}) });
+      })
+      .catch(() => {
+        if (alive) setAnswers({ ...emptyAnswers });
+      });
+    return () => {
+      alive = false;
+    };
+  }, [load]);
+
+  function addReplyGifts(gifts: string[]) {
+    if (!answers) return;
+    const mergedGifts = Array.from(new Set([...answers.gifts, ...gifts]));
+    const nextAnswers = { ...answers, gifts: mergedGifts };
+    setAnswers(nextAnswers);
+    setAddedGifts((current) => Array.from(new Set([...current, ...gifts])));
+    void save({ data: nextAnswers });
+  }
 
   return (
     <div className="flex min-h-dvh flex-col bg-ink font-body text-sand antialiased">
@@ -71,7 +100,7 @@ function GiftsInvitePage() {
         <div className="mt-6">
           <AskFriends
             showHeading={false}
-            onAddGifts={(gifts) => setAddedGifts((current) => Array.from(new Set([...current, ...gifts])))}
+            onAddGifts={addReplyGifts}
           />
         </div>
 
