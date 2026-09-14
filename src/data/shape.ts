@@ -75,7 +75,7 @@ export type Step = {
   id: string;
   letter?: string;
   title: string;
-  blurb: string;
+  blurb?: string;
   /** What we ask people to say out loud on this step. */
   prompt: string;
   fields: Field[];
@@ -170,7 +170,6 @@ export const steps: Step[] = [
   {
     id: "place",
     title: "Where will you serve?",
-    blurb: "This helps us suggest ministries and needs in your area.",
     prompt: "Say where you'll be serving — your city, and your ZIP code if you know it.",
     fields: [
       { kind: "text", key: "city", label: "City", placeholder: "Beaverton" },

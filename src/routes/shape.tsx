@@ -777,7 +777,9 @@ function ShapePage() {
         </button>
       )}
 
-      <p className="mb-4 text-base leading-relaxed text-mist/75">{current.blurb}</p>
+      {current.blurb && (
+        <p className="mb-4 text-base leading-relaxed text-mist/75">{current.blurb}</p>
+      )}
 
 
       {current.id === "review" ? (
@@ -789,7 +791,6 @@ function ShapePage() {
             value={answers.transcripts[current.id] ?? ""}
             onText={applyTranscript}
             onNext={next}
-            onSaveExit={saveAndExit}
             maxSeconds={current.id === "freetalk" ? 300 : 90}
           />
           {current.fields.map((field, i) => (
@@ -821,6 +822,14 @@ function ShapePage() {
       >
         {busy && <Loader2 className="size-5 animate-spin" aria-hidden="true" />}
         {isLast ? "Show my ministry ideas" : "Next"}
+      </button>
+
+      <button
+        type="button"
+        onClick={saveAndExit}
+        className="mt-3 inline-flex min-h-11 w-full items-center justify-center text-base font-semibold text-mist/75 underline underline-offset-4 transition hover:text-sand"
+      >
+        Save &amp; exit
       </button>
 
       {!isLast && current.id !== "place" && (
