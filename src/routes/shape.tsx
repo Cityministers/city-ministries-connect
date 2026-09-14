@@ -744,11 +744,19 @@ function ShapePage() {
   return (
     <Shell
       title={current.title}
-      subtitle={`Step ${step + 1} of ${steps.length}`}
       back={step > 0 ? () => setStep((s) => s - 1) : undefined}
       onExit={saveAndExit}
+      showExitAction={false}
     >
-      <div className="mb-5 h-1.5 w-full overflow-hidden rounded-full bg-ink-soft">
+      <div className="mb-3 flex items-end justify-between gap-4">
+        <span className="text-xs font-semibold uppercase text-mist/70">
+          Step {step + 1} of {steps.length}
+        </span>
+        <span className="text-xs text-mist/50">
+          {Math.round(((step + 1) / steps.length) * 100)}% complete
+        </span>
+      </div>
+      <div className="mb-6 h-1 w-full overflow-hidden rounded-full bg-ink-soft">
         <div
           className="h-full rounded-full bg-lemon transition-all"
           style={{ width: `${((step + 1) / steps.length) * 100}%` }}
@@ -769,16 +777,9 @@ function ShapePage() {
         </button>
       )}
 
-      {step === 0 && (
-        <p className="mb-4 rounded-xl bg-ink-soft/60 px-4 py-3 text-base leading-relaxed text-mist/80 ring-1 ring-mist/15">
-          This is optional help: answer a few questions by talking, and we'll write ready-to-post
-          ministry ideas for your city. You can skip it anytime and post your own instead.
-        </p>
-      )}
-
       <p className="mb-4 text-base leading-relaxed text-mist/75">{current.blurb}</p>
 
-      <div className="mb-6">
+      <div className="mb-4">
         <ReadAloud text={`${current.title}. ${current.blurb} ${current.prompt}`} />
       </div>
 
@@ -791,6 +792,7 @@ function ShapePage() {
             value={answers.transcripts[current.id] ?? ""}
             onText={applyTranscript}
             onNext={next}
+            onSaveExit={saveAndExit}
             maxSeconds={current.id === "freetalk" ? 300 : 90}
           />
           {current.fields.map((field, i) => (
@@ -857,12 +859,14 @@ function Shell({
   subtitle,
   back,
   onExit,
+  showExitAction = true,
   children,
 }: {
   title: string;
   subtitle?: string;
   back?: (() => void) | undefined;
   onExit?: (() => void) | undefined;
+  showExitAction?: boolean;
   children: React.ReactNode;
 }) {
   return (
@@ -902,7 +906,7 @@ function Shell({
             </h1>
             {subtitle && <p className="text-sm text-mist/70">{subtitle}</p>}
           </div>
-          {onExit ? (
+          {onExit && showExitAction ? (
             <button
               type="button"
               onClick={onExit}
@@ -910,14 +914,14 @@ function Shell({
             >
               Save &amp; exit
             </button>
-          ) : (
+          ) : !onExit ? (
             <Link
               to="/"
               className="shrink-0 rounded-full bg-ink px-4 py-2 text-base font-semibold text-sand ring-1 ring-mist/20 transition hover:bg-ink-soft"
             >
               Exit
             </Link>
-          )}
+          ) : null}
         </div>
       </header>
       <main className="mx-auto w-full max-w-lg flex-1 px-4 py-6 sm:py-8">{children}</main>

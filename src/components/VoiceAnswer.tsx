@@ -9,6 +9,7 @@ type Props = {
   value: string;
   onText: (text: string) => void;
   onNext?: (() => void) | undefined;
+  onSaveExit?: (() => void) | undefined;
   maxSeconds?: number;
 };
 
@@ -63,7 +64,15 @@ async function toBase64(blob: Blob): Promise<string> {
   return btoa(binary);
 }
 
-export default function VoiceAnswer({ label, hint, value, onText, onNext, maxSeconds = 90 }: Props) {
+export default function VoiceAnswer({
+  label,
+  hint,
+  value,
+  onText,
+  onNext,
+  onSaveExit,
+  maxSeconds = 90,
+}: Props) {
   const transcribe = useServerFn(transcribeAnswer);
 
   const [recording, setRecording] = useState(false);
@@ -227,6 +236,16 @@ export default function VoiceAnswer({ label, hint, value, onText, onNext, maxSec
           </>
         )}
       </button>
+
+      {onSaveExit && (
+        <button
+          type="button"
+          onClick={onSaveExit}
+          className="inline-flex min-h-11 items-center justify-center text-base font-semibold text-mist/75 underline underline-offset-4 transition hover:text-sand"
+        >
+          Save &amp; exit
+        </button>
+      )}
 
       {recording && (
         <div className="flex h-6 items-end justify-center gap-1" aria-hidden="true">

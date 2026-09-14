@@ -15,14 +15,12 @@ type Props = {
 export default function ReadAloud({ text }: Props) {
   const speak = useServerFn(speakText);
   const [on, setOn] = useState(false);
-  const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     setOn(window.localStorage.getItem(STORAGE_KEY) === "on");
-    setReady(true);
   }, []);
 
   useEffect(() => {
@@ -58,12 +56,12 @@ export default function ReadAloud({ text }: Props) {
     await audio.play().catch(() => {});
   }
 
-  // Read each new question once, when the voice is switched on.
+  // Read each new question once when the reader has opted in.
   useEffect(() => {
-    if (!ready || !on) return;
+    if (!on) return;
     void play();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [text, on, ready]);
+  }, [text, on]);
 
   function toggle() {
     const next = !on;
@@ -76,33 +74,25 @@ export default function ReadAloud({ text }: Props) {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      <button
-        type="button"
-        onClick={() => void play()}
-        disabled={busy}
-        className="inline-flex items-center gap-2 rounded-full bg-ink-soft px-4 py-2.5 text-base font-semibold text-sand ring-1 ring-mist/25 disabled:opacity-60"
-      >
-        {busy ? (
-          <Loader2 className="size-5 animate-spin" aria-hidden="true" />
-        ) : (
-          <Volume2 className="size-5" aria-hidden="true" />
-        )}
-        Hear this question
-      </button>
+    <div>
       <button
         type="button"
         onClick={toggle}
-        aria-pressed={!on}
-        className="inline-flex items-center gap-2 text-base text-mist/70 underline underline-offset-4"
+        disabled={busy}
+        aria-pressed={on}
+        className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-ink-soft/70 px-4 py-2.5 text-base font-semibold text-sand ring-1 ring-mist/20 transition hover:bg-ink-soft disabled:opacity-60"
       >
-        {on ? (
+        {busy ? (
           <>
-            <VolumeX className="size-4" aria-hidden="true" /> I'll just read it myself
+            <Loader2 className="size-4 animate-spin" aria-hidden="true" /> Preparing audio…
+          </>
+        ) : on ? (
+          <>
+            <VolumeX className="size-4" aria-hidden="true" /> Stop reading aloud
           </>
         ) : (
           <>
-            <Volume2 className="size-4" aria-hidden="true" /> Read the questions to me
+            <Volume2 className="size-4" aria-hidden="true" /> Read this and following questions
           </>
         )}
       </button>
