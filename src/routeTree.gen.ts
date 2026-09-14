@@ -32,6 +32,8 @@ import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedWelcomeRouteImport } from './routes/_authenticated/welcome'
 import { Route as GiftReferenceCodeRouteImport } from './routes/gift-reference.$code'
 import { Route as HowItWorksStepRouteImport } from './routes/how-it-works.$step'
+import { Route as AuthenticatedGiftsIndexRouteImport } from './routes/_authenticated/gifts.index'
+import { Route as AuthenticatedGiftsListRouteImport } from './routes/_authenticated/gifts.list'
 import { Route as AuthenticatedMessagesConversationIdRouteImport } from './routes/_authenticated/messages.$conversationId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -149,6 +151,16 @@ const HowItWorksStepRoute = HowItWorksStepRouteImport.update({
   path: '/how-it-works/$step',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedGiftsIndexRoute = AuthenticatedGiftsIndexRouteImport.update({
+  id: '/gifts/',
+  path: '/gifts/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedGiftsListRoute = AuthenticatedGiftsListRouteImport.update({
+  id: '/gifts/list',
+  path: '/gifts/list',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedMessagesConversationIdRoute =
   AuthenticatedMessagesConversationIdRouteImport.update({
     id: '/messages/$conversationId',
@@ -179,7 +191,9 @@ export interface FileRoutesByFullPath {
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/gift-reference/$code': typeof GiftReferenceCodeRoute
   '/how-it-works/$step': typeof HowItWorksStepRoute
+  '/gifts/list': typeof AuthenticatedGiftsListRoute
   '/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
+  '/gifts/': typeof AuthenticatedGiftsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -204,7 +218,9 @@ export interface FileRoutesByTo {
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/gift-reference/$code': typeof GiftReferenceCodeRoute
   '/how-it-works/$step': typeof HowItWorksStepRoute
+  '/gifts/list': typeof AuthenticatedGiftsListRoute
   '/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
+  '/gifts': typeof AuthenticatedGiftsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -231,7 +247,9 @@ export interface FileRoutesById {
   '/_authenticated/welcome': typeof AuthenticatedWelcomeRoute
   '/gift-reference/$code': typeof GiftReferenceCodeRoute
   '/how-it-works/$step': typeof HowItWorksStepRoute
+  '/_authenticated/gifts/list': typeof AuthenticatedGiftsListRoute
   '/_authenticated/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
+  '/_authenticated/gifts/': typeof AuthenticatedGiftsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -258,7 +276,9 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/gift-reference/$code'
     | '/how-it-works/$step'
+    | '/gifts/list'
     | '/messages/$conversationId'
+    | '/gifts/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -283,7 +303,9 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/gift-reference/$code'
     | '/how-it-works/$step'
+    | '/gifts/list'
     | '/messages/$conversationId'
+    | '/gifts'
   id:
     | '__root__'
     | '/'
@@ -309,7 +331,9 @@ export interface FileRouteTypes {
     | '/_authenticated/welcome'
     | '/gift-reference/$code'
     | '/how-it-works/$step'
+    | '/_authenticated/gifts/list'
     | '/_authenticated/messages/$conversationId'
+    | '/_authenticated/gifts/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -496,6 +520,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HowItWorksStepRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/gifts/': {
+      id: '/_authenticated/gifts/'
+      path: '/gifts'
+      fullPath: '/gifts/'
+      preLoaderRoute: typeof AuthenticatedGiftsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/gifts/list': {
+      id: '/_authenticated/gifts/list'
+      path: '/gifts/list'
+      fullPath: '/gifts/list'
+      preLoaderRoute: typeof AuthenticatedGiftsListRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/messages/$conversationId': {
       id: '/_authenticated/messages/$conversationId'
       path: '/messages/$conversationId'
@@ -512,7 +550,9 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPostNeedRoute: typeof AuthenticatedPostNeedRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedWelcomeRoute: typeof AuthenticatedWelcomeRoute
+  AuthenticatedGiftsListRoute: typeof AuthenticatedGiftsListRoute
   AuthenticatedMessagesConversationIdRoute: typeof AuthenticatedMessagesConversationIdRoute
+  AuthenticatedGiftsIndexRoute: typeof AuthenticatedGiftsIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -521,8 +561,10 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPostNeedRoute: AuthenticatedPostNeedRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedWelcomeRoute: AuthenticatedWelcomeRoute,
+  AuthenticatedGiftsListRoute: AuthenticatedGiftsListRoute,
   AuthenticatedMessagesConversationIdRoute:
     AuthenticatedMessagesConversationIdRoute,
+  AuthenticatedGiftsIndexRoute: AuthenticatedGiftsIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
