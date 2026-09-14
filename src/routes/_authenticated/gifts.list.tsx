@@ -2,7 +2,6 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, ArrowRight, Check, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import AskFriends from "@/components/AskFriends";
 import { BIBLICAL_GIFTS, emptyAnswers, type ShapeAnswers } from "@/data/shape";
 import { getShapeProfile, saveShapeProfile } from "@/lib/shape.functions";
 
@@ -13,12 +12,12 @@ export const Route = createFileRoute("/_authenticated/gifts/list")({
       {
         name: "description",
         content:
-          "Tap the Biblical spiritual gifts that sound like you, and invite friends and family to share what they see in you.",
+          "Tap the Biblical spiritual gifts that sound like you and save your choices.",
       },
       { property: "og:title", content: "Which gifts sound like you? — City Ministers" },
       {
         property: "og:description",
-        content: "Pick your gifts and ask the people who know you best what they see.",
+        content: "Choose the spiritual gifts that sound like you and continue your discovery.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -125,12 +124,6 @@ function GiftsListPage() {
                   </button>
                 );
               })}
-            </div>
-
-            <div className="mt-8">
-              <AskFriends
-                onAddGifts={(added) => setGifts(Array.from(new Set([...gifts, ...added])))}
-              />
             </div>
 
             {error && (

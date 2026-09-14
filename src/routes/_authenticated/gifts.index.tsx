@@ -5,6 +5,7 @@ import {
   BookOpen,
   HandHeart,
   HeartHandshake,
+  MailPlus,
   Sparkles,
   Users,
 } from "lucide-react";
@@ -99,6 +100,15 @@ function GiftsIntroPage() {
                     {i + 1}. {step.title}
                   </h2>
                   <p className="mt-1.5 text-lg leading-relaxed text-mist/80">{step.body}</p>
+                  {i === 1 && (
+                    <Link
+                      to="/gifts/invite"
+                      className="mt-4 inline-flex items-center justify-center gap-2 rounded-full bg-lemon px-5 py-3 text-base font-semibold text-ink transition active:translate-y-0.5"
+                    >
+                      <MailPlus className="size-5" aria-hidden="true" />
+                      Invite someone
+                    </Link>
+                  )}
                 </div>
               </li>
             );
@@ -106,7 +116,7 @@ function GiftsIntroPage() {
         </ol>
 
         <Link
-          to="/gifts/list"
+          to="/gifts/invite"
           className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full bg-lemon px-6 py-4 text-lg font-semibold text-ink transition active:translate-y-0.5"
         >
           Next
