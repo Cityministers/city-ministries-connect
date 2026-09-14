@@ -345,6 +345,7 @@ function ShapePage() {
   const [posted, setPosted] = useState<Record<number, true>>({});
   const [editing, setEditing] = useState<number | null>(null);
   const [postingAll, setPostingAll] = useState(false);
+  const [showStartOverConfirm, setShowStartOverConfirm] = useState(false);
 
   useEffect(() => {
     let live = true;
