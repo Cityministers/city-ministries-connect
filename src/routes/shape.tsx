@@ -805,6 +805,28 @@ function ShapePage() {
 
       {current.id === "review" ? (
         <Review answers={answers} />
+      ) : current.id === "place" ? (
+        <div className="flex flex-col gap-4">
+          <label className="flex flex-col gap-2 text-base text-mist/80">
+            City
+            <input
+              className={inputClass}
+              value={answers.city}
+              onChange={(e) => set("city", e.target.value)}
+              placeholder="Beaverton"
+            />
+          </label>
+          <label className="flex flex-col gap-2 text-base text-mist/80">
+            ZIP code
+            <input
+              className={inputClass}
+              value={answers.zip}
+              onChange={(e) => set("zip", e.target.value)}
+              placeholder="97006"
+              inputMode="numeric"
+            />
+          </label>
+        </div>
       ) : (
         <div className="flex flex-col gap-6">
           <VoiceAnswer
@@ -828,6 +850,7 @@ function ShapePage() {
           ))}
         </div>
       )}
+
 
       {error && (
         <div className="mt-5">
