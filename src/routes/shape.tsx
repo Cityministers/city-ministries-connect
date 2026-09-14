@@ -777,7 +777,9 @@ function ShapePage() {
         </button>
       )}
 
-      <p className="mb-4 text-base leading-relaxed text-mist/75">{current.blurb}</p>
+      {current.blurb && (
+        <p className="mb-4 text-base leading-relaxed text-mist/75">{current.blurb}</p>
+      )}
 
 
       {current.id === "review" ? (

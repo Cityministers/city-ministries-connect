@@ -219,7 +219,7 @@ export default function VoiceAnswer({
             onClick={() => void (recording ? stop() : start())}
             disabled={busy}
             aria-pressed={recording}
-            className={`inline-flex flex-1 items-center justify-center gap-3 rounded-full px-6 py-4 text-lg font-semibold transition ${
+            className={`inline-flex flex-1 items-center justify-center gap-2 rounded-full px-5 py-3 text-base font-semibold transition ${
               recording
                 ? "bg-emerald-light text-ink"
                 : "bg-lemon text-ink hover:-translate-y-0.5 disabled:opacity-60"
@@ -249,7 +249,7 @@ export default function VoiceAnswer({
             onClick={() => void toWriting()}
             aria-label="Write my answer instead"
             title="Write my answer instead"
-            className="inline-flex size-14 shrink-0 items-center justify-center rounded-full bg-ink-soft/70 text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+            className="inline-flex size-12 shrink-0 items-center justify-center rounded-full bg-ink-soft/70 text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
           >
             <Pencil className="size-5" aria-hidden="true" />
           </button>
@@ -268,22 +268,13 @@ export default function VoiceAnswer({
             onClick={() => setMode("voice")}
             aria-label="Talk my answer instead"
             title="Talk my answer instead"
-            className="inline-flex size-14 shrink-0 items-center justify-center rounded-full bg-ink-soft/70 text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+            className="inline-flex size-12 shrink-0 items-center justify-center rounded-full bg-ink-soft/70 text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
           >
             <Mic className="size-5" aria-hidden="true" />
           </button>
         </div>
       )}
 
-      {onSaveExit && (
-        <button
-          type="button"
-          onClick={onSaveExit}
-          className="inline-flex min-h-11 items-center justify-center text-base font-semibold text-mist/75 underline underline-offset-4 transition hover:text-sand"
-        >
-          Save &amp; exit
-        </button>
-      )}
 
 
       {recording && (
