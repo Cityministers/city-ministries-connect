@@ -97,6 +97,14 @@ export const getShapeProfile = createServerFn({ method: "GET" })
     };
   });
 
+export const deleteShapeProfile = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await context.supabase.from("shape_profiles").delete().eq("owner_id", context.userId);
+    await context.supabase.from("shape_suggestions").delete().eq("owner_id", context.userId);
+    return { ok: true };
+  });
+
 function describe(a: ShapeAnswers) {
   const kids = a.children
     .filter((c) => c.name.trim() || c.age.trim())
