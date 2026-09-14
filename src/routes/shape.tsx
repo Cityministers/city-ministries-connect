@@ -1130,16 +1130,29 @@ function FieldView({
 
   if (field.kind === "text" || field.kind === "longtext") {
     const value = answers[field.key] as string;
-    if (!value.trim()) return null;
     return (
-      <div className="flex flex-col gap-2 text-base text-mist/80">
+      <label className="flex flex-col gap-2 text-base text-mist/80">
         {field.label}
-        <p className="rounded-2xl bg-ink/60 px-4 py-3 text-base leading-relaxed text-sand ring-1 ring-mist/15">
-          {value}
-        </p>
-      </div>
+        {field.kind === "longtext" ? (
+          <textarea
+            rows={4}
+            value={value}
+            onChange={(e) => set(field.key, e.target.value as ShapeAnswers[typeof field.key])}
+            className="min-h-28 rounded-2xl bg-ink/60 px-4 py-3 text-base leading-relaxed text-sand ring-1 ring-mist/20 outline-none placeholder:text-mist/50 focus:ring-lemon/60"
+            placeholder="Write your answer here…"
+          />
+        ) : (
+          <input
+            className={inputClass}
+            value={value}
+            onChange={(e) => set(field.key, e.target.value as ShapeAnswers[typeof field.key])}
+            placeholder="Write your answer here…"
+          />
+        )}
+      </label>
     );
   }
+
 
   if (field.kind === "single") {
     const value = answers[field.key] as string;
