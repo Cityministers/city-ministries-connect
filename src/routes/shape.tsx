@@ -835,23 +835,61 @@ function ShapePage() {
         </div>
       )}
 
-      <button
-        type="button"
-        onClick={() => void next()}
-        disabled={busy}
-        className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full bg-lemon px-6 py-4 text-lg font-semibold text-ink transition-transform hover:-translate-y-0.5 disabled:opacity-60"
-      >
-        {busy && <Loader2 className="size-5 animate-spin" aria-hidden="true" />}
-        {isLast ? "Show my ministry ideas" : "Next"}
-      </button>
+      <div className="mt-8 flex items-stretch gap-3">
+        <button
+          type="button"
+          onClick={saveAndExit}
+          disabled={busy}
+          className="inline-flex min-h-[3.5rem] shrink-0 items-center justify-center rounded-full bg-ink-soft px-5 py-3 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft/80 disabled:opacity-60"
+        >
+          Save &amp; exit
+        </button>
+        <button
+          type="button"
+          onClick={() => void next()}
+          disabled={busy}
+          className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-lemon px-6 py-4 text-lg font-semibold text-ink transition-transform hover:-translate-y-0.5 disabled:opacity-60"
+        >
+          {busy && <Loader2 className="size-5 animate-spin" aria-hidden="true" />}
+          {isLast ? "Show my ministry ideas" : "Next"}
+        </button>
+      </div>
 
       <button
         type="button"
-        onClick={saveAndExit}
-        className="mt-3 inline-flex min-h-11 w-full items-center justify-center text-base font-semibold text-mist/75 underline underline-offset-4 transition hover:text-sand"
+        onClick={() => setShowStartOverConfirm(true)}
+        disabled={busy}
+        className="mt-4 inline-flex min-h-11 w-full items-center justify-center text-base font-semibold text-rose/80 underline underline-offset-4 transition hover:text-rose disabled:opacity-60"
       >
-        Save &amp; exit
+        Start over
       </button>
+
+      {showStartOverConfirm && (
+        <div className="mt-4 rounded-2xl bg-rose/10 p-4 ring-1 ring-rose/30">
+          <p className="mb-4 text-base leading-relaxed text-rose">
+            Starting over will permanently delete all of your saved answers and ministry ideas. You’ll need to complete the walkthrough from the beginning.
+          </p>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <button
+              type="button"
+              onClick={() => void startOver()}
+              disabled={busy}
+              className="inline-flex flex-1 items-center justify-center rounded-full bg-rose px-5 py-3 text-base font-semibold text-ink transition hover:bg-rose/90 disabled:opacity-60"
+            >
+              {busy && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}
+              Yes, delete everything
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowStartOverConfirm(false)}
+              disabled={busy}
+              className="inline-flex flex-1 items-center justify-center rounded-full bg-ink-soft px-5 py-3 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft/80 disabled:opacity-60"
+            >
+              Keep my answers
+            </button>
+          </div>
+        </div>
+      )}
 
       {!isLast && current.id !== "place" && (
         <button
