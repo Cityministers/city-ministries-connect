@@ -116,7 +116,7 @@ function GiftsIntroPage() {
         </ol>
 
         <Link
-          to="/gifts/invite"
+          to="/gifts/list"
           className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full bg-lemon px-6 py-4 text-lg font-semibold text-ink transition active:translate-y-0.5"
         >
           Next
