@@ -225,8 +225,8 @@ export default function VoiceAnswer({
           >
             {busy ? (
               <>
-                <Loader2 className="size-5 animate-spin" aria-hidden="true" /> Writing down what you
-                said…
+                <Loader2 className="size-5 animate-spin" aria-hidden="true" /> Processing your
+                answer…
               </>
             ) : recording ? (
               <>
