@@ -251,7 +251,7 @@ function HomePage() {
                   to="/shape"
                   className="inline-flex w-full items-center justify-center rounded-full border border-slate-lighter bg-slate px-5 py-2.5 text-lg font-semibold text-sand shadow-[0_4px_12px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)] transition hover:bg-slate-light active:translate-y-0.5 sm:w-auto sm:self-start"
                 >
-                  Spiritual Gift Test
+                  Explore Your Spiritual Gifts
                 </Link>
               )}
 
