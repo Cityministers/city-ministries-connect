@@ -331,6 +331,7 @@ function ShapePage() {
   const { step: requestedStep } = Route.useSearch();
   const load = useServerFn(getShapeProfile);
   const save = useServerFn(saveShapeProfile);
+  const remove = useServerFn(deleteShapeProfile);
   const generate = useServerFn(generateMinistrySuggestions);
   const post = useServerFn(postSuggestion);
 
