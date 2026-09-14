@@ -310,7 +310,7 @@ export default function VoiceAnswer({
         </button>
       )}
 
-      {value && !recording && (
+      {mode === "voice" && value && !recording && (
         <div className="flex flex-col gap-3">
           <p className="rounded-xl bg-ink/60 px-4 py-3 text-base leading-relaxed text-sand">
             “{value}”
