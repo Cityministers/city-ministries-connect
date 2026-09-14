@@ -1,5 +1,7 @@
 # City Ministers roadmap
 
+- [x] Refine the Spiritual Gifts questions with compact dark layout and consolidated voice controls
+
 - [x] Add an optional spiritual-gift invitation page without changing the main flow
 
 - [x] Darken Post a Need / View Needs buttons to slate grey and unify header background
