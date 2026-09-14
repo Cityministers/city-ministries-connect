@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { Fragment, useEffect, useRef, useState } from "react";
 import AskFriends from "@/components/AskFriends";
-import ReadAloud from "@/components/ReadAloud";
+
 import VoiceAnswer from "@/components/VoiceAnswer";
 import {
   emptyAnswers,
@@ -779,9 +779,6 @@ function ShapePage() {
 
       <p className="mb-4 text-base leading-relaxed text-mist/75">{current.blurb}</p>
 
-      <div className="mb-4">
-        <ReadAloud text={`${current.title}. ${current.blurb} ${current.prompt}`} />
-      </div>
 
       {current.id === "review" ? (
         <Review answers={answers} />
