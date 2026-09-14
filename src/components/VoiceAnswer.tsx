@@ -1,5 +1,5 @@
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowRight, Loader2, Mic, RotateCcw, Square } from "lucide-react";
+import { ArrowRight, Loader2, Mic, Pencil, RotateCcw, Square } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { transcribeAnswer } from "@/lib/transcribe.functions";
 
@@ -75,6 +75,7 @@ export default function VoiceAnswer({
 }: Props) {
   const transcribe = useServerFn(transcribeAnswer);
 
+  const [mode, setMode] = useState<"voice" | "write">("voice");
   const [recording, setRecording] = useState(false);
   const [seconds, setSeconds] = useState(0);
   const [level, setLevel] = useState(0);
@@ -201,41 +202,78 @@ export default function VoiceAnswer({
 
   const mmss = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
 
+  async function toWriting() {
+    if (recording) await stop();
+    setMode("write");
+  }
+
   return (
     <div className="flex flex-col gap-3 rounded-2xl bg-ink-soft/40 p-4 ring-1 ring-mist/15">
       <span className="font-display text-3xl font-semibold leading-snug text-sand">{label}</span>
       {hint && <span className="text-base text-mist/60">{hint}</span>}
 
-      <button
-        type="button"
-        onClick={() => void (recording ? stop() : start())}
-        disabled={busy}
-        aria-pressed={recording}
-        className={`inline-flex items-center justify-center gap-3 rounded-full px-6 py-4 text-lg font-semibold transition ${
-          recording
-            ? "bg-emerald-light text-ink"
-            : "bg-lemon text-ink hover:-translate-y-0.5 disabled:opacity-60"
-        }`}
-      >
-        {busy ? (
-          <>
-            <Loader2 className="size-5 animate-spin" aria-hidden="true" /> Writing down what you
-            said…
-          </>
-        ) : recording ? (
-          <>
-            <Square className="size-5" aria-hidden="true" /> Done talking · {mmss}
-          </>
-        ) : value ? (
-          <>
-            <RotateCcw className="size-5" aria-hidden="true" /> Record again
-          </>
-        ) : (
-          <>
-            <Mic className="size-5" aria-hidden="true" /> Just talk, we do the rest
-          </>
-        )}
-      </button>
+      {mode === "voice" ? (
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => void (recording ? stop() : start())}
+            disabled={busy}
+            aria-pressed={recording}
+            className={`inline-flex flex-1 items-center justify-center gap-3 rounded-full px-6 py-4 text-lg font-semibold transition ${
+              recording
+                ? "bg-emerald-light text-ink"
+                : "bg-lemon text-ink hover:-translate-y-0.5 disabled:opacity-60"
+            }`}
+          >
+            {busy ? (
+              <>
+                <Loader2 className="size-5 animate-spin" aria-hidden="true" /> Writing down what you
+                said…
+              </>
+            ) : recording ? (
+              <>
+                <Square className="size-5" aria-hidden="true" /> Done talking · {mmss}
+              </>
+            ) : value ? (
+              <>
+                <RotateCcw className="size-5" aria-hidden="true" /> Record again
+              </>
+            ) : (
+              <>
+                <Mic className="size-5" aria-hidden="true" /> Just talk, we do the rest
+              </>
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={() => void toWriting()}
+            aria-label="Write my answer instead"
+            title="Write my answer instead"
+            className="inline-flex size-14 shrink-0 items-center justify-center rounded-full bg-ink-soft/70 text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+          >
+            <Pencil className="size-5" aria-hidden="true" />
+          </button>
+        </div>
+      ) : (
+        <div className="flex items-start gap-3">
+          <textarea
+            value={value}
+            onChange={(e) => onText(e.target.value)}
+            rows={4}
+            placeholder="Write your answer here…"
+            className="min-h-28 flex-1 rounded-2xl bg-ink/60 px-4 py-3 text-base leading-relaxed text-sand ring-1 ring-mist/20 outline-none placeholder:text-mist/50 focus:ring-lemon/60"
+          />
+          <button
+            type="button"
+            onClick={() => setMode("voice")}
+            aria-label="Talk my answer instead"
+            title="Talk my answer instead"
+            className="inline-flex size-14 shrink-0 items-center justify-center rounded-full bg-ink-soft/70 text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+          >
+            <Mic className="size-5" aria-hidden="true" />
+          </button>
+        </div>
+      )}
 
       {onSaveExit && (
         <button
@@ -246,6 +284,7 @@ export default function VoiceAnswer({
           Save &amp; exit
         </button>
       )}
+
 
       {recording && (
         <div className="flex h-6 items-end justify-center gap-1" aria-hidden="true">
@@ -271,7 +310,7 @@ export default function VoiceAnswer({
         </button>
       )}
 
-      {value && !recording && (
+      {mode === "voice" && value && !recording && (
         <div className="flex flex-col gap-3">
           <p className="rounded-xl bg-ink/60 px-4 py-3 text-base leading-relaxed text-sand">
             “{value}”
