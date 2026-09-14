@@ -825,6 +825,14 @@ function ShapePage() {
         {isLast ? "Show my ministry ideas" : "Next"}
       </button>
 
+      <button
+        type="button"
+        onClick={saveAndExit}
+        className="mt-3 inline-flex min-h-11 w-full items-center justify-center text-base font-semibold text-mist/75 underline underline-offset-4 transition hover:text-sand"
+      >
+        Save &amp; exit
+      </button>
+
       {!isLast && current.id !== "place" && (
         <button
           type="button"
