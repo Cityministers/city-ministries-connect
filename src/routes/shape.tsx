@@ -213,6 +213,12 @@ function parseChildren(text: string) {
 
 export const Route = createFileRoute("/shape")({
   ssr: false,
+  validateSearch: (search: Record<string, unknown>): { step?: string } => {
+    const requestedStep = typeof search.step === "string" ? search.step : undefined;
+    return requestedStep && steps.some((item) => item.id === requestedStep)
+      ? { step: requestedStep }
+      : {};
+  },
   head: () => ({
     meta: [
       { title: "Spiritual Gift Test — City Ministers" },
@@ -321,13 +327,15 @@ function ComingSoon() {
 
 function ShapePage() {
   const navigate = useNavigate();
+  const { step: requestedStep } = Route.useSearch();
   const load = useServerFn(getShapeProfile);
   const save = useServerFn(saveShapeProfile);
   const generate = useServerFn(generateMinistrySuggestions);
   const post = useServerFn(postSuggestion);
 
   const [answers, setAnswers] = useState<ShapeAnswers>(emptyAnswers);
-  const [step, setStep] = useState(0);
+  const requestedStepIndex = steps.findIndex((item) => item.id === requestedStep);
+  const [step, setStep] = useState(requestedStepIndex >= 0 ? requestedStepIndex : 0);
   const [ideas, setIdeas] = useState<MinistryIdea[] | null>(null);
   const [savedIdeas, setSavedIdeas] = useState<MinistryIdea[] | null>(null);
   const [busy, setBusy] = useState(false);
