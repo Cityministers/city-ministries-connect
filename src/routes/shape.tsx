@@ -583,6 +583,24 @@ function ShapePage() {
     void navigate({ to: "/" });
   }
 
+  async function startOver() {
+    setBusy(true);
+    try {
+      await remove({ data: undefined });
+    } catch {
+      // Even if the server delete fails, reset locally so the user can continue.
+    } finally {
+      setBusy(false);
+    }
+    setAnswers(emptyAnswers);
+    setIdeas(null);
+    setSavedIdeas(null);
+    setPosted({});
+    setEditing(null);
+    setStep(0);
+    setShowStartOverConfirm(false);
+  }
+
   if (ideas) {
     const allPosted = ideas.every((_, i) => posted[i]);
     return (
