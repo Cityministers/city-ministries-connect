@@ -9,7 +9,6 @@ import {
   Home,
   Loader2,
   MapPin,
-  MessageSquare,
   Pencil,
   Plus,
   RotateCcw,
@@ -19,6 +18,7 @@ import {
   X,
 } from "lucide-react";
 import { Fragment, useEffect, useRef, useState } from "react";
+import AskFriends from "@/components/AskFriends";
 import ReadAloud from "@/components/ReadAloud";
 import VoiceAnswer from "@/components/VoiceAnswer";
 import {
@@ -29,11 +29,6 @@ import {
   type MinistryIdea,
   type ShapeAnswers,
 } from "@/data/shape";
-import {
-  createGiftReference,
-  listGiftReferences,
-  type GiftReference,
-} from "@/lib/gift-references.functions";
 import {
   generateMinistrySuggestions,
   getShapeAccess,
