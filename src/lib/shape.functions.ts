@@ -37,7 +37,7 @@ const AnswersSchema = z.object({
   timePerMonth: z.string().max(40),
   household: z.string().max(200),
   children: z.array(ChildSchema).max(12),
-  gifts: z.array(z.string().max(60)).max(20),
+  gifts: z.array(z.string().max(60)).max(25),
   giftsNote: z.string().max(600),
   giftLean: z.record(z.string(), z.string().max(80)),
   heart: z.array(z.string().max(60)).max(20),
@@ -356,16 +356,6 @@ export const getShapeAccess = createServerFn({ method: "GET" }).handler(
 
     const { data, error } = await supabase.auth.getClaims(token);
     if (error || !data?.claims?.sub) {
-      return { access: "soon" };
-    }
-
-    const { data: isAdmin } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", data.claims.sub as string)
-      .eq("role", "admin")
-      .maybeSingle();
-    if (!isAdmin) {
       return { access: "soon" };
     }
 
