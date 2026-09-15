@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { BrandLogo } from "@/components/BrandLogo";
+import { PhotoCropper } from "@/components/PhotoCropper";
 import { supabase } from "@/integrations/supabase/client";
 import {
   checkImageFile,
