@@ -638,7 +638,6 @@ export const steps: Step[] = [
   {
     id: "scope",
     title: "The scope of your ministry",
-    blurb: "How far, how often, and how many.",
     prompt:
       "Say how far you'd travel, how often, how many people at once, and whether kids are welcome.",
     fields: [
