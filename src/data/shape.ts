@@ -422,7 +422,6 @@ export const steps: Step[] = [
     id: "resources",
     letter: "A",
     title: "What you have to share",
-    blurb: "Ordinary things you already own can become a ministry.",
     prompt: "Say what you have that could be shared — space, a vehicle, tools, food, anything.",
     fields: [
       {
