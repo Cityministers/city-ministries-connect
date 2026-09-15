@@ -196,13 +196,27 @@ function GiftReferencePage() {
               })}
             </div>
 
+            <label className="flex flex-col gap-2">
+              <span className="text-base text-mist/80">
+                Anything else about how God uses {state.ownerFirstName}? (optional)
+              </span>
+              <textarea
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                maxLength={600}
+                rows={4}
+                placeholder="I've seen the way you…"
+                className="rounded-xl bg-ink-soft px-4 py-3.5 text-lg text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
+              />
+            </label>
+
             <section className="rounded-2xl bg-ink-soft/50 p-4 ring-1 ring-mist/15">
               <h2 className="text-lg font-semibold text-sand">
                 Ministry ideas{state.city ? ` around ${state.city}` : " nearby"}
               </h2>
               <p className="mt-1 text-base text-mist/80">
                 Here's how neighbors are already serving. If one fits{" "}
-                {state.ownerFirstName}, mention it in your note below.
+                {state.ownerFirstName}, mention it in your note above.
               </p>
               <ul className="mt-3 flex flex-wrap gap-2">
                 {(state.nearby.length > 0
@@ -218,20 +232,6 @@ function GiftReferencePage() {
                 ))}
               </ul>
             </section>
-
-            <label className="flex flex-col gap-2">
-              <span className="text-base text-mist/80">
-                Tell {state.ownerFirstName} in your own words (optional)
-              </span>
-              <textarea
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                maxLength={600}
-                rows={4}
-                placeholder="I've seen the way you…"
-                className="rounded-xl bg-ink-soft px-4 py-3.5 text-lg text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
-              />
-            </label>
 
             {error && (
               <p className="rounded-xl bg-rose/15 px-4 py-3 text-base text-rose ring-1 ring-rose/30">
