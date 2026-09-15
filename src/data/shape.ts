@@ -244,7 +244,6 @@ export const steps: Step[] = [
     id: "gifts-lean",
     letter: "S",
     title: "Which feels more like you?",
-    blurb: "Quick either/or questions to sharpen your top gifts.",
     prompt: "Say which of these sounds more like you, in your own words.",
     fields: [
       {
