@@ -380,11 +380,6 @@ function ShapePage() {
 
   const current = steps[step]!;
   const isLast = step === steps.length - 1;
-  const choiceOnly =
-    current.fields.length > 0 &&
-    current.fields.every(
-      (f) => f.kind === "multi" || f.kind === "single" || f.kind === "pair",
-    );
   const answersRef = useRef(answers);
   answersRef.current = answers;
 
