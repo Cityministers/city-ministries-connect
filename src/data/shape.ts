@@ -548,7 +548,6 @@ export const steps: Step[] = [
     id: "setting",
     letter: "P",
     title: "Where you're most yourself",
-    blurb: "The settings where serving would feel natural.",
     prompt: "Say where serving would feel most natural to you.",
     fields: [
       {
@@ -639,7 +638,6 @@ export const steps: Step[] = [
   {
     id: "scope",
     title: "The scope of your ministry",
-    blurb: "How far, how often, and how many.",
     prompt:
       "Say how far you'd travel, how often, how many people at once, and whether kids are welcome.",
     fields: [
