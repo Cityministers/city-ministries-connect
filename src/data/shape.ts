@@ -488,7 +488,7 @@ export const steps: Step[] = [
       {
         kind: "single",
         key: "budget",
-        label: "Could you spend anything each month?",
+        label: "How much could you spend each month on this ministry?",
         options: ["Nothing right now", "Under $25", "$25-$100", "$100+", "Whatever it takes"],
       },
     ],
