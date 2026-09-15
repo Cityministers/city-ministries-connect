@@ -1210,53 +1210,80 @@ function FieldView({
   );
 }
 
-function Review({ answers }: { answers: ShapeAnswers }) {
+function Review({
+  answers,
+  onEdit,
+}: {
+  answers: ShapeAnswers;
+  onEdit?: (stepId: string) => void;
+}) {
   const kids = answers.children.filter((c) => c.name.trim() || c.age.trim());
-  const rows: Array<[string, string]> = [
-    ["Serving in", [answers.city, answers.zip].filter(Boolean).join(" ") || "—"],
+  const rows: Array<[string, string, string]> = [
+    ["Serving in", [answers.city, answers.zip].filter(Boolean).join(" ") || "—", "place"],
     [
       "You",
       [answers.firstName, answers.ageRange, answers.marital].filter(Boolean).join(" · ") || "—",
+      "about",
     ],
     [
       "Family",
       kids.length > 0
         ? kids.map((c) => `${c.name || "Child"}${c.age ? ` (${c.age})` : ""}`).join(", ")
         : "No children listed",
+      "family",
     ],
-    ["Spiritual gifts", answers.gifts.join(", ") || "—"],
-    ["Heart", answers.heart.join(", ") || "—"],
-    ["Abilities", answers.abilities.join(", ") || "—"],
-    ["Personality", Object.values(answers.personality).filter(Boolean).join(" · ") || "—"],
-    ["Experiences", answers.experiences.join(", ") || "—"],
+    ["Spiritual gifts", answers.gifts.join(", ") || "—", "gifts"],
+    ["Heart", answers.heart.join(", ") || "—", "heart"],
+    ["Abilities", answers.abilities.join(", ") || "—", "abilities"],
+    [
+      "Personality",
+      Object.values(answers.personality).filter(Boolean).join(" · ") || "—",
+      "personality",
+    ],
+    ["Experiences", answers.experiences.join(", ") || "—", "experiences"],
     [
       "Resources",
       [answers.resources.join(", "), answers.budget].filter(Boolean).join(" · ") || "—",
+      "resources",
     ],
-    ["Served before", answers.pastService.join(", ") || "—"],
+    ["Served before", answers.pastService.join(", ") || "—", "service-history"],
     [
       "Serving with",
       [answers.familyServe.join(", "), answers.availableTimes.join(", ")]
         .filter(Boolean)
         .join(" · ") || "—",
+      "family-serve",
     ],
     [
       "Scope",
       [answers.travel, answers.frequency, answers.groupSize, answers.kidsWelcome]
         .filter(Boolean)
         .join(" · ") || "—",
+      "scope",
     ],
     [
       "Dream & barrier",
       [answers.dreamNote, answers.biggestBarrier].filter(Boolean).join(" · ") || "—",
+      "dream",
     ],
   ];
 
   return (
     <dl className="flex flex-col gap-3">
-      {rows.map(([label, value]) => (
+      {rows.map(([label, value, stepId]) => (
         <div key={label} className="rounded-2xl bg-ink-soft/50 px-4 py-3 ring-1 ring-mist/15">
-          <dt className="text-sm uppercase tracking-wider text-mist/60">{label}</dt>
+          <div className="flex items-start justify-between gap-3">
+            <dt className="text-sm uppercase tracking-wider text-mist/60">{label}</dt>
+            {onEdit && (
+              <button
+                type="button"
+                onClick={() => onEdit(stepId)}
+                className="shrink-0 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider text-ember ring-1 ring-ember/40 transition hover:bg-ember/10"
+              >
+                Edit
+              </button>
+            )}
+          </div>
           <dd className="mt-1 text-base leading-relaxed text-sand">{value}</dd>
         </div>
       ))}
