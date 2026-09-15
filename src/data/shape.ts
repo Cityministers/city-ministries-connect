@@ -497,7 +497,6 @@ export const steps: Step[] = [
     id: "personality",
     letter: "P",
     title: "Your personality",
-    blurb: "How you recharge and how you work with people.",
     prompt:
       "Say how you recharge, whether you plan or go with the flow, and whether you lead or support.",
     fields: [
