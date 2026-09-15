@@ -791,7 +791,16 @@ function ShapePage() {
 
 
       {current.id === "review" ? (
-        <Review answers={answers} />
+        <Review
+          answers={answers}
+          onEdit={(stepId) => {
+            const idx = steps.findIndex((s) => s.id === stepId);
+            if (idx >= 0) {
+              setStep(idx);
+              window.scrollTo({ top: 0 });
+            }
+          }}
+        />
       ) : current.id === "place" ? (
         <div className="flex flex-col gap-4">
           <label className="flex flex-col gap-2 text-base text-mist/80">
