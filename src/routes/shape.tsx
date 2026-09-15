@@ -798,8 +798,8 @@ function ShapePage() {
         </button>
       )}
 
-      {current.blurb && (
-        <p className="mb-4 text-base leading-relaxed text-mist/75">{current.blurb}</p>
+      {current.prompt && (
+        <p className="mb-4 text-base font-semibold leading-relaxed text-sand">{current.prompt}</p>
       )}
 
 
@@ -830,7 +830,6 @@ function ShapePage() {
       ) : (
         <div className="flex flex-col gap-6">
           <VoiceAnswer
-            label={current.prompt}
             value={answers.transcripts[current.id] ?? ""}
             onText={applyTranscript}
             {...(current.fields.length === 0 ? { onNext: next } : {})}

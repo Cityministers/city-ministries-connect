@@ -242,7 +242,6 @@ export const steps: Step[] = [
   {
     id: "family",
     title: "Your family",
-    blurb: "Optional. If you have kids, we'll suggest ministries the whole family can do together.",
     prompt: "Say the names and ages of your children, and who else lives with you.",
     fields: [
       { kind: "children" },
@@ -569,8 +568,6 @@ export const steps: Step[] = [
     id: "experiences",
     letter: "E",
     title: "Your experiences",
-    blurb:
-      "Private and always optional. Hard chapters often become the ministry only you can offer.",
     prompt: "Say what hard chapters you've walked through, only what you're comfortable sharing.",
     fields: [
       {
@@ -604,7 +601,6 @@ export const steps: Step[] = [
     id: "service-history",
     letter: "E",
     title: "Where you've served before",
-    blurb: "What you've already done tells us a lot about what will fit.",
     prompt: "Say how you've served people before, at church or anywhere else, and how it went.",
     fields: [
       {
@@ -733,7 +729,6 @@ export const steps: Step[] = [
   {
     id: "freetalk",
     title: "Just tell me about yourself",
-    blurb: "Talk freely for as long as you like. Anything you cover here fills in what we missed.",
     prompt:
       "Tell me about your life right now, the people around you, what you love doing, what you'd love to do for your neighbors, and anything you need help with yourself.",
     fields: [],
@@ -741,7 +736,6 @@ export const steps: Step[] = [
   {
     id: "review",
     title: "Your S.H.A.P.E.",
-    blurb: "Here's what we heard. Ready for your ministry ideas?",
     prompt: "",
     fields: [],
   },
