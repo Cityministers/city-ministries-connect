@@ -1042,35 +1042,6 @@ function ShapePage() {
           </div>
         </div>
       )}
-
-      {current.id === "review" && savedIdeas && savedIdeas.length > 0 && (
-        <button
-          type="button"
-          onClick={() => {
-            setIdeas(savedIdeas);
-            window.scrollTo({ top: 0 });
-          }}
-          className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/25"
-        >
-          <Sparkles className="size-5 text-lemon" aria-hidden="true" />
-          View saved ideas
-        </button>
-      )}
-
-      {current.id === "review" && (
-        <button
-          type="button"
-          onClick={() => {
-            void save({ data: answersRef.current }).catch(() => {});
-            void runGenerate();
-          }}
-          disabled={busy}
-          className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/25 disabled:opacity-60"
-        >
-          <Sparkles className="size-5" aria-hidden="true" />
-          Skip to my ideas
-        </button>
-      )}
     </Shell>
   );
 }
