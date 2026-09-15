@@ -452,6 +452,20 @@ export const steps: Step[] = [
         label: "You prefer...",
         options: ["A steady routine", "Lots of variety"],
       },
+      {
+        kind: "pair",
+        group: "personality",
+        id: "pace",
+        label: "You do better with...",
+        options: ["A short, intense push", "A slow, steady commitment"],
+      },
+      {
+        kind: "pair",
+        group: "personality",
+        id: "front",
+        label: "You'd rather be...",
+        options: ["Out front and visible", "Behind the scenes"],
+      },
     ],
   },
   {
