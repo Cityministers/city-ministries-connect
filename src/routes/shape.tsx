@@ -987,6 +987,51 @@ function ShapePage() {
         </div>
       )}
 
+      {current.id === "review" && (
+        <div className="mt-8 flex flex-col gap-3">
+          <button
+            type="button"
+            onClick={() => void openIdeas("ministry")}
+            disabled={busy}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/25 disabled:opacity-60"
+          >
+            <Sparkles className="size-5 text-lemon" aria-hidden="true" />
+            Your potential ministry posts
+          </button>
+          <button
+            type="button"
+            onClick={() => void openIdeas("need")}
+            disabled={busy}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/25 disabled:opacity-60"
+          >
+            <HandHeart className="size-5 text-lemon" aria-hidden="true" />
+            Your potential needs posts
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setPanel("people");
+              window.scrollTo({ top: 0 });
+            }}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/25"
+          >
+            <Users className="size-5 text-lemon" aria-hidden="true" />
+            People you should meet
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setPanel("posts");
+              window.scrollTo({ top: 0 });
+            }}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/25"
+          >
+            <MapPin className="size-5 text-lemon" aria-hidden="true" />
+            Posts you should view
+          </button>
+        </div>
+      )}
+
       <div className="mt-8 flex items-center justify-center gap-3">
         <button
           type="button"
