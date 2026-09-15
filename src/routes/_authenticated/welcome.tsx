@@ -49,6 +49,7 @@ function WelcomePage() {
   const [zip, setZip] = useState("");
   const [photo, setPhoto] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [cropping, setCropping] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [photoFailed, setPhotoFailed] = useState(false);
@@ -62,15 +63,21 @@ function WelcomePage() {
       setError(problem);
       return;
     }
+    setCropping(file);
+  }
+
+  function acceptCrop(file: File) {
     if (preview) URL.revokeObjectURL(preview);
     setPhoto(file);
     setPreview(URL.createObjectURL(file));
+    setCropping(null);
   }
 
   function clearPhoto() {
     if (preview) URL.revokeObjectURL(preview);
     setPhoto(null);
     setPreview(null);
+    setCropping(null);
     setPhotoFailed(false);
     setError(null);
   }
