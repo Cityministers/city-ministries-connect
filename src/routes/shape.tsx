@@ -380,6 +380,11 @@ function ShapePage() {
 
   const current = steps[step]!;
   const isLast = step === steps.length - 1;
+  const choiceOnly =
+    current.fields.length > 0 &&
+    current.fields.every(
+      (f) => f.kind === "multi" || f.kind === "single" || f.kind === "pair",
+    );
   const answersRef = useRef(answers);
   answersRef.current = answers;
 
@@ -829,13 +834,22 @@ function ShapePage() {
         </div>
       ) : (
         <div className="flex flex-col gap-6">
-          <VoiceAnswer
-            label={current.prompt}
-            value={answers.transcripts[current.id] ?? ""}
-            onText={applyTranscript}
-            {...(current.fields.length === 0 ? { onNext: next } : {})}
-            maxSeconds={current.id === "freetalk" ? 300 : 90}
-          />
+          {choiceOnly ? (
+            <div className="flex flex-col gap-1.5">
+              <h2 className="text-xl leading-snug font-semibold text-sand">{current.prompt}</h2>
+              <p className="text-sm text-mist/70">
+                Tap your answers below, then tap Next.
+              </p>
+            </div>
+          ) : (
+            <VoiceAnswer
+              label={current.prompt}
+              value={answers.transcripts[current.id] ?? ""}
+              onText={applyTranscript}
+              {...(current.fields.length === 0 ? { onNext: next } : {})}
+              maxSeconds={current.id === "freetalk" ? 300 : 90}
+            />
+          )}
 
 
           {current.fields.map((field, i) => (
@@ -1093,7 +1107,8 @@ function FieldView({
     const value = answers[field.group][field.id] ?? "";
     return (
       <div className="flex flex-col gap-3">
-        <span className="text-base text-mist/80">{field.label}</span>
+        <span className="text-base font-medium text-sand">{field.label}</span>
+        <span className="-mt-2 text-sm text-mist/60">Tap one</span>
         <div className="grid gap-3 sm:grid-cols-2">
           {field.options.map((opt) => (
             <button
@@ -1150,7 +1165,8 @@ function FieldView({
     const value = answers[field.key] as string;
     return (
       <div className="flex flex-col gap-3">
-        <span className="text-base text-mist/80">{field.label}</span>
+        <span className="text-base font-medium text-sand">{field.label}</span>
+        <span className="-mt-2 text-sm text-mist/60">Tap one</span>
         <div className="flex flex-wrap gap-2">
           {field.options.map((opt) => (
             <button
@@ -1178,7 +1194,11 @@ function FieldView({
   const list = answers[key];
   return (
     <div className="flex flex-col gap-3">
-      <span className="text-base text-mist/80">{field.label}</span>
+      <span className="text-base font-medium text-sand">{field.label}</span>
+      <span className="-mt-2 text-sm text-mist/60">
+        Tap every one that fits — tap again to unselect
+        {list.length > 0 ? ` · ${list.length} selected` : ""}
+      </span>
       <div className="flex flex-wrap gap-3">
         {field.options.map((opt) => {
           const on = list.includes(opt);
