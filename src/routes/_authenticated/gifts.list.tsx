@@ -87,7 +87,7 @@ function GiftsListPage() {
     setError(null);
     try {
       await save({ data: answers });
-      void navigate({ to: "/shape", search: { step: "gifts-lean" } });
+      void navigate({ to: "/shape", search: {} });
     } catch {
       setError("We couldn't save your picks. Try again.");
       setSaving(false);
