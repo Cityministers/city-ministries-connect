@@ -317,7 +317,6 @@ export const steps: Step[] = [
     id: "heart",
     letter: "H",
     title: "Your heart",
-    blurb: "The people and causes you can't stop caring about.",
     prompt: "Say who or what you can't stop caring about, and what breaks your heart.",
     fields: [
       {
