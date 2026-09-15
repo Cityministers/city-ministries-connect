@@ -280,7 +280,7 @@ function SignInPrompt() {
           </Link>
           <div className="min-w-0 flex-1">
             <h1 className="truncate font-display text-xl font-semibold leading-tight sm:text-2xl">
-              Coming Soon
+              Sign in to begin
             </h1>
           </div>
         </div>
