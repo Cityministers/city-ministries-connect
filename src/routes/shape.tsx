@@ -366,7 +366,7 @@ function ShapePage() {
   }
 
   function toggle(
-    key: "gifts" | "heart" | "abilities" | "settings" | "experiences",
+    key: "gifts" | "heart" | "abilities" | "settings" | "experiences" | "resources" | "pastService" | "familyServe" | "availableTimes",
     value: string,
   ) {
     setAnswers((prev) => {
@@ -1044,7 +1044,7 @@ function FieldView({
   answers: ShapeAnswers;
   set: <K extends keyof ShapeAnswers>(key: K, value: ShapeAnswers[K]) => void;
   toggle: (
-    key: "gifts" | "heart" | "abilities" | "settings" | "experiences",
+    key: "gifts" | "heart" | "abilities" | "settings" | "experiences" | "resources" | "pastService" | "familyServe" | "availableTimes",
     value: string,
   ) => void;
 }) {
@@ -1190,7 +1190,7 @@ function FieldView({
     );
   }
 
-  const key = field.key as "gifts" | "heart" | "abilities" | "settings" | "experiences";
+  const key = field.key as "gifts" | "heart" | "abilities" | "settings" | "experiences" | "resources" | "pastService" | "familyServe" | "availableTimes";
   const list = answers[key];
   return (
     <div className="flex flex-col gap-3">
