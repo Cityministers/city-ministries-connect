@@ -682,7 +682,7 @@ export const steps: Step[] = [
       {
         kind: "single",
         key: "travel",
-        label: "How far will you travel?",
+        label: "How far would you travel to minister?",
         options: ["My street", "My neighborhood", "Across the city", "Anywhere in the metro"],
       },
       {
