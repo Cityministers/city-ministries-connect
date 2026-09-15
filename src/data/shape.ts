@@ -601,7 +601,6 @@ export const steps: Step[] = [
     id: "service-history",
     letter: "E",
     title: "Where you've served before",
-    blurb: "What you've already done tells us a lot about what will fit.",
     prompt: "Say how you've served people before, at church or anywhere else, and how it went.",
     fields: [
       {
