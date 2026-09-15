@@ -37,7 +37,7 @@ const AnswersSchema = z.object({
   timePerMonth: z.string().max(40),
   household: z.string().max(200),
   children: z.array(ChildSchema).max(12),
-  gifts: z.array(z.string().max(60)).max(25),
+  gifts: z.array(z.string().max(60)).max(40),
   customGifts: z.array(z.string().max(60)).max(3).optional().default([]),
   giftsNote: z.string().max(600),
   giftLean: z.record(z.string(), z.string().max(80)),

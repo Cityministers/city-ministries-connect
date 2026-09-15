@@ -230,7 +230,7 @@ export const steps: Step[] = [
         kind: "multi",
         key: "gifts",
         label: "Choose all that fit",
-        options: [...SPIRITUAL_GIFTS],
+        options: [...BIBLICAL_GIFTS],
       },
       {
         kind: "longtext",
