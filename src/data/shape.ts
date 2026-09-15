@@ -21,10 +21,18 @@ export type ShapeAnswers = {
   settings: string[];
   experiences: string[];
   experienceNote: string;
+  resources: string[];
+  budget: string;
+  pastService: string[];
+  serviceNote: string;
+  familyServe: string[];
+  availableTimes: string[];
   travel: string;
   frequency: string;
   groupSize: string;
   kidsWelcome: string;
+  dreamNote: string;
+  biggestBarrier: string;
   freeTalk: string;
   /** Raw spoken answers, keyed by step id. */
   transcripts: Record<string, string>;
