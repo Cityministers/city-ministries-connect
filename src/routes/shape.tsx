@@ -919,16 +919,6 @@ function ShapePage() {
       {!isLast && current.id !== "place" && (
         <button
           type="button"
-          onClick={() => setStep((s) => s + 1)}
-          className="mt-3 w-full text-base text-mist/60 underline underline-offset-4"
-        >
-          Skip this one
-        </button>
-      )}
-
-      {!isLast && current.id !== "place" && (
-        <button
-          type="button"
           onClick={() => {
             void save({ data: answersRef.current }).catch(() => {});
             void runGenerate();
