@@ -799,7 +799,7 @@ function ShapePage() {
       )}
 
       {current.prompt && (
-        <p className="mb-4 text-base font-semibold leading-relaxed text-sand">{current.prompt}</p>
+        <p className="mb-4 font-display text-3xl font-semibold leading-snug text-sand">{current.prompt}</p>
       )}
 
 
