@@ -834,17 +834,14 @@ function ShapePage() {
         </div>
       ) : (
         <div className="flex flex-col gap-6">
-          {choiceOnly ? (
-            <h2 className="text-xl leading-snug font-semibold text-sand">{current.prompt}</h2>
-          ) : (
-            <VoiceAnswer
-              label={current.prompt}
-              value={answers.transcripts[current.id] ?? ""}
-              onText={applyTranscript}
-              {...(current.fields.length === 0 ? { onNext: next } : {})}
-              maxSeconds={current.id === "freetalk" ? 300 : 90}
-            />
-          )}
+          <VoiceAnswer
+            label={current.prompt}
+            value={answers.transcripts[current.id] ?? ""}
+            onText={applyTranscript}
+            {...(current.fields.length === 0 ? { onNext: next } : {})}
+            maxSeconds={current.id === "freetalk" ? 300 : 90}
+          />
+
 
 
           {current.fields.map((field, i) => (
