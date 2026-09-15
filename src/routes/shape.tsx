@@ -37,6 +37,7 @@ import {
   postSuggestion,
   saveShapeProfile,
 } from "@/lib/shape.functions";
+import { recommendConnections } from "@/lib/recommend.functions";
 
 const STOP_WORDS = new Set([
   "and",
@@ -346,6 +347,14 @@ function ShapePage() {
   const [editing, setEditing] = useState<number | null>(null);
   const [postingAll, setPostingAll] = useState(false);
   const [showStartOverConfirm, setShowStartOverConfirm] = useState(false);
+  const [panel, setPanel] = useState<"people" | "posts" | null>(null);
+
+  const recommend = useServerFn(recommendConnections);
+  const recs = useQuery({
+    queryKey: ["shape-recommendations"],
+    queryFn: () => recommend(),
+    enabled: panel !== null,
+  });
 
   useEffect(() => {
     let live = true;
