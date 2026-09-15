@@ -371,7 +371,6 @@ export const steps: Step[] = [
     id: "abilities",
     letter: "A",
     title: "Your abilities",
-    blurb: "Natural talents and skills you already use in everyday life.",
     prompt: "Say what you're good at — anything practical you already do well.",
     fields: [
       {
