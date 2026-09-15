@@ -37,6 +37,7 @@ import {
   postSuggestion,
   saveShapeProfile,
 } from "@/lib/shape.functions";
+import { recommendConnections } from "@/lib/recommend.functions";
 
 const STOP_WORDS = new Set([
   "and",
@@ -346,6 +347,14 @@ function ShapePage() {
   const [editing, setEditing] = useState<number | null>(null);
   const [postingAll, setPostingAll] = useState(false);
   const [showStartOverConfirm, setShowStartOverConfirm] = useState(false);
+  const [panel, setPanel] = useState<"people" | "posts" | null>(null);
+
+  const recommend = useServerFn(recommendConnections);
+  const recs = useQuery({
+    queryKey: ["shape-recommendations"],
+    queryFn: () => recommend(),
+    enabled: panel !== null,
+  });
 
   useEffect(() => {
     let live = true;
@@ -600,6 +609,128 @@ function ShapePage() {
     setStep(0);
     setShowStartOverConfirm(false);
   }
+
+  /** Opens the generated ideas, showing only ministries or only needs. */
+  async function openIdeas(kind: "ministry" | "need") {
+    let source = savedIdeas;
+    if (!source || source.length === 0) {
+      setBusy(true);
+      setError(null);
+      try {
+        const res = await generate({ data: answersRef.current });
+        if (res.error) setError(res.error);
+        source = res.ideas;
+        if (res.ideas.length > 0) setSavedIdeas(res.ideas);
+      } catch {
+        setError("Something went wrong generating your ideas. Try again.");
+      } finally {
+        setBusy(false);
+      }
+    }
+    const picked = (source ?? []).filter((idea) => idea.kind === kind);
+    if (picked.length === 0) {
+      setError(
+        kind === "ministry"
+          ? "We don't have ministry posts for you yet — tap Show my ministry ideas."
+          : "Your answers didn't show a need you'd want to post yet.",
+      );
+      return;
+    }
+    setPosted({});
+    setIdeas(picked);
+    window.scrollTo({ top: 0 });
+  }
+
+  if (panel) {
+    const data = recs.data;
+    return (
+      <Shell
+        title={panel === "people" ? "People you should meet" : "Posts you should view"}
+        back={() => setPanel(null)}
+        onExit={saveAndExit}
+      >
+        {recs.isLoading && (
+          <p className="flex items-center gap-2 text-base text-mist/80">
+            <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+            Looking for matches…
+          </p>
+        )}
+        {recs.isError && <ErrorNote text="We couldn't load your matches. Try again." />}
+
+        {panel === "people" && data && (
+          data.people.length === 0 ? (
+            <EmptyMatches text="No close matches yet. As more neighbors finish their answers, they'll show up here." />
+          ) : (
+            <ul className="flex flex-col gap-3">
+              {data.people.map((person) => (
+                <li
+                  key={person.id}
+                  className="flex gap-3 rounded-2xl bg-ink-soft p-4 ring-1 ring-mist/20"
+                >
+                  {person.avatarUrl ? (
+                    <img
+                      src={person.avatarUrl}
+                      alt=""
+                      className="size-12 shrink-0 rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-ink text-sand">
+                      <Users className="size-5" aria-hidden="true" />
+                    </span>
+                  )}
+                  <div>
+                    <p className="font-display text-lg font-semibold text-sand">{person.name}</p>
+                    {person.city && <p className="text-xs text-mist/60">{person.city}</p>}
+                    <p className="mt-1 text-sm leading-relaxed text-mist/85">{person.reason}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )
+        )}
+
+        {panel === "posts" && data && (
+          data.posts.length === 0 ? (
+            <EmptyMatches text="Nothing nearby matches your answers yet. Check the map to see everything that's posted." />
+          ) : (
+            <ul className="flex flex-col gap-3">
+              {data.posts.map((post) => (
+                <li key={post.id} className="rounded-2xl bg-ink-soft p-4 ring-1 ring-mist/20">
+                  <span className="text-xs font-semibold uppercase tracking-widest text-lemon">
+                    {post.kind === "need" ? "Need" : "Ministry"}
+                  </span>
+                  <p className="font-display text-lg font-semibold text-sand">{post.title}</p>
+                  {post.city && <p className="text-xs text-mist/60">{post.city}</p>}
+                  <p className="mt-1 line-clamp-3 text-sm leading-relaxed text-mist/85">
+                    {post.description}
+                  </p>
+                  <p className="mt-2 text-sm text-mist/70">{post.reason}</p>
+                  <Link
+                    to={post.kind === "need" ? "/needs" : "/ministries"}
+                    search={{ place: post.city || answers.city }}
+                    className="mt-3 inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-sand ring-1 ring-mist/25"
+                  >
+                    Open this post
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )
+        )}
+
+        <button
+          type="button"
+          onClick={() => setPanel(null)}
+          className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/25"
+        >
+          <ArrowLeft className="size-5" aria-hidden="true" />
+          Back
+        </button>
+      </Shell>
+    );
+  }
+
+
 
   if (ideas) {
     const allPosted = ideas.every((_, i) => posted[i]);
@@ -856,6 +987,51 @@ function ShapePage() {
         </div>
       )}
 
+      {current.id === "review" && (
+        <div className="mt-8 flex flex-col gap-3">
+          <button
+            type="button"
+            onClick={() => void openIdeas("ministry")}
+            disabled={busy}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/25 disabled:opacity-60"
+          >
+            <Sparkles className="size-5 text-lemon" aria-hidden="true" />
+            Your potential ministry posts
+          </button>
+          <button
+            type="button"
+            onClick={() => void openIdeas("need")}
+            disabled={busy}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/25 disabled:opacity-60"
+          >
+            <HandHeart className="size-5 text-lemon" aria-hidden="true" />
+            Your potential needs posts
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setPanel("people");
+              window.scrollTo({ top: 0 });
+            }}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/25"
+          >
+            <Users className="size-5 text-lemon" aria-hidden="true" />
+            People you should meet
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setPanel("posts");
+              window.scrollTo({ top: 0 });
+            }}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/25"
+          >
+            <MapPin className="size-5 text-lemon" aria-hidden="true" />
+            Posts you should view
+          </button>
+        </div>
+      )}
+
       <div className="mt-8 flex items-center justify-center gap-3">
         <button
           type="button"
@@ -910,35 +1086,6 @@ function ShapePage() {
             </button>
           </div>
         </div>
-      )}
-
-      {current.id === "review" && savedIdeas && savedIdeas.length > 0 && (
-        <button
-          type="button"
-          onClick={() => {
-            setIdeas(savedIdeas);
-            window.scrollTo({ top: 0 });
-          }}
-          className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/25"
-        >
-          <Sparkles className="size-5 text-lemon" aria-hidden="true" />
-          View saved ideas
-        </button>
-      )}
-
-      {current.id === "review" && (
-        <button
-          type="button"
-          onClick={() => {
-            void save({ data: answersRef.current }).catch(() => {});
-            void runGenerate();
-          }}
-          disabled={busy}
-          className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/25 disabled:opacity-60"
-        >
-          <Sparkles className="size-5" aria-hidden="true" />
-          Skip to my ideas
-        </button>
       )}
     </Shell>
   );
@@ -1026,6 +1173,23 @@ function ErrorNote({ text }: { text: string }) {
     </p>
   );
 }
+
+function EmptyMatches({ text }: { text: string }) {
+  return (
+    <div className="rounded-2xl bg-ink-soft p-5 ring-1 ring-mist/20">
+      <p className="text-base leading-relaxed text-mist/85">{text}</p>
+      <Link
+        to="/map"
+        className="mt-4 inline-flex items-center justify-center gap-2 rounded-full bg-ink px-5 py-3 text-sm font-semibold text-sand ring-1 ring-mist/25"
+      >
+        <MapPin className="size-4" aria-hidden="true" />
+        See the map
+      </Link>
+    </div>
+  );
+}
+
+
 
 const inputClass =
   "rounded-xl bg-ink-soft px-4 py-3.5 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50";
