@@ -207,7 +207,9 @@ export default function VoiceAnswer({
 
   return (
     <div className="flex flex-col gap-3 rounded-2xl bg-ink-soft/40 p-4 ring-1 ring-mist/15">
-      <span className="font-display text-3xl font-semibold leading-snug text-sand">{label}</span>
+      {label && (
+        <span className="font-display text-3xl font-semibold leading-snug text-sand">{label}</span>
+      )}
       {hint && <span className="text-base text-mist/60">{hint}</span>}
 
       {mode === "voice" ? (
