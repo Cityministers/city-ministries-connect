@@ -3,6 +3,7 @@ import { Check, Loader2, MessageSquare, Plus, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   createGiftReference,
+  deleteGiftReference,
   listGiftReferences,
   type GiftReference,
 } from "@/lib/gift-references.functions";
@@ -16,14 +17,31 @@ export default function AskFriends({
 }) {
   const create = useServerFn(createGiftReference);
   const list = useServerFn(listGiftReferences);
+  const remove = useServerFn(deleteGiftReference);
 
   const [open, setOpen] = useState(true);
   const [contactName, setContactName] = useState("");
   const [references, setReferences] = useState<GiftReference[] | null>(null);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [addedId, setAddedId] = useState<string | null>(null);
+  const [confirmId, setConfirmId] = useState<string | null>(null);
+  const [removingId, setRemovingId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  async function handleRemove(id: string) {
+    setRemovingId(id);
+    setError(null);
+    try {
+      await remove({ data: { id } });
+      setReferences((prev) => (prev ? prev.filter((r) => r.id !== id) : prev));
+      setConfirmId(null);
+    } catch {
+      setError("Couldn't remove that invite. Try again.");
+    } finally {
+      setRemovingId(null);
+    }
+  }
 
   function refresh() {
     void list()
