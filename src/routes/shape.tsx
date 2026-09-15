@@ -916,7 +916,7 @@ function ShapePage() {
         </div>
       )}
 
-      {!isLast && current.id !== "place" && (
+      {current.id === "review" && (
         <button
           type="button"
           onClick={() => {
