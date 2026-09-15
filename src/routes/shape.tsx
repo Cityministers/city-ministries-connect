@@ -291,28 +291,29 @@ function SignInPrompt() {
           <Sparkles className="size-9 text-lemon" aria-hidden="true" />
         </div>
         <h2 className="mt-6 font-display text-3xl font-semibold leading-tight sm:text-4xl">
-          Spiritual Gift Test
+          Your own walkthrough
         </h2>
         <p className="mx-auto mt-4 max-w-md text-xl leading-relaxed text-mist/85 sm:text-2xl">
-          We're building a guided walkthrough that helps you discover your spiritual gifts, heart,
-          abilities, personality, and experiences — then suggests ministries that fit you and your
-          family. Check back soon.
+          Create a free account or sign in to start your own walkthrough. Your answers and ministry
+          ideas are private to you.
         </p>
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-center">
           <Link
-            to="/"
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-lg font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft/70 sm:flex-initial"
-          >
-            <Home className="size-5" aria-hidden="true" />
-            Back to home
-          </Link>
-          <Link
-            to="/start"
+            to="/auth"
+            search={{ mode: "signup", next: "/shape" }}
             className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-lemon px-6 py-3.5 text-lg font-bold text-ink transition-transform hover:-translate-y-0.5 sm:flex-initial"
           >
             <HandHeart className="size-5" aria-hidden="true" />
-            Start Your Ministry
+            Create your account
+          </Link>
+          <Link
+            to="/auth"
+            search={{ next: "/shape" }}
+            className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-lg font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft/70 sm:flex-initial"
+          >
+            <Home className="size-5" aria-hidden="true" />
+            Sign in
           </Link>
           <Link
             to="/map"
