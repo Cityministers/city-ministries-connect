@@ -132,7 +132,11 @@ function describe(a: ShapeAnswers) {
     `Abilities: ${a.abilities.join(", ") || "unspecified"}. Notes: ${a.abilitiesNote || "none"}.`,
     `Personality: ${personality || "unspecified"}. Preferred settings: ${a.settings.join(", ") || "unspecified"}.`,
     `Experiences: ${a.experiences.join(", ") || "none shared"}. Notes: ${a.experienceNote || "none"}.`,
+    `Resources they can share: ${(a.resources ?? []).join(", ") || "none listed"}. Monthly budget: ${a.budget || "unspecified"}.`,
+    `Served before: ${(a.pastService ?? []).join(", ") || "not given"}. Notes: ${a.serviceNote || "none"}.`,
+    `Who serves with them: ${(a.familyServe ?? []).join(", ") || "unspecified"}. Usually free: ${(a.availableTimes ?? []).join(", ") || "unspecified"}.`,
     `Scope: travels ${a.travel || "?"}, ${a.frequency || "?"}, group size ${a.groupSize || "?"}, ${a.kidsWelcome || "?"}.`,
+    `Their dream: ${a.dreamNote || "not given"}. Biggest barrier: ${a.biggestBarrier || "unspecified"}.`,
     `Spoken answers, in their own words:\n${
       Object.entries(a.transcripts ?? {})
         .filter(([, v]) => v.trim())
