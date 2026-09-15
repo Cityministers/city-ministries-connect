@@ -729,7 +729,6 @@ export const steps: Step[] = [
   {
     id: "freetalk",
     title: "Just tell me about yourself",
-    blurb: "Talk freely for as long as you like. Anything you cover here fills in what we missed.",
     prompt:
       "Tell me about your life right now, the people around you, what you love doing, what you'd love to do for your neighbors, and anything you need help with yourself.",
     fields: [],
