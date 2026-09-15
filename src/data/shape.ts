@@ -179,7 +179,6 @@ export const steps: Step[] = [
   {
     id: "about",
     title: "A little about you",
-    blurb: "This helps us picture the season of life you're in.",
     prompt:
       "Say your first name, roughly your age, your relationship status, and how much time you could give each month to your ideal ministry.",
     fields: [
