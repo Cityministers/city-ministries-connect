@@ -835,12 +835,7 @@ function ShapePage() {
       ) : (
         <div className="flex flex-col gap-6">
           {choiceOnly ? (
-            <div className="flex flex-col gap-1.5">
-              <h2 className="text-xl leading-snug font-semibold text-sand">{current.prompt}</h2>
-              <p className="text-sm text-mist/70">
-                Tap your answers below, then tap Next.
-              </p>
-            </div>
+            <h2 className="text-xl leading-snug font-semibold text-sand">{current.prompt}</h2>
           ) : (
             <VoiceAnswer
               label={current.prompt}
