@@ -10,6 +10,7 @@ export type ShapeAnswers = {
   household: string;
   children: ChildEntry[];
   gifts: string[];
+  customGifts: string[];
   giftsNote: string;
   giftLean: Record<string, string>;
   heart: string[];
@@ -39,6 +40,7 @@ export const emptyAnswers: ShapeAnswers = {
   household: "",
   children: [],
   gifts: [],
+  customGifts: [],
   giftsNote: "",
   giftLean: {},
   heart: [],
