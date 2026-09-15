@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, ArrowRight, Check, Loader2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Loader2, Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { BIBLICAL_GIFTS, emptyAnswers, type ShapeAnswers } from "@/data/shape";
 import { getShapeProfile, saveShapeProfile } from "@/lib/shape.functions";
@@ -51,6 +51,8 @@ function GiftsListPage() {
   }, []);
 
   const gifts = answers?.gifts ?? [];
+  const customGifts = answers?.customGifts ?? [];
+  const [customInput, setCustomInput] = useState("");
 
   function setGifts(next: string[]) {
     setAnswers((prev) => (prev ? { ...prev, gifts: next } : prev));
@@ -58,6 +60,25 @@ function GiftsListPage() {
 
   function toggle(gift: string) {
     setGifts(gifts.includes(gift) ? gifts.filter((g) => g !== gift) : [...gifts, gift]);
+  }
+
+  function addCustomGift() {
+    const trimmed = customInput.trim();
+    if (!trimmed || customGifts.length >= 3) return;
+    if (customGifts.includes(trimmed) || gifts.includes(trimmed)) {
+      setCustomInput("");
+      return;
+    }
+    setAnswers((prev) =>
+      prev ? { ...prev, customGifts: [...prev.customGifts, trimmed] } : prev,
+    );
+    setCustomInput("");
+  }
+
+  function removeCustomGift(gift: string) {
+    setAnswers((prev) =>
+      prev ? { ...prev, customGifts: prev.customGifts.filter((g) => g !== gift) } : prev,
+    );
   }
 
   async function handleNext() {
@@ -124,6 +145,57 @@ function GiftsListPage() {
                   </button>
                 );
               })}
+            </div>
+
+            <div className="mt-8">
+              <h2 className="font-display text-lg font-semibold text-sand">
+                Add your own gift{customGifts.length > 0 ? `s (${customGifts.length}/3)` : "s (up to 3)"}
+              </h2>
+
+              {customGifts.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-2.5">
+                  {customGifts.map((gift) => (
+                    <button
+                      key={gift}
+                      type="button"
+                      onClick={() => removeCustomGift(gift)}
+                      className="inline-flex items-center gap-2 rounded-full bg-lemon px-4 py-3 text-lg font-semibold text-ink transition hover:bg-lemon/90"
+                      aria-label={`Remove ${gift}`}
+                    >
+                      {gift}
+                      <X className="size-4" aria-hidden="true" />
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {customGifts.length < 3 && (
+                <div className="mt-3 flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={customInput}
+                    onChange={(e) => setCustomInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        addCustomGift();
+                      }
+                    }}
+                    placeholder="Type a gift and tap Add"
+                    maxLength={60}
+                    className="flex-1 rounded-full bg-ink-soft px-5 py-3 text-base text-sand placeholder:text-mist/50 ring-1 ring-mist/20 focus:outline-none focus:ring-2 focus:ring-lemon"
+                  />
+                  <button
+                    type="button"
+                    onClick={addCustomGift}
+                    disabled={!customInput.trim() || customGifts.length >= 3}
+                    className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-ink-soft px-4 py-3 text-base font-semibold text-sand ring-1 ring-mist/20 transition hover:bg-ink-soft/70 disabled:opacity-60"
+                  >
+                    <Plus className="size-4" aria-hidden="true" />
+                    Add
+                  </button>
+                </div>
+              )}
             </div>
 
             {error && (
