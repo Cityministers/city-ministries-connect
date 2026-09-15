@@ -491,6 +491,56 @@ export const steps: Step[] = [
     ],
   },
   {
+    id: "family-serve",
+    title: "Serving together",
+    blurb: "Optional. Skip if you'll be serving on your own.",
+    prompt: "Say who would serve alongside you, and what your family enjoys doing together.",
+    fields: [
+      {
+        kind: "multi",
+        key: "familyServe",
+        label: "Who would join you?",
+        options: [
+          "Just me",
+          "My spouse",
+          "My kids",
+          "My whole household",
+          "A friend or two",
+          "My small group",
+          "My church",
+        ],
+      },
+    ],
+  },
+  {
+    id: "dream",
+    title: "Your dream and what's in the way",
+    prompt:
+      "Say what you'd love to do for your neighbors if nothing held you back, and what's making it hard to start.",
+    fields: [
+      {
+        kind: "longtext",
+        key: "dreamNote",
+        label: "If nothing held you back, what would you do? (optional)",
+        placeholder: "I'd love to...",
+      },
+      {
+        kind: "single",
+        key: "biggestBarrier",
+        label: "What makes it hardest to start?",
+        options: [
+          "Not enough time",
+          "Not sure where to start",
+          "Money",
+          "No one to do it with",
+          "Health or energy",
+          "Shy about reaching out",
+          "Nothing, I'm ready",
+        ],
+      },
+    ],
+  },
+  {
     id: "freetalk",
     title: "Just tell me about yourself",
     blurb: "Talk freely for as long as you like. Anything you cover here fills in what we missed.",
