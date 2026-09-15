@@ -798,8 +798,8 @@ function ShapePage() {
         </button>
       )}
 
-      {current.blurb && (
-        <p className="mb-4 text-base leading-relaxed text-mist/75">{current.blurb}</p>
+      {current.prompt && (
+        <p className="mb-4 text-base font-semibold leading-relaxed text-sand">{current.prompt}</p>
       )}
 
 
