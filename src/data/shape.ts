@@ -242,7 +242,6 @@ export const steps: Step[] = [
   {
     id: "family",
     title: "Your family",
-    blurb: "Optional. If you have kids, we'll suggest ministries the whole family can do together.",
     prompt: "Say the names and ages of your children, and who else lives with you.",
     fields: [
       { kind: "children" },
