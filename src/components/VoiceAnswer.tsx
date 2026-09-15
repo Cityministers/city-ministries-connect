@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { transcribeAnswer } from "@/lib/transcribe.functions";
 
 type Props = {
-  label: string;
+  label?: string;
   hint?: string;
   value: string;
   onText: (text: string) => void;
