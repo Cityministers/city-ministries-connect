@@ -66,3 +66,48 @@ export function friendlyUploadError(err: unknown): string {
   if (text.includes("sign in")) return "Please sign in again, then try once more.";
   return raw || "Your photo couldn't upload. Please try again.";
 }
+
+/** Pixel rectangle chosen in the cropper. */
+export type CropArea = { x: number; y: number; width: number; height: number };
+
+/** Returns a square JPG cut from the chosen area of the photo. */
+export async function cropImageFile(
+  file: File,
+  area: CropArea,
+  maxSide = 1024,
+): Promise<File> {
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const el = new Image();
+      el.onload = () => resolve(el);
+      el.onerror = () => reject(new Error("decode failed"));
+      el.src = url;
+    });
+    const size = Math.min(maxSide, Math.round(Math.max(area.width, area.height)));
+    const canvas = document.createElement("canvas");
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("no canvas");
+    ctx.drawImage(
+      img,
+      area.x,
+      area.y,
+      area.width,
+      area.height,
+      0,
+      0,
+      size,
+      size,
+    );
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob((b) => resolve(b), "image/jpeg", 0.9),
+    );
+    if (!blob) throw new Error("no blob");
+    const name = file.name.replace(/\.[^.]+$/, "") + ".jpg";
+    return new File([blob], name, { type: "image/jpeg" });
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}

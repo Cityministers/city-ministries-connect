@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { BrandLogo } from "@/components/BrandLogo";
+import { PhotoCropper } from "@/components/PhotoCropper";
 import { supabase } from "@/integrations/supabase/client";
 import {
   checkImageFile,
@@ -49,6 +50,7 @@ function WelcomePage() {
   const [zip, setZip] = useState("");
   const [photo, setPhoto] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [cropping, setCropping] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [photoFailed, setPhotoFailed] = useState(false);
@@ -62,15 +64,21 @@ function WelcomePage() {
       setError(problem);
       return;
     }
+    setCropping(file);
+  }
+
+  function acceptCrop(file: File) {
     if (preview) URL.revokeObjectURL(preview);
     setPhoto(file);
     setPreview(URL.createObjectURL(file));
+    setCropping(null);
   }
 
   function clearPhoto() {
     if (preview) URL.revokeObjectURL(preview);
     setPhoto(null);
     setPreview(null);
+    setCropping(null);
     setPhotoFailed(false);
     setError(null);
   }
@@ -186,7 +194,13 @@ function WelcomePage() {
           <div className="flex flex-col gap-2 text-base text-mist/80">
             <span>Photo (optional)</span>
             <div className="flex flex-col items-center gap-4 rounded-2xl bg-ink-soft/40 p-5 ring-1 ring-mist/15">
-              {preview ? (
+              {cropping ? (
+                <PhotoCropper
+                  file={cropping}
+                  onCancel={() => setCropping(null)}
+                  onDone={acceptCrop}
+                />
+              ) : preview ? (
                 <>
                   <img
                     src={preview}
