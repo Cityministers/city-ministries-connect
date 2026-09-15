@@ -1107,7 +1107,8 @@ function FieldView({
     const value = answers[field.group][field.id] ?? "";
     return (
       <div className="flex flex-col gap-3">
-        <span className="text-base text-mist/80">{field.label}</span>
+        <span className="text-base font-medium text-sand">{field.label}</span>
+        <span className="-mt-2 text-sm text-mist/60">Tap one</span>
         <div className="grid gap-3 sm:grid-cols-2">
           {field.options.map((opt) => (
             <button
@@ -1193,7 +1194,11 @@ function FieldView({
   const list = answers[key];
   return (
     <div className="flex flex-col gap-3">
-      <span className="text-base text-mist/80">{field.label}</span>
+      <span className="text-base font-medium text-sand">{field.label}</span>
+      <span className="-mt-2 text-sm text-mist/60">
+        Tap every one that fits — tap again to unselect
+        {list.length > 0 ? ` · ${list.length} selected` : ""}
+      </span>
       <div className="flex flex-wrap gap-3">
         {field.options.map((opt) => {
           const on = list.includes(opt);
