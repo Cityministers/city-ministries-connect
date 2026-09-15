@@ -21,10 +21,18 @@ export type ShapeAnswers = {
   settings: string[];
   experiences: string[];
   experienceNote: string;
+  resources: string[];
+  budget: string;
+  pastService: string[];
+  serviceNote: string;
+  familyServe: string[];
+  availableTimes: string[];
   travel: string;
   frequency: string;
   groupSize: string;
   kidsWelcome: string;
+  dreamNote: string;
+  biggestBarrier: string;
   freeTalk: string;
   /** Raw spoken answers, keyed by step id. */
   transcripts: Record<string, string>;
@@ -51,10 +59,18 @@ export const emptyAnswers: ShapeAnswers = {
   settings: [],
   experiences: [],
   experienceNote: "",
+  resources: [],
+  budget: "",
+  pastService: [],
+  serviceNote: "",
+  familyServe: [],
+  availableTimes: [],
   travel: "",
   frequency: "",
   groupSize: "",
   kidsWelcome: "",
+  dreamNote: "",
+  biggestBarrier: "",
   freeTalk: "",
   transcripts: {},
 };
@@ -274,6 +290,27 @@ export const steps: Step[] = [
         label: "You'd rather...",
         options: ["Invite people to your table", "Go out to where they are"],
       },
+      {
+        kind: "pair",
+        group: "giftLean",
+        id: "speak-vs-write",
+        label: "You share best by...",
+        options: ["Speaking to people", "Writing it down"],
+      },
+      {
+        kind: "pair",
+        group: "giftLean",
+        id: "start-vs-sustain",
+        label: "You're better at...",
+        options: ["Starting something new", "Keeping it going faithfully"],
+      },
+      {
+        kind: "pair",
+        group: "giftLean",
+        id: "crowd-vs-overlooked",
+        label: "You're drawn to...",
+        options: ["The crowd up front", "The person nobody noticed"],
+      },
     ],
   },
   {
@@ -347,6 +384,39 @@ export const steps: Step[] = [
     ],
   },
   {
+    id: "resources",
+    letter: "A",
+    title: "What you have to share",
+    blurb: "Ordinary things you already own can become a ministry.",
+    prompt: "Say what you have that could be shared — space, a vehicle, tools, food, anything.",
+    fields: [
+      {
+        kind: "multi",
+        key: "resources",
+        label: "Pick what you could share",
+        options: [
+          "A big table or kitchen",
+          "A yard or garage",
+          "A spare room",
+          "A vehicle or truck",
+          "Tools",
+          "Sports or camping gear",
+          "Musical instruments",
+          "A computer or camera",
+          "A workplace or business",
+          "Land or a farm",
+          "Time more than things",
+        ],
+      },
+      {
+        kind: "single",
+        key: "budget",
+        label: "Could you spend anything each month?",
+        options: ["Nothing right now", "Under $25", "$25-$100", "$100+", "Whatever it takes"],
+      },
+    ],
+  },
+  {
     id: "personality",
     letter: "P",
     title: "Your personality",
@@ -381,6 +451,20 @@ export const steps: Step[] = [
         id: "rhythm",
         label: "You prefer...",
         options: ["A steady routine", "Lots of variety"],
+      },
+      {
+        kind: "pair",
+        group: "personality",
+        id: "pace",
+        label: "You do better with...",
+        options: ["A short, intense push", "A slow, steady commitment"],
+      },
+      {
+        kind: "pair",
+        group: "personality",
+        id: "front",
+        label: "You'd rather be...",
+        options: ["Out front and visible", "Behind the scenes"],
       },
     ],
   },
@@ -442,6 +526,41 @@ export const steps: Step[] = [
     ],
   },
   {
+    id: "service-history",
+    letter: "E",
+    title: "Where you've served before",
+    blurb: "What you've already done tells us a lot about what will fit.",
+    prompt: "Say how you've served people before, at church or anywhere else, and how it went.",
+    fields: [
+      {
+        kind: "multi",
+        key: "pastService",
+        label: "Ways you've served before",
+        options: [
+          "Kids or nursery",
+          "Youth group",
+          "Worship team",
+          "Greeting or hospitality",
+          "Small group leader",
+          "Teaching or preaching",
+          "Missions trip",
+          "Food pantry or meals",
+          "Prison or hospital visits",
+          "Shelter or street outreach",
+          "Building or repair projects",
+          "Behind the scenes / admin",
+          "Never served formally",
+        ],
+      },
+      {
+        kind: "longtext",
+        key: "serviceNote",
+        label: "What did you love or hate about it? (optional)",
+        placeholder: "I loved... but I never want to...",
+      },
+    ],
+  },
+  {
     id: "scope",
     title: "The scope of your ministry",
     blurb: "How far, how often, and how many.",
@@ -471,6 +590,69 @@ export const steps: Step[] = [
         key: "kidsWelcome",
         label: "Are kids welcome?",
         options: ["Yes, kids welcome", "Adults only", "Kids only"],
+      },
+      {
+        kind: "multi",
+        key: "availableTimes",
+        label: "When are you usually free?",
+        options: [
+          "Weekday mornings",
+          "Weekday afternoons",
+          "Weeknights",
+          "Saturdays",
+          "Sundays",
+          "Whenever there's a need",
+        ],
+      },
+    ],
+  },
+  {
+    id: "family-serve",
+    title: "Serving together",
+    blurb: "Optional. Skip if you'll be serving on your own.",
+    prompt: "Say who would serve alongside you, and what your family enjoys doing together.",
+    fields: [
+      {
+        kind: "multi",
+        key: "familyServe",
+        label: "Who would join you?",
+        options: [
+          "Just me",
+          "My spouse",
+          "My kids",
+          "My whole household",
+          "A friend or two",
+          "My small group",
+          "My church",
+        ],
+      },
+    ],
+  },
+  {
+    id: "dream",
+    title: "Your dream and what's in the way",
+    prompt:
+      "Say what you'd love to do for your neighbors if nothing held you back, and what's making it hard to start.",
+    fields: [
+      {
+        kind: "longtext",
+        key: "dreamNote",
+        label: "If nothing held you back, what would you do? (optional)",
+        placeholder: "I'd love to...",
+      },
+      {
+        kind: "single",
+        key: "biggestBarrier",
+        label: "What makes it hardest to start?",
+        options: [
+          "Not enough time",
+          "Not sure where to start",
+          "Money",
+          "No one to do it with",
+          "Health or energy",
+          "Shy about reaching out",
+          "Nothing, I'm ready",
+        ],
       },
     ],
   },

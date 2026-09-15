@@ -49,10 +49,18 @@ const AnswersSchema = z.object({
   settings: z.array(z.string().max(60)).max(10),
   experiences: z.array(z.string().max(80)).max(20),
   experienceNote: z.string().max(800),
+  resources: z.array(z.string().max(60)).max(20).optional().default([]),
+  budget: z.string().max(60).optional().default(""),
+  pastService: z.array(z.string().max(60)).max(20).optional().default([]),
+  serviceNote: z.string().max(600).optional().default(""),
+  familyServe: z.array(z.string().max(60)).max(10).optional().default([]),
+  availableTimes: z.array(z.string().max(60)).max(10).optional().default([]),
   travel: z.string().max(60),
   frequency: z.string().max(60),
   groupSize: z.string().max(60),
   kidsWelcome: z.string().max(60),
+  dreamNote: z.string().max(800).optional().default(""),
+  biggestBarrier: z.string().max(60).optional().default(""),
   freeTalk: z.string().max(8000).optional().default(""),
   transcripts: z.record(z.string(), z.string().max(8000)).optional().default({}),
 });
@@ -124,7 +132,11 @@ function describe(a: ShapeAnswers) {
     `Abilities: ${a.abilities.join(", ") || "unspecified"}. Notes: ${a.abilitiesNote || "none"}.`,
     `Personality: ${personality || "unspecified"}. Preferred settings: ${a.settings.join(", ") || "unspecified"}.`,
     `Experiences: ${a.experiences.join(", ") || "none shared"}. Notes: ${a.experienceNote || "none"}.`,
+    `Resources they can share: ${(a.resources ?? []).join(", ") || "none listed"}. Monthly budget: ${a.budget || "unspecified"}.`,
+    `Served before: ${(a.pastService ?? []).join(", ") || "not given"}. Notes: ${a.serviceNote || "none"}.`,
+    `Who serves with them: ${(a.familyServe ?? []).join(", ") || "unspecified"}. Usually free: ${(a.availableTimes ?? []).join(", ") || "unspecified"}.`,
     `Scope: travels ${a.travel || "?"}, ${a.frequency || "?"}, group size ${a.groupSize || "?"}, ${a.kidsWelcome || "?"}.`,
+    `Their dream: ${a.dreamNote || "not given"}. Biggest barrier: ${a.biggestBarrier || "unspecified"}.`,
     `Spoken answers, in their own words:\n${
       Object.entries(a.transcripts ?? {})
         .filter(([, v]) => v.trim())
