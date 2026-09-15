@@ -1,0 +1,1 @@
+DELETE FROM public.gift_references WHERE id IN ('d4b109dd-ed83-4323-a3cd-1a36d93f3c44','620a632e-2cdc-4556-a233-e6058fe13702');

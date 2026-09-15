@@ -3,6 +3,7 @@ import { Check, Loader2, MessageSquare, Plus, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   createGiftReference,
+  deleteGiftReference,
   listGiftReferences,
   type GiftReference,
 } from "@/lib/gift-references.functions";
@@ -16,14 +17,31 @@ export default function AskFriends({
 }) {
   const create = useServerFn(createGiftReference);
   const list = useServerFn(listGiftReferences);
+  const remove = useServerFn(deleteGiftReference);
 
   const [open, setOpen] = useState(true);
   const [contactName, setContactName] = useState("");
   const [references, setReferences] = useState<GiftReference[] | null>(null);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [addedId, setAddedId] = useState<string | null>(null);
+  const [confirmId, setConfirmId] = useState<string | null>(null);
+  const [removingId, setRemovingId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  async function handleRemove(id: string) {
+    setRemovingId(id);
+    setError(null);
+    try {
+      await remove({ data: { id } });
+      setReferences((prev) => (prev ? prev.filter((r) => r.id !== id) : prev));
+      setConfirmId(null);
+    } catch {
+      setError("Couldn't remove that invite. Try again.");
+    } finally {
+      setRemovingId(null);
+    }
+  }
 
   function refresh() {
     void list()
@@ -233,6 +251,42 @@ export default function AskFriends({
                         )}
                       </button>
                     </div>
+                  )}
+
+                  {confirmId === ref.id ? (
+                    <div className="flex flex-col gap-2 rounded-xl bg-rose/10 p-3 ring-1 ring-rose/30">
+                      <p className="text-base leading-relaxed text-rose">
+                        Remove this invite? Their link will stop working.
+                      </p>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => void handleRemove(ref.id)}
+                          disabled={removingId === ref.id}
+                          className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-rose px-4 py-2.5 text-base font-semibold text-ink disabled:opacity-60"
+                        >
+                          {removingId === ref.id && (
+                            <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+                          )}
+                          Yes, remove
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setConfirmId(null)}
+                          className="inline-flex flex-1 items-center justify-center rounded-full bg-ink-soft px-4 py-2.5 text-base font-semibold text-sand ring-1 ring-mist/25"
+                        >
+                          Keep it
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setConfirmId(ref.id)}
+                      className="inline-flex min-h-9 items-center justify-center self-center text-xs font-medium uppercase tracking-widest text-rose/60 transition hover:text-rose"
+                    >
+                      Remove
+                    </button>
                   )}
                 </li>
               ))}
