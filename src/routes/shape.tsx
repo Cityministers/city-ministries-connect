@@ -1243,10 +1243,25 @@ function Review({ answers }: { answers: ShapeAnswers }) {
     ["Personality", Object.values(answers.personality).filter(Boolean).join(" · ") || "—"],
     ["Experiences", answers.experiences.join(", ") || "—"],
     [
+      "Resources",
+      [answers.resources.join(", "), answers.budget].filter(Boolean).join(" · ") || "—",
+    ],
+    ["Served before", answers.pastService.join(", ") || "—"],
+    [
+      "Serving with",
+      [answers.familyServe.join(", "), answers.availableTimes.join(", ")]
+        .filter(Boolean)
+        .join(" · ") || "—",
+    ],
+    [
       "Scope",
       [answers.travel, answers.frequency, answers.groupSize, answers.kidsWelcome]
         .filter(Boolean)
         .join(" · ") || "—",
+    ],
+    [
+      "Dream & barrier",
+      [answers.dreamNote, answers.biggestBarrier].filter(Boolean).join(" · ") || "—",
     ],
   ];
 
