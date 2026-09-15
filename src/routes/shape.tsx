@@ -1108,7 +1108,7 @@ function FieldView({
     return (
       <div className="flex flex-col gap-3">
         <span className="text-base font-medium text-sand">{field.label}</span>
-        <span className="-mt-2 text-sm text-mist/60">Tap one</span>
+        <span className="-mt-2 text-sm text-mist/70">Tap one</span>
         <div className="grid gap-3 sm:grid-cols-2">
           {field.options.map((opt) => (
             <button
@@ -1121,10 +1121,10 @@ function FieldView({
                   [field.id]: value === opt ? "" : opt,
                 })
               }
-              className={`rounded-2xl px-4 py-4 text-left text-base transition ${
+              className={`min-h-[3.25rem] rounded-2xl px-4 py-4 text-left text-base font-medium transition active:scale-[0.98] ${
                 value === opt
-                  ? "bg-ink-soft text-sand ring-2 ring-lemon"
-                  : "bg-ink-soft/40 text-mist/80 ring-1 ring-mist/15 hover:bg-ink-soft/70"
+                  ? "bg-ink-soft text-sand shadow-[0_0_0_2px_var(--color-lemon)] ring-1 ring-lemon"
+                  : "bg-ink-soft/70 text-sand ring-1 ring-mist/40 hover:bg-ink-soft hover:ring-mist/60"
               }`}
             >
               {opt}
@@ -1166,8 +1166,8 @@ function FieldView({
     return (
       <div className="flex flex-col gap-3">
         <span className="text-base font-medium text-sand">{field.label}</span>
-        <span className="-mt-2 text-sm text-mist/60">Tap one</span>
-        <div className="flex flex-wrap gap-2">
+        <span className="-mt-2 text-sm text-mist/70">Tap one</span>
+        <div className="flex flex-wrap gap-2.5">
           {field.options.map((opt) => (
             <button
               key={opt}
@@ -1176,10 +1176,10 @@ function FieldView({
               onClick={() =>
                 set(field.key, (value === opt ? "" : opt) as ShapeAnswers[typeof field.key])
               }
-              className={`rounded-xl px-4 py-3 text-base transition ${
+              className={`min-h-12 rounded-xl px-4 py-3 text-base font-medium transition active:scale-[0.98] ${
                 value === opt
-                  ? "bg-ink-soft text-sand ring-2 ring-lemon"
-                  : "bg-ink-soft/40 text-mist/80 ring-1 ring-mist/15 hover:bg-ink-soft/70"
+                  ? "bg-ink-soft text-sand shadow-[0_0_0_2px_var(--color-lemon)] ring-1 ring-lemon"
+                  : "bg-ink-soft/70 text-sand ring-1 ring-mist/40 hover:bg-ink-soft hover:ring-mist/60"
               }`}
             >
               {opt}
@@ -1195,11 +1195,11 @@ function FieldView({
   return (
     <div className="flex flex-col gap-3">
       <span className="text-base font-medium text-sand">{field.label}</span>
-      <span className="-mt-2 text-sm text-mist/60">
+      <span className="-mt-2 text-sm text-mist/70">
         Tap every one that fits — tap again to unselect
         {list.length > 0 ? ` · ${list.length} selected` : ""}
       </span>
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-wrap gap-2.5">
         {field.options.map((opt) => {
           const on = list.includes(opt);
           return (
@@ -1208,10 +1208,10 @@ function FieldView({
               type="button"
               aria-pressed={on}
               onClick={() => toggle(key, opt)}
-              className={`rounded-xl px-4 py-3.5 text-base font-medium transition-all active:scale-[0.98] ${
+              className={`min-h-12 rounded-xl px-4 py-3.5 text-base font-medium transition-all active:scale-[0.98] ${
                 on
                   ? "bg-ink-soft text-sand shadow-[0_0_0_2px_var(--color-lemon)] ring-1 ring-lemon"
-                  : "bg-ink-soft/50 text-mist/80 ring-1 ring-mist/40 hover:bg-ink-soft hover:text-sand hover:ring-mist/60"
+                  : "bg-ink-soft/70 text-sand ring-1 ring-mist/45 hover:bg-ink-soft hover:ring-mist/70"
               }`}
             >
               {opt}
