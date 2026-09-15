@@ -260,13 +260,13 @@ function ShapeGate() {
   }
 
   if (data?.access !== "full") {
-    return <ComingSoon />;
+    return <SignInPrompt />;
   }
 
   return <ShapePage />;
 }
 
-function ComingSoon() {
+function SignInPrompt() {
   return (
     <div className="flex min-h-dvh flex-col bg-ink font-body text-sand antialiased">
       <header className="border-b border-ink-soft bg-ink-soft/70">
