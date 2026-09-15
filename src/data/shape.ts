@@ -548,7 +548,6 @@ export const steps: Step[] = [
     id: "setting",
     letter: "P",
     title: "Where you're most yourself",
-    blurb: "The settings where serving would feel natural.",
     prompt: "Say where serving would feel most natural to you.",
     fields: [
       {
