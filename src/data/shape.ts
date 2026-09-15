@@ -224,7 +224,6 @@ export const steps: Step[] = [
     id: "gifts",
     letter: "S",
     title: "Spiritual gifts",
-    blurb: "The abilities God gave you to serve others. Pick the ones that sound like you.",
     prompt: "Say what you think God has gifted you to do for others. Talk as long as you like.",
     fields: [
       {
