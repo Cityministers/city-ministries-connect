@@ -1174,6 +1174,23 @@ function ErrorNote({ text }: { text: string }) {
   );
 }
 
+function EmptyMatches({ text }: { text: string }) {
+  return (
+    <div className="rounded-2xl bg-ink-soft p-5 ring-1 ring-mist/20">
+      <p className="text-base leading-relaxed text-mist/85">{text}</p>
+      <Link
+        to="/map"
+        className="mt-4 inline-flex items-center justify-center gap-2 rounded-full bg-ink px-5 py-3 text-sm font-semibold text-sand ring-1 ring-mist/25"
+      >
+        <MapPin className="size-4" aria-hidden="true" />
+        See the map
+      </Link>
+    </div>
+  );
+}
+
+
+
 const inputClass =
   "rounded-xl bg-ink-soft px-4 py-3.5 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50";
 
