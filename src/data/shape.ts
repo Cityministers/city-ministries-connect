@@ -736,7 +736,6 @@ export const steps: Step[] = [
   {
     id: "review",
     title: "Your S.H.A.P.E.",
-    blurb: "Here's what we heard. Ready for your ministry ideas?",
     prompt: "",
     fields: [],
   },
