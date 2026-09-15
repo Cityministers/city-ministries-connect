@@ -488,6 +488,19 @@ export const steps: Step[] = [
         label: "Are kids welcome?",
         options: ["Yes, kids welcome", "Adults only", "Kids only"],
       },
+      {
+        kind: "multi",
+        key: "availableTimes",
+        label: "When are you usually free?",
+        options: [
+          "Weekday mornings",
+          "Weekday afternoons",
+          "Weeknights",
+          "Saturdays",
+          "Sundays",
+          "Whenever there's a need",
+        ],
+      },
     ],
   },
   {
