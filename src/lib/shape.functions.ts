@@ -47,7 +47,7 @@ const AnswersSchema = z.object({
   abilitiesNote: z.string().max(600),
   personality: z.record(z.string(), z.string().max(80)),
   settings: z.array(z.string().max(60)).max(10),
-  experiences: z.array(z.string().max(80)).max(20),
+  experiences: z.array(z.string().max(80)).max(30),
   experienceNote: z.string().max(800),
   resources: z.array(z.string().max(60)).max(40).optional().default([]),
   budget: z.string().max(60).optional().default(""),
