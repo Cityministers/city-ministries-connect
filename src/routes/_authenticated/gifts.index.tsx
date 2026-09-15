@@ -5,7 +5,6 @@ import {
   BookOpen,
   HandHeart,
   HeartHandshake,
-  MailPlus,
   Sparkles,
   Users,
 } from "lucide-react";
