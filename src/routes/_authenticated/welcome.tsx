@@ -193,7 +193,13 @@ function WelcomePage() {
           <div className="flex flex-col gap-2 text-base text-mist/80">
             <span>Photo (optional)</span>
             <div className="flex flex-col items-center gap-4 rounded-2xl bg-ink-soft/40 p-5 ring-1 ring-mist/15">
-              {preview ? (
+              {cropping ? (
+                <PhotoCropper
+                  file={cropping}
+                  onCancel={() => setCropping(null)}
+                  onDone={acceptCrop}
+                />
+              ) : preview ? (
                 <>
                   <img
                     src={preview}
