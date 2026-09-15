@@ -380,6 +380,11 @@ function ShapePage() {
 
   const current = steps[step]!;
   const isLast = step === steps.length - 1;
+  const choiceOnly =
+    current.fields.length > 0 &&
+    current.fields.every(
+      (f) => f.kind === "multi" || f.kind === "single" || f.kind === "pair",
+    );
   const answersRef = useRef(answers);
   answersRef.current = answers;
 
@@ -1159,7 +1164,8 @@ function FieldView({
     const value = answers[field.key] as string;
     return (
       <div className="flex flex-col gap-3">
-        <span className="text-base text-mist/80">{field.label}</span>
+        <span className="text-base font-medium text-sand">{field.label}</span>
+        <span className="-mt-2 text-sm text-mist/60">Tap one</span>
         <div className="flex flex-wrap gap-2">
           {field.options.map((opt) => (
             <button
