@@ -784,7 +784,7 @@ function ShapePage() {
         />
       </div>
 
-      {savedIdeas && savedIdeas.length > 0 && (
+      {current.id === "review" && savedIdeas && savedIdeas.length > 0 && (
         <button
           type="button"
           onClick={() => {
