@@ -568,8 +568,6 @@ export const steps: Step[] = [
     id: "experiences",
     letter: "E",
     title: "Your experiences",
-    blurb:
-      "Private and always optional. Hard chapters often become the ministry only you can offer.",
     prompt: "Say what hard chapters you've walked through, only what you're comfortable sharing.",
     fields: [
       {
