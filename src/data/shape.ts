@@ -440,7 +440,7 @@ export const steps: Step[] = [
     id: "resources",
     letter: "A",
     title: "What you have to share",
-    prompt: "Say what you have that could be shared — space, a vehicle, tools, food, anything.",
+    prompt: "Say what you have that could be shared — space, a vehicle, tools, food, anything — and how much you could put toward it each month.",
     fields: [
       {
         kind: "multi",
