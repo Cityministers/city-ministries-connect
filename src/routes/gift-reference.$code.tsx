@@ -4,7 +4,7 @@ import { Loader2, Send } from "lucide-react";
 import { useEffect, useState } from "react";
 import { BrandLogo } from "@/components/BrandLogo";
 import { ministries } from "@/data/ministries";
-import { SPIRITUAL_GIFTS } from "@/data/shape";
+import { BIBLICAL_GIFTS } from "@/data/shape";
 import { getGiftReference, submitGiftReference } from "@/lib/gift-references.functions";
 
 export const Route = createFileRoute("/gift-reference/$code")({
@@ -176,7 +176,7 @@ function GiftReferencePage() {
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              {SPIRITUAL_GIFTS.map((gift) => {
+              {BIBLICAL_GIFTS.map((gift) => {
                 const active = picked.includes(gift);
                 return (
                   <button
