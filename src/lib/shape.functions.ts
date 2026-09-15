@@ -51,7 +51,7 @@ const AnswersSchema = z.object({
   experienceNote: z.string().max(800),
   resources: z.array(z.string().max(60)).max(40).optional().default([]),
   budget: z.string().max(60).optional().default(""),
-  pastService: z.array(z.string().max(60)).max(20).optional().default([]),
+  pastService: z.array(z.string().max(60)).max(40).optional().default([]),
   serviceNote: z.string().max(600).optional().default(""),
   familyServe: z.array(z.string().max(60)).max(10).optional().default([]),
   availableTimes: z.array(z.string().max(60)).max(10).optional().default([]),
