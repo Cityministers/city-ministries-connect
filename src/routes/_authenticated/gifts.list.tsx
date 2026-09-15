@@ -51,6 +51,8 @@ function GiftsListPage() {
   }, []);
 
   const gifts = answers?.gifts ?? [];
+  const customGifts = answers?.customGifts ?? [];
+  const [customInput, setCustomInput] = useState("");
 
   function setGifts(next: string[]) {
     setAnswers((prev) => (prev ? { ...prev, gifts: next } : prev));
@@ -58,6 +60,25 @@ function GiftsListPage() {
 
   function toggle(gift: string) {
     setGifts(gifts.includes(gift) ? gifts.filter((g) => g !== gift) : [...gifts, gift]);
+  }
+
+  function addCustomGift() {
+    const trimmed = customInput.trim();
+    if (!trimmed || customGifts.length >= 3) return;
+    if (customGifts.includes(trimmed) || gifts.includes(trimmed)) {
+      setCustomInput("");
+      return;
+    }
+    setAnswers((prev) =>
+      prev ? { ...prev, customGifts: [...prev.customGifts, trimmed] } : prev,
+    );
+    setCustomInput("");
+  }
+
+  function removeCustomGift(gift: string) {
+    setAnswers((prev) =>
+      prev ? { ...prev, customGifts: prev.customGifts.filter((g) => g !== gift) } : prev,
+    );
   }
 
   async function handleNext() {
