@@ -830,7 +830,6 @@ function ShapePage() {
       ) : (
         <div className="flex flex-col gap-6">
           <VoiceAnswer
-            label={current.prompt}
             value={answers.transcripts[current.id] ?? ""}
             onText={applyTranscript}
             {...(current.fields.length === 0 ? { onNext: next } : {})}
