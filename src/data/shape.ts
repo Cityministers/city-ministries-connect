@@ -290,6 +290,27 @@ export const steps: Step[] = [
         label: "You'd rather...",
         options: ["Invite people to your table", "Go out to where they are"],
       },
+      {
+        kind: "pair",
+        group: "giftLean",
+        id: "speak-vs-write",
+        label: "You share best by...",
+        options: ["Speaking to people", "Writing it down"],
+      },
+      {
+        kind: "pair",
+        group: "giftLean",
+        id: "start-vs-sustain",
+        label: "You're better at...",
+        options: ["Starting something new", "Keeping it going faithfully"],
+      },
+      {
+        kind: "pair",
+        group: "giftLean",
+        id: "crowd-vs-overlooked",
+        label: "You're drawn to...",
+        options: ["The crowd up front", "The person nobody noticed"],
+      },
     ],
   },
   {
