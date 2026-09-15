@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { SPIRITUAL_GIFTS } from "@/data/shape";
+import { BIBLICAL_GIFTS, SPIRITUAL_GIFTS } from "@/data/shape";
 
 export type GiftReference = {
   id: string;
@@ -12,7 +12,7 @@ export type GiftReference = {
   respondedAt: string | null;
 };
 
-const ALLOWED = new Set<string>(SPIRITUAL_GIFTS);
+const ALLOWED = new Set<string>([...BIBLICAL_GIFTS, ...SPIRITUAL_GIFTS]);
 
 function mapRow(row: {
   id: string;
@@ -157,7 +157,7 @@ export const submitGiftReference = createServerFn({ method: "POST" })
     z
       .object({
         code: codeSchema,
-        gifts: z.array(z.string().max(60)).max(24),
+        gifts: z.array(z.string().max(60)).max(40),
         note: z.string().trim().max(600),
       })
       .parse(input),
