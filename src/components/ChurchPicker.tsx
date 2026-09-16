@@ -16,6 +16,7 @@ export function ChurchPicker({ kind, postId, city, zip }: Props) {
   const fetchChurches = useServerFn(listChurchesNear);
   const ask = useServerFn(requestChurchPost);
   const [sent, setSent] = useState<string | null>(null);
+  const [listed, setListed] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const { data: churches } = useQuery({
@@ -63,7 +64,10 @@ export function ChurchPicker({ kind, postId, city, zip }: Props) {
                 </span>
               </span>
               {sent === c.id ? (
-                <Check className="size-5 shrink-0" aria-hidden="true" />
+                <span className="inline-flex shrink-0 items-center gap-1.5 text-sm">
+                  <Check className="size-5" aria-hidden="true" />
+                  {listed ? `Listed at ${c.name}` : "Sent for approval"}
+                </span>
               ) : (
                 <span className="shrink-0 text-sm">Ask</span>
               )}
