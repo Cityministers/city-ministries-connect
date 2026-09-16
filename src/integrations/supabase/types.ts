@@ -104,6 +104,151 @@ export type Database = {
         }
         Relationships: []
       }
+      church_payments: {
+        Row: {
+          amount_cents: number
+          church_id: string
+          created_at: string
+          id: string
+          is_mock: boolean
+          payer_id: string
+          status: string
+        }
+        Insert: {
+          amount_cents?: number
+          church_id: string
+          created_at?: string
+          id?: string
+          is_mock?: boolean
+          payer_id: string
+          status?: string
+        }
+        Update: {
+          amount_cents?: number
+          church_id?: string
+          created_at?: string
+          id?: string
+          is_mock?: boolean
+          payer_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "church_payments_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      church_posts: {
+        Row: {
+          church_id: string
+          created_at: string
+          id: string
+          post_id: string
+          post_type: Database["public"]["Enums"]["post_kind"]
+          requested_by: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          church_id: string
+          created_at?: string
+          id?: string
+          post_id: string
+          post_type: Database["public"]["Enums"]["post_kind"]
+          requested_by: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          church_id?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+          post_type?: Database["public"]["Enums"]["post_kind"]
+          requested_by?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "church_posts_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      churches: {
+        Row: {
+          address: string
+          avatar_url: string | null
+          city: string
+          created_at: string
+          current_period_end: string | null
+          description: string
+          icon_id: string
+          id: string
+          lat: number | null
+          lng: number | null
+          name: string
+          owner_id: string
+          phone: string
+          plan_status: string
+          service_times: string
+          status: string
+          updated_at: string
+          website: string
+          zip: string
+        }
+        Insert: {
+          address?: string
+          avatar_url?: string | null
+          city?: string
+          created_at?: string
+          current_period_end?: string | null
+          description?: string
+          icon_id?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          name: string
+          owner_id: string
+          phone?: string
+          plan_status?: string
+          service_times?: string
+          status?: string
+          updated_at?: string
+          website?: string
+          zip?: string
+        }
+        Update: {
+          address?: string
+          avatar_url?: string | null
+          city?: string
+          created_at?: string
+          current_period_end?: string | null
+          description?: string
+          icon_id?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          name?: string
+          owner_id?: string
+          phone?: string
+          plan_status?: string
+          service_times?: string
+          status?: string
+          updated_at?: string
+          website?: string
+          zip?: string
+        }
+        Relationships: []
+      }
       conversation_participants: {
         Row: {
           conversation_id: string
