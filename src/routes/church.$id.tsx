@@ -17,7 +17,6 @@ import {
 import { useEffect, useState } from "react";
 import { AccountMenu } from "@/components/AccountMenu";
 import { BrandLogo } from "@/components/BrandLogo";
-import { SiteFooter } from "@/components/SiteFooter";
 import { useSession } from "@/hooks/useSession";
 import { CHURCH_ICONS, churchIcon } from "@/lib/church-icons";
 import {
@@ -754,8 +753,6 @@ function ChurchPage() {
           </div>
         )}
       </main>
-
-      <SiteFooter />
     </div>
   );
 }
