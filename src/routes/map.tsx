@@ -57,7 +57,7 @@ function MapPage() {
   const [location, setLocation] = useState(place ?? "Portland, OR 97209");
   const [activeId, setActiveId] = useState<string | null>(null);
   const [highlightId, setHighlightId] = useState<string | null>(
-    freshId ? `user-${freshId}` : null,
+    freshId ? (freshId.startsWith("church-") ? freshId : `user-${freshId}`) : null,
   );
   const session = useSession();
 
