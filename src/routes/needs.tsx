@@ -16,6 +16,9 @@ import { useHomePoint, useMapPosts, usePlaceCenter } from "@/lib/use-map-view";
 import { MinistryPost } from "@/components/MinistryPost";
 import { Button } from "@/components/ui/button";
 import { toneStyles } from "@/data/ministries";
+import { CHURCH_PIN_COLOR, churchIcon } from "@/lib/church-icons";
+import { listChurches } from "@/lib/churches.functions";
+import { iconMarkup } from "@/lib/map-icon";
 import { listUserNeeds } from "@/lib/needs.functions";
 import { matchesPlace, matchesText } from "@/lib/place";
 import { useSession } from "@/hooks/useSession";
@@ -101,6 +104,38 @@ function NeedsPage() {
   // A freshly created need sits in the middle of the screen while it glows.
   const spotlight = highlightId ? points.find((p) => p.id === highlightId) : undefined;
   const mapCenter = spotlight ? { lat: spotlight.lat, lng: spotlight.lng } : center;
+
+  // Churches share the map with needs; tapping one opens that church's page.
+  const fetchChurches = useServerFn(listChurches);
+  const { data: churches } = useQuery({
+    queryKey: ["churches"],
+    queryFn: () => fetchChurches(),
+  });
+  const allPoints = useMemo(
+    () => [
+      ...points,
+      ...(churches ?? [])
+        .filter((c) => c.lat != null && c.lng != null)
+        .map((c) => ({
+          id: `church-${c.id}`,
+          lat: c.lat as number,
+          lng: c.lng as number,
+          title: c.name,
+          color: CHURCH_PIN_COLOR,
+          glyph: iconMarkup(churchIcon(c.iconId)),
+        })),
+    ],
+    [points, churches],
+  );
+
+  function selectPoint(id: string) {
+    if (id.startsWith("church-")) {
+      void navigate({ to: "/church/$id", params: { id: id.slice("church-".length) } });
+      return;
+    }
+    setActiveId(id);
+    if (id !== highlightId) setHighlightId(null);
+  }
 
   const toggleView = () => {
     void navigate({
