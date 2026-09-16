@@ -258,12 +258,9 @@ function NeedsPage() {
           <>
             <div className="relative">
               <LiveMap
-                points={points}
+                points={allPoints}
                 center={mapCenter}
-                onSelect={(id) => {
-                  setActiveId(id);
-                  if (id !== highlightId) setHighlightId(null);
-                }}
+                onSelect={selectPoint}
                 onBoundsChange={(b) => {
                   setPending(b);
                   setBounds((prev) => prev ?? b);
