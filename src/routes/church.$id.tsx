@@ -130,7 +130,7 @@ function ChurchPage() {
     return () => {
       alive = false;
     };
-  }, [church, id]);
+  }, [church, id, isOwner]);
 
   async function copyLink() {
     try {
