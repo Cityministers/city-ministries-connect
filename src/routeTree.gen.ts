@@ -16,6 +16,7 @@ import { Route as AdminLoginRouteImport } from './routes/admin-login'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DonateRouteImport } from './routes/donate'
+import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as MinistriesRouteImport } from './routes/ministries'
 import { Route as MinistryMindsetRouteImport } from './routes/ministry-mindset'
@@ -69,6 +70,11 @@ const ContactRoute = ContactRouteImport.update({
 const DonateRoute = DonateRouteImport.update({
   id: '/donate',
   path: '/donate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeedbackRoute = FeedbackRouteImport.update({
+  id: '/feedback',
+  path: '/feedback',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MapRoute = MapRouteImport.update({
@@ -182,6 +188,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/donate': typeof DonateRoute
+  '/feedback': typeof FeedbackRoute
   '/map': typeof MapRoute
   '/ministries': typeof MinistriesRoute
   '/ministry-mindset': typeof MinistryMindsetRoute
@@ -210,6 +217,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/donate': typeof DonateRoute
+  '/feedback': typeof FeedbackRoute
   '/map': typeof MapRoute
   '/ministries': typeof MinistriesRoute
   '/ministry-mindset': typeof MinistryMindsetRoute
@@ -240,6 +248,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/donate': typeof DonateRoute
+  '/feedback': typeof FeedbackRoute
   '/map': typeof MapRoute
   '/ministries': typeof MinistriesRoute
   '/ministry-mindset': typeof MinistryMindsetRoute
@@ -270,6 +279,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/contact'
     | '/donate'
+    | '/feedback'
     | '/map'
     | '/ministries'
     | '/ministry-mindset'
@@ -298,6 +308,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/contact'
     | '/donate'
+    | '/feedback'
     | '/map'
     | '/ministries'
     | '/ministry-mindset'
@@ -327,6 +338,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/contact'
     | '/donate'
+    | '/feedback'
     | '/map'
     | '/ministries'
     | '/ministry-mindset'
@@ -357,6 +369,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
   DonateRoute: typeof DonateRoute
+  FeedbackRoute: typeof FeedbackRoute
   MapRoute: typeof MapRoute
   MinistriesRoute: typeof MinistriesRoute
   MinistryMindsetRoute: typeof MinistryMindsetRoute
@@ -419,6 +432,13 @@ declare module '@tanstack/react-router' {
       path: '/donate'
       fullPath: '/donate'
       preLoaderRoute: typeof DonateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/feedback': {
+      id: '/feedback'
+      path: '/feedback'
+      fullPath: '/feedback'
+      preLoaderRoute: typeof FeedbackRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/map': {
@@ -600,6 +620,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,
   DonateRoute: DonateRoute,
+  FeedbackRoute: FeedbackRoute,
   MapRoute: MapRoute,
   MinistriesRoute: MinistriesRoute,
   MinistryMindsetRoute: MinistryMindsetRoute,
