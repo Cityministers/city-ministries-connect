@@ -5,10 +5,12 @@ import {
   Camera,
   Church,
   CreditCard,
+  ImagePlus,
   Loader2,
   MapPin,
   PartyPopper,
   ShieldCheck,
+  X,
 } from "lucide-react";
 import { useRef, useState } from "react";
 import {
@@ -21,6 +23,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { CHURCH_ICONS, churchIcon } from "@/lib/church-icons";
 import { createChurch, mockSubscribe, updateChurch } from "@/lib/churches.functions";
 import { iconMarkup } from "@/lib/map-icon";
+import {
+  MAX_PHOTOS,
+  MAX_VIDEO_BYTES,
+  toPreviews,
+  uploadMedia,
+  type MediaPreview,
+} from "@/lib/media-upload";
 import { placePinDataUrl } from "@/lib/place-pin";
 import { checkImageFile, friendlyUploadError, shrinkImage } from "@/lib/photo";
 
