@@ -20,14 +20,31 @@ export type PlacePin = {
   scale: number;
 };
 
-export function placePinSvg(glyph: string, title: string): PlacePin {
+export function placePinSvg(
+  glyph: string,
+  title: string,
+  highlight = false,
+  phase = 0,
+): PlacePin {
   const text = escapeXmlText(title);
   const pillWidth = Math.max(80, Math.min(240, text.length * 8.6 + 26));
   const width = Math.max(190, pillWidth + 24);
   const cx = width / 2;
   const height = 110;
+  // A freshly added church breathes a gold halo until the visitor taps elsewhere.
+  const defs = highlight
+    ? `<defs><filter id="cmPlaceGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"/></filter></defs>`
+    : "";
+  const glow = highlight
+    ? `<circle cx="${cx}" cy="28" r="${phase ? 38 : 32}" fill="none" stroke="${PLACE_GOLD}" stroke-width="${
+        phase ? 5 : 8
+      }" stroke-opacity="${phase ? 0.22 : 0.4}" filter="url(#cmPlaceGlow)"/>
+       <circle cx="${cx}" cy="28" r="${phase ? 31 : 29}" fill="${PLACE_GOLD}" fill-opacity="0.12"/>`
+    : "";
   // The tip sits at y=62 — that point lands on the building's coordinates.
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+    ${defs}
+    ${glow}
     <ellipse cx="${cx}" cy="63" rx="9" ry="3.5" fill="rgba(0,0,0,.5)"/>
     <path d="M${cx} 62 L${cx - 8} 47h16z" fill="${PLACE_GOLD}"/>
     <circle cx="${cx}" cy="28" r="23" fill="#171320" stroke="${PLACE_GOLD}" stroke-width="3"/>
