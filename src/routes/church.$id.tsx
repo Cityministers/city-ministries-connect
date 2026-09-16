@@ -102,10 +102,6 @@ function ChurchPage() {
   const church = data?.church ?? null;
   const isOwner = Boolean(session?.user?.id && church && session.user.id === church.ownerId);
 
-  const shareTitle = church ? `${church.name} on City Ministers` : "City Ministers";
-  const encodedUrl = encodeURIComponent(pageUrl);
-  const encodedText = encodeURIComponent(shareTitle);
-  const canNativeShare = typeof navigator !== "undefined" && "share" in navigator;
 
   const { data: requests } = useQuery({
     queryKey: ["church-requests", id],
