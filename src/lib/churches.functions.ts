@@ -616,10 +616,235 @@ export const setChurchPostStatus = createServerFn({ method: "POST" })
       .parse(data),
   )
   .handler(async ({ data, context }) => {
+    const { data: link } = await context.supabase
+      .from("church_posts")
+      .select("id, church_id, requested_by")
+      .eq("id", data.linkId)
+      .maybeSingle();
+    if (!link) throw new Error("That request is no longer there.");
+
+    const { data: church } = await context.supabase
+      .from("churches")
+      .select("owner_id, name")
+      .eq("id", link.church_id)
+      .maybeSingle();
+    if (!church || church.owner_id !== context.userId) {
+      throw new Error("Only the church can do that.");
+    }
+
     const { error } = await context.supabase
       .from("church_posts")
       .update({ status: data.status })
       .eq("id", data.linkId);
+    if (error) throw new Error(error.message);
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.from("notifications").insert({
+      user_id: link.requested_by,
+      kind: "church_post",
+      title:
+        data.status === "approved"
+          ? `Your post is listed at ${church.name}`
+          : `${church.name} did not list your post`,
+      body:
+        data.status === "approved"
+          ? "Visitors to their church page can see it now."
+          : "You can still share it on the map.",
+      link: `/church/${link.church_id}`,
+    });
+    return { ok: true };
+  });
+
+export type ChurchMemberDTO = {
+  id: string;
+  userId: string;
+  name: string;
+  photoUrl: string | null;
+  createdAt: string;
+};
+
+async function assertChurchOwner(
+  context: { supabase: any; userId: string },
+  churchId: string,
+): Promise<{ owner_id: string; name: string }> {
+  const { data: church } = await context.supabase
+    .from("churches")
+    .select("owner_id, name")
+    .eq("id", churchId)
+    .maybeSingle();
+  if (!church || church.owner_id !== context.userId) {
+    throw new Error("Only the church can open this page.");
+  }
+  return church;
+}
+
+/** Everything on a church's board: what is waiting and what is already listed. */
+export const listChurchBoard = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({ churchId: z.string().uuid() }).parse(data))
+  .handler(
+    async ({
+      data,
+      context,
+    }): Promise<{ churchName: string; pending: ChurchPostDTO[]; approved: ChurchPostDTO[] }> => {
+      const church = await assertChurchOwner(context, data.churchId);
+
+      const { data: links } = await context.supabase
+        .from("church_posts")
+        .select("id, post_type, post_id, requested_by, status")
+        .eq("church_id", data.churchId)
+        .in("status", ["pending", "approved"])
+        .order("created_at", { ascending: false });
+
+      const rows = links ?? [];
+      if (rows.length === 0) return { churchName: church.name, pending: [], approved: [] };
+
+      const ministryIds = rows.filter((l: any) => l.post_type === "ministry").map((l: any) => l.post_id);
+      const needIds = rows.filter((l: any) => l.post_type === "need").map((l: any) => l.post_id);
+      const [{ data: ministries }, { data: needs }, { data: profiles }] = await Promise.all([
+        ministryIds.length
+          ? context.supabase
+              .from("user_ministries")
+              .select("id, short_title, description, city, zip")
+              .in("id", ministryIds)
+          : Promise.resolve({ data: [] as never[] }),
+        needIds.length
+          ? context.supabase
+              .from("user_needs")
+              .select("id, short_title, description, city, zip")
+              .in("id", needIds)
+          : Promise.resolve({ data: [] as never[] }),
+        context.supabase
+          .from("profiles")
+          .select("id, display_name")
+          .in("id", [...new Set(rows.map((l: any) => l.requested_by))]),
+      ]);
+      const nameById = new Map((profiles ?? []).map((p: any) => [p.id, p.display_name]));
+      const byId = new Map<string, any>();
+      for (const r of [...((ministries ?? []) as any[]), ...((needs ?? []) as any[])]) {
+        byId.set(r.id, r);
+      }
+
+      const toDTO = (l: any): ChurchPostDTO[] => {
+        const row = byId.get(l.post_id);
+        if (!row) return [];
+        return [
+          {
+            linkId: l.id,
+            kind: l.post_type,
+            postId: l.post_id,
+            title: row.short_title,
+            description: row.description,
+            city: row.city ?? "",
+            zip: row.zip ?? "",
+            status: l.status,
+            posterName: nameById.get(l.requested_by) || "A neighbor",
+          },
+        ];
+      };
+
+      return {
+        churchName: church.name,
+        pending: rows.filter((l: any) => l.status === "pending").flatMap(toDTO),
+        approved: rows.filter((l: any) => l.status === "approved").flatMap(toDTO),
+      };
+    },
+  );
+
+/** The people this church lets post without approval. */
+export const listChurchMembers = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({ churchId: z.string().uuid() }).parse(data))
+  .handler(async ({ data, context }): Promise<ChurchMemberDTO[]> => {
+    await assertChurchOwner(context, data.churchId);
+    const { data: rows } = await context.supabase
+      .from("church_members")
+      .select("id, user_id, created_at")
+      .eq("church_id", data.churchId)
+      .order("created_at", { ascending: false });
+    if (!rows || rows.length === 0) return [];
+
+    const { data: profiles } = await context.supabase
+      .from("profiles")
+      .select("id, display_name, avatar_url")
+      .in("id", rows.map((r: any) => r.user_id));
+    const byId = new Map((profiles ?? []).map((p: any) => [p.id, p]));
+    const urlByPath = await signPaths(
+      (profiles ?? [])
+        .map((p: any) => p.avatar_url)
+        .filter((p: any): p is string => Boolean(p) && !String(p).startsWith("http")),
+    );
+
+    return rows.map((r: any) => {
+      const p = byId.get(r.user_id);
+      const raw = p?.avatar_url ?? null;
+      return {
+        id: r.id,
+        userId: r.user_id,
+        name: p?.display_name || "A neighbor",
+        photoUrl: raw ? (raw.startsWith("http") ? raw : (urlByPath[raw] ?? null)) : null,
+        createdAt: r.created_at,
+      };
+    });
+  });
+
+/** Always allow this person to post at the church; optionally approve the request they just sent. */
+export const addChurchMember = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) =>
+    z
+      .object({ churchId: z.string().uuid(), userId: z.string().uuid().optional(), linkId: z.string().uuid().optional() })
+      .parse(data),
+  )
+  .handler(async ({ data, context }) => {
+    const church = await assertChurchOwner(context, data.churchId);
+
+    let memberId = data.userId ?? null;
+    if (data.linkId) {
+      const { data: link } = await context.supabase
+        .from("church_posts")
+        .select("id, church_id, requested_by")
+        .eq("id", data.linkId)
+        .maybeSingle();
+      if (!link || link.church_id !== data.churchId) throw new Error("That request is no longer there.");
+      memberId = link.requested_by;
+      await context.supabase
+        .from("church_posts")
+        .update({ status: "approved" })
+        .eq("id", data.linkId);
+    }
+    if (!memberId) throw new Error("No one to add.");
+
+    const { error } = await context.supabase.from("church_members").insert({
+      church_id: data.churchId,
+      user_id: memberId,
+      added_by: context.userId,
+    });
+    if (error && !error.message.includes("duplicate")) throw new Error(error.message);
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.from("notifications").insert({
+      user_id: memberId,
+      kind: "church_post",
+      title: `${church.name} welcomed you to their board`,
+      body: "Anything you post can be listed at their church right away.",
+      link: `/church/${data.churchId}`,
+    });
+    return { ok: true };
+  });
+
+export const removeChurchMember = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) =>
+    z.object({ churchId: z.string().uuid(), memberId: z.string().uuid() }).parse(data),
+  )
+  .handler(async ({ data, context }) => {
+    await assertChurchOwner(context, data.churchId);
+    const { error } = await context.supabase
+      .from("church_members")
+      .delete()
+      .eq("id", data.memberId)
+      .eq("church_id", data.churchId);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
