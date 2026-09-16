@@ -286,6 +286,60 @@ function AddChurchPage() {
               />
             </div>
 
+            <div className="flex flex-col gap-3 rounded-2xl bg-ink-soft/60 p-4 ring-1 ring-mist/15">
+              <p className="text-base font-semibold text-sand sm:text-lg">
+                More photos and a video
+              </p>
+              <p className="text-base text-mist/60">
+                Add up to {MAX_PHOTOS} more photos and one short video (under 50MB) for your
+                church page.
+              </p>
+              {media.length > 0 && (
+                <div className="grid grid-cols-3 gap-2">
+                  {media.map((item) => (
+                    <div
+                      key={item.url}
+                      className="relative aspect-square overflow-hidden rounded-xl bg-ink ring-1 ring-mist/20"
+                    >
+                      {item.kind === "video" ? (
+                        <video src={item.url} className="size-full object-cover" muted />
+                      ) : (
+                        <img src={item.url} alt="" className="size-full object-cover" />
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => removeMedia(item.url)}
+                        aria-label="Remove this file"
+                        className="absolute right-1 top-1 grid size-7 place-items-center rounded-full bg-ink/80 text-sand ring-1 ring-mist/30"
+                      >
+                        <X className="size-4" aria-hidden="true" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <button
+                type="button"
+                onClick={() => mediaRef.current?.click()}
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-ink px-5 py-2.5 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+              >
+                <ImagePlus className="size-5" aria-hidden="true" />
+                Add photos or a video
+              </button>
+              <input
+                ref={mediaRef}
+                type="file"
+                accept="image/*,video/*"
+                multiple
+                className="hidden"
+                onChange={(e) => {
+                  addMedia(Array.from(e.target.files ?? []));
+                  e.target.value = "";
+                }}
+              />
+            </div>
+
+
             <label className="flex flex-col gap-2 text-base text-mist/80 sm:text-lg">
               Church name (shows under your icon on the map)
               <input
