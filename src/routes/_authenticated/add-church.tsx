@@ -63,6 +63,7 @@ function AddChurchPage() {
   const save = useServerFn(updateChurch);
   const pay = useServerFn(mockSubscribe);
   const fileRef = useRef<HTMLInputElement>(null);
+  const mediaRef = useRef<HTMLInputElement>(null);
 
   const [step, setStep] = useState<"details" | "checkout">("details");
   const [churchId, setChurchId] = useState<string | null>(null);
