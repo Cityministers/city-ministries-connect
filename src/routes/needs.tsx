@@ -66,7 +66,7 @@ function NeedsPage() {
   const [query, setQuery] = useState("");
   const [activeId, setActiveId] = useState<string | null>(null);
   const [highlightId, setHighlightId] = useState<string | null>(
-    freshId ? `need-${freshId}` : null,
+    freshId ? (freshId.startsWith("church-") ? freshId : `need-${freshId}`) : null,
   );
   const isMap = view !== "list";
 
