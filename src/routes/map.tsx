@@ -216,12 +216,9 @@ function MapPage() {
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 pt-2 pb-5 sm:px-6 sm:pt-3 sm:pb-8">
         <div className="relative">
           <LiveMap
-            points={points}
+            points={allPoints}
             center={mapCenter}
-            onSelect={(id) => {
-              setActiveId(id);
-              if (id !== highlightId) setHighlightId(null);
-            }}
+            onSelect={selectPoint}
             onBoundsChange={(b) => {
               setPending(b);
               setBounds((prev) => prev ?? b);
