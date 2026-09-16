@@ -1,7 +1,22 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, Camera, CreditCard, Loader2, ShieldCheck } from "lucide-react";
+import {
+  ArrowLeft,
+  Camera,
+  Church,
+  CreditCard,
+  Loader2,
+  MapPin,
+  PartyPopper,
+  ShieldCheck,
+} from "lucide-react";
 import { useRef, useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { CHURCH_ICONS, churchIcon } from "@/lib/church-icons";
 import { createChurch, mockSubscribe, updateChurch } from "@/lib/churches.functions";
