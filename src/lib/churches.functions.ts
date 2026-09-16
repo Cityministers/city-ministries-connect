@@ -11,6 +11,7 @@ export type ChurchDTO = {
   description: string;
   iconId: string;
   photoUrl: string | null;
+  gallery: { url: string; kind: "image" | "video" }[];
   address: string;
   city: string;
   zip: string;
@@ -23,6 +24,19 @@ export type ChurchDTO = {
   planStatus: string;
   currentPeriodEnd: string | null;
 };
+
+type GalleryItem = { path: string; kind: "image" | "video" };
+
+function galleryPaths(raw: unknown): GalleryItem[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((g) => g as { path?: unknown; kind?: unknown })
+    .filter(
+      (g): g is GalleryItem =>
+        typeof g.path === "string" && (g.kind === "image" || g.kind === "video"),
+    )
+    .map((g) => ({ path: g.path, kind: g.kind }));
+}
 
 export type ChurchPostDTO = {
   linkId: string;
@@ -71,10 +85,11 @@ type ChurchRow = {
   status: string;
   plan_status: string;
   current_period_end: string | null;
+  gallery: unknown;
 };
 
 const CHURCH_COLUMNS =
-  "id, owner_id, name, description, icon_id, avatar_url, address, city, zip, lat, lng, service_times, phone, website, status, plan_status, current_period_end";
+  "id, owner_id, name, description, icon_id, avatar_url, address, city, zip, lat, lng, service_times, phone, website, status, plan_status, current_period_end, gallery";
 
 async function signPaths(paths: string[]): Promise<Map<string, string>> {
   const urlByPath = new Map<string, string>();
@@ -98,6 +113,9 @@ function toChurch(row: ChurchRow, urlByPath: Map<string, string>): ChurchDTO {
     description: row.description,
     iconId: row.icon_id,
     photoUrl: row.avatar_url ? (urlByPath.get(row.avatar_url) ?? null) : null,
+    gallery: galleryPaths(row.gallery)
+      .map((g) => ({ url: urlByPath.get(g.path) ?? "", kind: g.kind }))
+      .filter((g) => g.url.length > 0),
     address: row.address,
     city: row.city,
     zip: row.zip,
@@ -151,7 +169,10 @@ export const getChurch = createServerFn({ method: "GET" })
         .maybeSingle();
       if (!row) return { church: null, posts: [], nearby: [] };
       const church = row as ChurchRow;
-      const urlByPath = await signPaths(church.avatar_url ? [church.avatar_url] : []);
+      const urlByPath = await signPaths([
+        ...(church.avatar_url ? [church.avatar_url] : []),
+        ...galleryPaths(church.gallery).map((g) => g.path),
+      ]);
 
       const { data: links } = await supabase
         .from("church_posts")
@@ -301,6 +322,16 @@ const churchInput = z.object({
   serviceTimes: z.string().trim().max(200).optional().default(""),
   phone: z.string().trim().max(40).optional().default(""),
   website: z.string().trim().max(200).optional().default(""),
+  gallery: z
+    .array(
+      z.object({
+        path: z.string().trim().min(1).max(300),
+        kind: z.enum(["image", "video"]),
+      }),
+    )
+    .max(8)
+    .optional()
+    .default([]),
 });
 
 export const createChurch = createServerFn({ method: "POST" })
@@ -326,6 +357,7 @@ export const createChurch = createServerFn({ method: "POST" })
           description: data.description,
           icon_id: data.iconId,
           avatar_url: data.avatarPath || null,
+          ...(data.gallery.length > 0 ? { gallery: data.gallery } : {}),
           address: data.address,
           city: data.city,
           zip: data.zip,
@@ -347,6 +379,7 @@ export const createChurch = createServerFn({ method: "POST" })
         description: data.description,
         icon_id: data.iconId,
         avatar_url: data.avatarPath || null,
+        gallery: data.gallery,
         address: data.address,
         city: data.city,
         zip: data.zip,
@@ -390,6 +423,7 @@ export const updateChurch = createServerFn({ method: "POST" })
         description: data.description,
         icon_id: data.iconId,
         ...(data.avatarPath ? { avatar_url: data.avatarPath } : {}),
+        ...(data.gallery.length > 0 ? { gallery: data.gallery } : {}),
         address: data.address,
         city: data.city,
         zip: data.zip,

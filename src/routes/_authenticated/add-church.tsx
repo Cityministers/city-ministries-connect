@@ -5,10 +5,12 @@ import {
   Camera,
   Church,
   CreditCard,
+  ImagePlus,
   Loader2,
   MapPin,
   PartyPopper,
   ShieldCheck,
+  X,
 } from "lucide-react";
 import { useRef, useState } from "react";
 import {
@@ -21,6 +23,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { CHURCH_ICONS, churchIcon } from "@/lib/church-icons";
 import { createChurch, mockSubscribe, updateChurch } from "@/lib/churches.functions";
 import { iconMarkup } from "@/lib/map-icon";
+import {
+  MAX_PHOTOS,
+  MAX_VIDEO_BYTES,
+  toPreviews,
+  uploadMedia,
+  type MediaPreview,
+} from "@/lib/media-upload";
 import { placePinDataUrl } from "@/lib/place-pin";
 import { checkImageFile, friendlyUploadError, shrinkImage } from "@/lib/photo";
 
@@ -54,6 +63,7 @@ function AddChurchPage() {
   const save = useServerFn(updateChurch);
   const pay = useServerFn(mockSubscribe);
   const fileRef = useRef<HTMLInputElement>(null);
+  const mediaRef = useRef<HTMLInputElement>(null);
 
   const [step, setStep] = useState<"details" | "checkout">("details");
   const [churchId, setChurchId] = useState<string | null>(null);
@@ -70,6 +80,7 @@ function AddChurchPage() {
   const [website, setWebsite] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [media, setMedia] = useState<MediaPreview[]>([]);
 
   const [cardName, setCardName] = useState("");
   const [cardNumber, setCardNumber] = useState("");
@@ -79,6 +90,9 @@ function AddChurchPage() {
   const [busy, setBusy] = useState(false);
   const [live, setLive] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const photoCount = media.filter((m) => m.kind === "image").length;
+  const hasVideo = media.some((m) => m.kind === "video");
 
   function pickPhoto(next: File | null) {
     if (next) {
@@ -91,6 +105,40 @@ function AddChurchPage() {
     setError(null);
     setFile(next);
     setPreview(next ? URL.createObjectURL(next) : null);
+  }
+
+  /** Extra photos and one short video for the church's own page. */
+  function addMedia(files: File[]) {
+    if (files.length === 0) return;
+    let photos = photoCount;
+    let video = hasVideo;
+    const accepted: File[] = [];
+    for (const f of files) {
+      if (f.type.startsWith("video/")) {
+        if (video) {
+          setError("You can add one video.");
+          continue;
+        }
+        if (f.size > MAX_VIDEO_BYTES) {
+          setError("That video is too large — please keep it under 50MB.");
+          continue;
+        }
+        video = true;
+        accepted.push(f);
+        continue;
+      }
+      if (photos >= MAX_PHOTOS) {
+        setError(`You can add up to ${MAX_PHOTOS} extra photos.`);
+        continue;
+      }
+      photos += 1;
+      accepted.push(f);
+    }
+    if (accepted.length > 0) setMedia((m) => [...m, ...toPreviews(accepted)]);
+  }
+
+  function removeMedia(url: string) {
+    setMedia((m) => m.filter((item) => item.url !== url));
   }
 
   async function submitDetails(e: React.FormEvent) {
@@ -123,11 +171,23 @@ function AddChurchPage() {
         }
       }
 
+      let gallery: { path: string; kind: "image" | "video" }[] = [];
+      if (media.length > 0) {
+        try {
+          gallery = await uploadMedia(media, "church");
+        } catch (err) {
+          setError(friendlyUploadError(err));
+          setBusy(false);
+          return;
+        }
+      }
+
       const payload = {
         name: name.trim(),
         description: description.trim(),
         iconId: iconId as "chapel" | "cross" | "hall" | "orthodox" | "dome" | "cathedral",
         avatarPath,
+        gallery,
         address: address.trim(),
         city: city.trim(),
         zip: zip.trim(),
@@ -226,6 +286,60 @@ function AddChurchPage() {
                 onChange={(e) => pickPhoto(e.target.files?.[0] ?? null)}
               />
             </div>
+
+            <div className="flex flex-col gap-3 rounded-2xl bg-ink-soft/60 p-4 ring-1 ring-mist/15">
+              <p className="text-base font-semibold text-sand sm:text-lg">
+                More photos and a video
+              </p>
+              <p className="text-base text-mist/60">
+                Add up to {MAX_PHOTOS} more photos and one short video (under 50MB) for your
+                church page.
+              </p>
+              {media.length > 0 && (
+                <div className="grid grid-cols-3 gap-2">
+                  {media.map((item) => (
+                    <div
+                      key={item.url}
+                      className="relative aspect-square overflow-hidden rounded-xl bg-ink ring-1 ring-mist/20"
+                    >
+                      {item.kind === "video" ? (
+                        <video src={item.url} className="size-full object-cover" muted />
+                      ) : (
+                        <img src={item.url} alt="" className="size-full object-cover" />
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => removeMedia(item.url)}
+                        aria-label="Remove this file"
+                        className="absolute right-1 top-1 grid size-7 place-items-center rounded-full bg-ink/80 text-sand ring-1 ring-mist/30"
+                      >
+                        <X className="size-4" aria-hidden="true" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <button
+                type="button"
+                onClick={() => mediaRef.current?.click()}
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-ink px-5 py-2.5 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+              >
+                <ImagePlus className="size-5" aria-hidden="true" />
+                Add photos or a video
+              </button>
+              <input
+                ref={mediaRef}
+                type="file"
+                accept="image/*,video/*"
+                multiple
+                className="hidden"
+                onChange={(e) => {
+                  addMedia(Array.from(e.target.files ?? []));
+                  e.target.value = "";
+                }}
+              />
+            </div>
+
 
             <label className="flex flex-col gap-2 text-base text-mist/80 sm:text-lg">
               Church name (shows under your icon on the map)

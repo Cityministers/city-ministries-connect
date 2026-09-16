@@ -223,6 +223,7 @@ export type Database = {
           created_at: string
           current_period_end: string | null
           description: string
+          gallery: Json
           icon_id: string
           id: string
           lat: number | null
@@ -244,6 +245,7 @@ export type Database = {
           created_at?: string
           current_period_end?: string | null
           description?: string
+          gallery?: Json
           icon_id?: string
           id?: string
           lat?: number | null
@@ -265,6 +267,7 @@ export type Database = {
           created_at?: string
           current_period_end?: string | null
           description?: string
+          gallery?: Json
           icon_id?: string
           id?: string
           lat?: number | null
