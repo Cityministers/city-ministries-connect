@@ -32,6 +32,9 @@ import {
 import { checkImageFile, friendlyUploadError, shrinkImage } from "@/lib/photo";
 
 export const Route = createFileRoute("/_authenticated/post-need")({
+  validateSearch: (search: Record<string, unknown>): { church?: string | undefined } => ({
+    church: typeof search["church"] === "string" ? search["church"] : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Post a need — City Ministers" },
