@@ -290,7 +290,10 @@ export const listChurchesNear = createServerFn({ method: "GET" })
 const churchInput = z.object({
   name: z.string().trim().min(2).max(60),
   description: z.string().trim().max(600).optional().default(""),
-  iconId: z.enum(["chapel", "cross", "hall"]).optional().default("chapel"),
+  iconId: z
+    .enum(["chapel", "cross", "hall", "orthodox", "dome", "cathedral"])
+    .optional()
+    .default("chapel"),
   avatarPath: z.string().trim().max(300).optional().default(""),
   address: z.string().trim().min(5).max(160),
   city: z.string().trim().min(2).max(80),
