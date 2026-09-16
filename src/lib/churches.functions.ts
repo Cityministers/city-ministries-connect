@@ -304,14 +304,37 @@ export const createChurch = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => churchInput.parse(data))
   .handler(async ({ data, context }): Promise<{ id: string; located: boolean }> => {
-    const { data: existing } = await context.supabase
+    // Their own church with the same name is the same church — a retry after a
+    // failed address lookup, not a duplicate. Someone else's church never blocks them.
+    const { data: mine } = await context.supabase
       .from("churches")
       .select("id")
+      .eq("owner_id", context.userId)
       .ilike("name", data.name)
       .eq("zip", data.zip)
+      .limit(1)
       .maybeSingle();
-    if (existing) {
-      throw new Error("A church with this name and ZIP code is already on the map.");
+    if (mine) {
+      const { geocodeAddress: locate } = await import("./geocode.server");
+      const spot = await locate(data.address, data.city, data.zip);
+      await context.supabase
+        .from("churches")
+        .update({
+          description: data.description,
+          icon_id: data.iconId,
+          avatar_url: data.avatarPath || null,
+          address: data.address,
+          city: data.city,
+          zip: data.zip,
+          service_times: data.serviceTimes,
+          phone: data.phone,
+          website: data.website,
+          lat: spot?.lat ?? null,
+          lng: spot?.lng ?? null,
+        })
+        .eq("id", mine.id)
+        .eq("owner_id", context.userId);
+      return { id: mine.id, located: Boolean(spot) };
     }
     const { data: row, error } = await context.supabase
       .from("churches")
