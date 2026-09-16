@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, Camera, ImagePlus, Loader2, MapPin, PartyPopper, UserCircle, X } from "lucide-react";
 import { useRef, useState } from "react";
+import { ChurchPicker } from "@/components/ChurchPicker";
 import { createUserMinistry } from "@/lib/ministries.functions";
 import { ministries, toneStyles } from "@/data/ministries";
 import { supabase } from "@/integrations/supabase/client";
@@ -373,6 +374,14 @@ function CreateMinistryPage() {
           <p className="text-center text-sm text-mist/60">
             You can visit your profile page anytime to edit, pause, or delete your post.
           </p>
+          {posted && (
+            <ChurchPicker
+              kind="ministry"
+              postId={posted.id}
+              city={city.trim()}
+              zip={zip.trim()}
+            />
+          )}
           <div className="mt-2 flex flex-col gap-3">
             <button
               type="button"

@@ -4,6 +4,7 @@ const footerLinks = [
   { to: "/ministry-mindset", label: "Ministry Mindset" },
   { to: "/about", label: "About Us" },
   { to: "/contact", label: "Contact" },
+  { to: "/add-church", label: "Add your Church" },
   { to: "/report-abuse", label: "Report Abuse" },
   { to: "/terms", label: "User Agreement" },
   { to: "/donate", label: "Donate" },

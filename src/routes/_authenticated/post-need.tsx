@@ -12,6 +12,7 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { ChurchPicker } from "@/components/ChurchPicker";
 import { createUserNeed } from "@/lib/needs.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { ministries, toneStyles } from "@/data/ministries";
@@ -510,6 +511,14 @@ function PostNeedPage() {
           <p className="text-center text-sm text-mist/60">
             You can visit your profile page anytime to edit, pause, or delete your post.
           </p>
+          {posted && (
+            <ChurchPicker
+              kind="need"
+              postId={posted.id}
+              city={city.trim()}
+              zip={zip.trim()}
+            />
+          )}
           <div className="mt-2 flex flex-col gap-3">
             <button
               type="button"

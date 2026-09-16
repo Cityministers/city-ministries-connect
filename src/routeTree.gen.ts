@@ -26,11 +26,13 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ShapeRouteImport } from './routes/shape'
 import { Route as StartRouteImport } from './routes/start'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as AuthenticatedAddChurchRouteImport } from './routes/_authenticated/add-church'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedCreateMinistryRouteImport } from './routes/_authenticated/create-ministry'
 import { Route as AuthenticatedPostNeedRouteImport } from './routes/_authenticated/post-need'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedWelcomeRouteImport } from './routes/_authenticated/welcome'
+import { Route as ChurchIdRouteImport } from './routes/church.$id'
 import { Route as GiftReferenceCodeRouteImport } from './routes/gift-reference.$code'
 import { Route as HowItWorksStepRouteImport } from './routes/how-it-works.$step'
 import { Route as AuthenticatedGiftsIndexRouteImport } from './routes/_authenticated/gifts.index'
@@ -122,6 +124,11 @@ const TermsRoute = TermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAddChurchRoute = AuthenticatedAddChurchRouteImport.update({
+  id: '/add-church',
+  path: '/add-church',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -147,6 +154,11 @@ const AuthenticatedWelcomeRoute = AuthenticatedWelcomeRouteImport.update({
   id: '/welcome',
   path: '/welcome',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const ChurchIdRoute = ChurchIdRouteImport.update({
+  id: '/church/$id',
+  path: '/church/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const GiftReferenceCodeRoute = GiftReferenceCodeRouteImport.update({
   id: '/gift-reference/$code',
@@ -198,11 +210,13 @@ export interface FileRoutesByFullPath {
   '/shape': typeof ShapeRoute
   '/start': typeof StartRoute
   '/terms': typeof TermsRoute
+  '/add-church': typeof AuthenticatedAddChurchRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/create-ministry': typeof AuthenticatedCreateMinistryRoute
   '/post-need': typeof AuthenticatedPostNeedRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/welcome': typeof AuthenticatedWelcomeRoute
+  '/church/$id': typeof ChurchIdRoute
   '/gift-reference/$code': typeof GiftReferenceCodeRoute
   '/how-it-works/$step': typeof HowItWorksStepRoute
   '/gifts/invite': typeof AuthenticatedGiftsInviteRoute
@@ -227,11 +241,13 @@ export interface FileRoutesByTo {
   '/shape': typeof ShapeRoute
   '/start': typeof StartRoute
   '/terms': typeof TermsRoute
+  '/add-church': typeof AuthenticatedAddChurchRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/create-ministry': typeof AuthenticatedCreateMinistryRoute
   '/post-need': typeof AuthenticatedPostNeedRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/welcome': typeof AuthenticatedWelcomeRoute
+  '/church/$id': typeof ChurchIdRoute
   '/gift-reference/$code': typeof GiftReferenceCodeRoute
   '/how-it-works/$step': typeof HowItWorksStepRoute
   '/gifts/invite': typeof AuthenticatedGiftsInviteRoute
@@ -258,11 +274,13 @@ export interface FileRoutesById {
   '/shape': typeof ShapeRoute
   '/start': typeof StartRoute
   '/terms': typeof TermsRoute
+  '/_authenticated/add-church': typeof AuthenticatedAddChurchRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/create-ministry': typeof AuthenticatedCreateMinistryRoute
   '/_authenticated/post-need': typeof AuthenticatedPostNeedRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/welcome': typeof AuthenticatedWelcomeRoute
+  '/church/$id': typeof ChurchIdRoute
   '/gift-reference/$code': typeof GiftReferenceCodeRoute
   '/how-it-works/$step': typeof HowItWorksStepRoute
   '/_authenticated/gifts/invite': typeof AuthenticatedGiftsInviteRoute
@@ -289,11 +307,13 @@ export interface FileRouteTypes {
     | '/shape'
     | '/start'
     | '/terms'
+    | '/add-church'
     | '/admin'
     | '/create-ministry'
     | '/post-need'
     | '/profile'
     | '/welcome'
+    | '/church/$id'
     | '/gift-reference/$code'
     | '/how-it-works/$step'
     | '/gifts/invite'
@@ -318,11 +338,13 @@ export interface FileRouteTypes {
     | '/shape'
     | '/start'
     | '/terms'
+    | '/add-church'
     | '/admin'
     | '/create-ministry'
     | '/post-need'
     | '/profile'
     | '/welcome'
+    | '/church/$id'
     | '/gift-reference/$code'
     | '/how-it-works/$step'
     | '/gifts/invite'
@@ -348,11 +370,13 @@ export interface FileRouteTypes {
     | '/shape'
     | '/start'
     | '/terms'
+    | '/_authenticated/add-church'
     | '/_authenticated/admin'
     | '/_authenticated/create-ministry'
     | '/_authenticated/post-need'
     | '/_authenticated/profile'
     | '/_authenticated/welcome'
+    | '/church/$id'
     | '/gift-reference/$code'
     | '/how-it-works/$step'
     | '/_authenticated/gifts/invite'
@@ -379,6 +403,7 @@ export interface RootRouteChildren {
   ShapeRoute: typeof ShapeRoute
   StartRoute: typeof StartRoute
   TermsRoute: typeof TermsRoute
+  ChurchIdRoute: typeof ChurchIdRoute
   GiftReferenceCodeRoute: typeof GiftReferenceCodeRoute
   HowItWorksStepRoute: typeof HowItWorksStepRoute
 }
@@ -504,6 +529,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/add-church': {
+      id: '/_authenticated/add-church'
+      path: '/add-church'
+      fullPath: '/add-church'
+      preLoaderRoute: typeof AuthenticatedAddChurchRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -538,6 +570,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/welcome'
       preLoaderRoute: typeof AuthenticatedWelcomeRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/church/$id': {
+      id: '/church/$id'
+      path: '/church/$id'
+      fullPath: '/church/$id'
+      preLoaderRoute: typeof ChurchIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/gift-reference/$code': {
       id: '/gift-reference/$code'
@@ -585,6 +624,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAddChurchRoute: typeof AuthenticatedAddChurchRoute
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedCreateMinistryRoute: typeof AuthenticatedCreateMinistryRoute
   AuthenticatedPostNeedRoute: typeof AuthenticatedPostNeedRoute
@@ -597,6 +637,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAddChurchRoute: AuthenticatedAddChurchRoute,
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedCreateMinistryRoute: AuthenticatedCreateMinistryRoute,
   AuthenticatedPostNeedRoute: AuthenticatedPostNeedRoute,
@@ -630,6 +671,7 @@ const rootRouteChildren: RootRouteChildren = {
   ShapeRoute: ShapeRoute,
   StartRoute: StartRoute,
   TermsRoute: TermsRoute,
+  ChurchIdRoute: ChurchIdRoute,
   GiftReferenceCodeRoute: GiftReferenceCodeRoute,
   HowItWorksStepRoute: HowItWorksStepRoute,
 }
