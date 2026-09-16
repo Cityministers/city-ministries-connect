@@ -411,31 +411,6 @@ function ChurchPage() {
                   </div>
                 )}
 
-                <div className="flex flex-col gap-3 rounded-xl bg-ink p-4 ring-1 ring-mist/15">
-                  <p className="inline-flex items-center gap-2 font-semibold text-sand">
-                    <QrCode className="size-5 text-lemon" aria-hidden="true" />
-                    Your QR code
-                  </p>
-                  <p className="text-sm text-mist/70">
-                    Put this on your overhead projector or bulletin — it opens this page.
-                  </p>
-                  {qr && (
-                    <>
-                      <img
-                        src={qr}
-                        alt={`QR code linking to ${church.name}`}
-                        className="size-40 self-start rounded-xl"
-                      />
-                      <a
-                        href={qr}
-                        download={`${church.name.replace(/\s+/g, "-").toLowerCase()}-qr.png`}
-                        className="self-start rounded-full bg-ink-soft px-5 py-2.5 text-base font-semibold text-sand ring-1 ring-mist/25"
-                      >
-                        Download QR code
-                      </a>
-                    </>
-                  )}
-                </div>
 
                 <div className="flex flex-col gap-3 rounded-xl bg-ink p-4 ring-1 ring-mist/15">
                   <p className="font-semibold text-sand">Requests waiting on you</p>
