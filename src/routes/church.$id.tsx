@@ -294,6 +294,32 @@ function ChurchPage() {
           </div>
         ) : (
           <div className="flex flex-col gap-6">
+            {church.gallery.length > 0 && (
+              <section className="flex flex-col gap-3 rounded-2xl bg-ink-soft p-5 ring-1 ring-mist/15">
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                  {church.gallery.map((item) =>
+                    item.kind === "video" ? (
+                      <video
+                        key={item.url}
+                        src={item.url}
+                        controls
+                        playsInline
+                        className="col-span-2 w-full rounded-xl bg-ink ring-1 ring-mist/20 sm:col-span-3"
+                      />
+                    ) : (
+                      <img
+                        key={item.url}
+                        src={item.url}
+                        alt={`${church.name}`}
+                        loading="lazy"
+                        className="aspect-square w-full rounded-xl object-cover ring-1 ring-mist/20"
+                      />
+                    ),
+                  )}
+                </div>
+              </section>
+            )}
+
             <section className="overflow-hidden rounded-2xl bg-ink-soft ring-1 ring-mist/15">
               {church.photoUrl && (
                 <img
@@ -415,32 +441,6 @@ function ChurchPage() {
               </div>
             </section>
 
-            {church.gallery.length > 0 && (
-              <section className="flex flex-col gap-3 rounded-2xl bg-ink-soft p-5 ring-1 ring-mist/15">
-                <h2 className="font-display text-xl font-semibold">Photos and video</h2>
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                  {church.gallery.map((item) =>
-                    item.kind === "video" ? (
-                      <video
-                        key={item.url}
-                        src={item.url}
-                        controls
-                        playsInline
-                        className="col-span-2 w-full rounded-xl bg-ink ring-1 ring-mist/20 sm:col-span-3"
-                      />
-                    ) : (
-                      <img
-                        key={item.url}
-                        src={item.url}
-                        alt={`${church.name}`}
-                        loading="lazy"
-                        className="aspect-square w-full rounded-xl object-cover ring-1 ring-mist/20"
-                      />
-                    ),
-                  )}
-                </div>
-              </section>
-            )}
 
 
             {!isOwner && (
