@@ -43,7 +43,10 @@ export function ChurchPicker({ kind, postId, city, zip }: Props) {
               onClick={() => {
                 setBusy(true);
                 void ask({ data: { churchId: c.id, kind, postId } })
-                  .then(() => setSent(c.id))
+                  .then((res) => {
+                    setSent(c.id);
+                    setListed(res?.status === "approved");
+                  })
                   .finally(() => setBusy(false));
               }}
               className={`flex w-full items-center justify-between gap-3 rounded-xl px-4 py-3 text-left text-base font-semibold transition disabled:opacity-70 ${
