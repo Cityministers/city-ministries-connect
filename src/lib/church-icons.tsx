@@ -1,5 +1,9 @@
 import { Church, Landmark, type LucideProps } from "lucide-react";
-import { forwardRef as reactForwardRef, type ComponentType } from "react";
+import {
+  createElement,
+  forwardRef as reactForwardRef,
+  type ComponentType,
+} from "react";
 
 /** Props every selectable church icon accepts (Lucide-compatible). */
 export type ChurchIconComponent = ComponentType<{
@@ -23,25 +27,25 @@ export const LatinCross = reactForwardRef<SVGSVGElement, LucideProps>(
     ref,
   ) {
     const numericSize = Number(size);
-    return (
-      <svg
-        ref={ref}
-        xmlns="http://www.w3.org/2000/svg"
-        width={size}
-        height={size}
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke={color}
-        strokeWidth={
-          absoluteStrokeWidth ? (Number(strokeWidth) * 24) / numericSize : strokeWidth
-        }
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        {...rest}
-      >
-        <path d="M12 3v18" />
-        <path d="M7 9h10" />
-      </svg>
+    return createElement(
+      "svg",
+      {
+        ref,
+        xmlns: "http://www.w3.org/2000/svg",
+        width: size,
+        height: size,
+        viewBox: "0 0 24 24",
+        fill: "none",
+        stroke: color,
+        strokeWidth: absoluteStrokeWidth
+          ? (Number(strokeWidth) * 24) / numericSize
+          : strokeWidth,
+        strokeLinecap: "round",
+        strokeLinejoin: "round",
+        ...rest,
+      },
+      createElement("path", { d: "M12 3v18" }),
+      createElement("path", { d: "M7 9h10" }),
     );
   },
 );
