@@ -782,7 +782,7 @@ export const listChurchMembers = createServerFn({ method: "POST" })
         id: r.id,
         userId: r.user_id,
         name: p?.display_name || "A neighbor",
-        photoUrl: raw ? (raw.startsWith("http") ? raw : (urlByPath[raw] ?? null)) : null,
+        photoUrl: raw ? (raw.startsWith("http") ? raw : (urlByPath.get(raw) ?? null)) : null,
         createdAt: r.created_at,
       };
     });
