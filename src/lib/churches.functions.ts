@@ -11,6 +11,7 @@ export type ChurchDTO = {
   description: string;
   iconId: string;
   photoUrl: string | null;
+  gallery: { url: string; kind: "image" | "video" }[];
   address: string;
   city: string;
   zip: string;
@@ -23,6 +24,19 @@ export type ChurchDTO = {
   planStatus: string;
   currentPeriodEnd: string | null;
 };
+
+type GalleryItem = { path: string; kind: "image" | "video" };
+
+function galleryPaths(raw: unknown): GalleryItem[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((g) => g as { path?: unknown; kind?: unknown })
+    .filter(
+      (g): g is GalleryItem =>
+        typeof g.path === "string" && (g.kind === "image" || g.kind === "video"),
+    )
+    .map((g) => ({ path: g.path, kind: g.kind }));
+}
 
 export type ChurchPostDTO = {
   linkId: string;
