@@ -340,9 +340,57 @@ function ChurchPage() {
               </div>
             </section>
 
+            <section className="flex flex-col gap-4 rounded-2xl bg-ink-soft p-5 ring-1 ring-mist/15 sm:flex-row sm:items-center">
+              <div className="grid size-48 shrink-0 place-items-center overflow-hidden rounded-2xl bg-white">
+                {qr ? (
+                  <img
+                    src={qr}
+                    alt={`QR code that opens the page for ${church.name}`}
+                    className="size-full object-contain p-2"
+                  />
+                ) : (
+                  <QrCode className="size-10 text-ink/30" aria-hidden="true" />
+                )}
+              </div>
+              <div className="flex min-w-0 flex-col gap-3">
+                <h2 className="inline-flex items-center gap-2 font-display text-xl font-semibold">
+                  <QrCode className="size-5 text-lemon" aria-hidden="true" />
+                  Scan to open this page
+                </h2>
+                <p className="text-base text-mist/75">
+                  Put this on your overhead, screen or bulletin. Anyone who scans it lands right
+                  here, on {church.name}'s page.
+                </p>
+                {pageUrl && (
+                  <p className="truncate rounded-lg bg-ink px-3 py-2 text-sm text-mist/70 ring-1 ring-mist/15">
+                    {pageUrl}
+                  </p>
+                )}
+                <div className="flex flex-wrap gap-2">
+                  {qr && (
+                    <a
+                      href={qr}
+                      download={`${church.name.replace(/\s+/g, "-").toLowerCase()}-qr.png`}
+                      className="rounded-full bg-lemon px-5 py-2.5 text-base font-semibold text-ink transition hover:opacity-90"
+                    >
+                      Download QR code
+                    </a>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => void copyLink()}
+                    className="rounded-full bg-ink px-5 py-2.5 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+                  >
+                    {copied ? "Link copied" : "Copy link"}
+                  </button>
+                </div>
+              </div>
+            </section>
+
             {isOwner && (
               <section className="flex flex-col gap-4 rounded-2xl bg-ink-soft/60 p-5 ring-1 ring-lemon/25">
                 <h2 className="font-display text-xl font-semibold">Church tools</h2>
+
 
                 {church.lat == null && (
                   <div className="rounded-xl bg-ink p-4 ring-1 ring-rose/30">
