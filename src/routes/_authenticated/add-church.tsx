@@ -169,7 +169,8 @@ function AddChurchPage() {
     setBusy(true);
     try {
       await pay({ data: { id: churchId, cardName: cardName.trim(), cardNumber: cardNumber.trim() } });
-      void navigate({ to: "/church/$id", params: { id: churchId } });
+      setBusy(false);
+      setLive(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
       setBusy(false);
