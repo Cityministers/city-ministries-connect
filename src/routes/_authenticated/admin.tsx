@@ -222,6 +222,29 @@ function AdminPage() {
                   ))
                 )}
               </section>
+            ) : tab === "churches" ? (
+              <section className="space-y-3">
+                {churches.isLoading ? (
+                  <p className="text-mist/70">Loading…</p>
+                ) : (churches.data?.length ?? 0) === 0 ? (
+                  <p className="text-mist/70">No churches have signed up yet.</p>
+                ) : (
+                  churches.data!.map((c) => (
+                    <ChurchCard
+                      key={c.id}
+                      church={c}
+                      pending={
+                        payMutation.isPending ||
+                        churchStatusMutation.isPending ||
+                        churchDeleteMutation.isPending
+                      }
+                      onPay={(months) => payMutation.mutate({ churchId: c.id, months })}
+                      onStatus={(status) => churchStatusMutation.mutate({ churchId: c.id, status })}
+                      onDelete={() => churchDeleteMutation.mutate({ churchId: c.id })}
+                    />
+                  ))
+                )}
+              </section>
             ) : tab === "feedback" ? (
               <section className="space-y-3">
                 {feedback.isLoading ? (
