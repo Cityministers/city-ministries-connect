@@ -88,9 +88,6 @@ function MapPage() {
     highlightId,
   );
   const active = all.find((m) => m.id === activeId);
-  // A freshly created post sits in the middle of the screen while it glows.
-  const spotlight = highlightId ? points.find((p) => p.id === highlightId) : undefined;
-  const mapCenter = spotlight ? { lat: spotlight.lat, lng: spotlight.lng } : center;
 
   // Churches share the map with posts; tapping one opens that church's page.
   const fetchChurches = useServerFn(listChurches);
