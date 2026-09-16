@@ -57,7 +57,7 @@ function MapPage() {
   const [location, setLocation] = useState(place ?? "Portland, OR 97209");
   const [activeId, setActiveId] = useState<string | null>(null);
   const [highlightId, setHighlightId] = useState<string | null>(
-    freshId ? `user-${freshId}` : null,
+    freshId ? (freshId.startsWith("church-") ? freshId : `user-${freshId}`) : null,
   );
   const session = useSession();
 
@@ -88,9 +88,6 @@ function MapPage() {
     highlightId,
   );
   const active = all.find((m) => m.id === activeId);
-  // A freshly created post sits in the middle of the screen while it glows.
-  const spotlight = highlightId ? points.find((p) => p.id === highlightId) : undefined;
-  const mapCenter = spotlight ? { lat: spotlight.lat, lng: spotlight.lng } : center;
 
   // Churches share the map with posts; tapping one opens that church's page.
   const fetchChurches = useServerFn(listChurches);
@@ -110,10 +107,15 @@ function MapPage() {
           color: CHURCH_PIN_COLOR,
           glyph: iconMarkup(churchIcon(c.iconId)),
           kind: "place" as const,
+          highlight: highlightId === `church-${c.id}`,
         })),
-    [churches],
+    [churches, highlightId],
   );
   const allPoints = useMemo(() => [...points, ...churchPoints], [points, churchPoints]);
+
+  // A freshly created post or church sits in the middle of the screen while it glows.
+  const spotlight = highlightId ? allPoints.find((p) => p.id === highlightId) : undefined;
+  const mapCenter = spotlight ? { lat: spotlight.lat, lng: spotlight.lng } : center;
 
   function selectPoint(id: string) {
     if (id.startsWith("church-")) {
