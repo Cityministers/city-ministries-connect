@@ -44,7 +44,7 @@ export function ChurchPicker({ kind, postId, city, zip, preferChurchId }: Props)
         Ask a church to list this on their page. They'll approve it first.
       </p>
       <ul className="mt-3 flex flex-col gap-2">
-        {churches.map((c) => (
+        {ordered.map((c) => (
           <li key={c.id}>
             <button
               type="button"
