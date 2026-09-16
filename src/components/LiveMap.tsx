@@ -96,10 +96,17 @@ type PinIcon = {
 };
 
 /** A fixed place (church) drawn so its tip rests on the exact address. */
-function placeIcon(glyph: string | undefined, title: string): PinIcon {
+function placeIcon(
+  glyph: string | undefined,
+  title: string,
+  highlight = false,
+  phase = 0,
+): PinIcon {
   const pin = placePinSvg(
     glyph ?? `<circle cx="11" cy="11" r="7" fill="none"/>`,
     title,
+    highlight,
+    phase,
   );
   return {
     url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(pin.svg)}`,
