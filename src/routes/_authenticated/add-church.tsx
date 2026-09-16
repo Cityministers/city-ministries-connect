@@ -458,6 +458,56 @@ function AddChurchPage() {
           </form>
         )}
       </main>
+
+      <Dialog open={live} onOpenChange={() => {}}>
+        <DialogContent className="border-ink-soft bg-ink-soft text-sand sm:rounded-2xl">
+          <DialogHeader className="text-center">
+            <div className="mx-auto mb-3 grid size-14 place-items-center rounded-full bg-lemon/15 text-lemon">
+              <PartyPopper className="size-7" aria-hidden="true" />
+            </div>
+            <DialogTitle className="font-display text-2xl font-semibold sm:text-3xl">
+              Congratulations!
+            </DialogTitle>
+          </DialogHeader>
+          <p className="text-center text-base text-mist/80 sm:text-lg">
+            <span className="font-semibold text-sand">“{name.trim()}”</span> is on the map.
+          </p>
+          <p className="text-center text-sm text-mist/60">
+            Your church page collects every ministry and need at your church, and your QR code is
+            waiting there.
+          </p>
+          <div className="mt-2 flex flex-col gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                if (!churchId) return;
+                void navigate({
+                  to: "/map",
+                  search: {
+                    place: [city.trim(), zip.trim()].filter(Boolean).join(" "),
+                    new: `church-${churchId}`,
+                  },
+                });
+              }}
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-lemon px-6 py-3.5 text-lg font-semibold text-ink transition-transform hover:-translate-y-0.5"
+            >
+              <MapPin className="size-5" aria-hidden="true" />
+              View my church on the map
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (!churchId) return;
+                void navigate({ to: "/church/$id", params: { id: churchId } });
+              }}
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-ink px-6 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/20 transition hover:bg-ink-soft"
+            >
+              <Church className="size-5" aria-hidden="true" />
+              Go to my church page
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
