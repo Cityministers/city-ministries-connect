@@ -59,6 +59,51 @@ export type Database = {
         }
         Relationships: []
       }
+      app_feedback: {
+        Row: {
+          additions: string
+          changes: string
+          created_at: string
+          design_rating: number | null
+          ease_rating: number | null
+          email: string
+          id: string
+          likes: string
+          overall_rating: number
+          speed_rating: number | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          additions?: string
+          changes?: string
+          created_at?: string
+          design_rating?: number | null
+          ease_rating?: number | null
+          email?: string
+          id?: string
+          likes?: string
+          overall_rating: number
+          speed_rating?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          additions?: string
+          changes?: string
+          created_at?: string
+          design_rating?: number | null
+          ease_rating?: number | null
+          email?: string
+          id?: string
+          likes?: string
+          overall_rating?: number
+          speed_rating?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       conversation_participants: {
         Row: {
           conversation_id: string

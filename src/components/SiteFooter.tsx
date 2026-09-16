@@ -7,6 +7,7 @@ const footerLinks = [
   { to: "/report-abuse", label: "Report Abuse" },
   { to: "/terms", label: "User Agreement" },
   { to: "/donate", label: "Donate" },
+  { to: "/feedback", label: "Feedback" },
 ] as const;
 
 export function SiteFooter() {
