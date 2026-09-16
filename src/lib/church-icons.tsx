@@ -1,5 +1,5 @@
-import { Church, Landmark, forwardRef, type ComponentType, type LucideProps } from "lucide-react";
-import { forwardRef as reactForwardRef } from "react";
+import { Church, Landmark, type LucideProps } from "lucide-react";
+import { forwardRef as reactForwardRef, type ComponentType } from "react";
 
 /** Props every selectable church icon accepts (Lucide-compatible). */
 export type ChurchIconComponent = ComponentType<{
