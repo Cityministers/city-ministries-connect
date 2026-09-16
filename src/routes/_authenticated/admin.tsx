@@ -90,6 +90,27 @@ function AdminPage() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "reports"] }),
   });
 
+  const fetchChurches = useServerFn(adminListChurches);
+  const recordPayment = useServerFn(adminRecordChurchPayment);
+  const setChurchStatus = useServerFn(adminSetChurchStatus);
+  const removeChurch = useServerFn(adminDeleteChurch);
+  const churches = useQuery({ queryKey: ["admin", "churches"], queryFn: () => fetchChurches() });
+  const refreshChurches = () => qc.invalidateQueries({ queryKey: ["admin", "churches"] });
+
+  const payMutation = useMutation({
+    mutationFn: (input: { churchId: string; months: number }) => recordPayment({ data: input }),
+    onSuccess: refreshChurches,
+  });
+  const churchStatusMutation = useMutation({
+    mutationFn: (input: { churchId: string; status: "active" | "inactive" }) =>
+      setChurchStatus({ data: input }),
+    onSuccess: refreshChurches,
+  });
+  const churchDeleteMutation = useMutation({
+    mutationFn: (input: { churchId: string }) => removeChurch({ data: input }),
+    onSuccess: refreshChurches,
+  });
+
   const blocked =
     needs.isError || reports.isError
       ? "This page is only for site admins."
