@@ -5,6 +5,8 @@ import { forwardRef as reactForwardRef, type ComponentType } from "react";
 export type ChurchIconComponent = ComponentType<{
   className?: string;
   size?: number | string;
+  width?: number | string;
+  height?: number | string;
   color?: string;
   strokeWidth?: number | string;
   absoluteStrokeWidth?: boolean;
