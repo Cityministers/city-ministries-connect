@@ -28,6 +28,7 @@ type CreateSearch = {
   city?: string | undefined;
   zip?: string | undefined;
   icon?: string | undefined;
+  church?: string | undefined;
 };
 
 export const Route = createFileRoute("/_authenticated/create-ministry")({
@@ -38,6 +39,7 @@ export const Route = createFileRoute("/_authenticated/create-ministry")({
     city: typeof search["city"] === "string" ? search["city"] : undefined,
     zip: typeof search["zip"] === "string" ? search["zip"] : undefined,
     icon: typeof search["icon"] === "string" ? search["icon"] : undefined,
+    church: typeof search["church"] === "string" ? search["church"] : undefined,
   }),
   head: () => ({
     meta: [
@@ -380,6 +382,7 @@ function CreateMinistryPage() {
               postId={posted.id}
               city={city.trim()}
               zip={zip.trim()}
+              preferChurchId={prefill.church}
             />
           )}
           <div className="mt-2 flex flex-col gap-3">

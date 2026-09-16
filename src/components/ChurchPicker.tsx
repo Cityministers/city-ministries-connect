@@ -9,10 +9,12 @@ type Props = {
   postId: string;
   city: string;
   zip: string;
+  /** Church the poster came from — shown first in the list. */
+  preferChurchId?: string | undefined;
 };
 
 /** Lets a poster ask a church to list their post on its page. */
-export function ChurchPicker({ kind, postId, city, zip }: Props) {
+export function ChurchPicker({ kind, postId, city, zip, preferChurchId }: Props) {
   const fetchChurches = useServerFn(listChurchesNear);
   const ask = useServerFn(requestChurchPost);
   const [sent, setSent] = useState<string | null>(null);
@@ -26,6 +28,12 @@ export function ChurchPicker({ kind, postId, city, zip }: Props) {
 
   if (!churches || churches.length === 0) return null;
 
+  const ordered = preferChurchId
+    ? [...churches].sort((a, b) =>
+        a.id === preferChurchId ? -1 : b.id === preferChurchId ? 1 : 0,
+      )
+    : churches;
+
   return (
     <div className="mt-4 rounded-xl bg-ink p-4 text-left ring-1 ring-mist/15">
       <p className="inline-flex items-center gap-2 font-semibold text-sand">
@@ -36,7 +44,7 @@ export function ChurchPicker({ kind, postId, city, zip }: Props) {
         Ask a church to list this on their page. They'll approve it first.
       </p>
       <ul className="mt-3 flex flex-col gap-2">
-        {churches.map((c) => (
+        {ordered.map((c) => (
           <li key={c.id}>
             <button
               type="button"

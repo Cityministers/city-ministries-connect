@@ -32,6 +32,9 @@ import {
 import { checkImageFile, friendlyUploadError, shrinkImage } from "@/lib/photo";
 
 export const Route = createFileRoute("/_authenticated/post-need")({
+  validateSearch: (search: Record<string, unknown>): { church?: string | undefined } => ({
+    church: typeof search["church"] === "string" ? search["church"] : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Post a need — City Ministers" },
@@ -54,6 +57,7 @@ export const Route = createFileRoute("/_authenticated/post-need")({
 
 function PostNeedPage() {
   const navigate = useNavigate();
+  const search = Route.useSearch();
   const create = useServerFn(createUserNeed);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -517,6 +521,7 @@ function PostNeedPage() {
               postId={posted.id}
               city={city.trim()}
               zip={zip.trim()}
+              preferChurchId={search.church}
             />
           )}
           <div className="mt-2 flex flex-col gap-3">
