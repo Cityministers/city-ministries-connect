@@ -13,6 +13,13 @@ import {
   type AdminReportDTO,
   type ReportStatus,
 } from "@/lib/moderation.functions";
+import {
+  adminListChurches,
+  adminRecordChurchPayment,
+  adminSetChurchStatus,
+  adminDeleteChurch,
+  type AdminChurchDTO,
+} from "@/lib/church-admin.functions";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -58,7 +65,7 @@ function Pill({ value }: { value: string }) {
 }
 
 function AdminPage() {
-  const [tab, setTab] = useState<"needs" | "reports" | "feedback">("needs");
+  const [tab, setTab] = useState<"needs" | "churches" | "reports" | "feedback">("needs");
   const qc = useQueryClient();
 
   const fetchNeeds = useServerFn(adminListNeeds);
@@ -81,6 +88,27 @@ function AdminPage() {
     mutationFn: (input: { id: string; status: ReportStatus; adminNotes: string }) =>
       updateReport({ data: input }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "reports"] }),
+  });
+
+  const fetchChurches = useServerFn(adminListChurches);
+  const recordPayment = useServerFn(adminRecordChurchPayment);
+  const setChurchStatus = useServerFn(adminSetChurchStatus);
+  const removeChurch = useServerFn(adminDeleteChurch);
+  const churches = useQuery({ queryKey: ["admin", "churches"], queryFn: () => fetchChurches() });
+  const refreshChurches = () => qc.invalidateQueries({ queryKey: ["admin", "churches"] });
+
+  const payMutation = useMutation({
+    mutationFn: (input: { churchId: string; months: number }) => recordPayment({ data: input }),
+    onSuccess: refreshChurches,
+  });
+  const churchStatusMutation = useMutation({
+    mutationFn: (input: { churchId: string; status: "active" | "inactive" }) =>
+      setChurchStatus({ data: input }),
+    onSuccess: refreshChurches,
+  });
+  const churchDeleteMutation = useMutation({
+    mutationFn: (input: { churchId: string }) => removeChurch({ data: input }),
+    onSuccess: refreshChurches,
   });
 
   const blocked =
@@ -111,8 +139,8 @@ function AdminPage() {
           </div>
         ) : (
           <>
-            <div className="mb-6 flex gap-2">
-              {(["needs", "reports", "feedback"] as const).map((t) => (
+            <div className="mb-6 flex flex-wrap gap-2">
+              {(["needs", "churches", "reports", "feedback"] as const).map((t) => (
                 <button
                   key={t}
                   type="button"
@@ -123,7 +151,13 @@ function AdminPage() {
                       : "bg-ink-soft/50 text-mist ring-1 ring-mist/20 hover:bg-ink-soft"
                   }`}
                 >
-                  {t === "needs" ? "Posted needs" : t === "reports" ? "Abuse reports" : "Feedback"}
+                  {t === "needs"
+                    ? "Posted needs"
+                    : t === "churches"
+                      ? "Churches"
+                      : t === "reports"
+                        ? "Abuse reports"
+                        : "Feedback"}
                   {t === "reports" && (reports.data?.filter((r) => r.status === "new").length ?? 0) > 0
                     ? ` (${reports.data?.filter((r) => r.status === "new").length})`
                     : ""}
@@ -185,6 +219,29 @@ function AdminPage() {
                         </button>
                       </div>
                     </article>
+                  ))
+                )}
+              </section>
+            ) : tab === "churches" ? (
+              <section className="space-y-3">
+                {churches.isLoading ? (
+                  <p className="text-mist/70">Loading…</p>
+                ) : (churches.data?.length ?? 0) === 0 ? (
+                  <p className="text-mist/70">No churches have signed up yet.</p>
+                ) : (
+                  churches.data!.map((c) => (
+                    <ChurchCard
+                      key={c.id}
+                      church={c}
+                      pending={
+                        payMutation.isPending ||
+                        churchStatusMutation.isPending ||
+                        churchDeleteMutation.isPending
+                      }
+                      onPay={(months) => payMutation.mutate({ churchId: c.id, months })}
+                      onStatus={(status) => churchStatusMutation.mutate({ churchId: c.id, status })}
+                      onDelete={() => churchDeleteMutation.mutate({ churchId: c.id })}
+                    />
                   ))
                 )}
               </section>
@@ -313,6 +370,151 @@ function ReportCard({
           Save
         </button>
       </div>
+    </article>
+  );
+}
+
+function money(cents: number) {
+  return `$${(cents / 100).toFixed(2)}`;
+}
+
+function ChurchCard({
+  church,
+  pending,
+  onPay,
+  onStatus,
+  onDelete,
+}: {
+  church: AdminChurchDTO;
+  pending: boolean;
+  onPay: (months: number) => void;
+  onStatus: (status: "active" | "inactive") => void;
+  onDelete: () => void;
+}) {
+  const [months, setMonths] = useState(1);
+  const [confirming, setConfirming] = useState(false);
+
+  const end = church.currentPeriodEnd ? new Date(church.currentPeriodEnd) : null;
+  const overdue = !end || end.getTime() < Date.now();
+  const state = church.status === "active" ? (overdue ? "past due" : "on the map") : "off the map";
+
+  return (
+    <article className="rounded-2xl bg-ink-soft/40 p-4 ring-1 ring-mist/15 sm:p-5">
+      <div className="flex flex-wrap items-center gap-2">
+        <h2 className="font-display text-lg font-semibold">{church.name}</h2>
+        <Pill value={state === "on the map" ? "active" : state === "past due" ? "hidden" : "removed"} />
+        {!church.located ? (
+          <span className="rounded-full bg-amber-500/15 px-2.5 py-1 text-xs font-semibold text-amber-300 ring-1 ring-amber-400/30">
+            address not found
+          </span>
+        ) : null}
+      </div>
+      <p className="mt-1 text-sm text-mist/70">
+        {church.ownerName}
+        {church.ownerEmail ? ` · ${church.ownerEmail}` : ""} ·{" "}
+        {[church.address, church.city, church.zip].filter(Boolean).join(", ") || "No address"}
+      </p>
+      <p className="mt-2 text-sm text-mist/80">
+        Paid through:{" "}
+        <span className={overdue ? "font-semibold text-rose" : "font-semibold text-sand"}>
+          {end ? end.toLocaleDateString() : "never paid"}
+        </span>{" "}
+        · Total paid {money(church.paidCents)} · Joined{" "}
+        {new Date(church.createdAt).toLocaleDateString()}
+      </p>
+
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <select
+          value={months}
+          onChange={(e) => setMonths(Number(e.target.value))}
+          aria-label="Months to add"
+          className="rounded-xl bg-ink px-3 py-2 text-sm text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
+        >
+          {[1, 3, 6, 12].map((m) => (
+            <option key={m} value={m}>
+              {m} month{m === 1 ? "" : "s"} · {money(4900 * m)}
+            </option>
+          ))}
+        </select>
+        <button
+          type="button"
+          disabled={pending}
+          onClick={() => onPay(months)}
+          className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-4 py-2 text-sm font-semibold text-emerald-300 ring-1 ring-emerald-400/30 transition hover:bg-emerald-500/25 disabled:opacity-40"
+        >
+          <Check className="size-4" aria-hidden="true" /> Record payment
+        </button>
+        {church.status === "active" ? (
+          <button
+            type="button"
+            disabled={pending}
+            onClick={() => onStatus("inactive")}
+            className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/15 px-4 py-2 text-sm font-semibold text-amber-300 ring-1 ring-amber-400/30 transition hover:bg-amber-500/25 disabled:opacity-40"
+          >
+            <EyeOff className="size-4" aria-hidden="true" /> Take off the map
+          </button>
+        ) : (
+          <button
+            type="button"
+            disabled={pending}
+            onClick={() => onStatus("active")}
+            className="inline-flex items-center gap-1.5 rounded-full bg-lemon/15 px-4 py-2 text-sm font-semibold text-lemon ring-1 ring-lemon/30 transition hover:bg-lemon/25 disabled:opacity-40"
+          >
+            <Check className="size-4" aria-hidden="true" /> Put on the map
+          </button>
+        )}
+        <Link
+          to="/church/$id"
+          params={{ id: church.id }}
+          className="rounded-full bg-ink-soft/60 px-4 py-2 text-sm font-semibold text-mist ring-1 ring-mist/20 transition hover:bg-ink-soft"
+        >
+          Open page
+        </Link>
+      </div>
+
+      {confirming ? (
+        <div className="mt-4 rounded-2xl bg-rose/10 p-4 ring-1 ring-rose/30">
+          <p className="text-sm text-sand">
+            Delete this church for good? Its page, posts links and payment records go with it.
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button
+              type="button"
+              disabled={pending}
+              onClick={onDelete}
+              className="rounded-full bg-rose/20 px-4 py-2 text-sm font-semibold text-rose ring-1 ring-rose/40 transition hover:bg-rose/30 disabled:opacity-40"
+            >
+              Yes, delete it
+            </button>
+            <button
+              type="button"
+              onClick={() => setConfirming(false)}
+              className="rounded-full bg-ink-soft/60 px-4 py-2 text-sm font-semibold text-mist ring-1 ring-mist/20 transition hover:bg-ink-soft"
+            >
+              Keep it
+            </button>
+          </div>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => setConfirming(true)}
+          className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-rose/80 transition hover:text-rose"
+        >
+          <Trash2 className="size-3.5" aria-hidden="true" /> Delete church
+        </button>
+      )}
+
+      {church.payments.length > 0 ? (
+        <ul className="mt-4 space-y-1 border-t border-mist/10 pt-3 text-xs text-mist/70">
+          {church.payments.map((p) => (
+            <li key={p.id}>
+              {new Date(p.createdAt).toLocaleDateString()} · {money(p.amountCents)} ·{" "}
+              {p.isMock ? "test checkout" : "recorded by admin"}
+            </li>
+          ))}
+        </ul>
+      ) : null}
     </article>
   );
 }
