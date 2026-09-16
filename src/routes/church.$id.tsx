@@ -113,6 +113,12 @@ function ChurchPage() {
   const [pageUrl, setPageUrl] = useState("");
   const [copied, setCopied] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+
+  const shareTitle = church ? `${church.name} on City Ministers` : "City Ministers";
+  const encodedUrl = encodeURIComponent(pageUrl);
+  const encodedText = encodeURIComponent(shareTitle);
+  const canNativeShare = typeof navigator !== "undefined" && "share" in navigator;
+
   useEffect(() => {
     if (typeof window === "undefined" || !church) return;
     let alive = true;
