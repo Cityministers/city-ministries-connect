@@ -110,8 +110,9 @@ function MapPage() {
           color: CHURCH_PIN_COLOR,
           glyph: iconMarkup(churchIcon(c.iconId)),
           kind: "place" as const,
+          highlight: highlightId === `church-${c.id}`,
         })),
-    [churches],
+    [churches, highlightId],
   );
   const allPoints = useMemo(() => [...points, ...churchPoints], [points, churchPoints]);
 
