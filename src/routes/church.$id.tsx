@@ -148,6 +148,14 @@ function ChurchPage() {
     }
   }
 
+  async function nativeShare() {
+    try {
+      await navigator.share({ title: shareTitle, url: pageUrl });
+    } catch {
+      // Visitor cancelled the share sheet — nothing to do.
+    }
+  }
+
   const [editing, setEditing] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
