@@ -252,7 +252,7 @@ export function LiveMap({
       for (const p of points) {
         const icon =
           p.kind === "place"
-            ? placeIcon(p.glyph, p.title)
+            ? placeIcon(p.glyph, p.title, Boolean(p.highlight), phase)
             : pinIcon(
                 p.color,
                 Boolean(p.owned),
