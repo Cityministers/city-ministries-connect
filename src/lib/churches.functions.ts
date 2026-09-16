@@ -85,10 +85,11 @@ type ChurchRow = {
   status: string;
   plan_status: string;
   current_period_end: string | null;
+  gallery: unknown;
 };
 
 const CHURCH_COLUMNS =
-  "id, owner_id, name, description, icon_id, avatar_url, address, city, zip, lat, lng, service_times, phone, website, status, plan_status, current_period_end";
+  "id, owner_id, name, description, icon_id, avatar_url, address, city, zip, lat, lng, service_times, phone, website, status, plan_status, current_period_end, gallery";
 
 async function signPaths(paths: string[]): Promise<Map<string, string>> {
   const urlByPath = new Map<string, string>();
