@@ -292,3 +292,43 @@ export const adminUpdateReport = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+export type AdminFeedbackDTO = {
+  id: string;
+  overall: number;
+  ease: number | null;
+  design: number | null;
+  speed: number | null;
+  likes: string;
+  changes: string;
+  additions: string;
+  email: string;
+  createdAt: string;
+};
+
+export const adminListFeedback = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<AdminFeedbackDTO[]> => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows, error } = await supabaseAdmin
+      .from("app_feedback")
+      .select(
+        "id, overall_rating, ease_rating, design_rating, speed_rating, likes, changes, additions, email, created_at",
+      )
+      .order("created_at", { ascending: false })
+      .limit(200);
+    if (error) throw new Error(error.message);
+    return (rows ?? []).map((r: any) => ({
+      id: r.id,
+      overall: r.overall_rating ?? 0,
+      ease: r.ease_rating,
+      design: r.design_rating,
+      speed: r.speed_rating,
+      likes: r.likes ?? "",
+      changes: r.changes ?? "",
+      additions: r.additions ?? "",
+      email: r.email ?? "",
+      createdAt: r.created_at,
+    }));
+  });
