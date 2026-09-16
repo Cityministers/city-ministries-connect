@@ -77,6 +77,7 @@ function AddChurchPage() {
   const [cvc, setCvc] = useState("");
 
   const [busy, setBusy] = useState(false);
+  const [live, setLive] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   function pickPhoto(next: File | null) {
