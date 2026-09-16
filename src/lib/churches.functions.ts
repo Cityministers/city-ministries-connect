@@ -498,32 +498,42 @@ export const requestChurchPost = createServerFn({ method: "POST" })
       })
       .parse(data),
   )
-  .handler(async ({ data, context }) => {
+  .handler(async ({ data, context }): Promise<{ ok: true; status: "approved" | "pending" }> => {
+    const { data: trusted } = await context.supabase
+      .from("church_members")
+      .select("id")
+      .eq("church_id", data.churchId)
+      .eq("user_id", context.userId)
+      .maybeSingle();
+    const status = trusted ? "approved" : "pending";
+
     const { error } = await context.supabase.from("church_posts").insert({
       church_id: data.churchId,
       post_type: data.kind,
       post_id: data.postId,
       requested_by: context.userId,
-      status: "pending",
+      status,
     });
     if (error && !error.message.includes("duplicate")) throw new Error(error.message);
 
-    const { data: church } = await context.supabase
-      .from("churches")
-      .select("owner_id, name")
-      .eq("id", data.churchId)
-      .maybeSingle();
-    if (church) {
-      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      await supabaseAdmin.from("notifications").insert({
-        user_id: church.owner_id,
-        kind: "church_request",
-        title: "A neighbor wants to list a post at your church",
-        body: `Open your church page to approve or decline it.`,
-        link: `/church/${data.churchId}`,
-      });
+    if (status === "pending") {
+      const { data: church } = await context.supabase
+        .from("churches")
+        .select("owner_id, name")
+        .eq("id", data.churchId)
+        .maybeSingle();
+      if (church) {
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        await supabaseAdmin.from("notifications").insert({
+          user_id: church.owner_id,
+          kind: "church_request",
+          title: "A neighbor wants to list a post at your church",
+          body: `Open your church board to approve or decline it.`,
+          link: `/church-board/${data.churchId}`,
+        });
+      }
     }
-    return { ok: true };
+    return { ok: true, status };
   });
 
 /** The requests waiting on a church owner. */
