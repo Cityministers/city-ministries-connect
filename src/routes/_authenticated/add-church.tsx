@@ -126,7 +126,7 @@ function AddChurchPage() {
       const payload = {
         name: name.trim(),
         description: description.trim(),
-        iconId: iconId as "chapel" | "cross" | "hall",
+        iconId: iconId as "chapel" | "cross" | "hall" | "orthodox" | "dome" | "cathedral",
         avatarPath,
         address: address.trim(),
         city: city.trim(),
