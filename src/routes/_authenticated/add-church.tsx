@@ -79,6 +79,7 @@ function AddChurchPage() {
   const [website, setWebsite] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [media, setMedia] = useState<MediaPreview[]>([]);
 
   const [cardName, setCardName] = useState("");
   const [cardNumber, setCardNumber] = useState("");
@@ -88,6 +89,9 @@ function AddChurchPage() {
   const [busy, setBusy] = useState(false);
   const [live, setLive] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const photoCount = media.filter((m) => m.kind === "image").length;
+  const hasVideo = media.some((m) => m.kind === "video");
 
   function pickPhoto(next: File | null) {
     if (next) {
@@ -100,6 +104,40 @@ function AddChurchPage() {
     setError(null);
     setFile(next);
     setPreview(next ? URL.createObjectURL(next) : null);
+  }
+
+  /** Extra photos and one short video for the church's own page. */
+  function addMedia(files: File[]) {
+    if (files.length === 0) return;
+    let photos = photoCount;
+    let video = hasVideo;
+    const accepted: File[] = [];
+    for (const f of files) {
+      if (f.type.startsWith("video/")) {
+        if (video) {
+          setError("You can add one video.");
+          continue;
+        }
+        if (f.size > MAX_VIDEO_BYTES) {
+          setError("That video is too large — please keep it under 50MB.");
+          continue;
+        }
+        video = true;
+        accepted.push(f);
+        continue;
+      }
+      if (photos >= MAX_PHOTOS) {
+        setError(`You can add up to ${MAX_PHOTOS} extra photos.`);
+        continue;
+      }
+      photos += 1;
+      accepted.push(f);
+    }
+    if (accepted.length > 0) setMedia((m) => [...m, ...toPreviews(accepted)]);
+  }
+
+  function removeMedia(url: string) {
+    setMedia((m) => m.filter((item) => item.url !== url));
   }
 
   async function submitDetails(e: React.FormEvent) {
