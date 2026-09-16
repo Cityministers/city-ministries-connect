@@ -170,11 +170,23 @@ function AddChurchPage() {
         }
       }
 
+      let gallery: { path: string; kind: "image" | "video" }[] = [];
+      if (media.length > 0) {
+        try {
+          gallery = await uploadMedia(media, "church");
+        } catch (err) {
+          setError(friendlyUploadError(err));
+          setBusy(false);
+          return;
+        }
+      }
+
       const payload = {
         name: name.trim(),
         description: description.trim(),
         iconId: iconId as "chapel" | "cross" | "hall" | "orthodox" | "dome" | "cathedral",
         avatarPath,
+        gallery,
         address: address.trim(),
         city: city.trim(),
         zip: zip.trim(),
