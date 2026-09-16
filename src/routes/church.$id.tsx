@@ -110,6 +110,7 @@ function ChurchPage() {
   const [qr, setQr] = useState<string | null>(null);
   const [pageUrl, setPageUrl] = useState("");
   const [copied, setCopied] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   useEffect(() => {
     if (typeof window === "undefined" || !church) return;
     let alive = true;
