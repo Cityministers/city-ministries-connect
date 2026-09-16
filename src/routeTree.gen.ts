@@ -32,6 +32,7 @@ import { Route as AuthenticatedCreateMinistryRouteImport } from './routes/_authe
 import { Route as AuthenticatedPostNeedRouteImport } from './routes/_authenticated/post-need'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedWelcomeRouteImport } from './routes/_authenticated/welcome'
+import { Route as ChurchIdRouteImport } from './routes/church.$id'
 import { Route as GiftReferenceCodeRouteImport } from './routes/gift-reference.$code'
 import { Route as HowItWorksStepRouteImport } from './routes/how-it-works.$step'
 import { Route as AuthenticatedGiftsIndexRouteImport } from './routes/_authenticated/gifts.index'
@@ -154,6 +155,11 @@ const AuthenticatedWelcomeRoute = AuthenticatedWelcomeRouteImport.update({
   path: '/welcome',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ChurchIdRoute = ChurchIdRouteImport.update({
+  id: '/church/$id',
+  path: '/church/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GiftReferenceCodeRoute = GiftReferenceCodeRouteImport.update({
   id: '/gift-reference/$code',
   path: '/gift-reference/$code',
@@ -210,6 +216,7 @@ export interface FileRoutesByFullPath {
   '/post-need': typeof AuthenticatedPostNeedRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/welcome': typeof AuthenticatedWelcomeRoute
+  '/church/$id': typeof ChurchIdRoute
   '/gift-reference/$code': typeof GiftReferenceCodeRoute
   '/how-it-works/$step': typeof HowItWorksStepRoute
   '/gifts/invite': typeof AuthenticatedGiftsInviteRoute
@@ -240,6 +247,7 @@ export interface FileRoutesByTo {
   '/post-need': typeof AuthenticatedPostNeedRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/welcome': typeof AuthenticatedWelcomeRoute
+  '/church/$id': typeof ChurchIdRoute
   '/gift-reference/$code': typeof GiftReferenceCodeRoute
   '/how-it-works/$step': typeof HowItWorksStepRoute
   '/gifts/invite': typeof AuthenticatedGiftsInviteRoute
@@ -272,6 +280,7 @@ export interface FileRoutesById {
   '/_authenticated/post-need': typeof AuthenticatedPostNeedRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/welcome': typeof AuthenticatedWelcomeRoute
+  '/church/$id': typeof ChurchIdRoute
   '/gift-reference/$code': typeof GiftReferenceCodeRoute
   '/how-it-works/$step': typeof HowItWorksStepRoute
   '/_authenticated/gifts/invite': typeof AuthenticatedGiftsInviteRoute
@@ -304,6 +313,7 @@ export interface FileRouteTypes {
     | '/post-need'
     | '/profile'
     | '/welcome'
+    | '/church/$id'
     | '/gift-reference/$code'
     | '/how-it-works/$step'
     | '/gifts/invite'
@@ -334,6 +344,7 @@ export interface FileRouteTypes {
     | '/post-need'
     | '/profile'
     | '/welcome'
+    | '/church/$id'
     | '/gift-reference/$code'
     | '/how-it-works/$step'
     | '/gifts/invite'
@@ -365,6 +376,7 @@ export interface FileRouteTypes {
     | '/_authenticated/post-need'
     | '/_authenticated/profile'
     | '/_authenticated/welcome'
+    | '/church/$id'
     | '/gift-reference/$code'
     | '/how-it-works/$step'
     | '/_authenticated/gifts/invite'
@@ -391,6 +403,7 @@ export interface RootRouteChildren {
   ShapeRoute: typeof ShapeRoute
   StartRoute: typeof StartRoute
   TermsRoute: typeof TermsRoute
+  ChurchIdRoute: typeof ChurchIdRoute
   GiftReferenceCodeRoute: typeof GiftReferenceCodeRoute
   HowItWorksStepRoute: typeof HowItWorksStepRoute
 }
@@ -558,6 +571,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWelcomeRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/church/$id': {
+      id: '/church/$id'
+      path: '/church/$id'
+      fullPath: '/church/$id'
+      preLoaderRoute: typeof ChurchIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/gift-reference/$code': {
       id: '/gift-reference/$code'
       path: '/gift-reference/$code'
@@ -651,6 +671,7 @@ const rootRouteChildren: RootRouteChildren = {
   ShapeRoute: ShapeRoute,
   StartRoute: StartRoute,
   TermsRoute: TermsRoute,
+  ChurchIdRoute: ChurchIdRoute,
   GiftReferenceCodeRoute: GiftReferenceCodeRoute,
   HowItWorksStepRoute: HowItWorksStepRoute,
 }
