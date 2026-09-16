@@ -11,6 +11,7 @@ import {
   Phone,
   QrCode,
   Settings2,
+  Share2,
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -462,13 +463,6 @@ function ChurchPage() {
                   >
                     Post your need here
                   </Link>
-                  <button
-                    type="button"
-                    onClick={() => void copyLink()}
-                    className="rounded-full bg-ink px-5 py-2.5 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
-                  >
-                    {copied ? "Link copied" : "Copy link"}
-                  </button>
                 </div>
               </section>
             )}
