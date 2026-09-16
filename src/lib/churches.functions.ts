@@ -169,7 +169,10 @@ export const getChurch = createServerFn({ method: "GET" })
         .maybeSingle();
       if (!row) return { church: null, posts: [], nearby: [] };
       const church = row as ChurchRow;
-      const urlByPath = await signPaths(church.avatar_url ? [church.avatar_url] : []);
+      const urlByPath = await signPaths([
+        ...(church.avatar_url ? [church.avatar_url] : []),
+        ...galleryPaths(church.gallery).map((g) => g.path),
+      ]);
 
       const { data: links } = await supabase
         .from("church_posts")
