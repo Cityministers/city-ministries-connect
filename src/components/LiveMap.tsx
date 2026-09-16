@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { placePinSvg } from "@/lib/place-pin";
 
 export type MapPoint = {
   id: string;
@@ -11,6 +12,8 @@ export type MapPoint = {
   glyph?: string;
   owned?: boolean;
   highlight?: boolean;
+  /** "place" pins sit on an exact street address (churches) instead of a post's area. */
+  kind?: "post" | "place";
 };
 
 export type MapBounds = { north: number; south: number; east: number; west: number };
@@ -91,6 +94,19 @@ type PinIcon = {
   scaledSize: google.maps.Size;
   anchor: google.maps.Point;
 };
+
+/** A fixed place (church) drawn so its tip rests on the exact address. */
+function placeIcon(glyph: string | undefined, title: string): PinIcon {
+  const pin = placePinSvg(
+    glyph ?? `<circle cx="11" cy="11" r="7" fill="none"/>`,
+    title,
+  );
+  return {
+    url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(pin.svg)}`,
+    scaledSize: new window.google.maps.Size(pin.width * pin.scale, pin.height * pin.scale),
+    anchor: new window.google.maps.Point(pin.anchorX * pin.scale, pin.anchorY * pin.scale),
+  };
+}
 
 function pinIcon(
   color: string,
@@ -227,16 +243,24 @@ export function LiveMap({
         }
       }
       for (const p of points) {
-        const icon = pinIcon(
-          p.color,
-          Boolean(p.owned),
-          Boolean(p.highlight),
-          p.glyph,
-          p.title,
-          phase,
-        );
+        const icon =
+          p.kind === "place"
+            ? placeIcon(p.glyph, p.title)
+            : pinIcon(
+                p.color,
+                Boolean(p.owned),
+                Boolean(p.highlight),
+                p.glyph,
+                p.title,
+                phase,
+              );
         // A highlighted post always sits above its neighbours until it is dismissed.
-        const zIndex = p.highlight ? 100000 : Math.round(1000 - p.lat * 10);
+        // Churches are landmarks, so they stay above ordinary post pins.
+        const zIndex = p.highlight
+          ? 100000
+          : p.kind === "place"
+            ? 50000 + Math.round(1000 - p.lat * 10)
+            : Math.round(1000 - p.lat * 10);
         const existing = markers.current.get(p.id);
         if (existing) {
           existing.setPosition({ lat: p.lat, lng: p.lng });

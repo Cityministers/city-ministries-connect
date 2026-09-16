@@ -123,6 +123,7 @@ function NeedsPage() {
           title: c.name,
           color: CHURCH_PIN_COLOR,
           glyph: iconMarkup(churchIcon(c.iconId)),
+          kind: "place" as const,
         })),
     ],
     [points, churches],

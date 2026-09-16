@@ -3,8 +3,10 @@ import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, Camera, CreditCard, Loader2, ShieldCheck } from "lucide-react";
 import { useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { CHURCH_ICONS } from "@/lib/church-icons";
-import { createChurch, mockSubscribe } from "@/lib/churches.functions";
+import { CHURCH_ICONS, churchIcon } from "@/lib/church-icons";
+import { createChurch, mockSubscribe, updateChurch } from "@/lib/churches.functions";
+import { iconMarkup } from "@/lib/map-icon";
+import { placePinDataUrl } from "@/lib/place-pin";
 import { checkImageFile, friendlyUploadError, shrinkImage } from "@/lib/photo";
 
 export const Route = createFileRoute("/_authenticated/add-church")({
@@ -34,11 +36,13 @@ const inputClass =
 function AddChurchPage() {
   const navigate = useNavigate();
   const create = useServerFn(createChurch);
+  const save = useServerFn(updateChurch);
   const pay = useServerFn(mockSubscribe);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [step, setStep] = useState<"details" | "checkout">("details");
   const [churchId, setChurchId] = useState<string | null>(null);
+  const [found, setFound] = useState<string | null>(null);
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -78,6 +82,8 @@ function AddChurchPage() {
     setError(null);
     if (name.trim().length < 2) return setError("Add your church's name.");
     if (city.trim().length < 2) return setError("Add the city your church is in.");
+    if (address.trim().length < 5)
+      return setError("Add your street address — your icon sits on that exact spot.");
 
     setBusy(true);
     try {
@@ -101,21 +107,33 @@ function AddChurchPage() {
         }
       }
 
-      const result = await create({
-        data: {
-          name: name.trim(),
-          description: description.trim(),
-          iconId: iconId as "chapel" | "cross" | "hall",
-          avatarPath,
-          address: address.trim(),
-          city: city.trim(),
-          zip: zip.trim(),
-          serviceTimes: serviceTimes.trim(),
-          phone: phone.trim(),
-          website: website.trim(),
-        },
-      });
+      const payload = {
+        name: name.trim(),
+        description: description.trim(),
+        iconId: iconId as "chapel" | "cross" | "hall",
+        avatarPath,
+        address: address.trim(),
+        city: city.trim(),
+        zip: zip.trim(),
+        serviceTimes: serviceTimes.trim(),
+        phone: phone.trim(),
+        website: website.trim(),
+      };
+
+      // Saved once already? Then this is a corrected address, not a second church.
+      const result = churchId
+        ? { id: churchId, ...(await save({ data: { id: churchId, ...payload } })) }
+        : await create({ data: payload });
+
       setChurchId(result.id);
+      if (!result.located) {
+        setFound(null);
+        setError(
+          "We couldn't find that street address. Check the street, city and ZIP — your icon needs an exact address to sit on the map.",
+        );
+        return;
+      }
+      setFound([address.trim(), city.trim(), zip.trim()].filter(Boolean).join(", "));
       setStep("checkout");
       window.scrollTo({ top: 0 });
     } catch (err) {
@@ -227,6 +245,16 @@ function AddChurchPage() {
                   );
                 })}
               </div>
+              <div className="mt-2 flex flex-col items-center gap-1 rounded-xl bg-ink/70 px-3 py-4 ring-1 ring-mist/10">
+                <img
+                  src={placePinDataUrl(iconMarkup(churchIcon(iconId)), name.trim() || "Your church")}
+                  alt="How your church will look on the map"
+                  className="h-24 w-auto"
+                />
+                <p className="text-sm text-mist/70">
+                  This sits on your exact street address.
+                </p>
+              </div>
             </div>
 
             <label className="flex flex-col gap-2 text-base text-mist/80 sm:text-lg">
@@ -248,7 +276,11 @@ function AddChurchPage() {
                 onChange={(e) => setAddress(e.target.value)}
                 maxLength={160}
                 placeholder="1420 SW Oak St"
+                required
               />
+              <span className="text-sm text-mist/60">
+                Your icon is placed on this exact spot, so write it the way mail arrives.
+              </span>
             </label>
 
             <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-3">
@@ -323,7 +355,7 @@ function AddChurchPage() {
               className="mt-1 inline-flex items-center justify-center gap-2 rounded-full bg-lemon px-6 py-4 text-xl font-semibold text-ink transition hover:opacity-90 disabled:opacity-60 sm:text-2xl"
             >
               {busy && <Loader2 className="size-5 animate-spin" aria-hidden="true" />}
-              Continue to checkout
+              {churchId ? "Try this address" : "Continue to checkout"}
             </button>
             <p className="text-center text-base text-mist/60">
               $49 per month keeps your church on the map.
@@ -338,6 +370,11 @@ function AddChurchPage() {
               <p className="mt-1 text-base text-mist/70 sm:text-lg">
                 Church listing — $49.00 per month, cancel any time.
               </p>
+              {found && (
+                <p className="mt-2 text-base text-sand/90">
+                  Found on the map: <span className="text-lemon">{found}</span>
+                </p>
+              )}
               <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-lemon/10 px-3 py-1.5 text-sm font-semibold text-lemon ring-1 ring-lemon/30">
                 <ShieldCheck className="size-4" aria-hidden="true" />
                 Test checkout — no card is charged

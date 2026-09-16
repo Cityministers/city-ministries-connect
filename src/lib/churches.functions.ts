@@ -112,26 +112,7 @@ function toChurch(row: ChurchRow, urlByPath: Map<string, string>): ChurchDTO {
   };
 }
 
-/** Puts churches that were never geocoded onto the map, same as ministry posts. */
-async function placeChurches(rows: ChurchRow[]) {
-  const unplaced = rows.filter((r) => r.lat == null || r.lng == null);
-  if (unplaced.length === 0) return;
-  const { geocodePlaces, placeKey } = await import("./geocode.server");
-  const found = await geocodePlaces(unplaced.map((r) => ({ city: r.city, zip: r.zip })));
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  for (const r of unplaced) {
-    const point = found.get(placeKey(r.city, r.zip));
-    if (!point) continue;
-    r.lat = point.lat;
-    r.lng = point.lng;
-    await supabaseAdmin
-      .from("churches")
-      .update({ lat: point.lat, lng: point.lng })
-      .eq("id", r.id);
-  }
-}
-
-/** Active churches for the map. */
+/** Active churches for the map, placed on their exact street address. */
 export const listChurches = createServerFn({ method: "GET" }).handler(
   async (): Promise<ChurchDTO[]> => {
     const supabase = publicClient();
@@ -139,10 +120,11 @@ export const listChurches = createServerFn({ method: "GET" }).handler(
       .from("churches")
       .select(CHURCH_COLUMNS)
       .eq("status", "active")
+      .not("lat", "is", null)
+      .not("lng", "is", null)
       .limit(200);
     if (error || !data) return [];
     const rows = data as ChurchRow[];
-    await placeChurches(rows);
     const urlByPath = await signPaths(
       rows.map((r) => r.avatar_url).filter((p): p is string => Boolean(p)),
     );
@@ -310,7 +292,7 @@ const churchInput = z.object({
   description: z.string().trim().max(600).optional().default(""),
   iconId: z.enum(["chapel", "cross", "hall"]).optional().default("chapel"),
   avatarPath: z.string().trim().max(300).optional().default(""),
-  address: z.string().trim().max(160).optional().default(""),
+  address: z.string().trim().min(5).max(160),
   city: z.string().trim().min(2).max(80),
   zip: z.string().trim().max(10).optional().default(""),
   serviceTimes: z.string().trim().max(200).optional().default(""),
@@ -321,7 +303,7 @@ const churchInput = z.object({
 export const createChurch = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => churchInput.parse(data))
-  .handler(async ({ data, context }): Promise<{ id: string }> => {
+  .handler(async ({ data, context }): Promise<{ id: string; located: boolean }> => {
     const { data: existing } = await context.supabase
       .from("churches")
       .select("id")
@@ -351,7 +333,18 @@ export const createChurch = createServerFn({ method: "POST" })
       .select("id")
       .single();
     if (error) throw new Error(error.message);
-    return { id: row.id };
+
+    // Churches are real buildings, so we place them on their exact address.
+    const { geocodeAddress } = await import("./geocode.server");
+    const point = await geocodeAddress(data.address, data.city, data.zip);
+    if (point) {
+      await context.supabase
+        .from("churches")
+        .update({ lat: point.lat, lng: point.lng })
+        .eq("id", row.id)
+        .eq("owner_id", context.userId);
+    }
+    return { id: row.id, located: Boolean(point) };
   });
 
 export const updateChurch = createServerFn({ method: "POST" })
@@ -359,7 +352,11 @@ export const updateChurch = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) =>
     churchInput.extend({ id: z.string().uuid() }).parse(data),
   )
-  .handler(async ({ data, context }) => {
+  .handler(async ({ data, context }): Promise<{ ok: true; located: boolean }> => {
+    // An edited address is looked up again so the pin follows the building.
+    const { geocodeAddress } = await import("./geocode.server");
+    const point = await geocodeAddress(data.address, data.city, data.zip);
+
     const { error } = await context.supabase
       .from("churches")
       .update({
@@ -373,13 +370,37 @@ export const updateChurch = createServerFn({ method: "POST" })
         service_times: data.serviceTimes,
         phone: data.phone,
         website: data.website,
-        lat: null,
-        lng: null,
+        lat: point?.lat ?? null,
+        lng: point?.lng ?? null,
       })
       .eq("id", data.id)
       .eq("owner_id", context.userId);
     if (error) throw new Error(error.message);
-    return { ok: true };
+    return { ok: true, located: Boolean(point) };
+  });
+
+/** Runs the address lookup again for a church that couldn't be placed. */
+export const relocateChurch = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({ id: z.string().uuid() }).parse(data))
+  .handler(async ({ data, context }): Promise<{ located: boolean }> => {
+    const { data: church } = await context.supabase
+      .from("churches")
+      .select("owner_id, address, city, zip")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (!church || church.owner_id !== context.userId) return { located: false };
+
+    const { geocodeAddress } = await import("./geocode.server");
+    const point = await geocodeAddress(church.address ?? "", church.city ?? "", church.zip ?? "");
+    if (!point) return { located: false };
+
+    await context.supabase
+      .from("churches")
+      .update({ lat: point.lat, lng: point.lng })
+      .eq("id", data.id)
+      .eq("owner_id", context.userId);
+    return { located: true };
   });
 
 export const deleteChurch = createServerFn({ method: "POST" })
