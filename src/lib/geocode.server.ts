@@ -13,6 +13,46 @@ function addressOf(city: string, zip: string): string {
   return [city?.trim(), zip?.trim()].filter(Boolean).join(" ").trim();
 }
 
+/** Free, keyless fallbacks so a post always lands on the map. */
+async function callFallback(city: string, zip: string): Promise<LatLng | null> {
+  const clean = (zip ?? "").trim().match(/\b\d{5}\b/)?.[0] ?? "";
+  if (clean) {
+    try {
+      const res = await fetch(`https://api.zippopotam.us/us/${clean}`);
+      if (res.ok) {
+        const body = (await res.json()) as { places?: { latitude: string; longitude: string }[] };
+        const p = body.places?.[0];
+        if (p) {
+          const lat = Number(p.latitude);
+          const lng = Number(p.longitude);
+          if (Number.isFinite(lat) && Number.isFinite(lng)) return { lat, lng };
+        }
+      }
+    } catch (err) {
+      console.error("ZIP lookup failed", err);
+    }
+  }
+
+  const text = addressOf(city, zip);
+  if (!text) return null;
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=us&q=${encodeURIComponent(text)}`,
+      { headers: { "User-Agent": "CityMinisters/1.0 (map geocoding)" } },
+    );
+    if (!res.ok) return null;
+    const body = (await res.json()) as { lat?: string; lon?: string }[];
+    const hit = body[0];
+    if (!hit?.lat || !hit?.lon) return null;
+    const lat = Number(hit.lat);
+    const lng = Number(hit.lon);
+    return Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null;
+  } catch (err) {
+    console.error("Place lookup failed", err);
+    return null;
+  }
+}
+
 async function callGoogle(address: string): Promise<LatLng | null> {
   const lovableKey = process.env["LOVABLE_API_KEY"];
   const connectionKey = process.env["GOOGLE_MAPS_API_KEY"];
@@ -58,10 +98,11 @@ export async function geocodePlaces(
     .from("geo_cache")
     .select("place_key, lat, lng")
     .in("place_key", keys);
+  // Only a cached hit counts — a blank row means an earlier lookup failed, so we retry it.
   const seen = new Set<string>();
   for (const row of cached ?? []) {
-    seen.add(row.place_key);
     if (typeof row.lat === "number" && typeof row.lng === "number") {
+      seen.add(row.place_key);
       out.set(row.place_key, { lat: row.lat, lng: row.lng });
     }
   }
@@ -69,18 +110,21 @@ export async function geocodePlaces(
   const missing = keys.filter((k) => !seen.has(k)).slice(0, 25);
   for (const key of missing) {
     const place = wanted.get(key)!;
-    const found = await callGoogle(addressOf(place.city, place.zip));
+    const found =
+      (await callGoogle(addressOf(place.city, place.zip))) ??
+      (await callFallback(place.city ?? "", place.zip ?? ""));
+    if (!found) continue;
     await supabaseAdmin.from("geo_cache").upsert(
       {
         place_key: key,
         city: place.city ?? "",
         zip: place.zip ?? "",
-        lat: found?.lat ?? null,
-        lng: found?.lng ?? null,
+        lat: found.lat,
+        lng: found.lng,
       },
       { onConflict: "place_key" },
     );
-    if (found) out.set(key, found);
+    out.set(key, found);
   }
 
   return out;
