@@ -139,8 +139,8 @@ function AdminPage() {
           </div>
         ) : (
           <>
-            <div className="mb-6 flex gap-2">
-              {(["needs", "reports", "feedback"] as const).map((t) => (
+            <div className="mb-6 flex flex-wrap gap-2">
+              {(["needs", "churches", "reports", "feedback"] as const).map((t) => (
                 <button
                   key={t}
                   type="button"
@@ -151,7 +151,13 @@ function AdminPage() {
                       : "bg-ink-soft/50 text-mist ring-1 ring-mist/20 hover:bg-ink-soft"
                   }`}
                 >
-                  {t === "needs" ? "Posted needs" : t === "reports" ? "Abuse reports" : "Feedback"}
+                  {t === "needs"
+                    ? "Posted needs"
+                    : t === "churches"
+                      ? "Churches"
+                      : t === "reports"
+                        ? "Abuse reports"
+                        : "Feedback"}
                   {t === "reports" && (reports.data?.filter((r) => r.status === "new").length ?? 0) > 0
                     ? ` (${reports.data?.filter((r) => r.status === "new").length})`
                     : ""}
