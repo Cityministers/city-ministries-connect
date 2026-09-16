@@ -98,10 +98,11 @@ export async function geocodePlaces(
     .from("geo_cache")
     .select("place_key, lat, lng")
     .in("place_key", keys);
+  // Only a cached hit counts — a blank row means an earlier lookup failed, so we retry it.
   const seen = new Set<string>();
   for (const row of cached ?? []) {
-    seen.add(row.place_key);
     if (typeof row.lat === "number" && typeof row.lng === "number") {
+      seen.add(row.place_key);
       out.set(row.place_key, { lat: row.lat, lng: row.lng });
     }
   }
@@ -109,18 +110,21 @@ export async function geocodePlaces(
   const missing = keys.filter((k) => !seen.has(k)).slice(0, 25);
   for (const key of missing) {
     const place = wanted.get(key)!;
-    const found = await callGoogle(addressOf(place.city, place.zip));
+    const found =
+      (await callGoogle(addressOf(place.city, place.zip))) ??
+      (await callFallback(place.city ?? "", place.zip ?? ""));
+    if (!found) continue;
     await supabaseAdmin.from("geo_cache").upsert(
       {
         place_key: key,
         city: place.city ?? "",
         zip: place.zip ?? "",
-        lat: found?.lat ?? null,
-        lng: found?.lng ?? null,
+        lat: found.lat,
+        lng: found.lng,
       },
       { onConflict: "place_key" },
     );
-    if (found) out.set(key, found);
+    out.set(key, found);
   }
 
   return out;
