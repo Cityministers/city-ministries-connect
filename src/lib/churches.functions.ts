@@ -113,6 +113,9 @@ function toChurch(row: ChurchRow, urlByPath: Map<string, string>): ChurchDTO {
     description: row.description,
     iconId: row.icon_id,
     photoUrl: row.avatar_url ? (urlByPath.get(row.avatar_url) ?? null) : null,
+    gallery: galleryPaths(row.gallery)
+      .map((g) => ({ url: urlByPath.get(g.path) ?? "", kind: g.kind }))
+      .filter((g) => g.url.length > 0),
     address: row.address,
     city: row.city,
     zip: row.zip,
