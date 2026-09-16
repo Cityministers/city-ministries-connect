@@ -13,6 +13,46 @@ function addressOf(city: string, zip: string): string {
   return [city?.trim(), zip?.trim()].filter(Boolean).join(" ").trim();
 }
 
+/** Free, keyless fallbacks so a post always lands on the map. */
+async function callFallback(city: string, zip: string): Promise<LatLng | null> {
+  const clean = (zip ?? "").trim().match(/\b\d{5}\b/)?.[0] ?? "";
+  if (clean) {
+    try {
+      const res = await fetch(`https://api.zippopotam.us/us/${clean}`);
+      if (res.ok) {
+        const body = (await res.json()) as { places?: { latitude: string; longitude: string }[] };
+        const p = body.places?.[0];
+        if (p) {
+          const lat = Number(p.latitude);
+          const lng = Number(p.longitude);
+          if (Number.isFinite(lat) && Number.isFinite(lng)) return { lat, lng };
+        }
+      }
+    } catch (err) {
+      console.error("ZIP lookup failed", err);
+    }
+  }
+
+  const text = addressOf(city, zip);
+  if (!text) return null;
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=us&q=${encodeURIComponent(text)}`,
+      { headers: { "User-Agent": "CityMinisters/1.0 (map geocoding)" } },
+    );
+    if (!res.ok) return null;
+    const body = (await res.json()) as { lat?: string; lon?: string }[];
+    const hit = body[0];
+    if (!hit?.lat || !hit?.lon) return null;
+    const lat = Number(hit.lat);
+    const lng = Number(hit.lon);
+    return Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null;
+  } catch (err) {
+    console.error("Place lookup failed", err);
+    return null;
+  }
+}
+
 async function callGoogle(address: string): Promise<LatLng | null> {
   const lovableKey = process.env["LOVABLE_API_KEY"];
   const connectionKey = process.env["GOOGLE_MAPS_API_KEY"];
