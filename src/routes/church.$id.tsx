@@ -754,8 +754,6 @@ function ChurchPage() {
           </div>
         )}
       </main>
-
-      <SiteFooter />
     </div>
   );
 }
