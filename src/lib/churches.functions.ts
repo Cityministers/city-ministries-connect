@@ -322,6 +322,16 @@ const churchInput = z.object({
   serviceTimes: z.string().trim().max(200).optional().default(""),
   phone: z.string().trim().max(40).optional().default(""),
   website: z.string().trim().max(200).optional().default(""),
+  gallery: z
+    .array(
+      z.object({
+        path: z.string().trim().min(1).max(300),
+        kind: z.enum(["image", "video"]),
+      }),
+    )
+    .max(8)
+    .optional()
+    .default([]),
 });
 
 export const createChurch = createServerFn({ method: "POST" })
