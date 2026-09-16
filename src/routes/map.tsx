@@ -92,6 +92,37 @@ function MapPage() {
   const spotlight = highlightId ? points.find((p) => p.id === highlightId) : undefined;
   const mapCenter = spotlight ? { lat: spotlight.lat, lng: spotlight.lng } : center;
 
+  // Churches share the map with posts; tapping one opens that church's page.
+  const fetchChurches = useServerFn(listChurches);
+  const { data: churches } = useQuery({
+    queryKey: ["churches"],
+    queryFn: () => fetchChurches(),
+  });
+  const churchPoints = useMemo(
+    () =>
+      (churches ?? [])
+        .filter((c) => c.lat != null && c.lng != null)
+        .map((c) => ({
+          id: `church-${c.id}`,
+          lat: c.lat as number,
+          lng: c.lng as number,
+          title: c.name,
+          color: CHURCH_PIN_COLOR,
+          glyph: iconMarkup(churchIcon(c.iconId)),
+        })),
+    [churches],
+  );
+  const allPoints = useMemo(() => [...points, ...churchPoints], [points, churchPoints]);
+
+  function selectPoint(id: string) {
+    if (id.startsWith("church-")) {
+      void navigate({ to: "/church/$id", params: { id: id.slice("church-".length) } });
+      return;
+    }
+    setActiveId(id);
+    if (id !== highlightId) setHighlightId(null);
+  }
+
 
   return (
     <div className="flex min-h-dvh flex-col bg-ink font-body text-sand antialiased">
