@@ -13,6 +13,13 @@ import {
   type AdminReportDTO,
   type ReportStatus,
 } from "@/lib/moderation.functions";
+import {
+  adminListChurches,
+  adminRecordChurchPayment,
+  adminSetChurchStatus,
+  adminDeleteChurch,
+  type AdminChurchDTO,
+} from "@/lib/church-admin.functions";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
