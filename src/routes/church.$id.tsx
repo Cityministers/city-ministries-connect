@@ -353,6 +353,62 @@ function ChurchPage() {
                     </li>
                   )}
                 </ul>
+                <button
+                  type="button"
+                  onClick={() => (canNativeShare ? void nativeShare() : setShareOpen((v) => !v))}
+                  className="mt-1 inline-flex w-fit items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+                >
+                  <Share2 className="size-4 text-lemon" aria-hidden="true" />
+                  Share
+                </button>
+                {shareOpen && (
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => void copyLink()}
+                      className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+                    >
+                      {copied ? "Link copied" : "Copy link"}
+                    </button>
+                    <a
+                      href={`mailto:?subject=${encodedText}&body=${encodedUrl}`}
+                      className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+                    >
+                      Email
+                    </a>
+                    <a
+                      href={`sms:?&body=${encodedText}%20${encodedUrl}`}
+                      className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+                    >
+                      Text message
+                    </a>
+                    <a
+                      href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+                    >
+                      Facebook
+                    </a>
+                    <a
+                      href={`https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedText}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+                    >
+                      X
+                    </a>
+                    {canNativeShare && (
+                      <button
+                        type="button"
+                        onClick={() => void nativeShare()}
+                        className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+                      >
+                        More…
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
             </section>
 
