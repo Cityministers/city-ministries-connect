@@ -65,7 +65,7 @@ function Pill({ value }: { value: string }) {
 }
 
 function AdminPage() {
-  const [tab, setTab] = useState<"needs" | "reports" | "feedback">("needs");
+  const [tab, setTab] = useState<"needs" | "churches" | "reports" | "feedback">("needs");
   const qc = useQueryClient();
 
   const fetchNeeds = useServerFn(adminListNeeds);
