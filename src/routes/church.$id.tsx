@@ -461,43 +461,22 @@ function ChurchPage() {
 
 
                 <div className="flex flex-col gap-3 rounded-xl bg-ink p-4 ring-1 ring-mist/15">
-                  <p className="font-semibold text-sand">Requests waiting on you</p>
-                  {(requests ?? []).length === 0 ? (
-                    <p className="text-sm text-mist/60">No one is waiting right now.</p>
-                  ) : (
-                    <ul className="flex flex-col gap-2">
-                      {(requests ?? []).map((r) => (
-                        <li
-                          key={r.linkId}
-                          className="flex flex-col gap-2 rounded-xl bg-ink-soft p-3 ring-1 ring-mist/10"
-                        >
-                          <span className="font-heading text-lg text-sand">{r.title}</span>
-                          <span className="line-clamp-2 text-sm text-mist/70">{r.description}</span>
-                          <span className="text-xs text-mist/50">
-                            {r.kind === "ministry" ? "Ministry" : "Need"} · {r.posterName}
-                          </span>
-                          <span className="flex gap-2">
-                            <button
-                              type="button"
-                              onClick={() => void respond(r.linkId, "approved")}
-                              className="inline-flex items-center gap-1.5 rounded-full bg-tone-emerald/15 px-4 py-2 text-sm font-semibold text-tone-emerald ring-1 ring-tone-emerald/45"
-                            >
-                              <Check className="size-4" aria-hidden="true" />
-                              Approve
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => void respond(r.linkId, "declined")}
-                              className="inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-2 text-sm font-semibold text-rose ring-1 ring-rose/35"
-                            >
-                              <X className="size-4" aria-hidden="true" />
-                              Decline
-                            </button>
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+                  <p className="font-semibold text-sand">Your church board</p>
+                  <p className="text-sm text-mist/60">
+                    {(requests ?? []).length === 0
+                      ? "No one is waiting right now."
+                      : `${(requests ?? []).length} ${
+                          (requests ?? []).length === 1 ? "post is" : "posts are"
+                        } waiting for your approval.`}
+                  </p>
+                  <Link
+                    to="/church-board/$id"
+                    params={{ id }}
+                    className="inline-flex w-fit items-center gap-1.5 rounded-full bg-lemon px-5 py-2.5 text-sm font-semibold text-ink"
+                  >
+                    <Check className="size-4" aria-hidden="true" />
+                    Review requests
+                  </Link>
                 </div>
 
                 {editing ? (
