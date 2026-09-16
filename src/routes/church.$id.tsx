@@ -23,6 +23,7 @@ import {
   getChurch,
   listChurchRequests,
   mockSubscribe,
+  relocateChurch,
   setChurchPostStatus,
   updateChurch,
   type ChurchPostDTO,
@@ -90,6 +91,7 @@ function ChurchPage() {
   const decide = useServerFn(setChurchPostStatus);
   const save = useServerFn(updateChurch);
   const pay = useServerFn(mockSubscribe);
+  const relocate = useServerFn(relocateChurch);
 
   const { data, isLoading } = useQuery({
     queryKey: ["church", id],
@@ -187,6 +189,24 @@ function ChurchPage() {
       await pay({ data: { id, cardName: cardName.trim(), cardNumber: cardNumber.trim() } });
       await queryClient.invalidateQueries({ queryKey: ["church", id] });
       setPayOpen(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function tryAddressAgain() {
+    setBusy(true);
+    setError(null);
+    try {
+      const result = await relocate({ data: { id } });
+      if (!result.located) {
+        setError(
+          "We still couldn't find that street address. Open Edit details and correct it, then try again.",
+        );
+      }
+      await queryClient.invalidateQueries({ queryKey: ["church", id] });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
@@ -307,6 +327,28 @@ function ChurchPage() {
             {isOwner && (
               <section className="flex flex-col gap-4 rounded-2xl bg-ink-soft/60 p-5 ring-1 ring-lemon/25">
                 <h2 className="font-display text-xl font-semibold">Church tools</h2>
+
+                {church.lat == null && (
+                  <div className="rounded-xl bg-ink p-4 ring-1 ring-rose/30">
+                    <p className="text-base text-mist/80">
+                      We couldn't find{" "}
+                      <span className="text-sand">
+                        {[church.address, church.city, church.zip].filter(Boolean).join(", ")}
+                      </span>
+                      , so your icon isn't on the map yet. Correct the address below, then try
+                      again. Your page, link and QR code still work.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => void tryAddressAgain()}
+                      disabled={busy}
+                      className="mt-3 inline-flex items-center justify-center rounded-full bg-lemon px-5 py-2.5 text-base font-semibold text-ink transition hover:opacity-90 disabled:opacity-60"
+                    >
+                      Try again
+                    </button>
+                  </div>
+                )}
+
 
                 {church.status !== "active" && (
                   <div className="rounded-xl bg-ink p-4 ring-1 ring-rose/30">

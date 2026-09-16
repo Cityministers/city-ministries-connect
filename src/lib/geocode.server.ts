@@ -130,6 +130,64 @@ export async function geocodePlaces(
   return out;
 }
 
+/**
+ * Exact street-address lookup for fixed places like churches.
+ * No ZIP-code fallback: if the building can't be found we return null so the
+ * owner is asked to correct the address rather than being dropped in the
+ * middle of a ZIP code.
+ */
+export async function geocodeAddress(
+  address: string,
+  city: string,
+  zip: string,
+): Promise<LatLng | null> {
+  const street = (address ?? "").trim();
+  if (street.length < 4) return null;
+  const full = [street, (city ?? "").trim(), (zip ?? "").trim()].filter(Boolean).join(", ");
+  const key = `addr|${full.toLowerCase()}`;
+
+  const { data: cached } = await supabaseAdmin
+    .from("geo_cache")
+    .select("lat, lng")
+    .eq("place_key", key)
+    .maybeSingle();
+  if (cached && typeof cached.lat === "number" && typeof cached.lng === "number") {
+    return { lat: cached.lat, lng: cached.lng };
+  }
+
+  let found = await callGoogle(full);
+  if (!found) {
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=us&q=${encodeURIComponent(full)}`,
+        { headers: { "User-Agent": "CityMinisters/1.0 (map geocoding)" } },
+      );
+      if (res.ok) {
+        const body = (await res.json()) as { lat?: string; lon?: string }[];
+        const hit = body[0];
+        const lat = Number(hit?.lat);
+        const lng = Number(hit?.lon);
+        if (Number.isFinite(lat) && Number.isFinite(lng)) found = { lat, lng };
+      }
+    } catch (err) {
+      console.error("Address lookup failed", err);
+    }
+  }
+  if (!found) return null;
+
+  await supabaseAdmin.from("geo_cache").upsert(
+    {
+      place_key: key,
+      city: (city ?? "").trim(),
+      zip: (zip ?? "").trim(),
+      lat: found.lat,
+      lng: found.lng,
+    },
+    { onConflict: "place_key" },
+  );
+  return found;
+}
+
 /** Free-text place lookup ("Beaverton, OR" or "97006"), cached the same way. */
 export async function geocodeQuery(query: string): Promise<LatLng | null> {
   const q = String(query ?? "").trim().slice(0, 120);
