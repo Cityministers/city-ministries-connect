@@ -9,6 +9,7 @@ import {
   adminListReports,
   adminSetNeedStatus,
   adminUpdateReport,
+  adminListFeedback,
   type AdminReportDTO,
   type ReportStatus,
 } from "@/lib/moderation.functions";
@@ -57,16 +58,18 @@ function Pill({ value }: { value: string }) {
 }
 
 function AdminPage() {
-  const [tab, setTab] = useState<"needs" | "reports">("needs");
+  const [tab, setTab] = useState<"needs" | "reports" | "feedback">("needs");
   const qc = useQueryClient();
 
   const fetchNeeds = useServerFn(adminListNeeds);
   const fetchReports = useServerFn(adminListReports);
   const setNeedStatus = useServerFn(adminSetNeedStatus);
   const updateReport = useServerFn(adminUpdateReport);
+  const fetchFeedback = useServerFn(adminListFeedback);
 
   const needs = useQuery({ queryKey: ["admin", "needs"], queryFn: () => fetchNeeds() });
   const reports = useQuery({ queryKey: ["admin", "reports"], queryFn: () => fetchReports() });
+  const feedback = useQuery({ queryKey: ["admin", "feedback"], queryFn: () => fetchFeedback() });
 
   const needMutation = useMutation({
     mutationFn: (input: { id: string; status: "active" | "hidden" | "removed" }) =>
@@ -109,7 +112,7 @@ function AdminPage() {
         ) : (
           <>
             <div className="mb-6 flex gap-2">
-              {(["needs", "reports"] as const).map((t) => (
+              {(["needs", "reports", "feedback"] as const).map((t) => (
                 <button
                   key={t}
                   type="button"
@@ -120,7 +123,7 @@ function AdminPage() {
                       : "bg-ink-soft/50 text-mist ring-1 ring-mist/20 hover:bg-ink-soft"
                   }`}
                 >
-                  {t === "needs" ? "Posted needs" : "Abuse reports"}
+                  {t === "needs" ? "Posted needs" : t === "reports" ? "Abuse reports" : "Feedback"}
                   {t === "reports" && (reports.data?.filter((r) => r.status === "new").length ?? 0) > 0
                     ? ` (${reports.data?.filter((r) => r.status === "new").length})`
                     : ""}
@@ -181,6 +184,52 @@ function AdminPage() {
                           <Trash2 className="size-4" aria-hidden="true" /> Remove
                         </button>
                       </div>
+                    </article>
+                  ))
+                )}
+              </section>
+            ) : tab === "feedback" ? (
+              <section className="space-y-3">
+                {feedback.isLoading ? (
+                  <p className="text-mist/70">Loading…</p>
+                ) : (feedback.data?.length ?? 0) === 0 ? (
+                  <p className="text-mist/70">No feedback has been sent yet.</p>
+                ) : (
+                  feedback.data!.map((f) => (
+                    <article
+                      key={f.id}
+                      className="rounded-2xl bg-ink-soft/40 p-4 ring-1 ring-mist/15 sm:p-5"
+                    >
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="rounded-full bg-lemon/15 px-2.5 py-1 text-xs font-semibold text-lemon ring-1 ring-lemon/30">
+                          {f.overall}/5 overall
+                        </span>
+                        <span className="text-sm text-mist/70">
+                          {new Date(f.createdAt).toLocaleString()}
+                        </span>
+                      </div>
+                      <p className="mt-2 text-sm text-mist/70">
+                        Ease {f.ease ?? "—"}/5 · Look {f.design ?? "—"}/5 · Speed {f.speed ?? "—"}/5
+                        {f.email ? ` · ${f.email}` : ""}
+                      </p>
+                      {f.likes ? (
+                        <p className="mt-3 text-sm leading-relaxed text-mist/80">
+                          <span className="font-semibold text-sand">Likes: </span>
+                          {f.likes}
+                        </p>
+                      ) : null}
+                      {f.changes ? (
+                        <p className="mt-2 text-sm leading-relaxed text-mist/80">
+                          <span className="font-semibold text-sand">Would change: </span>
+                          {f.changes}
+                        </p>
+                      ) : null}
+                      {f.additions ? (
+                        <p className="mt-2 text-sm leading-relaxed text-mist/80">
+                          <span className="font-semibold text-sand">Should add: </span>
+                          {f.additions}
+                        </p>
+                      ) : null}
                     </article>
                   ))
                 )}
