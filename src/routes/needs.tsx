@@ -101,9 +101,6 @@ function NeedsPage() {
     highlightId,
   );
   const active = all.find((m) => m.id === activeId);
-  // A freshly created need sits in the middle of the screen while it glows.
-  const spotlight = highlightId ? points.find((p) => p.id === highlightId) : undefined;
-  const mapCenter = spotlight ? { lat: spotlight.lat, lng: spotlight.lng } : center;
 
   // Churches share the map with needs; tapping one opens that church's page.
   const fetchChurches = useServerFn(listChurches);
@@ -124,10 +121,15 @@ function NeedsPage() {
           color: CHURCH_PIN_COLOR,
           glyph: iconMarkup(churchIcon(c.iconId)),
           kind: "place" as const,
+          highlight: highlightId === `church-${c.id}`,
         })),
     ],
-    [points, churches],
+    [points, churches, highlightId],
   );
+
+  // A freshly created need or church sits in the middle of the screen while it glows.
+  const spotlight = highlightId ? allPoints.find((p) => p.id === highlightId) : undefined;
+  const mapCenter = spotlight ? { lat: spotlight.lat, lng: spotlight.lng } : center;
 
   function selectPoint(id: string) {
     if (id.startsWith("church-")) {
