@@ -57,6 +57,7 @@ export const Route = createFileRoute("/_authenticated/post-need")({
 
 function PostNeedPage() {
   const navigate = useNavigate();
+  const search = Route.useSearch();
   const create = useServerFn(createUserNeed);
   const fileRef = useRef<HTMLInputElement>(null);
 
