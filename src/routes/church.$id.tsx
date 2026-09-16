@@ -388,7 +388,7 @@ function ChurchPage() {
                   <Link
                     to="/post-need"
                     search={{ church: church.id }}
-                    className="rounded-full bg-ink px-5 py-2.5 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+                    className="rounded-full bg-ember px-5 py-2.5 text-base font-semibold text-ink shadow-[0_0_18px_-4px_var(--color-ember)] transition hover:opacity-90"
                   >
                     Post your need here
                   </Link>
