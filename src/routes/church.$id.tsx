@@ -108,14 +108,20 @@ function ChurchPage() {
   });
 
   const [qr, setQr] = useState<string | null>(null);
+  const [pageUrl, setPageUrl] = useState("");
+  const [copied, setCopied] = useState(false);
   useEffect(() => {
     if (typeof window === "undefined" || !church) return;
     let alive = true;
+    const link = `${window.location.origin}/church/${id}`;
+    setPageUrl(link);
     void import("qrcode").then(async (mod) => {
-      const url = await mod.default.toDataURL(`${window.location.origin}/church/${id}`, {
-        width: 512,
-        margin: 1,
-        color: { dark: "#171320", light: "#f4f1ea" },
+      // Big and high-contrast so it still scans from the back of the room.
+      const url = await mod.default.toDataURL(link, {
+        width: 1024,
+        margin: 2,
+        errorCorrectionLevel: "M",
+        color: { dark: "#171320", light: "#ffffff" },
       });
       if (alive) setQr(url);
     });
@@ -123,6 +129,16 @@ function ChurchPage() {
       alive = false;
     };
   }, [church, id]);
+
+  async function copyLink() {
+    try {
+      await navigator.clipboard.writeText(pageUrl);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopied(false);
+    }
+  }
 
   const [editing, setEditing] = useState(false);
   const [busy, setBusy] = useState(false);
