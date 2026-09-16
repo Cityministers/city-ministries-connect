@@ -113,6 +113,10 @@ function MapPage() {
   );
   const allPoints = useMemo(() => [...points, ...churchPoints], [points, churchPoints]);
 
+  // A freshly created post or church sits in the middle of the screen while it glows.
+  const spotlight = highlightId ? allPoints.find((p) => p.id === highlightId) : undefined;
+  const mapCenter = spotlight ? { lat: spotlight.lat, lng: spotlight.lng } : center;
+
   function selectPoint(id: string) {
     if (id.startsWith("church-")) {
       void navigate({ to: "/church/$id", params: { id: id.slice("church-".length) } });
