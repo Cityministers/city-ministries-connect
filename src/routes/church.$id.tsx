@@ -115,6 +115,8 @@ function ChurchPage() {
     let alive = true;
     const link = `${window.location.origin}/church/${id}`;
     setPageUrl(link);
+    // The scan code is an owner tool — visitors never see or build it.
+    if (!isOwner) return;
     void import("qrcode").then(async (mod) => {
       // Big and high-contrast so it still scans from the back of the room.
       const url = await mod.default.toDataURL(link, {

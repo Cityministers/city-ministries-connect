@@ -521,6 +521,7 @@ function PostNeedPage() {
               postId={posted.id}
               city={city.trim()}
               zip={zip.trim()}
+              preferChurchId={search.church}
             />
           )}
           <div className="mt-2 flex flex-col gap-3">
