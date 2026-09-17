@@ -290,7 +290,8 @@ function MapPage() {
         )}
 
         <ul className="mt-3 space-y-2">
-          {list.map(({ post: m, distance }) => (
+          {mode !== "church" &&
+            list.map(({ post: m, distance }) => (
             <li key={m.id}>
               <button
                 type="button"
@@ -326,12 +327,52 @@ function MapPage() {
               </button>
             </li>
           ))}
-          {list.length === 0 && (
+          {(mode === "church" || mode === "near") &&
+            churchList.map(({ church: c, distance }) => {
+              const Icon = churchIcon(c.iconId);
+              return (
+                <li key={c.id}>
+                  <Link
+                    to="/church/$id"
+                    params={{ id: c.id }}
+                    className="flex w-full items-center gap-3 rounded-2xl bg-ink-soft p-3 text-left ring-1 ring-lemon/20 transition hover:ring-lemon/40"
+                  >
+                    {c.photoUrl ? (
+                      <img
+                        src={c.photoUrl}
+                        alt=""
+                        className="size-12 shrink-0 rounded-xl object-cover ring-1 ring-mist/20"
+                      />
+                    ) : (
+                      <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-lemon/15 text-lemon ring-1 ring-lemon/40">
+                        <Icon className="size-5" aria-hidden="true" />
+                      </span>
+                    )}
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate font-heading text-lg text-sand sm:text-base">
+                        {c.name}
+                      </span>
+                      <span className="block truncate text-xs text-mist/70">
+                        Church · {c.city}
+                        {c.zip ? ` ${c.zip}` : ""}
+                      </span>
+                    </span>
+                    <span className="shrink-0 rounded-full bg-ink px-2.5 py-1 text-xs font-semibold text-lemon ring-1 ring-lemon/30">
+                      {distance}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          {(mode === "church" ? churchList.length === 0 : list.length === 0 && (mode !== "near" || churchList.length === 0)) && (
             <li className="rounded-2xl bg-ink-soft p-4 text-center text-sm text-mist/70">
-              No ministries in this area yet — drag the map to look around.
+              {mode === "church"
+                ? "No churches on the map yet."
+                : "No ministries in this area yet — drag the map to look around."}
             </li>
           )}
         </ul>
+
 
         {active && <MinistryPost ministry={active} onClose={() => setActiveId(null)} />}
       </main>
