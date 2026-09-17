@@ -1396,52 +1396,53 @@ function Review({
   answers: ShapeAnswers;
   onEdit?: (stepId: string) => void;
 }) {
+  const { t } = useTranslation();
   const kids = answers.children.filter((c) => c.name.trim() || c.age.trim());
   const rows: Array<[string, string, string]> = [
-    ["Serving in", [answers.city, answers.zip].filter(Boolean).join(" ") || "—", "place"],
+    [t("Serving in"), [answers.city, answers.zip].filter(Boolean).join(" ") || "—", "place"],
     [
-      "You",
+      t("You"),
       [answers.firstName, answers.ageRange, answers.marital].filter(Boolean).join(" · ") || "—",
       "about",
     ],
     [
-      "Family",
+      t("Family"),
       kids.length > 0
-        ? kids.map((c) => `${c.name || "Child"}${c.age ? ` (${c.age})` : ""}`).join(", ")
-        : "No children listed",
+        ? kids.map((c) => `${c.name || t("Child")}${c.age ? ` (${c.age})` : ""}`).join(", ")
+        : t("No children listed"),
       "family",
     ],
-    ["Spiritual gifts", answers.gifts.join(", ") || "—", "gifts"],
-    ["Heart", answers.heart.join(", ") || "—", "heart"],
-    ["Abilities", answers.abilities.join(", ") || "—", "abilities"],
+    [t("Spiritual gifts"), answers.gifts.join(", ") || "—", "gifts"],
+    [t("Heart"), answers.heart.join(", ") || "—", "heart"],
+    [t("Abilities"), answers.abilities.join(", ") || "—", "abilities"],
     [
-      "Personality",
+      t("Personality"),
       Object.values(answers.personality).filter(Boolean).join(" · ") || "—",
       "personality",
     ],
-    ["Experiences", answers.experiences.join(", ") || "—", "experiences"],
+    [t("Experiences"), answers.experiences.join(", ") || "—", "experiences"],
     [
-      "Resources",
+      t("Resources"),
       [answers.resources.join(", "), answers.budget].filter(Boolean).join(" · ") || "—",
       "resources",
     ],
-    ["Served before", answers.pastService.join(", ") || "—", "service-history"],
+    [t("Served before"), answers.pastService.join(", ") || "—", "service-history"],
     [
-      "Serving with",
+      t("Serving with"),
       [answers.familyServe.join(", "), answers.availableTimes.join(", ")]
         .filter(Boolean)
         .join(" · ") || "—",
       "family-serve",
     ],
     [
-      "Scope",
+      t("Scope"),
       [answers.travel, answers.frequency, answers.groupSize, answers.kidsWelcome]
         .filter(Boolean)
         .join(" · ") || "—",
       "scope",
     ],
     [
-      "Dream & barrier",
+      t("Dream & barrier"),
       [answers.dreamNote, answers.biggestBarrier].filter(Boolean).join(" · ") || "—",
       "dream",
     ],
@@ -1459,7 +1460,7 @@ function Review({
                 onClick={() => onEdit(stepId)}
                 className="shrink-0 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider text-ember ring-1 ring-ember/40 transition hover:bg-ember/10"
               >
-                Edit
+                {t("Edit")}
               </button>
             )}
           </div>
