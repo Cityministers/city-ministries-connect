@@ -63,6 +63,7 @@ const AnswersSchema = z.object({
   biggestBarrier: z.string().max(60).optional().default(""),
   freeTalk: z.string().max(8000).optional().default(""),
   transcripts: z.record(z.string(), z.string().max(8000)).optional().default({}),
+  lang: z.string().max(5).optional().default("en"),
 });
 
 export const saveShapeProfile = createServerFn({ method: "POST" })
