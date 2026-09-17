@@ -12,6 +12,7 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ChurchPicker } from "@/components/ChurchPicker";
 import { createUserNeed } from "@/lib/needs.functions";
 import { supabase } from "@/integrations/supabase/client";
@@ -56,6 +57,7 @@ export const Route = createFileRoute("/_authenticated/post-need")({
 });
 
 function PostNeedPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const search = Route.useSearch();
   const create = useServerFn(createUserNeed);
@@ -111,7 +113,7 @@ function PostNeedPage() {
     const photos = next.filter((m) => m.kind === "image").slice(0, MAX_PHOTOS);
     const video = next.filter((m) => m.kind === "video").slice(0, 1);
     if (video[0] && video[0].file.size > MAX_VIDEO_BYTES) {
-      setError("Videos need to be under 50 MB.");
+      setError(t("Videos need to be under 50 MB."));
       return;
     }
     setError(null);
@@ -147,13 +149,13 @@ function PostNeedPage() {
     e.preventDefault();
     setError(null);
 
-    if (shortTitle.trim().length < 2) return setError("Add a short title.");
+    if (shortTitle.trim().length < 2) return setError(t("Add a short title."));
     if (description.trim().length < 10)
-      return setError("Add a little more about what you need.");
+      return setError(t("Add a little more about what you need."));
     if (city.trim().length < 2 && zip.trim().length < 4)
-      return setError("Enter the city or ZIP where you need help.");
+      return setError(t("Enter the city or ZIP where you need help."));
     if (!agreed)
-      return setError("Please read and accept the User & Privacy Agreement first.");
+      return setError(t("Please read and accept the User & Privacy Agreement first."));
 
     setBusy(true);
     try {
@@ -162,7 +164,7 @@ function PostNeedPage() {
         try {
           const { data: userData } = await supabase.auth.getUser();
           const uid = userData.user?.id;
-          if (!uid) throw new Error("Please sign in again.");
+          if (!uid) throw new Error(t("Please sign in again."));
           const upload = await shrinkImage(file);
           const ext =
             upload.type === "image/jpeg" ? "jpg" : (upload.name.split(".").pop()?.toLowerCase() ?? "jpg");
@@ -197,7 +199,7 @@ function PostNeedPage() {
       const place = [city.trim(), zip.trim()].filter(Boolean).join(" ");
       setPosted({ id: result.id, shortTitle: shortTitle.trim(), place });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong.");
+      setError(err instanceof Error ? err.message : t("Something went wrong."));
     } finally {
       setBusy(false);
     }
@@ -210,13 +212,13 @@ function PostNeedPage() {
           <Link
             to="/map"
             className="grid size-10 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20 transition hover:bg-ink-soft"
-            aria-label="Back to map"
+            aria-label={t("Back to map")}
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
           </Link>
           <div>
             <h1 className="font-display text-2xl font-semibold leading-tight sm:text-3xl">
-              Post a need
+              {t("Post a need")}
             </h1>
           </div>
         </div>
@@ -226,21 +228,20 @@ function PostNeedPage() {
         {confirmed === false ? (
           <div className="flex flex-col items-start gap-4 rounded-2xl bg-ink-soft/60 p-5 ring-1 ring-lemon/30">
             <MailCheck className="size-8 text-lemon" aria-hidden="true" />
-            <h2 className="font-display text-lg font-semibold">Confirm your email to post a need</h2>
+            <h2 className="font-display text-lg font-semibold">{t("Confirm your email to post a need")}</h2>
             <p className="text-sm leading-relaxed text-mist/75">
-              We sent a confirmation link to {email || "your email address"}. Tap the link,
-              then come back here to share your need.
+              {t("We sent a confirmation link to {{email}}. Tap the link, then come back here to share your need.", { email: email || t("your email address") })}
             </p>
             <button
               type="button"
               onClick={() => void resend()}
               className="rounded-full bg-lemon px-5 py-3 text-base font-semibold text-ink transition hover:opacity-90"
             >
-              {resent ? "Sent again — check your inbox" : "Resend confirmation email"}
+              {resent ? t("Sent again — check your inbox") : t("Resend confirmation email")}
             </button>
           </div>
         ) : confirmed === null ? (
-          <p className="py-16 text-center text-sm text-mist/60">Loading…</p>
+          <p className="py-16 text-center text-sm text-mist/60">{t("Loading…")}</p>
         ) : (
           <form className="flex flex-col gap-4" onSubmit={(e) => void handleSubmit(e)}>
             <div className="flex flex-col gap-4 rounded-2xl bg-ink-soft/60 p-4 ring-1 ring-mist/15">
@@ -256,22 +257,22 @@ function PostNeedPage() {
                       ? toneStyles[picked.tone]
                       : "bg-ink text-mist/60 ring-mist/25 hover:ring-lemon/50"
                   }`}
-                  aria-label={picked ? picked.label : "Add your profile photo"}
+                  aria-label={picked ? picked.label : t("Add your profile photo")}
                 >
                   {picked ? (
                     <picked.icon className="size-7" aria-hidden="true" />
                   ) : preview ? (
-                    <img src={preview} alt="Your profile" className="size-full object-cover" />
+                    <img src={preview} alt={t("Your profile")} className="size-full object-cover" />
                   ) : (
                     <Camera className="size-6" aria-hidden="true" />
                   )}
                 </button>
                 <div className="min-w-0">
                   <p className="text-lg font-medium text-sand sm:text-xl">
-                    {shortTitle.trim() || "Short title"}
+                    {shortTitle.trim() || t("Short title")}
                   </p>
                   <p className="text-base text-mist/60 sm:text-lg">
-                    This is how your need looks on the map and in the list.
+                    {t("This is how your need looks on the map and in the list.")}
                   </p>
                 </div>
                 <input
@@ -294,8 +295,8 @@ function PostNeedPage() {
                       : "bg-ink text-sand ring-1 ring-mist/20 hover:bg-ink-soft"
                   }`}
                 >
-                  <span className="block">Choose from</span>
-                  <span className="block">ministry list</span>
+                  <span className="block">{t("Choose from")}</span>
+                  <span className="block">{t("ministry list")}</span>
                 </button>
                 <button
                   type="button"
@@ -310,7 +311,7 @@ function PostNeedPage() {
                       : "bg-ink text-sand ring-1 ring-mist/20 hover:bg-ink-soft"
                   }`}
                 >
-                  Customize my own
+                  {t("Customize my own")}
                 </button>
               </div>
 
@@ -354,9 +355,9 @@ function PostNeedPage() {
 
             <div className="flex flex-col gap-3 rounded-2xl bg-ink-soft/60 p-4 ring-1 ring-mist/15">
               <div>
-                <p className="text-lg font-semibold text-sand sm:text-xl">Photos and video</p>
+                <p className="text-lg font-semibold text-sand sm:text-xl">{t("Photos and video")}</p>
                 <p className="text-base text-mist/70 sm:text-lg">
-                  Add up to {MAX_PHOTOS} photos and one video (50 MB max).
+                  {t("Add up to {{count}} photos and one video (50 MB max).", { count: MAX_PHOTOS })}
                 </p>
               </div>
               {media.length > 0 && (
@@ -372,7 +373,7 @@ function PostNeedPage() {
                         type="button"
                         onClick={() => removeMedia(m.url)}
                         className="absolute -right-1 -top-1 grid size-6 place-items-center rounded-full bg-ink text-sand ring-1 ring-mist/30"
-                        aria-label="Remove this file"
+                        aria-label={t("Remove this file")}
                       >
                         <X className="size-3" aria-hidden="true" />
                       </button>
@@ -386,7 +387,7 @@ function PostNeedPage() {
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-ink px-4 py-3 text-lg font-semibold text-sand ring-1 ring-mist/20 transition hover:bg-ink-soft sm:text-xl"
               >
                 <ImagePlus className="size-5" aria-hidden="true" />
-                Add photos or video
+                {t("Add photos or video")}
               </button>
               <input
                 ref={mediaRef}
@@ -402,7 +403,7 @@ function PostNeedPage() {
             </div>
 
             <label className="flex flex-col gap-2 text-base text-mist/80 sm:text-lg">
-              Short title (shows under your icon)
+              {t("Short title (shows under your icon)")}
               <input
                 className="rounded-xl bg-ink-soft px-4 py-3.5 text-lg text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50 sm:text-xl"
                 value={shortTitle}
@@ -415,7 +416,7 @@ function PostNeedPage() {
             </label>
 
             <label className="flex flex-col gap-2 text-base text-mist/80 sm:text-lg">
-              Personal message, passage or quote
+              {t("Personal message, passage or quote")}
               <input
                 className="rounded-xl bg-ink-soft px-4 py-3.5 text-lg text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50 sm:text-xl"
                 value={title}
@@ -426,7 +427,7 @@ function PostNeedPage() {
             </label>
 
             <label className="flex flex-col gap-2 text-base text-mist/80 sm:text-lg">
-              Describe your need
+              {t("Describe your need")}
               <textarea
                 className="min-h-36 rounded-xl bg-ink-soft px-4 py-3.5 text-lg text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50 sm:text-xl"
                 value={description}
@@ -439,7 +440,7 @@ function PostNeedPage() {
 
             <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-3">
               <label className="flex min-w-0 flex-col gap-2 text-base text-mist/80 sm:text-lg">
-                City
+                {t("City")}
                 <input
                   className="w-full min-w-0 rounded-xl bg-ink-soft px-4 py-3.5 text-lg text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50 sm:text-xl"
                   value={city}
@@ -449,7 +450,7 @@ function PostNeedPage() {
                 />
               </label>
               <label className="flex w-24 shrink-0 flex-col gap-2 text-base text-mist/80 sm:w-32 sm:text-lg">
-                ZIP
+                {t("ZIP")}
                 <input
                   className="w-full min-w-0 rounded-xl bg-ink-soft px-4 py-3.5 text-lg text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50 sm:text-xl"
                   value={zip}
@@ -473,7 +474,7 @@ function PostNeedPage() {
               className="mt-1 inline-flex items-center justify-center gap-2 rounded-full bg-lemon px-6 py-4 text-xl font-semibold text-ink transition hover:opacity-90 disabled:opacity-60 sm:text-2xl"
             >
               {busy && <Loader2 className="size-5 animate-spin" aria-hidden="true" />}
-              Post my need
+              {t("Post my need")}
             </button>
 
             <label className="flex items-start gap-3 rounded-xl bg-ink-soft/60 px-4 py-3.5 text-base text-mist/80 ring-1 ring-mist/15 sm:text-lg">
@@ -484,12 +485,12 @@ function PostNeedPage() {
                 className="mt-0.5 size-5 shrink-0 rounded-full accent-lemon"
               />
               <span>
-                I have read and agree to the{" "}
+                {t("I have read and agree to the")}{" "}
                 <Link
                   to="/terms"
                   className="text-sand underline decoration-mist/40 underline-offset-2"
                 >
-                  User &amp; Privacy Agreement
+                  {t("User & Privacy Agreement")}
                 </Link>
                 .
               </span>
@@ -505,15 +506,14 @@ function PostNeedPage() {
               <PartyPopper className="size-7" aria-hidden="true" />
             </div>
             <DialogTitle className="font-display text-2xl font-semibold sm:text-3xl">
-              Congratulations!
+              {t("Congratulations!")}
             </DialogTitle>
           </DialogHeader>
           <p className="text-center text-base text-mist/80 sm:text-lg">
-            Your need <span className="font-semibold text-sand">“{posted?.shortTitle}”</span> is
-            live.
+            {t("Your need")} <span className="font-semibold text-sand">“{posted?.shortTitle}”</span> {t("is live.")}
           </p>
           <p className="text-center text-sm text-mist/60">
-            You can visit your profile page anytime to edit, pause, or delete your post.
+            {t("You can visit your profile page anytime to edit, pause, or delete your post.")}
           </p>
           {posted && (
             <ChurchPicker
@@ -534,7 +534,7 @@ function PostNeedPage() {
               className="inline-flex items-center justify-center gap-2 rounded-full bg-lemon px-6 py-3.5 text-lg font-semibold text-ink transition-transform hover:-translate-y-0.5"
             >
               <MapPin className="size-5" aria-hidden="true" />
-              View my need on the map
+              {t("View my need on the map")}
             </button>
             <Link
               to="/profile"
@@ -542,7 +542,7 @@ function PostNeedPage() {
               className="inline-flex items-center justify-center gap-2 rounded-full bg-ink px-6 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/20 transition hover:bg-ink-soft"
             >
               <UserCircle className="size-5" aria-hidden="true" />
-              Go to my profile
+              {t("Go to my profile")}
             </Link>
           </div>
         </DialogContent>
