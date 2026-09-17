@@ -8,6 +8,7 @@ import {
   Sparkles,
   Users,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/_authenticated/gifts/")({
   head: () => ({
@@ -59,6 +60,7 @@ const STEPS = [
 ];
 
 function GiftsIntroPage() {
+  const { t } = useTranslation();
   return (
     <div className="flex min-h-dvh flex-col bg-ink font-body text-sand antialiased">
       <header className="border-b border-ink-soft bg-ink-soft/70">
@@ -66,13 +68,13 @@ function GiftsIntroPage() {
           <Link
             to="/"
             className="grid size-10 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20 transition hover:bg-ink-soft"
-            aria-label="Back to home"
+            aria-label={t("Back to home")}
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
           </Link>
           <div className="min-w-0 flex-1">
             <h1 className="truncate font-display text-xl font-semibold leading-tight sm:text-2xl">
-              Explore Your Spiritual Gifts
+              {t("Explore Your Spiritual Gifts")}
             </h1>
           </div>
         </div>
@@ -80,7 +82,7 @@ function GiftsIntroPage() {
 
       <main className="mx-auto w-full max-w-lg flex-1 px-4 py-8">
         <p className="text-xl leading-relaxed text-mist/85 sm:text-2xl">
-          Here's how we'll help you discover the gifts God gave you.
+          {t("Here's how we'll help you discover the gifts God gave you.")}
         </p>
 
         <ol className="mt-8 flex flex-col gap-4">
@@ -96,9 +98,9 @@ function GiftsIntroPage() {
                 </div>
                 <div className="min-w-0">
                   <h2 className="font-display text-xl font-semibold leading-snug text-sand">
-                    {i + 1}. {step.title}
+                    {i + 1}. {t(step.title)}
                   </h2>
-                  <p className="mt-1.5 text-lg leading-relaxed text-mist/80">{step.body}</p>
+                  <p className="mt-1.5 text-lg leading-relaxed text-mist/80">{t(step.body)}</p>
                 </div>
               </li>
             );
@@ -109,7 +111,7 @@ function GiftsIntroPage() {
           to="/gifts/list"
           className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full bg-lemon px-6 py-4 text-lg font-semibold text-ink transition active:translate-y-0.5"
         >
-          Next
+          {t("Next")}
           <ArrowRight className="size-5" aria-hidden="true" />
         </Link>
       </main>

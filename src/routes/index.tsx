@@ -226,18 +226,18 @@ function HomePage() {
                   <s.icon className="size-6" aria-hidden="true" />
                 </span>
                 <h2 className="font-display text-xl font-semibold sm:text-2xl">
-                  {s.title}
+                  {t(s.title)}
                 </h2>
               </div>
               <p className="text-xl leading-relaxed text-mist/80 sm:text-2xl">
-                {s.body}
+                {t(s.body)}
               </p>
               {s.title === "Start your own ministry" && (
                 <Link
                   to="/start"
                   className="inline-flex w-full items-center justify-center rounded-full border border-slate-lighter bg-slate px-5 py-2.5 text-lg font-semibold text-sand shadow-[0_4px_12px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)] transition hover:bg-slate-light active:translate-y-0.5 sm:w-auto sm:self-start"
                 >
-                  Start your ministry
+                  {t("Start your ministry")}
                 </Link>
               )}
               {s.title === "Post a need, or answer one" && (
@@ -245,7 +245,7 @@ function HomePage() {
                   to="/post-need"
                   className="inline-flex w-full items-center justify-center rounded-full border border-slate-lighter bg-slate px-5 py-2.5 text-lg font-semibold text-sand shadow-[0_4px_12px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)] transition hover:bg-slate-light active:translate-y-0.5 sm:w-auto sm:self-start"
                 >
-                  Post a Need
+                  {t("Post a Need")}
                 </Link>
               )}
               {s.title === "Not sure what to offer?" && (
@@ -253,7 +253,7 @@ function HomePage() {
                   to="/gifts"
                   className="inline-flex w-full items-center justify-center rounded-full border border-slate-lighter bg-slate px-5 py-2.5 text-lg font-semibold text-sand shadow-[0_4px_12px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)] transition hover:bg-slate-light active:translate-y-0.5 sm:w-auto sm:self-start"
                 >
-                  Explore Your Spiritual Gifts
+                  {t("Explore Your Spiritual Gifts")}
                 </Link>
               )}
 
@@ -262,14 +262,14 @@ function HomePage() {
                   to="/map"
                   className="inline-flex w-full items-center justify-center rounded-full border border-slate-lighter bg-slate px-5 py-2.5 text-lg font-semibold text-sand shadow-[0_4px_12px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)] transition hover:bg-slate-light active:translate-y-0.5 sm:w-auto sm:self-start"
                 >
-                  See Map
+                  {t("See Map")}
                 </Link>
               )}
               {s.title === "See ministries on your city's map" && (
                 <div className="relative h-44 overflow-hidden rounded-xl ring-1 ring-mist/15 sm:h-56">
                   <img
                     src={cityMap}
-                    alt="Sample city map showing ministry locations"
+                    alt={t("Sample city map showing ministry locations")}
                     className="absolute inset-0 h-full w-full object-cover"
                   />
                   <div className="absolute inset-0 bg-ink/25" />
@@ -285,7 +285,7 @@ function HomePage() {
                         <ministry.icon className="size-5 sm:size-6" aria-hidden="true" />
                       </div>
                       <span className="absolute left-1/2 top-full mt-1.5 -translate-x-1/2 whitespace-nowrap rounded-full bg-ink/90 px-2 py-0.5 text-xs font-medium uppercase tracking-[0.15em] text-sand ring-1 ring-mist/20">
-                        {ministry.label}
+                        {t(ministry.label)}
                   </span>
                     </div>
                   ))}
@@ -293,7 +293,7 @@ function HomePage() {
               )}
               {s.title === "See ministries on your city's map" && (
                 <p className="text-center text-lg italic text-mist/80 sm:text-xl">
-                  “For this reason I remind you to fan into flame the gift of God, which is in you…”
+                  {t("For this reason I remind you to fan into flame the gift of God, which is in you…")}
                   <span className="ml-1.5 font-medium not-italic text-mist/60">— 2 Timothy 1:6, ESV</span>
                 </p>
               )}
@@ -303,19 +303,19 @@ function HomePage() {
 
         <div className="mt-10 rounded-2xl bg-ink-soft/45 p-6 text-center ring-1 ring-mist/15">
           <h2 className="font-display text-2xl font-semibold sm:text-3xl">
-            Ready to put your gift on the map?
+            {t("Ready to put your gift on the map?")}
           </h2>
           <p className="mt-2 text-lg text-mist/80 sm:text-xl">
-            It takes a couple of minutes — a short title, a few words, and your city.
+            {t("It takes a couple of minutes — a short title, a few words, and your city.")}
           </p>
           <Link
             to="/start"
             className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-lemon px-8 py-3.5 text-2xl font-bold text-ink transition-transform hover:-translate-y-0.5 sm:w-auto"
           >
-            Start Your Ministry
+            {t("Start Your Ministry")}
           </Link>
           <p className="mt-4 text-lg italic text-mist/80 sm:text-xl">
-            “And they devoted themselves to the apostles' teaching and the fellowship, to the breaking of bread and the prayers.”
+            {t("And they devoted themselves to the apostles' teaching and the fellowship, to the breaking of bread and the prayers.")}
             <span className="ml-1.5 font-medium not-italic text-mist/60">— Acts 2:42, ESV</span>
           </p>
         </div>
