@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { HandHeart, HeartHandshake, MapPin, MessageCircle, Sparkles } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { AccountMenu } from "@/components/AccountMenu";
 import { LanguagePicker } from "@/components/LanguagePicker";
 import { BrandLogo } from "@/components/BrandLogo";
@@ -75,6 +76,7 @@ const sections = [
 ] as const;
 
 function HomePage() {
+  const { t } = useTranslation();
   return (
     <div className="flex min-h-dvh flex-col bg-ink font-body text-sand antialiased">
       <header className="border-b border-ink-soft bg-ink">
@@ -93,13 +95,10 @@ function HomePage() {
 
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6 sm:py-12">
         <h1 className="font-display text-4xl font-semibold leading-tight sm:text-5xl">
-          Ministry happens on your street.
+          {t("Ministry happens on your street.")}
         </h1>
         <p className="mt-4 text-xl leading-relaxed text-mist/85 sm:text-2xl">
-          City Ministers is a neighborhood map of everyday ministry opportunities.
-          People post the spiritual or practical gifts they can share, or the needs
-          they carry, then message each other directly to connect — no committee,
-          no building, just neighbors.
+          {t("City Ministers is a neighborhood map of everyday ministry opportunities. People post the spiritual or practical gifts they can share, or the needs they carry, then message each other directly to connect — no committee, no building, just neighbors.")}
         </p>
 
         <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
@@ -107,26 +106,26 @@ function HomePage() {
             to="/map"
             className="inline-flex flex-1 items-center justify-center rounded-full bg-lemon px-8 py-3.5 text-2xl font-bold text-ink transition-transform hover:-translate-y-0.5 sm:flex-initial"
           >
-            See the map
+            {t("See the map")}
           </Link>
           <Link
             to="/start"
             className="inline-flex flex-1 items-center justify-center rounded-full border border-slate-lighter bg-slate px-6 py-3.5 text-xl font-semibold text-sand shadow-[0_4px_12px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)] transition hover:bg-slate-light active:translate-y-0.5 sm:flex-initial"
           >
-            Start Your Ministry
+            {t("Start Your Ministry")}
           </Link>
           <LanguagePicker variant="pill" />
           <Link
             to="/post-need"
             className="inline-flex flex-1 items-center justify-center rounded-full border border-slate-lighter bg-slate px-6 py-3.5 text-xl font-semibold text-sand shadow-[0_4px_12px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)] transition hover:bg-slate-light active:translate-y-0.5 sm:flex-initial"
           >
-            Post a Need
+            {t("Post a Need")}
           </Link>
           <Link
             to="/needs"
             className="inline-flex flex-1 items-center justify-center rounded-full border border-slate-lighter bg-slate px-6 py-3.5 text-xl font-semibold text-sand shadow-[0_4px_12px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)] transition hover:bg-slate-light active:translate-y-0.5 sm:flex-initial"
           >
-            View Needs
+            {t("View Needs")}
           </Link>
         </div>
 
@@ -135,7 +134,7 @@ function HomePage() {
             id="ministry-preview-heading"
             className="font-display text-3xl font-semibold sm:text-4xl"
           >
-            Ways to minister
+            {t("Ways to minister")}
           </h2>
 
           <ul className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-4 sm:gap-3">
@@ -146,7 +145,7 @@ function HomePage() {
                     <button
                       type="button"
                       className="flex min-h-28 w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg bg-ink-soft/55 p-3 text-center ring-1 ring-mist/15 transition hover:-translate-y-0.5 hover:bg-ink-soft hover:ring-mist/30"
-                      aria-label={`Learn about ${ministry.label}`}
+                      aria-label={t("Learn about {{label}}", { label: ministry.label })}
                     >
                       <span
                         className={`grid size-12 place-items-center rounded-lg ring-1 ${toneStyles[ministry.tone]}`}
@@ -154,7 +153,7 @@ function HomePage() {
                         <ministry.icon className="size-6" aria-hidden="true" />
                       </span>
                       <span className="text-base font-semibold leading-tight text-sand">
-                        {ministry.label}
+                        {t(ministry.label)}
                       </span>
                     </button>
                   </DialogTrigger>
@@ -167,12 +166,12 @@ function HomePage() {
                           <ministry.icon className="size-6" aria-hidden="true" />
                         </span>
                         <DialogTitle className="font-display text-2xl font-semibold text-sand sm:text-3xl">
-                          {ministry.label}
+                          {t(ministry.label)}
                         </DialogTitle>
                       </div>
                     </DialogHeader>
                     <p className="text-lg leading-relaxed text-mist/85 sm:text-xl">
-                      {ministry.description}
+                      {t(ministry.description)}
                     </p>
                     <div className="flex flex-col gap-3 border-t border-mist/15 pt-4">
                       {(ministryScriptures[ministry.id] ?? []).map((s) => (
@@ -180,7 +179,7 @@ function HomePage() {
                           key={s.reference}
                           className="text-lg italic leading-relaxed text-mist/90 sm:text-xl"
                         >
-                          “{s.text}”
+                          “{t(s.text)}”
                           <span className="ml-1.5 whitespace-nowrap font-medium not-italic text-mist/70">
                             — {s.reference}, ESV
                           </span>
@@ -196,7 +195,7 @@ function HomePage() {
                       rel="noopener noreferrer"
                       className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-youversion px-5 py-3 text-base font-semibold text-white transition-transform hover:-translate-y-0.5 sm:w-auto sm:self-start sm:px-6 sm:text-lg"
                     >
-                      Read in context on YouVersion
+                      {t("Read in context on YouVersion")}
                     </a>
                     <Link
                       to="/create-ministry"
@@ -207,7 +206,7 @@ function HomePage() {
                       }}
                       className="inline-flex w-full items-center justify-center rounded-full bg-lemon px-6 py-3 text-xl font-bold text-ink transition-transform hover:-translate-y-0.5 sm:w-auto sm:self-start"
                     >
-                      Start this ministry
+                      {t("Start this ministry")}
                     </Link>
                   </DialogContent>
                 </Dialog>
