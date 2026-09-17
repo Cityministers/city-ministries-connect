@@ -1,6 +1,7 @@
 import { useServerFn } from "@tanstack/react-start";
 import { Loader2, Volume2, VolumeX } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { speakText } from "@/lib/speak.functions";
 
 const STORAGE_KEY = "cm.readAloud";
@@ -14,6 +15,7 @@ type Props = {
 /** Reads the question out loud, unless the reader has chosen to read it themselves. */
 export default function ReadAloud({ text }: Props) {
   const speak = useServerFn(speakText);
+  const { t } = useTranslation();
   const [on, setOn] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,13 +41,13 @@ export default function ReadAloud({ text }: Props) {
       try {
         const res = await speak({ data: { text } });
         if (res.error || !res.audio) {
-          setError(res.error ?? "We couldn't read that out loud right now.");
+          setError(res.error ?? t("We couldn't read that out loud right now."));
           return;
         }
         src = `data:audio/mpeg;base64,${res.audio}`;
         cache.set(text, src);
       } catch {
-        setError("We couldn't read that out loud right now.");
+        setError(t("We couldn't read that out loud right now."));
         return;
       } finally {
         setBusy(false);
@@ -84,15 +86,15 @@ export default function ReadAloud({ text }: Props) {
       >
         {busy ? (
           <>
-            <Loader2 className="size-4 animate-spin" aria-hidden="true" /> Preparing audio…
+            <Loader2 className="size-4 animate-spin" aria-hidden="true" /> {t("Preparing audio…")}
           </>
         ) : on ? (
           <>
-            <VolumeX className="size-4" aria-hidden="true" /> Stop reading aloud
+            <VolumeX className="size-4" aria-hidden="true" /> {t("Stop reading aloud")}
           </>
         ) : (
           <>
-            <Volume2 className="size-4" aria-hidden="true" /> Read this and following questions
+            <Volume2 className="size-4" aria-hidden="true" /> {t("Read this and following questions")}
           </>
         )}
       </button>

@@ -3,6 +3,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft, Heart, Menu } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import {
   Sheet,
@@ -20,6 +21,7 @@ const menuLinks = [
 ] as const;
 
 export function SiteNav() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
   return (
@@ -28,7 +30,7 @@ export function SiteNav() {
         <button
           type="button"
           className="grid size-10 place-items-center rounded-full bg-ink text-sand ring-1 ring-mist/20 transition hover:bg-ink-soft"
-          aria-label="Open menu"
+          aria-label={t("Open menu")}
         >
           <Menu className="size-5" aria-hidden="true" />
         </button>
@@ -36,17 +38,17 @@ export function SiteNav() {
       <SheetContent side="left" className="w-3/4 border-ink-soft bg-ink-soft/95 backdrop-blur sm:max-w-sm">
         <SheetHeader>
           <SheetTitle className="text-left font-display text-xl text-sand">
-            Menu
+            {t("Menu")}
           </SheetTitle>
         </SheetHeader>
         <Link
           to="/"
           onClick={() => setOpen(false)}
           className="mt-4 inline-flex items-center gap-2 rounded-xl border border-ink-soft px-3 py-2 text-sm text-mist transition hover:text-sand"
-          aria-label="Back to home"
+          aria-label={t("Back to home")}
         >
           <ArrowLeft className="size-4" aria-hidden="true" />
-          Back to home
+          {t("Back to home")}
         </Link>
         <nav className="mt-6 flex flex-col gap-2">
           <Link
@@ -58,7 +60,7 @@ export function SiteNav() {
             <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
             <div className="absolute inset-0 rounded-xl shadow-[inset_0_0_12px_rgba(255,255,255,0.2)]" />
             <Heart className="relative z-10 size-5" aria-hidden="true" />
-            <span className="relative z-10">Donate</span>
+            <span className="relative z-10">{t("Donate")}</span>
           </Link>
           {menuLinks.map((link) => (
             <Link
@@ -67,7 +69,7 @@ export function SiteNav() {
               onClick={() => setOpen(false)}
               className="rounded-xl px-4 py-3 text-lg font-medium text-sand transition hover:bg-ink"
             >
-              {link.label}
+              {t(link.label)}
             </Link>
           ))}
         </nav>
