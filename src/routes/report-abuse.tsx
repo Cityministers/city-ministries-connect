@@ -269,9 +269,7 @@ function ReportAbusePage() {
             <div className="mt-4 rounded-xl bg-ink p-4 ring-1 ring-mist/15">
               <p className="font-mono text-sm text-lemon">{tracked.trackingCode}</p>
               <p className="mt-2 font-display text-lg font-semibold">
-                {statusCopy[tracked.status]
-                  ? t(statusCopy[tracked.status])
-                  : tracked.status}
+                {t(statusCopy[tracked.status] ?? tracked.status)}
               </p>
               <p className="mt-1 text-sm text-mist/70">
                 {t("Reported for {{reason}} on {{createdDate}} · last update {{updatedDate}}", {
