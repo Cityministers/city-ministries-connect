@@ -15,6 +15,7 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { AccountMenu } from "@/components/AccountMenu";
 import { BrandLogo } from "@/components/BrandLogo";
 import { useSession } from "@/hooks/useSession";
@@ -54,6 +55,7 @@ const inputClass =
   "w-full min-w-0 rounded-xl bg-ink-soft px-4 py-3 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50";
 
 function PostRow({ post }: { post: ChurchPostDTO }) {
+  const { t } = useTranslation();
   return (
     <Link
       to={post.kind === "ministry" ? "/ministries" : "/needs"}
@@ -68,7 +70,7 @@ function PostRow({ post }: { post: ChurchPostDTO }) {
               : "bg-tone-indigo/15 text-tone-indigo ring-tone-indigo/40"
           }`}
         >
-          {post.kind === "ministry" ? "Ministry" : "Need"}
+          {post.kind === "ministry" ? t("Ministry") : t("Need")}
         </span>
         <span className="truncate font-heading text-lg text-sand">{post.title}</span>
       </span>
@@ -83,6 +85,7 @@ function PostRow({ post }: { post: ChurchPostDTO }) {
 
 function ChurchPage() {
   const { id } = Route.useParams();
+  const { t } = useTranslation();
   const session = useSession();
   const queryClient = useQueryClient();
 
