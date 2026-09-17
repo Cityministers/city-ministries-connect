@@ -135,6 +135,17 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
+  // Apply the visitor's saved language after hydration so SSR and the first
+  // client render always match (English), then switch once the bundle loads.
+  useEffect(() => {
+    const lang = savedLanguage();
+    if (lang !== "en") {
+      void applyLanguage(lang);
+    } else {
+      updateDocumentLang("en");
+    }
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
