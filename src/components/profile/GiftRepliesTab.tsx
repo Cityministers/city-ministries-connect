@@ -3,8 +3,10 @@ import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Loader2, Sparkles } from "lucide-react";
 import { listGiftReferences } from "@/lib/gift-references.functions";
+import { useTranslation } from "react-i18next";
 
 export function GiftRepliesTab() {
+  const { t } = useTranslation();
   const list = useServerFn(listGiftReferences);
   const query = useQuery({
     queryKey: ["gift-references"],
@@ -15,7 +17,7 @@ export function GiftRepliesTab() {
     return (
       <p className="flex items-center gap-2 py-8 text-base text-mist/80">
         <Loader2 className="size-5 animate-spin" aria-hidden="true" />
-        Loading replies…
+        {t("Loading replies…")}
       </p>
     );
   }
@@ -28,14 +30,14 @@ export function GiftRepliesTab() {
     return (
       <div className="py-8">
         <p className="text-lg text-mist/85">
-          You haven't asked anyone about your gifts yet.
+          {t("You haven't asked anyone about your gifts yet.")}
         </p>
         <Link
           to="/shape"
           className="mt-4 inline-flex items-center gap-2 rounded-full bg-lemon px-5 py-3 text-lg font-semibold text-ink"
         >
           <Sparkles className="size-5" aria-hidden="true" />
-          Ask friends and family
+          {t("Ask friends and family")}
         </Link>
       </div>
     );
@@ -45,11 +47,11 @@ export function GiftRepliesTab() {
     <div className="space-y-6 py-6">
       <section className="space-y-3">
         <h2 className="text-xl font-semibold text-sand">
-          Replies ({answered.length})
+          {t("Replies ({{count}})", { count: answered.length })}
         </h2>
         {answered.length === 0 ? (
           <p className="text-lg text-mist/85">
-            No replies yet. They'll show up here with an alert as soon as someone answers.
+            {t("No replies yet. They'll show up here with an alert as soon as someone answers.")}
           </p>
         ) : (
           answered.map((r) => (
@@ -72,7 +74,7 @@ export function GiftRepliesTab() {
                       key={g}
                       className="rounded-full bg-lemon/15 px-3.5 py-1.5 text-base font-semibold text-lemon"
                     >
-                      {g}
+                      {t(g)}
                     </li>
                   ))}
                 </ul>
@@ -90,7 +92,7 @@ export function GiftRepliesTab() {
       {waiting.length > 0 && (
         <section className="space-y-2">
           <h2 className="text-xl font-semibold text-sand">
-            Waiting on ({waiting.length})
+            {t("Waiting on ({{count}})", { count: waiting.length })}
           </h2>
           <ul className="flex flex-wrap gap-2">
             {waiting.map((r) => (
@@ -103,7 +105,7 @@ export function GiftRepliesTab() {
             ))}
           </ul>
           <Link to="/shape" className="inline-block text-lg font-semibold text-lemon">
-            Manage invites on your Spiritual Gift Test page
+            {t("Manage invites on your Spiritual Gift Test page")}
           </Link>
         </section>
       )}

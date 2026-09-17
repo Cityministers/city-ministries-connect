@@ -1213,16 +1213,17 @@ function FieldView({
     value: string,
   ) => void;
 }) {
+  const { t } = useTranslation();
   if (field.kind === "children") {
     return (
       <div className="flex flex-col gap-3">
-        <span className="text-base text-mist/80">Your children</span>
+        <span className="text-base text-mist/80">{t("Your children")}</span>
         {answers.children.map((child, i) => (
           <div key={i} className="flex items-center gap-2">
             <input
               className={`${inputClass} min-w-0 flex-1`}
               value={child.name}
-              placeholder="Name"
+              placeholder={t("Name")}
               onChange={(e) =>
                 set(
                   "children",
@@ -1233,7 +1234,7 @@ function FieldView({
             <input
               className={`${inputClass} w-24`}
               value={child.age}
-              placeholder="Age"
+              placeholder={t("Age")}
               inputMode="numeric"
               onChange={(e) =>
                 set(
@@ -1244,7 +1245,7 @@ function FieldView({
             />
             <button
               type="button"
-              aria-label={`Remove child ${i + 1}`}
+              aria-label={t("Remove child {{n}}", { n: i + 1 })}
               onClick={() =>
                 set(
                   "children",
@@ -1262,7 +1263,7 @@ function FieldView({
           onClick={() => set("children", [...answers.children, { name: "", age: "" }])}
           className="inline-flex items-center justify-center gap-2 rounded-xl bg-ink-soft/60 px-4 py-3 text-base font-medium text-sand ring-1 ring-mist/20"
         >
-          <Plus className="size-4" aria-hidden="true" /> Add a child
+          <Plus className="size-4" aria-hidden="true" /> {t("Add a child")}
         </button>
       </div>
     );
@@ -1272,8 +1273,8 @@ function FieldView({
     const value = answers[field.group][field.id] ?? "";
     return (
       <div className="flex flex-col gap-3">
-        <span className="text-base font-medium text-sand">{field.label}</span>
-        <span className="-mt-2 text-sm text-mist/70">Tap one</span>
+        <span className="text-base font-medium text-sand">{t(field.label)}</span>
+        <span className="-mt-2 text-sm text-mist/70">{t("Tap one")}</span>
         <div className="grid gap-3 sm:grid-cols-2">
           {field.options.map((opt) => (
             <button
@@ -1292,7 +1293,7 @@ function FieldView({
                   : "bg-ink-soft/70 text-sand ring-1 ring-mist/40 hover:bg-ink-soft hover:ring-mist/60"
               }`}
             >
-              {opt}
+              {t(opt)}
             </button>
           ))}
         </div>
@@ -1304,21 +1305,21 @@ function FieldView({
     const value = answers[field.key] as string;
     return (
       <label className="flex flex-col gap-2 text-base text-mist/80">
-        {field.label}
+        {t(field.label)}
         {field.kind === "longtext" ? (
           <textarea
             rows={4}
             value={value}
             onChange={(e) => set(field.key, e.target.value as ShapeAnswers[typeof field.key])}
             className="min-h-28 rounded-2xl bg-ink/60 px-4 py-3 text-base leading-relaxed text-sand ring-1 ring-mist/20 outline-none placeholder:text-mist/50 focus:ring-lemon/60"
-            placeholder="Write your answer here…"
+            placeholder={t("Write your answer here…")}
           />
         ) : (
           <input
             className={inputClass}
             value={value}
             onChange={(e) => set(field.key, e.target.value as ShapeAnswers[typeof field.key])}
-            placeholder="Write your answer here…"
+            placeholder={t("Write your answer here…")}
           />
         )}
       </label>
@@ -1330,8 +1331,8 @@ function FieldView({
     const value = answers[field.key] as string;
     return (
       <div className="flex flex-col gap-3">
-        <span className="text-base font-medium text-sand">{field.label}</span>
-        <span className="-mt-2 text-sm text-mist/70">Tap one</span>
+        <span className="text-base font-medium text-sand">{t(field.label)}</span>
+        <span className="-mt-2 text-sm text-mist/70">{t("Tap one")}</span>
         <div className="flex flex-wrap gap-2.5">
           {field.options.map((opt) => (
             <button
@@ -1347,7 +1348,7 @@ function FieldView({
                   : "bg-ink-soft/70 text-sand ring-1 ring-mist/40 hover:bg-ink-soft hover:ring-mist/60"
               }`}
             >
-              {opt}
+              {t(opt)}
             </button>
           ))}
         </div>
@@ -1359,10 +1360,10 @@ function FieldView({
   const list = answers[key];
   return (
     <div className="flex flex-col gap-3">
-      <span className="text-base font-medium text-sand">{field.label}</span>
+      <span className="text-base font-medium text-sand">{t(field.label)}</span>
       <span className="-mt-2 text-sm text-mist/70">
-        Tap every one that fits — tap again to unselect
-        {list.length > 0 ? ` · ${list.length} selected` : ""}
+        {t("Tap every one that fits — tap again to unselect")}
+        {list.length > 0 ? ` · ${t("{{count}} selected", { count: list.length })}` : ""}
       </span>
       <div className="flex flex-wrap gap-2.5">
         {field.options.map((opt) => {
@@ -1379,7 +1380,7 @@ function FieldView({
                   : "bg-ink-soft/70 text-sand ring-1 ring-mist/45 hover:bg-ink-soft hover:ring-mist/70"
               }`}
             >
-              {opt}
+              {t(opt)}
             </button>
           );
         })}

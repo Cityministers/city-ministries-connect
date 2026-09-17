@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, MessageSquare, Star } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/feedback")({
@@ -43,6 +44,7 @@ function Stars({
   onChange: (n: number) => void;
   label: string;
 }) {
+  const { t } = useTranslation();
   return (
     <div role="group" aria-label={label} className="flex items-center gap-2">
       {[1, 2, 3, 4, 5].map((n) => (
@@ -50,7 +52,7 @@ function Stars({
           key={n}
           type="button"
           onClick={() => onChange(n)}
-          aria-label={`${n} of 5 stars`}
+          aria-label={t("{{n}} of 5 stars", { n })}
           aria-pressed={value === n}
           className={`grid size-11 place-items-center rounded-full ring-1 transition active:scale-95 ${
             n <= value
@@ -66,6 +68,7 @@ function Stars({
 }
 
 function FeedbackPage() {
+  const { t } = useTranslation();
   const [ratings, setRatings] = useState<Record<RatingKey, number>>({
     overall: 0,
     ease: 0,
@@ -87,7 +90,7 @@ function FeedbackPage() {
     e.preventDefault();
     setError(null);
     if (ratings.overall === 0) {
-      setError("Please give an overall star rating first.");
+      setError(t("Please give an overall star rating first."));
       return;
     }
     setBusy(true);
@@ -105,7 +108,7 @@ function FeedbackPage() {
     });
     setBusy(false);
     if (insertError) {
-      setError("Sorry, that didn't send. Please try again in a moment.");
+      setError(t("Sorry, that didn't send. Please try again in a moment."));
       return;
     }
     setSent(true);
@@ -118,11 +121,11 @@ function FeedbackPage() {
           <Link
             to="/"
             className="grid size-10 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20 transition hover:bg-ink-soft"
-            aria-label="Back home"
+            aria-label={t("Back home")}
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
           </Link>
-          <h1 className="font-display text-lg font-semibold sm:text-xl">Feedback</h1>
+          <h1 className="font-display text-lg font-semibold sm:text-xl">{t("Feedback")}</h1>
         </div>
       </header>
 
@@ -130,34 +133,34 @@ function FeedbackPage() {
         {sent ? (
           <div className="rounded-2xl bg-ink-soft/40 p-6 text-center ring-1 ring-mist/15">
             <MessageSquare className="mx-auto mb-3 size-8 text-lemon" aria-hidden="true" />
-            <h2 className="font-display text-xl font-semibold sm:text-2xl">Thank you</h2>
+            <h2 className="font-display text-xl font-semibold sm:text-2xl">{t("Thank you")}</h2>
             <p className="mt-2 text-base text-mist/70 sm:text-lg">
-              Your feedback helps us make City Ministers better for everyone.
+              {t("Your feedback helps us make City Ministers better for everyone.")}
             </p>
             <Link
               to="/"
               className="mt-5 inline-flex items-center justify-center rounded-full bg-lemon px-6 py-3 text-lg font-semibold text-ink transition hover:bg-lemon/90"
             >
-              Back home
+              {t("Back home")}
             </Link>
           </div>
         ) : (
           <>
             <div className="mb-8 text-center">
               <h2 className="font-display text-2xl font-semibold sm:text-3xl">
-                How is City Ministers working for you?
+                {t("How is City Ministers working for you?")}
               </h2>
               <p className="mt-3 text-lg text-mist/80 sm:text-xl">
-                Tap the stars, then tell us anything you'd change or add.
+                {t("Tap the stars, then tell us anything you'd change or add.")}
               </p>
             </div>
 
             <form className="space-y-6" onSubmit={submit}>
               {ratingQuestions.map((q) => (
                 <div key={q.key}>
-                  <p className="mb-2 text-base font-medium text-sand sm:text-lg">{q.label}</p>
+                  <p className="mb-2 text-base font-medium text-sand sm:text-lg">{t(q.label)}</p>
                   <Stars
-                    label={q.label}
+                    label={t(q.label)}
                     value={ratings[q.key]}
                     onChange={(n) => setRatings((r) => ({ ...r, [q.key]: n }))}
                   />
@@ -166,7 +169,7 @@ function FeedbackPage() {
 
               <div>
                 <label htmlFor="likes" className="mb-1.5 block text-base font-medium text-sand sm:text-lg">
-                  What do you like most?
+                  {t("What do you like most?")}
                 </label>
                 <textarea
                   id="likes"
@@ -175,13 +178,13 @@ function FeedbackPage() {
                   value={likes}
                   onChange={(e) => setLikes(e.target.value)}
                   className={inputClass}
-                  placeholder="The part that works well for you"
+                  placeholder={t("The part that works well for you")}
                 />
               </div>
 
               <div>
                 <label htmlFor="changes" className="mb-1.5 block text-base font-medium text-sand sm:text-lg">
-                  What would you change?
+                  {t("What would you change?")}
                 </label>
                 <textarea
                   id="changes"
@@ -190,7 +193,7 @@ function FeedbackPage() {
                   value={changes}
                   onChange={(e) => setChanges(e.target.value)}
                   className={inputClass}
-                  placeholder="Anything confusing, slow, or hard to read"
+                  placeholder={t("Anything confusing, slow, or hard to read")}
                 />
               </div>
 
@@ -199,7 +202,7 @@ function FeedbackPage() {
                   htmlFor="additions"
                   className="mb-1.5 block text-base font-medium text-sand sm:text-lg"
                 >
-                  What should we add?
+                  {t("What should we add?")}
                 </label>
                 <textarea
                   id="additions"
@@ -208,13 +211,13 @@ function FeedbackPage() {
                   value={additions}
                   onChange={(e) => setAdditions(e.target.value)}
                   className={inputClass}
-                  placeholder="A feature or page you wish existed"
+                  placeholder={t("A feature or page you wish existed")}
                 />
               </div>
 
               <div>
                 <label htmlFor="email" className="mb-1.5 block text-base font-medium text-sand sm:text-lg">
-                  Email (optional, if you'd like a reply)
+                  {t("Email (optional, if you'd like a reply)")}
                 </label>
                 <input
                   id="email"
@@ -223,7 +226,7 @@ function FeedbackPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className={inputClass}
-                  placeholder="you@example.com"
+                  placeholder={t("you@example.com")}
                 />
               </div>
 
@@ -238,7 +241,7 @@ function FeedbackPage() {
                 disabled={busy}
                 className="w-full rounded-full bg-lemon px-6 py-3 text-lg font-semibold text-ink transition hover:bg-lemon/90 disabled:opacity-60 sm:text-xl"
               >
-                {busy ? "Sending…" : "Send feedback"}
+                {busy ? t("Sending…") : t("Send feedback")}
               </button>
             </form>
           </>

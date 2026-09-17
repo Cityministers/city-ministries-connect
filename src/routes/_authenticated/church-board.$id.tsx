@@ -116,13 +116,13 @@ function ChurchBoardPage() {
         ) : (
           <>
             <div className="mb-6 flex flex-wrap gap-2">
-              {(["waiting", "people"] as const).map((t) => (
+              {(["waiting", "people"] as const).map((tabKey) => (
                 <button
-                  key={t}
+                  key={tabKey}
                   type="button"
-                  onClick={() => setTab(t)}
+                  onClick={() => setTab(tabKey)}
                   className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                    tab === t
+                    tab === tabKey
                       ? "bg-lemon text-ink"
                       : "bg-ink-soft/50 text-mist ring-1 ring-mist/20 hover:bg-ink-soft"
                   }`}
