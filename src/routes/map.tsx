@@ -12,6 +12,8 @@ import { toneStyles } from "@/data/ministries";
 import { LiveMap, type MapBounds } from "@/components/LiveMap";
 import { useSession } from "@/hooks/useSession";
 import { CHURCH_PIN_COLOR, churchIcon } from "@/lib/church-icons";
+import { formatMiles, milesBetween } from "@/lib/distance";
+
 import { listChurches } from "@/lib/churches.functions";
 import { iconMarkup } from "@/lib/map-icon";
 import { listUserMinistries } from "@/lib/ministries.functions";
