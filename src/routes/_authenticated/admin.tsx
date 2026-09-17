@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, Check, EyeOff, ShieldCheck, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import {
   adminListNeeds,
@@ -53,18 +54,20 @@ const statusStyles: Record<string, string> = {
 };
 
 function Pill({ value }: { value: string }) {
+  const { t } = useTranslation();
   return (
     <span
       className={`rounded-full px-2.5 py-1 text-xs font-semibold uppercase tracking-wide ring-1 ${
         statusStyles[value] ?? "bg-mist/15 text-mist ring-mist/30"
       }`}
     >
-      {value}
+      {t(value)}
     </span>
   );
 }
 
 function AdminPage() {
+  const { t } = useTranslation();
   const [tab, setTab] = useState<"needs" | "churches" | "reports" | "feedback">("needs");
   const qc = useQueryClient();
 
@@ -113,7 +116,7 @@ function AdminPage() {
 
   const blocked =
     needs.isError || reports.isError
-      ? "This page is only for site admins."
+      ? t("This page is only for site admins.")
       : null;
 
   return (
@@ -123,11 +126,11 @@ function AdminPage() {
           <Link
             to="/map"
             className="grid size-10 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20 transition hover:bg-ink-soft"
-            aria-label="Back to map"
+            aria-label={t("Back to map")}
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
           </Link>
-          <h1 className="font-display text-lg font-semibold sm:text-xl">Review Center</h1>
+          <h1 className="font-display text-lg font-semibold sm:text-xl">{t("Review Center")}</h1>
         </div>
       </header>
 
@@ -152,12 +155,12 @@ function AdminPage() {
                   }`}
                 >
                   {t === "needs"
-                    ? "Posted needs"
+                    ? tt("Posted needs")
                     : t === "churches"
-                      ? "Churches"
+                      ? tt("Churches")
                       : t === "reports"
-                        ? "Abuse reports"
-                        : "Feedback"}
+                        ? tt("Abuse reports")
+                        : tt("Feedback")}
                   {t === "reports" && (reports.data?.filter((r) => r.status === "new").length ?? 0) > 0
                     ? ` (${reports.data?.filter((r) => r.status === "new").length})`
                     : ""}
@@ -168,9 +171,9 @@ function AdminPage() {
             {tab === "needs" ? (
               <section className="space-y-3">
                 {needs.isLoading ? (
-                  <p className="text-mist/70">Loading…</p>
+                  <p className="text-mist/70">{t("Loading…")}</p>
                 ) : (needs.data?.length ?? 0) === 0 ? (
-                  <p className="text-mist/70">No needs have been posted yet.</p>
+                  <p className="text-mist/70">{t("No needs have been posted yet.")}</p>
                 ) : (
                   needs.data!.map((n) => (
                     <article
@@ -182,12 +185,14 @@ function AdminPage() {
                         <Pill value={n.status} />
                         {n.reportCount > 0 ? (
                           <span className="rounded-full bg-rose/15 px-2.5 py-1 text-xs font-semibold text-rose ring-1 ring-rose/30">
-                            {n.reportCount} report{n.reportCount === 1 ? "" : "s"}
+                            {n.reportCount === 1
+                              ? t("{{count}} report", { count: n.reportCount })
+                              : t("{{count}} reports", { count: n.reportCount })}
                           </span>
                         ) : null}
                       </div>
                       <p className="mt-1 text-sm text-mist/70">
-                        {n.posterName} · {[n.city, n.zip].filter(Boolean).join(" ") || "No location"} ·{" "}
+                        {n.posterName} · {[n.city, n.zip].filter(Boolean).join(" ") || t("No location")} ·{" "}
                         {new Date(n.createdAt).toLocaleDateString()}
                       </p>
                       <p className="mt-3 text-sm leading-relaxed text-mist/80">{n.description}</p>
@@ -199,7 +204,7 @@ function AdminPage() {
                           onClick={() => needMutation.mutate({ id: n.id, status: "active" })}
                           className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-4 py-2 text-sm font-semibold text-emerald-300 ring-1 ring-emerald-400/30 transition hover:bg-emerald-500/25 disabled:opacity-40"
                         >
-                          <Check className="size-4" aria-hidden="true" /> Approve
+                          <Check className="size-4" aria-hidden="true" /> {t("Approve")}
                         </button>
                         <button
                           type="button"
@@ -207,7 +212,7 @@ function AdminPage() {
                           onClick={() => needMutation.mutate({ id: n.id, status: "hidden" })}
                           className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/15 px-4 py-2 text-sm font-semibold text-amber-300 ring-1 ring-amber-400/30 transition hover:bg-amber-500/25 disabled:opacity-40"
                         >
-                          <EyeOff className="size-4" aria-hidden="true" /> Hide
+                          <EyeOff className="size-4" aria-hidden="true" /> {t("Hide")}
                         </button>
                         <button
                           type="button"
@@ -215,7 +220,7 @@ function AdminPage() {
                           onClick={() => needMutation.mutate({ id: n.id, status: "removed" })}
                           className="inline-flex items-center gap-1.5 rounded-full bg-rose/15 px-4 py-2 text-sm font-semibold text-rose ring-1 ring-rose/30 transition hover:bg-rose/25 disabled:opacity-40"
                         >
-                          <Trash2 className="size-4" aria-hidden="true" /> Remove
+                          <Trash2 className="size-4" aria-hidden="true" /> {t("Remove")}
                         </button>
                       </div>
                     </article>
@@ -225,9 +230,9 @@ function AdminPage() {
             ) : tab === "churches" ? (
               <section className="space-y-3">
                 {churches.isLoading ? (
-                  <p className="text-mist/70">Loading…</p>
+                  <p className="text-mist/70">{t("Loading…")}</p>
                 ) : (churches.data?.length ?? 0) === 0 ? (
-                  <p className="text-mist/70">No churches have signed up yet.</p>
+                  <p className="text-mist/70">{t("No churches have signed up yet.")}</p>
                 ) : (
                   churches.data!.map((c) => (
                     <ChurchCard
@@ -248,9 +253,9 @@ function AdminPage() {
             ) : tab === "feedback" ? (
               <section className="space-y-3">
                 {feedback.isLoading ? (
-                  <p className="text-mist/70">Loading…</p>
+                  <p className="text-mist/70">{t("Loading…")}</p>
                 ) : (feedback.data?.length ?? 0) === 0 ? (
-                  <p className="text-mist/70">No feedback has been sent yet.</p>
+                  <p className="text-mist/70">{t("No feedback has been sent yet.")}</p>
                 ) : (
                   feedback.data!.map((f) => (
                     <article
@@ -259,31 +264,31 @@ function AdminPage() {
                     >
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="rounded-full bg-lemon/15 px-2.5 py-1 text-xs font-semibold text-lemon ring-1 ring-lemon/30">
-                          {f.overall}/5 overall
+                          {t("{{n}}/5 overall", { n: f.overall })}
                         </span>
                         <span className="text-sm text-mist/70">
                           {new Date(f.createdAt).toLocaleString()}
                         </span>
                       </div>
                       <p className="mt-2 text-sm text-mist/70">
-                        Ease {f.ease ?? "—"}/5 · Look {f.design ?? "—"}/5 · Speed {f.speed ?? "—"}/5
+                        {t("Ease {{ease}}/5 · Look {{design}}/5 · Speed {{speed}}/5", { ease: f.ease ?? "—", design: f.design ?? "—", speed: f.speed ?? "—" })}
                         {f.email ? ` · ${f.email}` : ""}
                       </p>
                       {f.likes ? (
                         <p className="mt-3 text-sm leading-relaxed text-mist/80">
-                          <span className="font-semibold text-sand">Likes: </span>
+                          <span className="font-semibold text-sand">{t("Likes: ")}</span>
                           {f.likes}
                         </p>
                       ) : null}
                       {f.changes ? (
                         <p className="mt-2 text-sm leading-relaxed text-mist/80">
-                          <span className="font-semibold text-sand">Would change: </span>
+                          <span className="font-semibold text-sand">{t("Would change: ")}</span>
                           {f.changes}
                         </p>
                       ) : null}
                       {f.additions ? (
                         <p className="mt-2 text-sm leading-relaxed text-mist/80">
-                          <span className="font-semibold text-sand">Should add: </span>
+                          <span className="font-semibold text-sand">{t("Should add: ")}</span>
                           {f.additions}
                         </p>
                       ) : null}
@@ -294,9 +299,9 @@ function AdminPage() {
             ) : (
               <section className="space-y-3">
                 {reports.isLoading ? (
-                  <p className="text-mist/70">Loading…</p>
+                  <p className="text-mist/70">{t("Loading…")}</p>
                 ) : (reports.data?.length ?? 0) === 0 ? (
-                  <p className="text-mist/70">No reports yet. That's good news.</p>
+                  <p className="text-mist/70">{t("No reports yet. That's good news.")}</p>
                 ) : (
                   reports.data!.map((r) => (
                     <ReportCard

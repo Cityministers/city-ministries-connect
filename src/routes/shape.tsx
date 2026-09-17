@@ -331,6 +331,7 @@ function SignInPrompt() {
 }
 
 function ShapePage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { step: requestedStep } = Route.useSearch();
   const load = useServerFn(getShapeProfile);
@@ -518,7 +519,7 @@ function ShapePage() {
     setError(null);
     const latest = answersRef.current;
     if (current.id === "place" && latest.city.trim().length < 2 && latest.zip.trim().length < 4) {
-      setError("Record where you'll serve — say your city or ZIP code.");
+      setError(t("Record where you'll serve — say your city or ZIP code."));
       return;
     }
     void save({ data: latest }).catch(() => {});
@@ -541,7 +542,7 @@ function ShapePage() {
         setSavedIdeas(res.ideas);
       }
     } catch {
-      setError("Something went wrong generating your ideas. Try again.");
+      setError(t("Something went wrong generating your ideas. Try again."));
     } finally {
       setBusy(false);
       window.scrollTo({ top: 0 });
@@ -565,7 +566,7 @@ function ShapePage() {
       });
       setPosted((prev) => ({ ...prev, [index]: true }));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "We couldn't post that one. Try again.");
+      setError(err instanceof Error ? err.message : t("We couldn't post that one. Try again."));
       throw err;
     }
   }
@@ -625,7 +626,7 @@ function ShapePage() {
         source = res.ideas;
         if (res.ideas.length > 0) setSavedIdeas(res.ideas);
       } catch {
-        setError("Something went wrong generating your ideas. Try again.");
+        setError(t("Something went wrong generating your ideas. Try again."));
       } finally {
         setBusy(false);
       }
@@ -634,8 +635,8 @@ function ShapePage() {
     if (picked.length === 0) {
       setError(
         kind === "ministry"
-          ? "We don't have ministry posts for you yet — tap Show my ministry ideas."
-          : "Your answers didn't show a need you'd want to post yet.",
+          ? t("We don't have ministry posts for you yet — tap Show my ministry ideas.")
+          : t("Your answers didn't show a need you'd want to post yet."),
       );
       return;
     }
@@ -648,21 +649,21 @@ function ShapePage() {
     const data = recs.data;
     return (
       <Shell
-        title={panel === "people" ? "People you should meet" : "Posts you should view"}
+        title={panel === "people" ? t("People you should meet") : t("Posts you should view")}
         back={() => setPanel(null)}
         onExit={saveAndExit}
       >
         {recs.isLoading && (
           <p className="flex items-center gap-2 text-base text-mist/80">
             <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-            Looking for matches…
+            {t("Looking for matches…")}
           </p>
         )}
-        {recs.isError && <ErrorNote text="We couldn't load your matches. Try again." />}
+        {recs.isError && <ErrorNote text={t("We couldn't load your matches. Try again.")} />}
 
         {panel === "people" && data && (
           data.people.length === 0 ? (
-            <EmptyMatches text="No close matches yet. As more neighbors finish their answers, they'll show up here." />
+            <EmptyMatches text={t("No close matches yet. As more neighbors finish their answers, they'll show up here.")} />
           ) : (
             <ul className="flex flex-col gap-3">
               {data.people.map((person) => (
@@ -694,13 +695,13 @@ function ShapePage() {
 
         {panel === "posts" && data && (
           data.posts.length === 0 ? (
-            <EmptyMatches text="Nothing nearby matches your answers yet. Check the map to see everything that's posted." />
+            <EmptyMatches text={t("Nothing nearby matches your answers yet. Check the map to see everything that's posted.")} />
           ) : (
             <ul className="flex flex-col gap-3">
               {data.posts.map((post) => (
                 <li key={post.id} className="rounded-2xl bg-ink-soft p-4 ring-1 ring-mist/20">
                   <span className="text-xs font-semibold uppercase tracking-widest text-lemon">
-                    {post.kind === "need" ? "Need" : "Ministry"}
+                    {post.kind === "need" ? t("Need") : t("Ministry")}
                   </span>
                   <p className="font-display text-lg font-semibold text-sand">{post.title}</p>
                   {post.city && <p className="text-xs text-mist/60">{post.city}</p>}
@@ -713,7 +714,7 @@ function ShapePage() {
                     search={{ place: post.city || answers.city }}
                     className="mt-3 inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-sand ring-1 ring-mist/25"
                   >
-                    Open this post
+                    {t("Open this post")}
                   </Link>
                 </li>
               ))}
@@ -727,7 +728,7 @@ function ShapePage() {
           className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/25"
         >
           <ArrowLeft className="size-5" aria-hidden="true" />
-          Back
+          {t("Back")}
         </button>
       </Shell>
     );
@@ -738,9 +739,9 @@ function ShapePage() {
   if (ideas) {
     const allPosted = ideas.every((_, i) => posted[i]);
     return (
-      <Shell title="Ready to post" back={() => setIdeas(null)} onExit={saveAndExit}>
+      <Shell title={t("Ready to post")} back={() => setIdeas(null)} onExit={saveAndExit}>
         <p className="mb-4 text-base text-mist/80 sm:text-lg">
-          Edit anything, then post the ones you want.
+          {t("Edit anything, then post the ones you want.")}
         </p>
         {error && <ErrorNote text={error} />}
 
@@ -755,7 +756,7 @@ function ShapePage() {
           ) : (
             <Send className="size-5" aria-hidden="true" />
           )}
-          {allPosted ? "All posted" : "Post all"}
+          {allPosted ? t("All posted") : t("Post all")}
         </button>
 
         <ul className="flex flex-col gap-4">
@@ -767,11 +768,11 @@ function ShapePage() {
                 </span>
                 <span className="inline-flex items-center gap-1.5 rounded-lg bg-ink px-2.5 py-1 text-sm text-mist/80 ring-1 ring-mist/20">
                   <HeartHandshake className="size-4" aria-hidden="true" />
-                  {idea.kind === "need" ? "A need" : "A ministry"}
+                  {idea.kind === "need" ? t("A need") : t("A ministry")}
                 </span>
                 {idea.familyFriendly && (
                   <span className="inline-flex items-center gap-1.5 rounded-lg bg-ink px-2.5 py-1 text-sm text-mist/80 ring-1 ring-mist/20">
-                    <Users className="size-4" aria-hidden="true" /> Family friendly
+                    <Users className="size-4" aria-hidden="true" /> {t("Family friendly")}
                   </span>
                 )}
               </div>

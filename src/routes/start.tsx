@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ministries, toneStyles } from "@/data/ministries";
 import { getShapeAccess } from "@/lib/shape.functions";
 import { useSession } from "@/hooks/useSession";
@@ -30,6 +31,7 @@ export const Route = createFileRoute("/start")({
 });
 
 function StartPage() {
+  const { t } = useTranslation();
   const session = useSession();
   const checkShapeAccess = useServerFn(getShapeAccess);
   const { data: shapeAccessData } = useQuery({
@@ -49,31 +51,31 @@ function StartPage() {
           <Link
             to="/map"
             className="grid size-10 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20 transition hover:bg-ink-soft"
-            aria-label="Back to map"
+            aria-label={t("Back to map")}
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
           </Link>
           <div>
             <h1 className="font-display text-lg font-semibold leading-tight sm:text-xl">
-              Start Your Ministry
+              {t("Start Your Ministry")}
             </h1>
-            <p className="text-xs text-mist/70">Choose the type you want to post</p>
+            <p className="text-xs text-mist/70">{t("Choose the type you want to post")}</p>
           </div>
         </div>
       </header>
 
       {session === undefined ? (
         <main className="mx-auto flex w-full max-w-6xl flex-1 items-center justify-center px-4 py-16">
-          <Loader2 className="size-8 animate-spin text-mist/50" aria-label="Loading" />
+          <Loader2 className="size-8 animate-spin text-mist/50" aria-label={t("Loading")} />
         </main>
       ) : session === null ? (
         <main className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center px-4 py-16 text-center">
           <div className="w-full rounded-2xl bg-ink-soft/60 p-6 ring-1 ring-mist/15 sm:p-8">
             <h2 className="font-display text-2xl font-semibold sm:text-3xl">
-              One quick step first
+              {t("One quick step first")}
             </h2>
             <p className="mt-3 text-base leading-relaxed text-mist/80 sm:text-lg">
-              Create a free account to post your ministry on your city's map.
+              {t("Create a free account to post your ministry on your city's map.")}
             </p>
             <div className="mt-6 flex flex-col gap-3">
               <Link
@@ -81,14 +83,14 @@ function StartPage() {
                 search={{ mode: "signup", next: "/start" }}
                 className="rounded-full bg-lemon px-6 py-4 text-lg font-bold text-ink transition-transform hover:-translate-y-0.5"
               >
-                Create Account
+                {t("Create Account")}
               </Link>
               <Link
                 to="/auth"
                 search={{ next: "/start" }}
                 className="rounded-full bg-ink px-6 py-4 text-lg font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
               >
-                Sign in
+                {t("Sign in")}
               </Link>
             </div>
           </div>
@@ -101,14 +103,14 @@ function StartPage() {
                 to="/create-ministry"
                 className="rounded-2xl bg-lemon px-5 py-4 text-center text-base font-semibold text-ink transition-transform hover:-translate-y-0.5"
               >
-                Create a unique ministry
+                {t("Create a unique ministry")}
               </Link>
               {shapeAccess === "full" ? (
                 <Link
                   to="/shape"
                   className="rounded-2xl bg-ink-soft px-5 py-4 text-center text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft/70"
                 >
-                  Help me create a Ministry
+                  {t("Help me create a Ministry")}
                 </Link>
               ) : (
                 <div
@@ -116,17 +118,17 @@ function StartPage() {
                   className="flex flex-col items-center gap-1 rounded-2xl bg-ink-soft/40 px-5 py-4 text-center ring-1 ring-mist/15"
                 >
                   <span className="text-base font-semibold text-mist/60">
-                    Help me create a Ministry
+                    {t("Help me create a Ministry")}
                   </span>
                   <span className="text-xs font-semibold uppercase tracking-wider text-mist/50">
-                    Coming soon
+                    {t("Coming soon")}
                   </span>
                 </div>
               )}
             </div>
 
             <p className="mb-4 text-sm font-semibold uppercase tracking-wider text-sand/90">
-              Or choose a pre-made ministry
+              {t("Or choose a pre-made ministry")}
             </p>
 
             <ul className="flex flex-col gap-3">
@@ -151,10 +153,10 @@ function StartPage() {
                       </span>
                       <span className="flex min-w-0 flex-1 flex-col gap-1 py-0.5">
                         <span className="font-display text-base font-semibold text-sand sm:text-lg">
-                          {m.label}
+                          {t(m.label)}
                         </span>
                         <span className="line-clamp-2 text-sm leading-relaxed text-mist/70 sm:text-base">
-                          {m.description}
+                          {t(m.description)}
                         </span>
                       </span>
                     </button>
@@ -169,10 +171,10 @@ function StartPage() {
               <p className="text-xs text-mist/70">
                 {chosen ? (
                   <>
-                    Selected: <span className="text-sand">{chosen.label}</span>
+                    {t("Selected:")} <span className="text-sand">{t(chosen.label)}</span>
                   </>
                 ) : (
-                  "Tap a ministry type to select it"
+                  t("Tap a ministry type to select it")
                 )}
               </p>
               <Link
@@ -188,7 +190,7 @@ function StartPage() {
                     : "pointer-events-none bg-ink-soft text-mist/40"
                 }`}
               >
-                Continue
+                {t("Continue")}
               </Link>
             </div>
           </div>
