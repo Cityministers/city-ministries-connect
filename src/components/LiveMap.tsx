@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { placePinSvg } from "@/lib/place-pin";
 
 export type MapPoint = {
@@ -168,8 +169,10 @@ export function LiveMap({
   onSelect,
   onBoundsChange,
   className = "",
-  label = "Map of nearby posts",
+  label,
 }: Props) {
+  const { t } = useTranslation();
+  const defaultLabel = t("Map of nearby posts");
   const hostRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
   const markers = useRef(new Map<string, google.maps.Marker>());
@@ -306,7 +309,7 @@ export function LiveMap({
     <div
       ref={hostRef}
       role="application"
-      aria-label={label}
+      aria-label={label ?? defaultLabel}
       className={`overflow-hidden rounded-2xl bg-ink-soft ring-1 ring-mist/15 ${className}`}
     />
   );

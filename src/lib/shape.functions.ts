@@ -5,6 +5,11 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
 import type { MinistryIdea, ShapeAnswers } from "@/data/shape";
+import { LANGUAGES } from "@/lib/i18n";
+
+function languageName(code: string) {
+  return LANGUAGES.find((l) => l.code === code)?.name ?? code;
+}
 
 function isNewSupabaseApiKey(value: string): boolean {
   return value.startsWith("sb_publishable_") || value.startsWith("sb_secret_");

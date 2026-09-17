@@ -268,7 +268,7 @@ function ChurchPage() {
           <Link
             to="/map"
             className="grid size-9 place-items-center rounded-full bg-ink text-sand ring-1 ring-mist/20 transition hover:bg-ink-soft"
-            aria-label="Back to the map"
+            aria-label={t("Back to the map")}
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
           </Link>
@@ -283,14 +283,14 @@ function ChurchPage() {
 
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
         {isLoading ? (
-          <p className="py-16 text-center text-sm text-mist/60">Loading…</p>
+          <p className="py-16 text-center text-sm text-mist/60">{t("Loading…")}</p>
         ) : !church ? (
           <div className="rounded-2xl bg-ink-soft p-6 text-center">
-            <h1 className="font-display text-2xl font-semibold">We couldn't find that church</h1>
+            <h1 className="font-display text-2xl font-semibold">{t("We couldn't find that church")}</h1>
             <p className="mt-2 text-base text-mist/70">
-              It may have been taken down.{" "}
+              {t("It may have been taken down.")}{" "}
               <Link to="/map" className="text-lemon underline underline-offset-2">
-                Back to the map
+                {t("Back to the map")}
               </Link>
             </p>
           </div>
@@ -341,7 +341,7 @@ function ChurchPage() {
                     </h1>
                     {church.status !== "active" && (
                       <p className="mt-1 text-sm font-semibold text-rose">
-                        Not on the map right now
+                        {t("Not on the map right now")}
                       </p>
                     )}
                   </div>
@@ -390,7 +390,7 @@ function ChurchPage() {
                   className="mt-1 inline-flex w-fit items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
                 >
                   <Share2 className="size-4 text-lemon" aria-hidden="true" />
-                  Share
+                  {t("Share")}
                 </button>
                 {shareOpen && (
                   <div className="flex flex-wrap gap-2">
@@ -399,19 +399,19 @@ function ChurchPage() {
                       onClick={() => void copyLink()}
                       className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
                     >
-                      {copied ? "Link copied" : "Copy link"}
+                      {copied ? t("Link copied") : t("Copy link")}
                     </button>
                     <a
                       href={`mailto:?subject=${encodedText}&body=${encodedUrl}`}
                       className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
                     >
-                      Email
+                      {t("Email")}
                     </a>
                     <a
                       href={`sms:?&body=${encodedText}%20${encodedUrl}`}
                       className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
                     >
-                      Text message
+                      {t("Text message")}
                     </a>
                     <a
                       href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`}
@@ -419,7 +419,7 @@ function ChurchPage() {
                       rel="noreferrer"
                       className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
                     >
-                      Facebook
+                      {t("Facebook")}
                     </a>
                     <a
                       href={`https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedText}`}
@@ -435,7 +435,7 @@ function ChurchPage() {
                         onClick={() => void nativeShare()}
                         className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
                       >
-                        More…
+                        {t("More…")}
                       </button>
                     )}
                   </div>
@@ -447,10 +447,9 @@ function ChurchPage() {
 
             {!isOwner && (
               <section className="flex flex-col gap-3 rounded-2xl bg-ink-soft p-5 ring-1 ring-mist/15">
-                <h2 className="font-display text-xl font-semibold">Serving at this church</h2>
+                <h2 className="font-display text-xl font-semibold">{t("Serving at this church")}</h2>
                 <p className="text-base text-mist/75">
-                  Share what you can offer, or what you need. {church.name} reviews each post
-                  before it shows up here.
+                  {t("Share what you can offer, or what you need. {{name}} reviews each post before it shows up here.", { name: church.name })}
                 </p>
                 <div className="flex flex-wrap gap-2">
                   <Link
@@ -458,14 +457,14 @@ function ChurchPage() {
                     search={{ city: church.city, zip: church.zip, church: church.id }}
                     className="rounded-full bg-lemon px-5 py-2.5 text-base font-semibold text-ink transition hover:opacity-90"
                   >
-                    Post your ministry here
+                    {t("Post your ministry here")}
                   </Link>
                   <Link
                     to="/post-need"
                     search={{ church: church.id }}
                     className="rounded-full bg-ember px-5 py-2.5 text-base font-semibold text-ink shadow-[0_0_18px_-4px_var(--color-ember)] transition hover:opacity-90"
                   >
-                    Post your need here
+                    {t("Post your need here")}
                   </Link>
                 </div>
               </section>
@@ -473,14 +472,14 @@ function ChurchPage() {
 
             {isOwner && (
               <section className="flex flex-col gap-4 rounded-2xl bg-ink-soft/60 p-5 ring-1 ring-lemon/25">
-                <h2 className="font-display text-xl font-semibold">Church tools</h2>
+                <h2 className="font-display text-xl font-semibold">{t("Church tools")}</h2>
 
                 <div className="flex flex-col gap-4 rounded-xl bg-ink p-4 ring-1 ring-mist/15 sm:flex-row sm:items-center">
                   <div className="grid size-40 shrink-0 place-items-center overflow-hidden rounded-2xl bg-white">
                     {qr ? (
                       <img
                         src={qr}
-                        alt={`QR code that opens the page for ${church.name}`}
+                        alt={t("QR code that opens the page for {{name}}", { name: church.name })}
                         className="size-full object-contain p-2"
                       />
                     ) : (
@@ -490,11 +489,10 @@ function ChurchPage() {
                   <div className="flex min-w-0 flex-col gap-3">
                     <h3 className="inline-flex items-center gap-2 font-display text-lg font-semibold">
                       <QrCode className="size-5 text-lemon" aria-hidden="true" />
-                      Scan to open this page
+                      {t("Scan to open this page")}
                     </h3>
                     <p className="text-base text-mist/75">
-                      Put this on your overhead, screen or bulletin. Anyone who scans it lands
-                      right here, on your page.
+                      {t("Put this on your overhead, screen or bulletin. Anyone who scans it lands right here, on your page.")}
                     </p>
                     {pageUrl && (
                       <p className="truncate rounded-lg bg-ink-soft px-3 py-2 text-sm text-mist/70 ring-1 ring-mist/15">
@@ -508,7 +506,7 @@ function ChurchPage() {
                           download={`${church.name.replace(/\s+/g, "-").toLowerCase()}-qr.png`}
                           className="rounded-full bg-lemon px-5 py-2.5 text-base font-semibold text-ink transition hover:opacity-90"
                         >
-                          Download QR code
+                          {t("Download QR code")}
                         </a>
                       )}
                       <button
@@ -516,7 +514,7 @@ function ChurchPage() {
                         onClick={() => void copyLink()}
                         className="rounded-full bg-ink-soft px-5 py-2.5 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink"
                       >
-                        {copied ? "Link copied" : "Copy link"}
+                        {copied ? t("Link copied") : t("Copy link")}
                       </button>
                     </div>
                   </div>
@@ -526,12 +524,11 @@ function ChurchPage() {
                 {church.lat == null && (
                   <div className="rounded-xl bg-ink p-4 ring-1 ring-rose/30">
                     <p className="text-base text-mist/80">
-                      We couldn't find{" "}
+                      {t("We couldn't find")}{" "}
                       <span className="text-sand">
                         {[church.address, church.city, church.zip].filter(Boolean).join(", ")}
                       </span>
-                      , so your icon isn't on the map yet. Correct the address below, then try
-                      again. Your page, link and QR code still work.
+                      {t(", so your icon isn't on the map yet. Correct the address below, then try again. Your page, link and QR code still work.")}
                     </p>
                     <button
                       type="button"
@@ -539,7 +536,7 @@ function ChurchPage() {
                       disabled={busy}
                       className="mt-3 inline-flex items-center justify-center rounded-full bg-lemon px-5 py-2.5 text-base font-semibold text-ink transition hover:opacity-90 disabled:opacity-60"
                     >
-                      Try again
+                      {t("Try again")}
                     </button>
                   </div>
                 )}
@@ -548,8 +545,7 @@ function ChurchPage() {
                 {church.status !== "active" && (
                   <div className="rounded-xl bg-ink p-4 ring-1 ring-rose/30">
                     <p className="text-base text-mist/80">
-                      Your $49 monthly listing isn't active, so your pin is off the map. This page
-                      and your QR code still work.
+                      {t("Your $49 monthly listing isn't active, so your pin is off the map. This page and your QR code still work.")}
                     </p>
                     {payOpen ? (
                       <form className="mt-3 flex flex-col gap-2" onSubmit={(e) => void reactivate(e)}>
@@ -572,10 +568,10 @@ function ChurchPage() {
                           className="inline-flex items-center justify-center gap-2 rounded-full bg-lemon px-6 py-3 text-base font-semibold text-ink disabled:opacity-60"
                         >
                           {busy && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}
-                          Pay $49 and go back on the map
+                          {t("Pay $49 and go back on the map")}
                         </button>
                         <p className="text-center text-xs text-mist/50">
-                          Test checkout — no card is charged.
+                          {t("Test checkout — no card is charged.")}
                         </p>
                       </form>
                     ) : (
@@ -584,7 +580,7 @@ function ChurchPage() {
                         onClick={() => setPayOpen(true)}
                         className="mt-3 rounded-full bg-lemon px-5 py-2.5 text-base font-semibold text-ink"
                       >
-                        Reactivate
+                        {t("Reactivate")}
                       </button>
                     )}
                   </div>
@@ -592,13 +588,11 @@ function ChurchPage() {
 
 
                 <div className="flex flex-col gap-3 rounded-xl bg-ink p-4 ring-1 ring-mist/15">
-                  <p className="font-semibold text-sand">Your church board</p>
+                  <p className="font-semibold text-sand">{t("Your church board")}</p>
                   <p className="text-sm text-mist/60">
                     {(requests ?? []).length === 0
-                      ? "No one is waiting right now."
-                      : `${(requests ?? []).length} ${
-                          (requests ?? []).length === 1 ? "post is" : "posts are"
-                        } waiting for your approval.`}
+                      ? t("No one is waiting right now.")
+                      : t("{{count}} posts are waiting for your approval", { count: (requests ?? []).length })}
                   </p>
                   <Link
                     to="/church-board/$id"
@@ -606,7 +600,7 @@ function ChurchPage() {
                     className="inline-flex w-fit items-center gap-1.5 rounded-full bg-lemon px-5 py-2.5 text-sm font-semibold text-ink"
                   >
                     <Check className="size-4" aria-hidden="true" />
-                    Review requests
+                    {t("Review requests")}
                   </Link>
                 </div>
 
@@ -615,18 +609,18 @@ function ChurchPage() {
                     className="flex flex-col gap-2 rounded-xl bg-ink p-4 ring-1 ring-mist/15"
                     onSubmit={(e) => void saveEdit(e)}
                   >
-                    <p className="font-semibold text-sand">Edit your church</p>
+                    <p className="font-semibold text-sand">{t("Edit your church")}</p>
                     <input
                       className={inputClass}
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      placeholder="Church name"
+                      placeholder={t("Church name")}
                     />
                     <textarea
                       className={`${inputClass} min-h-28`}
                       value={form.description}
                       onChange={(e) => setForm({ ...form, description: e.target.value })}
-                      placeholder="About your church"
+                      placeholder={t("About your church")}
                     />
                     <div className="grid grid-cols-3 gap-2">
                       {CHURCH_ICONS.map((choice) => (
@@ -650,20 +644,20 @@ function ChurchPage() {
                       className={inputClass}
                       value={form.address}
                       onChange={(e) => setForm({ ...form, address: e.target.value })}
-                      placeholder="Street address"
+                      placeholder={t("Street address")}
                     />
                     <div className="grid grid-cols-[minmax(0,1fr)_7rem] gap-2">
                       <input
                         className={inputClass}
                         value={form.city}
                         onChange={(e) => setForm({ ...form, city: e.target.value })}
-                        placeholder="City"
+                        placeholder={t("City")}
                       />
                       <input
                         className={inputClass}
                         value={form.zip}
                         onChange={(e) => setForm({ ...form, zip: e.target.value })}
-                        placeholder="ZIP"
+                        placeholder={t("ZIP")}
                         inputMode="numeric"
                       />
                     </div>
@@ -671,20 +665,20 @@ function ChurchPage() {
                       className={inputClass}
                       value={form.serviceTimes}
                       onChange={(e) => setForm({ ...form, serviceTimes: e.target.value })}
-                      placeholder="Service times"
+                      placeholder={t("Service times")}
                     />
                     <div className="grid grid-cols-2 gap-2">
                       <input
                         className={inputClass}
                         value={form.phone}
                         onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                        placeholder="Phone"
+                        placeholder={t("Phone")}
                       />
                       <input
                         className={inputClass}
                         value={form.website}
                         onChange={(e) => setForm({ ...form, website: e.target.value })}
-                        placeholder="Website"
+                        placeholder={t("Website")}
                       />
                     </div>
                     {error && <p className="text-sm text-rose">{error}</p>}
@@ -695,14 +689,14 @@ function ChurchPage() {
                         className="inline-flex items-center gap-2 rounded-full bg-lemon px-5 py-2.5 text-base font-semibold text-ink disabled:opacity-60"
                       >
                         {busy && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}
-                        Save changes
+                        {t("Save changes")}
                       </button>
                       <button
                         type="button"
                         onClick={() => setEditing(false)}
                         className="rounded-full bg-ink-soft px-5 py-2.5 text-base font-semibold text-sand ring-1 ring-mist/25"
                       >
-                        Cancel
+                        {t("Cancel")}
                       </button>
                     </div>
                   </form>
@@ -713,18 +707,17 @@ function ChurchPage() {
                     className="inline-flex w-fit items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-base font-semibold text-sand ring-1 ring-mist/25"
                   >
                     <Settings2 className="size-4" aria-hidden="true" />
-                    Edit church details
+                    {t("Edit church details")}
                   </button>
                 )}
               </section>
             )}
 
             <section className="flex flex-col gap-3">
-              <h2 className="font-display text-xl font-semibold">Posts at this church</h2>
+              <h2 className="font-display text-xl font-semibold">{t("Posts at this church")}</h2>
               {(data?.posts ?? []).length === 0 ? (
                 <p className="rounded-2xl bg-ink-soft p-4 text-base text-mist/70">
-                  No posts here yet. When neighbors post a ministry or a need they can ask to list
-                  it at this church.
+                  {t("No posts here yet. When neighbors post a ministry or a need they can ask to list it at this church.")}
                 </p>
               ) : (
                 <ul className="flex flex-col gap-2">
@@ -738,10 +731,10 @@ function ChurchPage() {
             </section>
 
             <section className="flex flex-col gap-3">
-              <h2 className="font-display text-xl font-semibold">Public posts nearby</h2>
+              <h2 className="font-display text-xl font-semibold">{t("Public posts nearby")}</h2>
               {(data?.nearby ?? []).length === 0 ? (
                 <p className="rounded-2xl bg-ink-soft p-4 text-base text-mist/70">
-                  Nothing posted nearby yet.
+                  {t("Nothing posted nearby yet.")}
                 </p>
               ) : (
                 <ul className="flex flex-col gap-2">
