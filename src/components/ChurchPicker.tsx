@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Check, Church } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { listChurchesNear, requestChurchPost } from "@/lib/churches.functions";
 
 type Props = {
@@ -15,6 +16,7 @@ type Props = {
 
 /** Lets a poster ask a church to list their post on its page. */
 export function ChurchPicker({ kind, postId, city, zip, preferChurchId }: Props) {
+  const { t } = useTranslation();
   const fetchChurches = useServerFn(listChurchesNear);
   const ask = useServerFn(requestChurchPost);
   const [sent, setSent] = useState<string | null>(null);
@@ -38,10 +40,10 @@ export function ChurchPicker({ kind, postId, city, zip, preferChurchId }: Props)
     <div className="mt-4 rounded-xl bg-ink p-4 text-left ring-1 ring-mist/15">
       <p className="inline-flex items-center gap-2 font-semibold text-sand">
         <Church className="size-5 text-lemon" aria-hidden="true" />
-        Which church?
+        {t("Which church?")}
       </p>
       <p className="mt-1 text-sm text-mist/70">
-        Ask a church to list this on their page. They'll approve it first.
+        {t("Ask a church to list this on their page. They'll approve it first.")}
       </p>
       <ul className="mt-3 flex flex-col gap-2">
         {ordered.map((c) => (
@@ -74,10 +76,10 @@ export function ChurchPicker({ kind, postId, city, zip, preferChurchId }: Props)
               {sent === c.id ? (
                 <span className="inline-flex shrink-0 items-center gap-1.5 text-sm">
                   <Check className="size-5" aria-hidden="true" />
-                  {listed ? `Listed at ${c.name}` : "Sent for approval"}
+                  {listed ? t("Listed at {{name}}", { name: c.name }) : t("Sent for approval")}
                 </span>
               ) : (
-                <span className="shrink-0 text-sm">Ask</span>
+                <span className="shrink-0 text-sm">{t("Ask")}</span>
               )}
             </button>
           </li>
