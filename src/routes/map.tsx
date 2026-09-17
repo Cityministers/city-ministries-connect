@@ -74,7 +74,7 @@ function MapPage() {
   const center = usePlaceCenter(location);
   const { origin, hasHome } = useHomePoint(Boolean(session), center);
 
-  const [mode, setMode] = useState<"view" | "near">("view");
+  const [mode, setMode] = useState<"view" | "near" | "church">("view");
   const [bounds, setBounds] = useState<MapBounds | null>(null);
   const [pending, setPending] = useState<MapBounds | null>(null);
   const moved = mode === "view" && pending !== null && pending !== bounds;
@@ -83,11 +83,12 @@ function MapPage() {
     all,
     origin,
     mode === "view" ? bounds : null,
-    mode,
+    mode === "church" ? "near" : mode,
     session?.user?.id ?? null,
     highlightId,
   );
   const active = all.find((m) => m.id === activeId);
+
 
   // Churches share the map with posts; tapping one opens that church's page.
   const fetchChurches = useServerFn(listChurches);
