@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 
 const footerLinks = [
   { to: "/ministry-mindset", label: "Ministry Mindset" },
@@ -12,6 +13,7 @@ const footerLinks = [
 ] as const;
 
 export function SiteFooter() {
+  const { t } = useTranslation();
   return (
     <footer className="border-t border-ink-soft bg-ink">
       <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-4 px-4 py-8 sm:px-6">
@@ -22,12 +24,12 @@ export function SiteFooter() {
               to={link.to}
               className="rounded-full px-4 py-2.5 text-sm font-semibold text-sand ring-1 ring-mist/20 transition hover:bg-ink-soft sm:text-base"
             >
-              {link.label}
+              {t(link.label)}
             </Link>
           ))}
         </nav>
         <p className="text-xs text-mist/60 sm:text-sm">
-          City Ministers — neighbors serving neighbors.
+          {t("City Ministers — neighbors serving neighbors.")}
         </p>
       </div>
     </footer>
