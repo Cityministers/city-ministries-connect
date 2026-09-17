@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/terms")({
   head: () => ({
@@ -99,6 +100,7 @@ const sections: { heading: string; body: string[] }[] = [
 ];
 
 function TermsPage() {
+  const { t } = useTranslation();
   return (
     <div className="flex min-h-dvh flex-col bg-ink font-body text-sand antialiased">
       <header className="border-b border-ink-soft bg-ink-soft/70">
@@ -106,28 +108,26 @@ function TermsPage() {
           <Link
             to="/map"
             className="grid size-10 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20 transition hover:bg-ink-soft"
-            aria-label="Back to map"
+            aria-label={t("Back to map")}
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
           </Link>
           <h1 className="font-display text-lg font-semibold sm:text-xl">
-            User &amp; Privacy Agreement
+            {t("User & Privacy Agreement")}
           </h1>
         </div>
       </header>
 
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8">
         <p className="text-sm leading-relaxed text-mist/80 sm:text-base">
-          This is the agreement between you and City Ministers. It covers how members
-          treat each other and what happens to the information you share. Please read it
-          before you create a profile or post a need.
+          {t("This is the agreement between you and City Ministers. It covers how members treat each other and what happens to the information you share. Please read it before you create a profile or post a need.")}
         </p>
 
         <div className="mt-8 flex flex-col gap-7">
           {sections.map((section) => (
             <section key={section.heading}>
               <h2 className="font-display text-base font-semibold text-sand sm:text-lg">
-                {section.heading}
+                {t(section.heading)}
               </h2>
               <div className="mt-2 flex flex-col gap-2">
                 {section.body.map((paragraph) => (
@@ -135,7 +135,7 @@ function TermsPage() {
                     key={paragraph}
                     className="text-sm leading-relaxed text-mist/75 sm:text-base"
                   >
-                    {paragraph}
+                    {t(paragraph)}
                   </p>
                 ))}
               </div>
@@ -149,13 +149,13 @@ function TermsPage() {
             search={{ mode: "signup" }}
             className="inline-flex items-center justify-center rounded-full bg-lemon px-6 py-3 text-base font-semibold text-ink transition hover:opacity-90"
           >
-            Create an account
+            {t("Create an account")}
           </Link>
           <Link
             to="/contact"
             className="inline-flex items-center justify-center rounded-full bg-ink-soft px-6 py-3 text-base font-semibold text-sand ring-1 ring-mist/20 transition hover:bg-ink"
           >
-            Contact us
+            {t("Contact us")}
           </Link>
         </div>
       </main>
