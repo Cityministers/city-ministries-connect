@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, ArrowRight, Check, Loader2, Plus, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, Check, Loader2, Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { BIBLICAL_GIFTS, emptyAnswers, type ShapeAnswers } from "@/data/shape";
 import { getShapeProfile, saveShapeProfile } from "@/lib/shape.functions";
@@ -114,7 +114,17 @@ function GiftsListPage() {
       </header>
 
       <main className="mx-auto w-full max-w-lg flex-1 px-4 py-8">
-        <p className="text-xl leading-relaxed text-mist/85 sm:text-2xl">
+        <a
+          href="https://www.bible.com/reading-plans/16766-what-are-spiritual-gifts"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-youversion px-6 py-3.5 text-lg font-semibold text-white transition active:translate-y-0.5 hover:bg-youversion/90"
+        >
+          <BookOpen className="size-5" aria-hidden="true" />
+          What are spiritual gifts?
+        </a>
+
+        <p className="mt-6 text-xl leading-relaxed text-mist/85 sm:text-2xl">
           Tap every gift you believe applies to you. There are no wrong answers — you can change
           these later.
         </p>
