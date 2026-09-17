@@ -899,17 +899,17 @@ function ShapePage() {
 
   return (
     <Shell
-      title={current.title}
+      title={t(current.title)}
       back={step > 0 ? () => setStep((s) => s - 1) : undefined}
       onExit={saveAndExit}
       showExitAction={false}
     >
       <div className="mb-3 flex items-end justify-between gap-4">
         <span className="text-xs font-semibold uppercase text-mist/70">
-          Step {step + 1} of {steps.length}
+          {t("Step {{step}} of {{total}}", { step: step + 1, total: steps.length })}
         </span>
         <span className="text-xs text-mist/50">
-          {Math.round(((step + 1) / steps.length) * 100)}% complete
+          {t("{{percent}}% complete", { percent: Math.round(((step + 1) / steps.length) * 100) })}
         </span>
       </div>
       <div className="mb-6 h-1 w-full overflow-hidden rounded-full bg-ink-soft">
@@ -921,7 +921,7 @@ function ShapePage() {
 
 
       {current.prompt && (
-        <p className="mb-4 font-display text-3xl font-semibold leading-snug text-sand">{current.prompt}</p>
+        <p className="mb-4 font-display text-3xl font-semibold leading-snug text-sand">{t(current.prompt)}</p>
       )}
 
 
@@ -939,21 +939,21 @@ function ShapePage() {
       ) : current.id === "place" ? (
         <div className="flex flex-col gap-4">
           <label className="flex flex-col gap-2 text-base text-mist/80">
-            City
+            {t("City")}
             <input
               className={inputClass}
               value={answers.city}
               onChange={(e) => set("city", e.target.value)}
-              placeholder="Beaverton"
+              placeholder={t("Beaverton")}
             />
           </label>
           <label className="flex flex-col gap-2 text-base text-mist/80">
-            ZIP code
+            {t("ZIP code")}
             <input
               className={inputClass}
               value={answers.zip}
               onChange={(e) => set("zip", e.target.value)}
-              placeholder="97006"
+              placeholder={t("97006")}
               inputMode="numeric"
             />
           </label>
@@ -1000,7 +1000,7 @@ function ShapePage() {
             className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/25 disabled:opacity-60"
           >
             <Sparkles className="size-5 text-lemon" aria-hidden="true" />
-            Your potential ministry posts
+            {t("Your potential ministry posts")}
           </button>
           <button
             type="button"
@@ -1009,7 +1009,7 @@ function ShapePage() {
             className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/25 disabled:opacity-60"
           >
             <HandHeart className="size-5 text-lemon" aria-hidden="true" />
-            Your potential needs posts
+            {t("Your potential needs posts")}
           </button>
           <button
             type="button"
@@ -1020,7 +1020,7 @@ function ShapePage() {
             className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/25"
           >
             <Users className="size-5 text-lemon" aria-hidden="true" />
-            People you should meet
+            {t("People you should meet")}
           </button>
           <button
             type="button"
@@ -1031,7 +1031,7 @@ function ShapePage() {
             className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/25"
           >
             <MapPin className="size-5 text-lemon" aria-hidden="true" />
-            Posts you should view
+            {t("Posts you should view")}
           </button>
         </div>
       )}
@@ -1043,7 +1043,7 @@ function ShapePage() {
           disabled={busy}
           className="inline-flex h-11 items-center justify-center rounded-full border border-sand/20 bg-sand/5 px-5 text-sm font-medium text-sand transition hover:bg-sand/10 disabled:opacity-60"
         >
-          Save &amp; exit
+          {t("Save & exit")}
         </button>
         <button
           type="button"
@@ -1052,7 +1052,7 @@ function ShapePage() {
           className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-ember px-8 text-sm font-semibold text-ink shadow-ember/20 transition hover:shadow-ember/30 active:scale-[0.98] disabled:opacity-60"
         >
           {busy && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}
-          {isLast ? "Show my ministry ideas" : "Next"}
+          {isLast ? t("Show my ministry ideas") : t("Next")}
         </button>
       </div>
 
@@ -1062,13 +1062,13 @@ function ShapePage() {
         disabled={busy}
         className="mt-4 inline-flex min-h-11 w-full items-center justify-center text-xs font-medium uppercase tracking-widest text-rose/60 transition hover:text-rose disabled:opacity-60"
       >
-        Start over
+        {t("Start over")}
       </button>
 
       {showStartOverConfirm && (
         <div className="mt-4 rounded-2xl bg-rose/10 p-4 ring-1 ring-rose/30">
           <p className="mb-4 text-base leading-relaxed text-rose">
-            Starting over will permanently delete all of your saved answers and ministry ideas. You’ll need to complete the walkthrough from the beginning.
+            {t("Starting over will permanently delete all of your saved answers and ministry ideas. You'll need to complete the walkthrough from the beginning.")}
           </p>
           <div className="flex flex-col gap-3 sm:flex-row">
             <button
@@ -1078,7 +1078,7 @@ function ShapePage() {
               className="inline-flex flex-1 items-center justify-center rounded-full bg-rose px-5 py-3 text-base font-semibold text-ink transition hover:bg-rose/90 disabled:opacity-60"
             >
               {busy && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}
-              Yes, delete everything
+              {t("Yes, delete everything")}
             </button>
             <button
               type="button"
@@ -1086,7 +1086,7 @@ function ShapePage() {
               disabled={busy}
               className="inline-flex flex-1 items-center justify-center rounded-full bg-ink-soft px-5 py-3 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft/80 disabled:opacity-60"
             >
-              Keep my answers
+              {t("Keep my answers")}
             </button>
           </div>
         </div>
