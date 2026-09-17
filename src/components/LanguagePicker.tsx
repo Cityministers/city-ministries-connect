@@ -27,7 +27,6 @@ export function LanguagePicker({ variant = "button" }: { variant?: "button" | "p
     setCurrent(code);
     updateDocumentLang(code);
     await applyLanguage(code);
-migrate: setCurrent(i18n.language as LanguageCode);
   };
 
   if (variant === "pill") {
