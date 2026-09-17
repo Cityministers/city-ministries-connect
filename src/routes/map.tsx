@@ -12,6 +12,8 @@ import { toneStyles } from "@/data/ministries";
 import { LiveMap, type MapBounds } from "@/components/LiveMap";
 import { useSession } from "@/hooks/useSession";
 import { CHURCH_PIN_COLOR, churchIcon } from "@/lib/church-icons";
+import { formatMiles, milesBetween } from "@/lib/distance";
+
 import { listChurches } from "@/lib/churches.functions";
 import { iconMarkup } from "@/lib/map-icon";
 import { listUserMinistries } from "@/lib/ministries.functions";
@@ -74,7 +76,7 @@ function MapPage() {
   const center = usePlaceCenter(location);
   const { origin, hasHome } = useHomePoint(Boolean(session), center);
 
-  const [mode, setMode] = useState<"view" | "near">("view");
+  const [mode, setMode] = useState<"view" | "near" | "church">("view");
   const [bounds, setBounds] = useState<MapBounds | null>(null);
   const [pending, setPending] = useState<MapBounds | null>(null);
   const moved = mode === "view" && pending !== null && pending !== bounds;
@@ -83,11 +85,12 @@ function MapPage() {
     all,
     origin,
     mode === "view" ? bounds : null,
-    mode,
+    mode === "church" ? "near" : mode,
     session?.user?.id ?? null,
     highlightId,
   );
   const active = all.find((m) => m.id === activeId);
+
 
   // Churches share the map with posts; tapping one opens that church's page.
   const fetchChurches = useServerFn(listChurches);
@@ -111,7 +114,24 @@ function MapPage() {
         })),
     [churches, highlightId],
   );
-  const allPoints = useMemo(() => [...points, ...churchPoints], [points, churchPoints]);
+  const allPoints = useMemo(
+    () => (mode === "church" ? churchPoints : [...points, ...churchPoints]),
+    [points, churchPoints, mode],
+  );
+
+  /** Churches with a distance from home, nearest first. */
+  const churchList = useMemo(
+    () =>
+      (churches ?? [])
+        .filter((c) => c.lat != null && c.lng != null)
+        .map((c) => {
+          const miles = milesBetween(origin, { lat: c.lat as number, lng: c.lng as number });
+          return { church: c, miles, distance: formatMiles(miles) };
+        })
+        .sort((a, b) => a.miles - b.miles),
+    [churches, origin],
+  );
+
 
   // A freshly created post or church sits in the middle of the screen while it glows.
   const spotlight = highlightId ? allPoints.find((p) => p.id === highlightId) : undefined;
@@ -242,7 +262,7 @@ function MapPage() {
 
         <div className="mt-3 flex items-center justify-between gap-3">
           <div className="flex rounded-full bg-ink-soft p-1 ring-1 ring-mist/15">
-            {(["view", "near"] as const).map((m) => (
+            {(["view", "near", "church"] as const).map((m) => (
               <button
                 key={m}
                 type="button"
@@ -253,14 +273,17 @@ function MapPage() {
                     : "text-mist hover:text-sand"
                 }`}
               >
-                {m === "view" ? "In this view" : "Nearest to me"}
+                {m === "view" ? "In this view" : m === "near" ? "Nearest to me" : "Churches"}
               </button>
             ))}
           </div>
           <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-mist/40">
-            {list.length} ministries
+            {mode === "church"
+              ? `${churchList.length} churches`
+              : `${list.length + (mode === "near" ? churchList.length : 0)} nearby`}
           </p>
         </div>
+
 
         {!hasHome && (
           <p className="mt-2 text-xs text-mist/70">
@@ -269,7 +292,8 @@ function MapPage() {
         )}
 
         <ul className="mt-3 space-y-2">
-          {list.map(({ post: m, distance }) => (
+          {mode !== "church" &&
+            list.map(({ post: m, distance }) => (
             <li key={m.id}>
               <button
                 type="button"
@@ -305,12 +329,52 @@ function MapPage() {
               </button>
             </li>
           ))}
-          {list.length === 0 && (
+          {(mode === "church" || mode === "near") &&
+            churchList.map(({ church: c, distance }) => {
+              const Icon = churchIcon(c.iconId);
+              return (
+                <li key={c.id}>
+                  <Link
+                    to="/church/$id"
+                    params={{ id: c.id }}
+                    className="flex w-full items-center gap-3 rounded-2xl bg-ink-soft p-3 text-left ring-1 ring-lemon/20 transition hover:ring-lemon/40"
+                  >
+                    {c.photoUrl ? (
+                      <img
+                        src={c.photoUrl}
+                        alt=""
+                        className="size-12 shrink-0 rounded-xl object-cover ring-1 ring-mist/20"
+                      />
+                    ) : (
+                      <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-lemon/15 text-lemon ring-1 ring-lemon/40">
+                        <Icon className="size-5" aria-hidden="true" />
+                      </span>
+                    )}
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate font-heading text-lg text-sand sm:text-base">
+                        {c.name}
+                      </span>
+                      <span className="block truncate text-xs text-mist/70">
+                        Church · {c.city}
+                        {c.zip ? ` ${c.zip}` : ""}
+                      </span>
+                    </span>
+                    <span className="shrink-0 rounded-full bg-ink px-2.5 py-1 text-xs font-semibold text-lemon ring-1 ring-lemon/30">
+                      {distance}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          {(mode === "church" ? churchList.length === 0 : list.length === 0 && (mode !== "near" || churchList.length === 0)) && (
             <li className="rounded-2xl bg-ink-soft p-4 text-center text-sm text-mist/70">
-              No ministries in this area yet — drag the map to look around.
+              {mode === "church"
+                ? "No churches on the map yet."
+                : "No ministries in this area yet — drag the map to look around."}
             </li>
           )}
         </ul>
+
 
         {active && <MinistryPost ministry={active} onClose={() => setActiveId(null)} />}
       </main>
