@@ -51,7 +51,7 @@ export function useTranslatedPost(title: string, description: string | null): Tr
     })
       .then((res) => {
         if (cancelled) return;
-        if (res.error || !res.translations.title) {
+        if (res.error || !res.translations["title"]) {
           setState("error");
         } else {
           setTexts(res.translations);

@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, Check, ShieldCheck, UserPlus, Users, X } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import {
   addChurchMember,
@@ -34,6 +35,7 @@ export const Route = createFileRoute("/_authenticated/church-board/$id")({
 });
 
 function ChurchBoardPage() {
+  const { t } = useTranslation();
   const { id } = Route.useParams();
   const qc = useQueryClient();
   const [tab, setTab] = useState<"waiting" | "people">("waiting");
@@ -79,7 +81,7 @@ function ChurchBoardPage() {
   const busy =
     decideMutation.isPending || trustMutation.isPending || untrustMutation.isPending;
   const blocked = board.isError
-    ? "This page is only for the church that owns this listing."
+    ? t("This page is only for the church that owns this listing.")
     : null;
   const pending = board.data?.pending ?? [];
   const approved = board.data?.approved ?? [];
@@ -92,12 +94,12 @@ function ChurchBoardPage() {
             to="/church/$id"
             params={{ id }}
             className="grid size-10 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20 transition hover:bg-ink-soft"
-            aria-label="Back to the church page"
+            aria-label={t("Back to the church page")}
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
           </Link>
           <div>
-            <h1 className="font-display text-lg font-semibold sm:text-xl">Church board</h1>
+            <h1 className="font-display text-lg font-semibold sm:text-xl">{t("Church board")}</h1>
             {board.data?.churchName ? (
               <p className="text-sm text-mist/70">{board.data.churchName}</p>
             ) : null}
@@ -125,9 +127,11 @@ function ChurchBoardPage() {
                       : "bg-ink-soft/50 text-mist ring-1 ring-mist/20 hover:bg-ink-soft"
                   }`}
                 >
-                  {t === "waiting"
-                    ? `Waiting for you${pending.length > 0 ? ` (${pending.length})` : ""}`
-                    : "Who can post"}
+                  {tabKey === "waiting"
+                    ? pending.length > 0
+                      ? t("Waiting for you ({{count}})", { count: pending.length })
+                      : t("Waiting for you")
+                    : t("Who can post")}
                 </button>
               ))}
             </div>
@@ -136,9 +140,9 @@ function ChurchBoardPage() {
               <section className="space-y-6">
                 <div className="space-y-3">
                   {board.isLoading ? (
-                    <p className="text-mist/70">Loading…</p>
+                    <p className="text-mist/70">{t("Loading…")}</p>
                   ) : pending.length === 0 ? (
-                    <p className="text-mist/70">No one is waiting right now.</p>
+                    <p className="text-mist/70">{t("No one is waiting right now.")}</p>
                   ) : (
                     pending.map((p) => (
                       <article
@@ -147,12 +151,12 @@ function ChurchBoardPage() {
                       >
                         <div className="flex flex-wrap items-center gap-2">
                           <span className="rounded-full bg-lemon/15 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-lemon ring-1 ring-lemon/30">
-                            {p.kind === "ministry" ? "Ministry" : "Need"}
+                            {p.kind === "ministry" ? t("Ministry") : t("Need")}
                           </span>
                           <h2 className="font-display text-lg font-semibold">{p.title}</h2>
                         </div>
                         <p className="mt-1 text-sm text-mist/70">
-                          {p.posterName} · {[p.city, p.zip].filter(Boolean).join(" ") || "No town"}
+                          {p.posterName} · {[p.city, p.zip].filter(Boolean).join(" ") || t("No town")}
                         </p>
                         <p className="mt-3 text-sm leading-relaxed text-mist/80">{p.description}</p>
                         <div className="mt-4 flex flex-wrap gap-2">
@@ -164,7 +168,7 @@ function ChurchBoardPage() {
                             }
                             className="inline-flex items-center gap-1.5 rounded-full bg-tone-emerald/15 px-4 py-2 text-sm font-semibold text-tone-emerald ring-1 ring-tone-emerald/45 transition hover:bg-tone-emerald/25 disabled:opacity-40"
                           >
-                            <Check className="size-4" aria-hidden="true" /> Approve
+                            <Check className="size-4" aria-hidden="true" /> {t("Approve")}
                           </button>
                           <button
                             type="button"
@@ -174,7 +178,7 @@ function ChurchBoardPage() {
                             }
                             className="inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-2 text-sm font-semibold text-rose ring-1 ring-rose/35 transition hover:bg-rose/10 disabled:opacity-40"
                           >
-                            <X className="size-4" aria-hidden="true" /> Decline
+                            <X className="size-4" aria-hidden="true" /> {t("Decline")}
                           </button>
                           <button
                             type="button"
@@ -182,8 +186,7 @@ function ChurchBoardPage() {
                             onClick={() => trustMutation.mutate({ linkId: p.linkId })}
                             className="inline-flex items-center gap-1.5 rounded-full bg-lemon/15 px-4 py-2 text-sm font-semibold text-lemon ring-1 ring-lemon/30 transition hover:bg-lemon/25 disabled:opacity-40"
                           >
-                            <UserPlus className="size-4" aria-hidden="true" /> Always allow this
-                            person
+                            <UserPlus className="size-4" aria-hidden="true" /> {t("Always allow this person")}
                           </button>
                         </div>
                       </article>
@@ -192,9 +195,9 @@ function ChurchBoardPage() {
                 </div>
 
                 <div className="space-y-3">
-                  <h2 className="font-display text-lg font-semibold">Already on your board</h2>
+                  <h2 className="font-display text-lg font-semibold">{t("Already on your board")}</h2>
                   {approved.length === 0 ? (
-                    <p className="text-mist/70">Nothing is listed at your church yet.</p>
+                    <p className="text-mist/70">{t("Nothing is listed at your church yet.")}</p>
                   ) : (
                     approved.map((p) => (
                       <article
@@ -204,7 +207,7 @@ function ChurchBoardPage() {
                         <div className="min-w-0">
                           <p className="font-heading text-base text-sand">{p.title}</p>
                           <p className="text-sm text-mist/70">
-                            {p.kind === "ministry" ? "Ministry" : "Need"} · {p.posterName}
+                            {p.kind === "ministry" ? t("Ministry") : t("Need")} · {p.posterName}
                           </p>
                         </div>
                         <button
@@ -215,7 +218,7 @@ function ChurchBoardPage() {
                           }
                           className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-rose ring-1 ring-rose/35 transition hover:bg-rose/10 disabled:opacity-40"
                         >
-                          Take off the board
+                          {t("Take off the board")}
                         </button>
                       </article>
                     ))
@@ -225,14 +228,13 @@ function ChurchBoardPage() {
             ) : (
               <section className="space-y-3">
                 <p className="text-sm text-mist/70">
-                  Posts from these people go straight onto your board. Everyone else waits for your
-                  approval.
+                  {t("Posts from these people go straight onto your board. Everyone else waits for your approval.")}
                 </p>
                 {members.isLoading ? (
-                  <p className="text-mist/70">Loading…</p>
+                  <p className="text-mist/70">{t("Loading…")}</p>
                 ) : (members.data?.length ?? 0) === 0 ? (
                   <p className="text-mist/70">
-                    No one yet. Use “Always allow this person” on a request to add them.
+                    {t("No one yet. Use “Always allow this person” on a request to add them.")}
                   </p>
                 ) : (
                   members.data!.map((m) => (
@@ -255,7 +257,7 @@ function ChurchBoardPage() {
                         <div className="min-w-0">
                           <p className="font-heading text-base text-sand">{m.name}</p>
                           <p className="text-sm text-mist/60">
-                            Trusted {new Date(m.createdAt).toLocaleDateString()}
+                            {t("Trusted {{date}}", { date: new Date(m.createdAt).toLocaleDateString() })}
                           </p>
                         </div>
                       </div>
@@ -265,7 +267,7 @@ function ChurchBoardPage() {
                         onClick={() => untrustMutation.mutate(m.id)}
                         className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-rose ring-1 ring-rose/35 transition hover:bg-rose/10 disabled:opacity-40"
                       >
-                        Remove
+                        {t("Remove")}
                       </button>
                     </article>
                   ))
