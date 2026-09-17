@@ -260,7 +260,7 @@ function MapPage() {
 
         <div className="mt-3 flex items-center justify-between gap-3">
           <div className="flex rounded-full bg-ink-soft p-1 ring-1 ring-mist/15">
-            {(["view", "near"] as const).map((m) => (
+            {(["view", "near", "church"] as const).map((m) => (
               <button
                 key={m}
                 type="button"
@@ -271,14 +271,17 @@ function MapPage() {
                     : "text-mist hover:text-sand"
                 }`}
               >
-                {m === "view" ? "In this view" : "Nearest to me"}
+                {m === "view" ? "In this view" : m === "near" ? "Nearest to me" : "Churches"}
               </button>
             ))}
           </div>
           <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-mist/40">
-            {list.length} ministries
+            {mode === "church"
+              ? `${churchList.length} churches`
+              : `${list.length + (mode === "near" ? churchList.length : 0)} nearby`}
           </p>
         </div>
+
 
         {!hasHome && (
           <p className="mt-2 text-xs text-mist/70">
