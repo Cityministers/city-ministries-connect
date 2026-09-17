@@ -1068,7 +1068,7 @@ function ShapePage() {
       {showStartOverConfirm && (
         <div className="mt-4 rounded-2xl bg-rose/10 p-4 ring-1 ring-rose/30">
           <p className="mb-4 text-base leading-relaxed text-rose">
-            {t("Starting over will permanently delete all of your saved answers and ministry ideas. You'll need to complete the walkthrough from the beginning.")}
+            {t("Starting over will permanently delete all of your saved answers and ministry ideas. You’ll need to complete the walkthrough from the beginning.")}
           </p>
           <div className="flex flex-col gap-3 sm:flex-row">
             <button
