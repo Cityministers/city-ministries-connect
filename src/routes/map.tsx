@@ -112,7 +112,24 @@ function MapPage() {
         })),
     [churches, highlightId],
   );
-  const allPoints = useMemo(() => [...points, ...churchPoints], [points, churchPoints]);
+  const allPoints = useMemo(
+    () => (mode === "church" ? churchPoints : [...points, ...churchPoints]),
+    [points, churchPoints, mode],
+  );
+
+  /** Churches with a distance from home, nearest first. */
+  const churchList = useMemo(
+    () =>
+      (churches ?? [])
+        .filter((c) => c.lat != null && c.lng != null)
+        .map((c) => {
+          const miles = milesBetween(origin, { lat: c.lat as number, lng: c.lng as number });
+          return { church: c, miles, distance: formatMiles(miles) };
+        })
+        .sort((a, b) => a.miles - b.miles),
+    [churches, origin],
+  );
+
 
   // A freshly created post or church sits in the middle of the screen while it glows.
   const spotlight = highlightId ? allPoints.find((p) => p.id === highlightId) : undefined;
