@@ -195,6 +195,7 @@ Write between 5 and 8 posts they can put straight on the local map. Rules:
 - whyItFits: one sentence to the person, naming their own answers back to them.
 - familyFriendly: true when their children could take part.
 ${hasKids ? "- At least two ideas must be family ministries their children can join, referencing their kids by name where natural." : "- Set familyFriendly true only when it genuinely applies."}
+${data.lang && data.lang !== "en" ? `- IMPORTANT: The reader reads ${languageName(data.lang)}, not English. Write every text value (shortTitle, title, description, whyItFits) in natural, warm ${languageName(data.lang)}. Keep shortTitle at most 24 characters even in ${languageName(data.lang)}.` : ""}
 Return JSON only.`;
 
     let text = "";
