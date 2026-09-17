@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Heart } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/donate")({
   head: () => ({
@@ -24,6 +25,7 @@ export const Route = createFileRoute("/donate")({
 });
 
 function DonatePage() {
+  const { t } = useTranslation();
   return (
     <div className="flex min-h-dvh flex-col bg-ink font-body text-sand antialiased">
       <header className="border-b border-ink-soft bg-ink-soft/70">
@@ -31,11 +33,11 @@ function DonatePage() {
           <Link
             to="/map"
             className="grid size-10 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20 transition hover:bg-ink-soft"
-            aria-label="Back to map"
+            aria-label={t("Back to map")}
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
           </Link>
-          <h1 className="font-display text-lg font-semibold sm:text-xl">Donate</h1>
+          <h1 className="font-display text-lg font-semibold sm:text-xl">{t("Donate")}</h1>
         </div>
       </header>
 
@@ -45,10 +47,10 @@ function DonatePage() {
             <Heart className="size-8" aria-hidden="true" />
           </div>
           <h2 className="font-display text-2xl font-semibold sm:text-3xl">
-            Help us keep serving
+            {t("Help us keep serving")}
           </h2>
           <p className="mt-3 text-base text-mist/80 sm:text-lg">
-            City Ministers is built to connect neighbors for free. Your donation keeps the lights on and the map growing.
+            {t("City Ministers is built to connect neighbors for free. Your donation keeps the lights on and the map growing.")}
           </p>
         </div>
 
@@ -60,14 +62,14 @@ function DonatePage() {
               className="rounded-2xl bg-ink-soft/40 p-5 text-center ring-1 ring-mist/15 transition hover:bg-ink-soft/70"
             >
               <span className="font-display text-2xl font-semibold text-sand">{amount}</span>
-              <span className="mt-2 block text-xs text-mist/60">One-time gift</span>
+              <span className="mt-2 block text-xs text-mist/60">{t("One-time gift")}</span>
             </button>
           ))}
         </div>
 
         <div className="mt-6 rounded-2xl bg-ink-soft/40 p-5 ring-1 ring-mist/15">
           <label htmlFor="custom" className="mb-2 block text-sm font-medium text-sand">
-            Custom amount
+            {t("Custom amount")}
           </label>
           <div className="flex items-center gap-2">
             <span className="text-lg text-mist/70">$</span>
@@ -76,7 +78,7 @@ function DonatePage() {
               type="number"
               min="1"
               className="flex-1 rounded-xl bg-ink px-4 py-3 text-base text-sand ring-1 ring-mist/20 placeholder:text-mist/50 focus:outline-none focus:ring-lemon/50"
-              placeholder="Enter amount"
+              placeholder={t("Enter amount")}
             />
           </div>
         </div>
@@ -89,11 +91,11 @@ function DonatePage() {
           <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
           <div className="absolute inset-0 rounded-2xl shadow-[inset_0_0_12px_rgba(255,255,255,0.2)]" />
           <div className="absolute -inset-1 bg-emerald-light opacity-20 blur-xl transition-opacity group-hover:opacity-40" />
-          <span className="relative z-10">Give now</span>
+          <span className="relative z-10">{t("Give now")}</span>
         </button>
 
         <p className="mt-6 text-center text-xs text-mist/60">
-          This is a placeholder donation flow. Connect your preferred payment processor to start accepting gifts.
+          {t("This is a placeholder donation flow. Connect your preferred payment processor to start accepting gifts.")}
         </p>
       </main>
     </div>
