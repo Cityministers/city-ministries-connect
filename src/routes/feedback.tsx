@@ -226,7 +226,7 @@ function FeedbackPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className={inputClass}
-                  placeholder={t("you@example.com")}
+                  placeholder="you@example.com"
                 />
               </div>
 
