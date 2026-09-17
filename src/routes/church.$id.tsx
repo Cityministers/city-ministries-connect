@@ -17,6 +17,7 @@ import {
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AccountMenu } from "@/components/AccountMenu";
+import { AutoText } from "@/components/AutoText";
 import { BrandLogo } from "@/components/BrandLogo";
 import { useSession } from "@/hooks/useSession";
 import { CHURCH_ICONS, churchIcon } from "@/lib/church-icons";
@@ -72,9 +73,13 @@ function PostRow({ post }: { post: ChurchPostDTO }) {
         >
           {post.kind === "ministry" ? t("Ministry") : t("Need")}
         </span>
-        <span className="truncate font-heading text-lg text-sand">{post.title}</span>
+        <span className="truncate font-heading text-lg text-sand">
+          <AutoText text={post.title} />
+        </span>
       </span>
-      <span className="line-clamp-2 text-sm text-mist/70">{post.description}</span>
+      <span className="line-clamp-2 text-sm text-mist/70">
+        <AutoText text={post.description} />
+      </span>
       <span className="text-xs text-mist/50">
         {post.posterName} · {post.city}
         {post.zip ? ` ${post.zip}` : ""}

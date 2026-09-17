@@ -19,6 +19,17 @@ import {
 } from "lucide-react";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { savedLanguage } from "@/lib/i18n";
+
+// The language the visitor is currently reading the app in; used so generated
+// ministry ideas and recommendation reasons come back in that language.
+function readerLang(): string {
+  try {
+    return savedLanguage();
+  } catch {
+    return "en";
+  }
+}
 import AskFriends from "@/components/AskFriends";
 
 import VoiceAnswer from "@/components/VoiceAnswer";
@@ -39,6 +50,7 @@ import {
   saveShapeProfile,
 } from "@/lib/shape.functions";
 import { recommendConnections } from "@/lib/recommend.functions";
+import { AutoText } from "@/components/AutoText";
 
 const STOP_WORDS = new Set([
   "and",
@@ -535,7 +547,7 @@ function ShapePage() {
     setBusy(true);
     setError(null);
     try {
-      const res = await generate({ data: answersRef.current });
+      const res = await generate({ data: { ...answersRef.current, lang: readerLang() } });
       if (res.error) setError(res.error);
       if (res.ideas.length > 0) {
         setIdeas(res.ideas);
@@ -621,7 +633,7 @@ function ShapePage() {
       setBusy(true);
       setError(null);
       try {
-        const res = await generate({ data: answersRef.current });
+        const res = await generate({ data: { ...answersRef.current, lang: readerLang() } });
         if (res.error) setError(res.error);
         source = res.ideas;
         if (res.ideas.length > 0) setSavedIdeas(res.ideas);
@@ -685,7 +697,9 @@ function ShapePage() {
                   <div>
                     <p className="font-display text-lg font-semibold text-sand">{person.name}</p>
                     {person.city && <p className="text-xs text-mist/60">{person.city}</p>}
-                    <p className="mt-1 text-sm leading-relaxed text-mist/85">{person.reason}</p>
+                    <p className="mt-1 text-sm leading-relaxed text-mist/85">
+                      <AutoText text={person.reason} />
+                    </p>
                   </div>
                 </li>
               ))}
@@ -703,12 +717,16 @@ function ShapePage() {
                   <span className="text-xs font-semibold uppercase tracking-widest text-lemon">
                     {post.kind === "need" ? t("Need") : t("Ministry")}
                   </span>
-                  <p className="font-display text-lg font-semibold text-sand">{post.title}</p>
+                  <p className="font-display text-lg font-semibold text-sand">
+                    <AutoText text={post.title} />
+                  </p>
                   {post.city && <p className="text-xs text-mist/60">{post.city}</p>}
                   <p className="mt-1 line-clamp-3 text-sm leading-relaxed text-mist/85">
-                    {post.description}
+                    <AutoText text={post.description} />
                   </p>
-                  <p className="mt-2 text-sm text-mist/70">{post.reason}</p>
+                  <p className="mt-2 text-sm text-mist/70">
+                    <AutoText text={post.reason} />
+                  </p>
                   <Link
                     to={post.kind === "need" ? "/needs" : "/ministries"}
                     search={{ place: post.city || answers.city }}
