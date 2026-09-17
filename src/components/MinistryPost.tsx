@@ -220,7 +220,7 @@ export function MinistryPost({
             ) : (
               <img
                 src={current.url}
-                alt={ministry.mediaAlt ?? `${ministry.label} — ${ministry.poster.name}`}
+                alt={ministry.mediaAlt ?? t("{{label}} — {{name}}", { label: ministry.label, name: ministry.poster.name })}
                 className="h-56 w-full object-cover sm:h-64"
                 loading="lazy"
               />
@@ -372,7 +372,7 @@ export function MinistryPost({
                 {ministry.poster.photo ? (
                   <img
                     src={ministry.poster.photo}
-                    alt={`Profile photo of ${ministry.poster.name}`}
+                    alt={t("Profile photo of {{name}}", { name: ministry.poster.name })}
                     className="size-14 shrink-0 rounded-full object-cover ring-2 ring-lemon/40"
                     loading="lazy"
                   />
@@ -481,7 +481,7 @@ export function MinistryPost({
                 <input
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
-                  placeholder="Leave a kind word"
+                  placeholder={t("Leave a kind word")}
                   maxLength={500}
                   className="flex-1 rounded-full bg-ink px-4 py-2.5 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
                 />
@@ -490,7 +490,7 @@ export function MinistryPost({
                   onClick={() => void handleComment()}
                   disabled={busy}
                   className="grid size-11 shrink-0 place-items-center rounded-full bg-lemon text-ink disabled:opacity-60"
-                  aria-label="Post comment"
+                  aria-label={t("Post comment")}
                 >
                   {busy ? (
                     <Loader2 className="size-5 animate-spin" aria-hidden="true" />
@@ -509,7 +509,7 @@ export function MinistryPost({
                 onChange={(e) => setMessageText(e.target.value)}
                 rows={3}
                 maxLength={1000}
-                placeholder={`Write a note to ${ministry.poster.name}`}
+                placeholder={t("Write a note to {{name}}", { name: ministry.poster.name })}
                 className="rounded-xl bg-ink px-4 py-3 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
               />
               <button
@@ -519,7 +519,7 @@ export function MinistryPost({
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-lemon px-5 py-3 text-base font-semibold text-ink disabled:opacity-60"
               >
                 {busy && <Loader2 className="size-5 animate-spin" aria-hidden="true" />}
-                Send message
+                {t("Send message")}
               </button>
             </div>
           )}
@@ -536,12 +536,12 @@ export function MinistryPost({
               onClick={() => {
                 if (!guard()) return;
                 setMessageOpen(true);
-                setMessageText((t) => t || "Hi! When works for you to meet up?");
+                setMessageText((prev) => prev || t("Hi! When works for you to meet up?"));
               }}
               className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-lemon px-5 py-3 text-base font-semibold text-ink ring-1 ring-lemon/60 transition-transform hover:-translate-y-0.5 sm:text-lg"
             >
               <CalendarClock className="size-5" aria-hidden="true" />
-              Let&rsquo;s set a time
+              {t("Let's set a time")}
             </button>
             <button
               type="button"
@@ -552,14 +552,13 @@ export function MinistryPost({
               className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-ink px-5 py-3 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft sm:text-lg"
             >
               <MessageCircle className="size-5" aria-hidden="true" />
-              Message
+              {t("Message")}
             </button>
           </div>
 
           {!live && (
             <p className="text-center text-xs text-mist/50 sm:text-sm">
-              This is an example ministry — saving and messaging work on posts from real
-              neighbors.
+              {t("This is an example ministry — saving and messaging work on posts from real neighbors.")}
             </p>
           )}
         </div>
@@ -571,19 +570,19 @@ export function MinistryPost({
           onClick={() => setImageLightboxOpen(false)}
           role="dialog"
           aria-modal="true"
-          aria-label={`${ministry.poster.name}'s profile photo`}
+          aria-label={t("{{name}}'s profile photo", { name: ministry.poster.name })}
         >
           <button
             type="button"
             onClick={() => setImageLightboxOpen(false)}
             className="absolute right-4 top-4 grid size-11 place-items-center rounded-full bg-ink/80 text-sand ring-1 ring-mist/20 transition hover:bg-ink"
-            aria-label="Close photo"
+            aria-label={t("Close photo")}
           >
             <X className="size-5" aria-hidden="true" />
           </button>
           <img
             src={ministry.poster.photo}
-            alt={`Profile photo of ${ministry.poster.name}`}
+            alt={t("Profile photo of {{name}}", { name: ministry.poster.name })}
             className="max-h-[85dvh] max-w-full rounded-2xl object-contain ring-1 ring-mist/20"
             onClick={(e) => e.stopPropagation()}
           />
