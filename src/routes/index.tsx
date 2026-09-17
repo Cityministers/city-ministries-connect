@@ -99,7 +99,7 @@ function HomePage() {
           {t("Ministry happens on your street.")}
         </h1>
         <p className="mt-4 text-xl leading-relaxed text-mist/85 sm:text-2xl">
-          {t("City Ministers is a neighborhood map of everyday ministry opportunities. People post the spiritual or practical gifts they can share, or the needs they carry, then message each other directly to share the love of Christ — no committee, no building, just neighbors.")}
+          {t("City Ministers is a neighborhood map of everyday ministry opportunities. People post their spiritual or practical gifts to share, or the needs they carry, then message each other directly to share the love of Christ — no committee, no building, just neighbors.")}
         </p>
 
         <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
