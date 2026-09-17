@@ -18,6 +18,7 @@ import {
   X,
 } from "lucide-react";
 import { Fragment, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import AskFriends from "@/components/AskFriends";
 
 import VoiceAnswer from "@/components/VoiceAnswer";
@@ -243,6 +244,7 @@ export const Route = createFileRoute("/shape")({
 });
 
 function ShapeGate() {
+  const { t } = useTranslation();
   const checkAccess = useServerFn(getShapeAccess);
   const { data, isLoading } = useQuery({
     queryKey: ["shape-access"],
@@ -254,7 +256,7 @@ function ShapeGate() {
     return (
       <div className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-ink px-4 text-sand">
         <Loader2 className="size-8 animate-spin text-lemon" aria-hidden="true" />
-        <p className="text-lg text-mist/80">Loading…</p>
+        <p className="text-lg text-mist/80">{t("Loading…")}</p>
       </div>
     );
   }
@@ -267,6 +269,7 @@ function ShapeGate() {
 }
 
 function SignInPrompt() {
+  const { t } = useTranslation();
   return (
     <div className="flex min-h-dvh flex-col bg-ink font-body text-sand antialiased">
       <header className="border-b border-ink-soft bg-ink-soft/70">
@@ -274,13 +277,13 @@ function SignInPrompt() {
           <Link
             to="/"
             className="grid size-10 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20 transition hover:bg-ink-soft"
-            aria-label="Back to home"
+            aria-label={t("Back to home")}
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
           </Link>
           <div className="min-w-0 flex-1">
             <h1 className="truncate font-display text-xl font-semibold leading-tight sm:text-2xl">
-              Sign in to begin
+              {t("Sign in to begin")}
             </h1>
           </div>
         </div>
@@ -291,11 +294,10 @@ function SignInPrompt() {
           <Sparkles className="size-9 text-lemon" aria-hidden="true" />
         </div>
         <h2 className="mt-6 font-display text-3xl font-semibold leading-tight sm:text-4xl">
-          Your own walkthrough
+          {t("Your own walkthrough")}
         </h2>
         <p className="mx-auto mt-4 max-w-md text-xl leading-relaxed text-mist/85 sm:text-2xl">
-          Create a free account or sign in to start your own walkthrough. Your answers and ministry
-          ideas are private to you.
+          {t("Create a free account or sign in to start your own walkthrough. Your answers and ministry ideas are private to you.")}
         </p>
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-center">
@@ -305,7 +307,7 @@ function SignInPrompt() {
             className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-lemon px-6 py-3.5 text-lg font-bold text-ink transition-transform hover:-translate-y-0.5 sm:flex-initial"
           >
             <HandHeart className="size-5" aria-hidden="true" />
-            Create your account
+            {t("Create your account")}
           </Link>
           <Link
             to="/auth"
@@ -313,14 +315,14 @@ function SignInPrompt() {
             className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-lg font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft/70 sm:flex-initial"
           >
             <Home className="size-5" aria-hidden="true" />
-            Sign in
+            {t("Sign in")}
           </Link>
           <Link
             to="/map"
             className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-lg font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft/70 sm:flex-initial"
           >
             <MapPin className="size-5" aria-hidden="true" />
-            See the map
+            {t("See the map")}
           </Link>
         </div>
       </main>
