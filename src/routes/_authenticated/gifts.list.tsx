@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, ArrowRight, Check, Loader2, Plus, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, Check, Loader2, Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { BIBLICAL_GIFTS, emptyAnswers, type ShapeAnswers } from "@/data/shape";
 import { getShapeProfile, saveShapeProfile } from "@/lib/shape.functions";
