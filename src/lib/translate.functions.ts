@@ -211,11 +211,12 @@ export const translateTexts = createServerFn({ method: "POST" })
 
       if (db) {
         const rows = missing
-          .filter((item) => map[item.key])
-          .map((item) => ({
-            content_hash: hashText(item.text),
+          .map((item) => ({ key: item.key, text: map[item.key] }))
+          .filter((row): row is { key: string; text: string } => Boolean(row.text))
+          .map((row) => ({
+            content_hash: hashText(missing.find((m) => m.key === row.key)!.text),
             lang,
-            translated: map[item.key],
+            translated: row.text,
           }));
         if (rows.length > 0) {
           const { error: insertError } = await db

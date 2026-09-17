@@ -52,7 +52,7 @@ export function savedLanguage(): LanguageCode {
     const stored = window.localStorage.getItem("cm_lang");
     if (stored && LANGUAGE_CODES.has(stored)) return stored as LanguageCode;
     const match = document.cookie.match(/(?:^|;\s*)cm_lang=([a-z-]+)/);
-    if (match && LANGUAGE_CODES.has(match[1])) return match[1] as LanguageCode;
+    if (match?.[1] && LANGUAGE_CODES.has(match[1])) return match[1] as LanguageCode;
   } catch {
     // storage unavailable — default to English
   }

@@ -1110,6 +1110,7 @@ function Shell({
   showExitAction?: boolean;
   children: React.ReactNode;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="flex min-h-dvh flex-col bg-ink font-body text-sand antialiased">
       <header className="border-b border-ink-soft bg-ink-soft/70">
@@ -1119,7 +1120,7 @@ function Shell({
               type="button"
               onClick={back}
               className="grid size-10 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20 transition hover:bg-ink-soft"
-              aria-label="Back"
+              aria-label={t("Back")}
             >
               <ArrowLeft className="size-4" aria-hidden="true" />
             </button>
@@ -1128,7 +1129,7 @@ function Shell({
               type="button"
               onClick={onExit}
               className="grid size-10 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20 transition hover:bg-ink-soft"
-              aria-label="Back"
+              aria-label={t("Back")}
             >
               <ArrowLeft className="size-4" aria-hidden="true" />
             </button>
@@ -1136,7 +1137,7 @@ function Shell({
             <Link
               to="/"
               className="grid size-10 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20 transition hover:bg-ink-soft"
-              aria-label="Back"
+              aria-label={t("Back")}
             >
               <ArrowLeft className="size-4" aria-hidden="true" />
             </Link>
@@ -1153,14 +1154,14 @@ function Shell({
               onClick={onExit}
               className="shrink-0 rounded-full bg-ink px-4 py-2 text-base font-semibold text-sand ring-1 ring-mist/20 transition hover:bg-ink-soft"
             >
-              Save &amp; exit
+              {t("Save & exit")}
             </button>
           ) : !onExit ? (
             <Link
               to="/"
               className="shrink-0 rounded-full bg-ink px-4 py-2 text-base font-semibold text-sand ring-1 ring-mist/20 transition hover:bg-ink-soft"
             >
-              Exit
+              {t("Exit")}
             </Link>
           ) : null}
         </div>
