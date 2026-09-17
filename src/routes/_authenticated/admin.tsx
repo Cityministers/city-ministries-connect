@@ -143,25 +143,25 @@ function AdminPage() {
         ) : (
           <>
             <div className="mb-6 flex flex-wrap gap-2">
-              {(["needs", "churches", "reports", "feedback"] as const).map((t) => (
+              {(["needs", "churches", "reports", "feedback"] as const).map((tabItem) => (
                 <button
-                  key={t}
+                  key={tabItem}
                   type="button"
-                  onClick={() => setTab(t)}
+                  onClick={() => setTab(tabItem)}
                   className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                    tab === t
+                    tab === tabItem
                       ? "bg-lemon text-ink"
                       : "bg-ink-soft/50 text-mist ring-1 ring-mist/20 hover:bg-ink-soft"
                   }`}
                 >
-                  {t === "needs"
-                    ? tt("Posted needs")
-                    : t === "churches"
-                      ? tt("Churches")
-                      : t === "reports"
-                        ? tt("Abuse reports")
-                        : tt("Feedback")}
-                  {t === "reports" && (reports.data?.filter((r) => r.status === "new").length ?? 0) > 0
+                  {tabItem === "needs"
+                    ? t("Posted needs")
+                    : tabItem === "churches"
+                      ? t("Churches")
+                      : tabItem === "reports"
+                        ? t("Abuse reports")
+                        : t("Feedback")}
+                  {tabItem === "reports" && (reports.data?.filter((r) => r.status === "new").length ?? 0) > 0
                     ? ` (${reports.data?.filter((r) => r.status === "new").length})`
                     : ""}
                 </button>

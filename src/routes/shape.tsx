@@ -780,7 +780,7 @@ function ShapePage() {
               {editing === i ? (
                 <div className="flex flex-col gap-3">
                   <label className="flex flex-col gap-2 text-base text-mist/80">
-                    Short title (shows under the pin)
+                    {t("Short title (shows under the pin)")}
                     <input
                       className={inputClass}
                       value={idea.shortTitle}
@@ -789,7 +789,7 @@ function ShapePage() {
                     />
                   </label>
                   <label className="flex flex-col gap-2 text-base text-mist/80">
-                    Quote or passage about your mission
+                    {t("Quote or passage about your mission")}
                     <input
                       className={inputClass}
                       value={idea.title}
@@ -798,7 +798,7 @@ function ShapePage() {
                     />
                   </label>
                   <label className="flex flex-col gap-2 text-base text-mist/80">
-                    Description
+                    {t("Description")}
                     <textarea
                       className={`${inputClass} min-h-32`}
                       value={idea.description}
@@ -810,7 +810,7 @@ function ShapePage() {
                     onClick={() => setEditing(null)}
                     className="inline-flex items-center justify-center gap-2 rounded-full bg-ink px-5 py-3 text-base font-semibold text-sand ring-1 ring-mist/25"
                   >
-                    <Check className="size-4" aria-hidden="true" /> Done editing
+                    <Check className="size-4" aria-hidden="true" /> {t("Done editing")}
                   </button>
                 </div>
               ) : (
@@ -830,7 +830,7 @@ function ShapePage() {
                   onClick={() => setEditing(editing === i ? null : i)}
                   className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-ink px-5 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/25"
                 >
-                  <Pencil className="size-4" aria-hidden="true" /> Edit
+                  <Pencil className="size-4" aria-hidden="true" /> {t("Edit")}
                 </button>
                 <button
                   type="button"
@@ -840,10 +840,10 @@ function ShapePage() {
                 >
                   {posted[i] ? (
                     <>
-                      <Check className="size-4" aria-hidden="true" /> Posted
+                      <Check className="size-4" aria-hidden="true" /> {t("Posted")}
                     </>
                   ) : (
-                    "Post"
+                    t("Post")
                   )}
                 </button>
               </div>
@@ -857,7 +857,7 @@ function ShapePage() {
             onClick={() => void navigate({ to: "/map" })}
             className="inline-flex items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-lg font-semibold text-sand ring-1 ring-mist/25"
           >
-            See them on the map
+            {t("See them on the map")}
           </button>
           <button
             type="button"
@@ -869,7 +869,7 @@ function ShapePage() {
             className="inline-flex items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-lg font-semibold text-sand ring-1 ring-mist/25 disabled:opacity-60"
           >
             {busy && <Loader2 className="size-5 animate-spin" aria-hidden="true" />}
-            Show me different ideas
+            {t("Show me different ideas")}
           </button>
           <button
             type="button"
@@ -877,7 +877,7 @@ function ShapePage() {
             className="inline-flex items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-lg font-semibold text-sand ring-1 ring-mist/25"
           >
             <ArrowLeft className="size-5" aria-hidden="true" />
-            See form results
+            {t("See form results")}
           </button>
           <button
             type="button"
@@ -890,7 +890,7 @@ function ShapePage() {
             className="inline-flex items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-lg font-semibold text-sand ring-1 ring-mist/25"
           >
             <RotateCcw className="size-5" aria-hidden="true" />
-            Start over
+            {t("Start over")}
           </button>
         </div>
       </Shell>
