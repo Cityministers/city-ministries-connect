@@ -13,6 +13,7 @@ import {
   TriangleAlert,
 } from "lucide-react";
 import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { FavoritesTab } from "@/components/profile/FavoritesTab";
 import { MailboxTab } from "@/components/profile/MailboxTab";
@@ -73,6 +74,7 @@ export const Route = createFileRoute("/_authenticated/profile")({
 });
 
 function ProfilePage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { tab } = Route.useSearch();
   const queryClient = useQueryClient();
@@ -174,19 +176,19 @@ function ProfilePage() {
           <Link
             to="/map"
             className="grid size-10 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20 transition hover:bg-ink-soft"
-            aria-label="Back to map"
+            aria-label={t("Back to map")}
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
           </Link>
           <h1 className="font-display text-xl font-semibold leading-tight sm:text-2xl">
-            Your profile
+            {t("Your profile")}
           </h1>
         </div>
       </header>
 
         <main className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-5 px-4 py-6 sm:py-8">
         {!profile ? (
-          <p className="py-16 text-center text-base text-mist/60">Loading…</p>
+          <p className="py-16 text-center text-base text-mist/60">{t("Loading…")}</p>
         ) : (
           <>
             {/* Identity card */}
@@ -198,13 +200,13 @@ function ProfilePage() {
                     setEditing(true);
                     fileRef.current?.click();
                   }}
-                  aria-label="Change your profile photo"
+                  aria-label={t("Change your profile photo")}
                   className="relative grid size-16 shrink-0 place-items-center overflow-hidden rounded-full bg-ink text-mist/60 ring-1 ring-mist/25 transition hover:ring-lemon/60"
                 >
                   {profile.avatarUrl ? (
                     <img
                       src={profile.avatarUrl}
-                      alt="Your profile"
+                      alt={t("Your profile")}
                       className="size-full object-cover"
                     />
                   ) : (
@@ -217,7 +219,7 @@ function ProfilePage() {
 
                 <div className="min-w-0">
                   <p className="truncate font-display text-xl font-semibold text-sand">
-                    {profile.displayName || "Your name"}
+                    {profile.displayName || t("Your name")}
                   </p>
                   <p className="truncate text-base text-mist/60">{profile.email}</p>
                 </div>
@@ -228,7 +230,7 @@ function ProfilePage() {
                     className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-ink px-4 py-2.5 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink/70"
                   >
                     <Pencil className="size-4" aria-hidden="true" />
-                    Edit
+                    {t("Edit")}
                   </button>
                 )}
               </div>
@@ -239,13 +241,13 @@ function ProfilePage() {
                   onSubmit={(e) => void handleSaveName(e)}
                 >
                   <label className="flex flex-col gap-2 text-base text-mist/80">
-                    Display name
+                    {t("Display name")}
                     <input
                       className="rounded-xl bg-ink px-4 py-3.5 text-lg text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
                       value={displayName}
                       onChange={(e) => setName(e.target.value)}
                       maxLength={60}
-                      placeholder="How neighbors see you"
+                      placeholder={t("How neighbors see you")}
                     />
                   </label>
                   <button
@@ -255,7 +257,7 @@ function ProfilePage() {
                     className="inline-flex items-center justify-center gap-2 rounded-full bg-ink px-4 py-3 text-base font-semibold text-lemon ring-1 ring-mist/25 transition hover:bg-ink/70"
                   >
                     <Camera className="size-5" aria-hidden="true" />
-                    Change photo
+                    {t("Change photo")}
                   </button>
                   <div className="flex gap-3">
                     <button
@@ -264,7 +266,7 @@ function ProfilePage() {
                       className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-lemon px-5 py-3 text-lg font-semibold text-ink transition hover:opacity-90 disabled:opacity-60"
                     >
                       {busy && <Loader2 className="size-5 animate-spin" aria-hidden="true" />}
-                      {saved ? "Saved" : "Save"}
+                      {saved ? t("Saved") : t("Save")}
                     </button>
                     <button
                       type="button"
@@ -275,7 +277,7 @@ function ProfilePage() {
                       }}
                       className="inline-flex flex-1 items-center justify-center rounded-full bg-ink px-5 py-3 text-lg font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink/70"
                     >
-                      Cancel
+                      {t("Cancel")}
                     </button>
                   </div>
                 </form>
@@ -310,7 +312,7 @@ function ProfilePage() {
               }`}
             >
               <Bell className="size-6" aria-hidden="true" />
-              Notifications
+              {t("Notifications")}
               {unread > 0 && (
                 <span className="grid min-w-8 place-items-center rounded-full bg-rose px-2 py-0.5 text-base font-bold text-white">
                   {unread > 99 ? "99+" : unread}
@@ -321,7 +323,7 @@ function ProfilePage() {
             {/* Tabs */}
             <nav
               className="-mt-1 grid grid-cols-5 border-b border-mist/15"
-              aria-label="Profile sections"
+              aria-label={t("Profile sections")}
             >
               {TABS.map((t) => (
                 <Link
@@ -355,7 +357,7 @@ function ProfilePage() {
                   className="inline-flex items-center justify-center gap-2 rounded-full bg-lemon px-5 py-3 text-base font-semibold text-ink transition hover:bg-lemon/90"
                 >
                   <ShieldCheck className="size-4" aria-hidden="true" />
-                  Review Center
+                  {t("Review Center")}
                 </Link>
               ) : null}
 
@@ -368,7 +370,7 @@ function ProfilePage() {
                 <div className="absolute inset-0 rounded-2xl shadow-[inset_0_0_12px_rgba(255,255,255,0.2)]" />
                 <div className="absolute -inset-1 bg-emerald-light opacity-20 blur-xl transition-opacity group-hover:opacity-40" />
                 <Heart className="relative z-10 size-4" aria-hidden="true" />
-                <span className="relative z-10">Donate</span>
+                <span className="relative z-10">{t("Donate")}</span>
               </Link>
               <button
                 type="button"
@@ -376,7 +378,7 @@ function ProfilePage() {
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-ink-soft px-5 py-3 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft/70"
               >
                 <LogOut className="size-4" aria-hidden="true" />
-                Sign out
+                {t("Sign out")}
               </button>
             </div>
 
@@ -385,19 +387,18 @@ function ProfilePage() {
               <div className="flex items-center gap-2">
                 <TriangleAlert className="size-6 text-rose" aria-hidden="true" />
                 <h2 className="font-display text-xl font-semibold text-rose">
-                  Delete account
+                  {t("Delete account")}
                 </h2>
               </div>
               <p className="text-base leading-relaxed text-mist/75">
-                This permanently removes your account, your ministries, needs,
-                and profile. This can't be undone. Type DELETE to confirm.
+                {t("This permanently removes your account, your ministries, needs, and profile. This can't be undone. Type DELETE to confirm.")}
               </p>
               <input
                 className="rounded-xl bg-ink px-4 py-3.5 text-lg text-sand ring-1 ring-rose/30 focus:outline-none focus:ring-rose/60"
                 value={confirmText}
                 onChange={(e) => setConfirmText(e.target.value)}
-                placeholder="Type DELETE"
-                aria-label="Type DELETE to confirm account deletion"
+                placeholder={t("Type DELETE")}
+                aria-label={t("Type DELETE to confirm account deletion")}
               />
               <button
                 type="button"
@@ -406,7 +407,7 @@ function ProfilePage() {
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-rose px-5 py-3 text-lg font-semibold text-white transition hover:bg-rose/90 disabled:opacity-50"
               >
                 {deleting && <Loader2 className="size-5 animate-spin" aria-hidden="true" />}
-                Permanently delete my account
+                {t("Permanently delete my account")}
               </button>
             </div>
               </>
