@@ -78,10 +78,11 @@ function HomePage() {
     <div className="flex min-h-dvh flex-col bg-ink font-body text-sand antialiased">
       <header className="border-b border-ink-soft bg-ink">
         <div className="mx-auto grid w-full max-w-6xl grid-cols-[auto_1fr_auto] items-center gap-2 px-4 py-4 sm:px-6">
-          <SiteNav />
-          <div className="flex items-center justify-center">
+          <div className="flex items-center gap-3">
+            <SiteNav />
             <BrandLogo />
           </div>
+          <div />
           <div className="flex justify-end">
             <AccountMenu />
           </div>
