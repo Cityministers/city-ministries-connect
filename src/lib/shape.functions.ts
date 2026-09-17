@@ -5,6 +5,11 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
 import type { MinistryIdea, ShapeAnswers } from "@/data/shape";
+import { LANGUAGES } from "@/lib/i18n";
+
+function languageName(code: string) {
+  return LANGUAGES.find((l) => l.code === code)?.name ?? code;
+}
 
 function isNewSupabaseApiKey(value: string): boolean {
   return value.startsWith("sb_publishable_") || value.startsWith("sb_secret_");
@@ -63,6 +68,7 @@ const AnswersSchema = z.object({
   biggestBarrier: z.string().max(60).optional().default(""),
   freeTalk: z.string().max(8000).optional().default(""),
   transcripts: z.record(z.string(), z.string().max(8000)).optional().default({}),
+  lang: z.string().max(5).optional().default("en"),
 });
 
 export const saveShapeProfile = createServerFn({ method: "POST" })
@@ -194,6 +200,7 @@ Write between 5 and 8 posts they can put straight on the local map. Rules:
 - whyItFits: one sentence to the person, naming their own answers back to them.
 - familyFriendly: true when their children could take part.
 ${hasKids ? "- At least two ideas must be family ministries their children can join, referencing their kids by name where natural." : "- Set familyFriendly true only when it genuinely applies."}
+${data.lang && data.lang !== "en" ? `- IMPORTANT: The reader reads ${languageName(data.lang)}, not English. Write every text value (shortTitle, title, description, whyItFits) in natural, warm ${languageName(data.lang)}. Keep shortTitle at most 24 characters even in ${languageName(data.lang)}.` : ""}
 Return JSON only.`;
 
     let text = "";

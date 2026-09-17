@@ -3,20 +3,22 @@ import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ChevronRight, Mail } from "lucide-react";
 import { listMyConversations } from "@/lib/messages.functions";
+import { useTranslation } from "react-i18next";
 
 export function MailboxTab() {
+  const { t } = useTranslation();
   const fetchConversations = useServerFn(listMyConversations);
   const { data: conversations, isLoading } = useQuery({
     queryKey: ["my-conversations"],
     queryFn: () => fetchConversations(),
   });
 
-  if (isLoading) return <p className="py-10 text-center text-base text-mist/60">Loading…</p>;
+  if (isLoading) return <p className="py-10 text-center text-base text-mist/60">{t("Loading…")}</p>;
 
   if (!conversations || conversations.length === 0) {
     return (
       <p className="rounded-2xl bg-ink-soft/60 p-6 text-center text-base text-mist/70 ring-1 ring-mist/15">
-        No messages yet. Tap Message on any ministry or need to start a conversation.
+        {t("No messages yet. Tap Message on any ministry or need to start a conversation.")}
       </p>
     );
   }
@@ -45,11 +47,11 @@ export function MailboxTab() {
             <p className="flex items-center gap-2 truncate text-lg font-semibold text-sand">
               {c.otherName}
               {c.unread && (
-                <span className="size-2.5 shrink-0 rounded-full bg-lemon" aria-label="Unread" />
+                <span className="size-2.5 shrink-0 rounded-full bg-lemon" aria-label={t("Unread")} />
               )}
             </p>
             <p className="truncate text-xs uppercase tracking-[0.15em] text-lemon/80">
-              About: {c.subject || "General message"}
+              {t("About: {{subject}}", { subject: c.subject || t("General message") })}
             </p>
             <p className="truncate text-base text-mist/65">{c.lastMessage}</p>
           </div>

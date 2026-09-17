@@ -5,6 +5,7 @@ import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { UserRound } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useSession } from "@/hooks/useSession";
 import { getUnreadCount } from "@/lib/notifications.functions";
 import { supabase } from "@/integrations/supabase/client";
@@ -45,6 +46,7 @@ function useHeaderProfile(userId: string | undefined) {
 }
 
 export function AccountMenu() {
+  const { t } = useTranslation();
   const session = useSession();
   const profile = useHeaderProfile(session?.user?.id);
   const fetchUnread = useServerFn(getUnreadCount);
@@ -67,7 +69,7 @@ export function AccountMenu() {
         className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-slate-lighter bg-slate px-4 py-2 text-sm font-bold text-sand transition hover:bg-slate-light"
       >
         <UserRound className="size-4" aria-hidden="true" />
-        Start
+        {t("Start")}
       </Link>
     );
   }
@@ -85,15 +87,15 @@ export function AccountMenu() {
       className="relative grid size-10 place-items-center text-sm font-semibold text-lemon"
       aria-label={
         unreadCount > 0
-          ? `Your profile, ${unreadCount} unread notifications`
-          : "Your profile"
+          ? t("Your profile, {{count}} unread notifications", { count: unreadCount })
+          : t("Your profile")
       }
     >
       <span className="relative grid size-10 place-items-center overflow-hidden rounded-full bg-ink ring-1 ring-mist/25 transition hover:ring-lemon/50">
         {profile?.avatarUrl ? (
           <img
             src={profile.avatarUrl}
-            alt="Your profile"
+            alt={t("Your profile")}
             className="size-full object-cover"
           />
         ) : (

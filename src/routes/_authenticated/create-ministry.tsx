@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, Camera, ImagePlus, Loader2, MapPin, PartyPopper, UserCircle, X } from "lucide-react";
 import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ChurchPicker } from "@/components/ChurchPicker";
 import { createUserMinistry } from "@/lib/ministries.functions";
 import { ministries, toneStyles } from "@/data/ministries";
@@ -62,6 +63,7 @@ export const Route = createFileRoute("/_authenticated/create-ministry")({
 });
 
 function CreateMinistryPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const create = useServerFn(createUserMinistry);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -104,7 +106,7 @@ function CreateMinistryPage() {
     const photos = next.filter((m) => m.kind === "image").slice(0, MAX_PHOTOS);
     const video = next.filter((m) => m.kind === "video").slice(0, 1);
     if (video[0] && video[0].file.size > MAX_VIDEO_BYTES) {
-      setError("Videos need to be under 50 MB.");
+      setError(t("Videos need to be under 50 MB."));
       return;
     }
     setError(null);
@@ -119,11 +121,11 @@ function CreateMinistryPage() {
     e.preventDefault();
     setError(null);
 
-    if (shortTitle.trim().length < 2) return setError("Add a short title.");
+    if (shortTitle.trim().length < 2) return setError(t("Add a short title."));
     if (description.trim().length < 10)
-      return setError("Add a little more to your description.");
+      return setError(t("Add a little more to your description."));
     if (city.trim().length < 2 && zip.trim().length < 4)
-      return setError("Enter the city or ZIP where you serve so your pin lands in the right place.");
+      return setError(t("Enter the city or ZIP where you serve so your pin lands in the right place."));
 
     setBusy(true);
     try {
@@ -132,7 +134,7 @@ function CreateMinistryPage() {
         try {
           const { data: userData } = await supabase.auth.getUser();
           const uid = userData.user?.id;
-          if (!uid) throw new Error("Please sign in again.");
+          if (!uid) throw new Error(t("Please sign in again."));
           const upload = await shrinkImage(file);
           const ext =
             upload.type === "image/jpeg" ? "jpg" : (upload.name.split(".").pop()?.toLowerCase() ?? "jpg");
@@ -167,7 +169,7 @@ function CreateMinistryPage() {
       const place = [city.trim(), zip.trim()].filter(Boolean).join(" ");
       setPosted({ id: result.id, shortTitle: shortTitle.trim(), place });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Couldn't post your ministry.");
+      setError(err instanceof Error ? err.message : t("Couldn't post your ministry."));
     } finally {
       setBusy(false);
     }
@@ -180,13 +182,13 @@ function CreateMinistryPage() {
           <Link
             to="/start"
             className="grid size-10 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20 transition hover:bg-ink-soft"
-            aria-label="Back"
+            aria-label={t("Back")}
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
           </Link>
           <div>
             <h1 className="font-display text-xl font-semibold leading-tight sm:text-2xl">
-              Create a unique ministry
+              {t("Create a unique ministry")}
             </h1>
           </div>
         </div>
@@ -206,10 +208,10 @@ function CreateMinistryPage() {
                 type="button"
                 onClick={() => fileRef.current?.click()}
                 className="grid size-16 shrink-0 place-items-center overflow-hidden rounded-xl bg-ink text-mist/60 ring-1 ring-mist/25 transition hover:ring-lemon/50"
-                aria-label="Add your profile photo"
+                aria-label={t("Add your profile photo")}
               >
                 {preview ? (
-                  <img src={preview} alt="Your ministry photo" className="size-full object-cover" />
+                  <img src={preview} alt={t("Your ministry photo")} className="size-full object-cover" />
                 ) : (
                   <Camera className="size-6" aria-hidden="true" />
                 )}
@@ -217,10 +219,10 @@ function CreateMinistryPage() {
             )}
             <div className="min-w-0">
               <p className="text-base font-medium text-sand">
-                {shortTitle.trim() || "Short title"}
+                {shortTitle.trim() || t("Short title")}
               </p>
               <p className="text-sm text-mist/60">
-                This is how your pin looks on the map and in the list.
+                {t("This is how your pin looks on the map and in the list.")}
               </p>
             </div>
             {!preset && (
@@ -236,9 +238,9 @@ function CreateMinistryPage() {
 
           <div className="flex flex-col gap-3 rounded-2xl bg-ink-soft/60 p-4 ring-1 ring-mist/15">
             <div>
-              <p className="text-base font-semibold text-sand">Photos and video</p>
+              <p className="text-base font-semibold text-sand">{t("Photos and video")}</p>
               <p className="text-sm text-mist/70">
-                Add up to {MAX_PHOTOS} photos and one video (50 MB max).
+                {t("Add up to {{count}} photos and one video (50 MB max).", { count: MAX_PHOTOS })}
               </p>
             </div>
             {media.length > 0 && (
@@ -254,7 +256,7 @@ function CreateMinistryPage() {
                       type="button"
                       onClick={() => removeMedia(m.url)}
                       className="absolute -right-1 -top-1 grid size-6 place-items-center rounded-full bg-ink text-sand ring-1 ring-mist/30"
-                      aria-label="Remove this file"
+                      aria-label={t("Remove this file")}
                     >
                       <X className="size-3" aria-hidden="true" />
                     </button>
@@ -268,7 +270,7 @@ function CreateMinistryPage() {
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-ink px-4 py-3 text-base font-semibold text-sand ring-1 ring-mist/20 transition hover:bg-ink-soft"
             >
               <ImagePlus className="size-5" aria-hidden="true" />
-              Add photos or video
+              {t("Add photos or video")}
             </button>
             <input
               ref={mediaRef}
@@ -284,7 +286,7 @@ function CreateMinistryPage() {
           </div>
 
           <label className="flex flex-col gap-2 text-sm text-mist/80 sm:text-base">
-            Short title (shows under your icon)
+            {t("Short title (shows under your icon)")}
             <input
               className="rounded-xl bg-ink-soft px-4 py-3.5 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
               value={shortTitle}
@@ -297,7 +299,7 @@ function CreateMinistryPage() {
           </label>
 
           <label className="flex flex-col gap-2 text-sm text-mist/80 sm:text-base">
-            Quote or passage about your mission
+            {t("Quote or passage about your mission")}
             <input
               className="rounded-xl bg-ink-soft px-4 py-3.5 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
               value={title}
@@ -308,7 +310,7 @@ function CreateMinistryPage() {
           </label>
 
           <label className="flex flex-col gap-2 text-sm text-mist/80 sm:text-base">
-            Description
+            {t("Description")}
             <textarea
               className="min-h-36 rounded-xl bg-ink-soft px-4 py-3.5 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
               value={description}
@@ -321,7 +323,7 @@ function CreateMinistryPage() {
 
           <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-3">
             <label className="flex min-w-0 flex-col gap-2 text-sm text-mist/80 sm:text-base">
-              City
+              {t("City")}
               <input
                 className="w-full min-w-0 rounded-xl bg-ink-soft px-4 py-3.5 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
                 value={city}
@@ -331,7 +333,7 @@ function CreateMinistryPage() {
               />
             </label>
             <label className="flex w-24 shrink-0 flex-col gap-2 text-sm text-mist/80 sm:w-32 sm:text-base">
-              ZIP
+              {t("ZIP")}
               <input
                 className="w-full min-w-0 rounded-xl bg-ink-soft px-4 py-3.5 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
                 value={zip}
@@ -355,7 +357,7 @@ function CreateMinistryPage() {
             className="mt-1 inline-flex items-center justify-center gap-2 rounded-full bg-lemon px-6 py-4 text-lg font-semibold text-ink transition-transform hover:-translate-y-0.5 disabled:opacity-60"
           >
             {busy && <Loader2 className="size-5 animate-spin" aria-hidden="true" />}
-            Post my ministry
+            {t("Post my ministry")}
           </button>
         </form>
       </main>
@@ -367,14 +369,14 @@ function CreateMinistryPage() {
               <PartyPopper className="size-7" aria-hidden="true" />
             </div>
             <DialogTitle className="font-display text-2xl font-semibold sm:text-3xl">
-              Congratulations!
+              {t("Congratulations!")}
             </DialogTitle>
           </DialogHeader>
           <p className="text-center text-base text-mist/80 sm:text-lg">
-            Your ministry <span className="font-semibold text-sand">“{posted?.shortTitle}”</span> is live.
+            {t("Your ministry")} <span className="font-semibold text-sand">“{posted?.shortTitle}”</span> {t("is live.")}
           </p>
           <p className="text-center text-sm text-mist/60">
-            You can visit your profile page anytime to edit, pause, or delete your post.
+            {t("You can visit your profile page anytime to edit, pause, or delete your post.")}
           </p>
           {posted && (
             <ChurchPicker
@@ -395,7 +397,7 @@ function CreateMinistryPage() {
               className="inline-flex items-center justify-center gap-2 rounded-full bg-lemon px-6 py-3.5 text-lg font-semibold text-ink transition-transform hover:-translate-y-0.5"
             >
               <MapPin className="size-5" aria-hidden="true" />
-              View my ministry on the map
+              {t("View my ministry on the map")}
             </button>
             <Link
               to="/profile"
@@ -403,7 +405,7 @@ function CreateMinistryPage() {
               className="inline-flex items-center justify-center gap-2 rounded-full bg-ink px-6 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/20 transition hover:bg-ink-soft"
             >
               <UserCircle className="size-5" aria-hidden="true" />
-              Go to my profile
+              {t("Go to my profile")}
             </Link>
           </div>
         </DialogContent>

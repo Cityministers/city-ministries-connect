@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { HandHeart, HeartHandshake, Loader2, Pencil, RefreshCw, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   deleteMyPost,
   listMyPosts,
@@ -11,6 +12,7 @@ import {
 } from "@/lib/my-posts.functions";
 
 export function MyPostsTab() {
+  const { t } = useTranslation();
   const fetchPosts = useServerFn(listMyPosts);
   const save = useServerFn(updateMyPost);
   const repost = useServerFn(repostMyPost);
@@ -46,10 +48,10 @@ export function MyPostsTab() {
         },
       });
       setEditing(null);
-      setNote("Saved.");
+      setNote(t("Saved."));
       await refetch();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not save that.");
+      setError(err instanceof Error ? err.message : t("Could not save that."));
     } finally {
       setBusy(false);
     }
@@ -60,7 +62,7 @@ export function MyPostsTab() {
     setNote(null);
     try {
       await repost({ data: { postType: post.postType, id: post.id } });
-      setNote(`"${post.shortTitle}" is back at the top.`);
+      setNote(t('"{{title}}" is back at the top.', { title: post.shortTitle }));
       await refetch();
     } finally {
       setBusy(false);
@@ -72,19 +74,19 @@ export function MyPostsTab() {
     try {
       await remove({ data: { postType: post.postType, id: post.id } });
       setConfirmId(null);
-      setNote("Post deleted.");
+      setNote(t("Post deleted."));
       await refetch();
     } finally {
       setBusy(false);
     }
   }
 
-  if (isLoading) return <p className="py-10 text-center text-base text-mist/60">Loading…</p>;
+  if (isLoading) return <p className="py-10 text-center text-base text-mist/60">{t("Loading…")}</p>;
 
   if (!posts || posts.length === 0) {
     return (
       <p className="rounded-2xl bg-ink-soft/60 p-6 text-center text-base text-mist/70 ring-1 ring-mist/15">
-        You haven&rsquo;t posted a ministry or a need yet.
+        {t("You haven’t posted a ministry or a need yet.")}
       </p>
     );
   }
@@ -130,7 +132,7 @@ export function MyPostsTab() {
               )}
               <div className="min-w-0 flex-1">
                 <p className="text-xs uppercase tracking-[0.2em] text-mist/50">
-                  {post.postType === "need" ? "Need" : "Ministry"} ·{" "}
+                  {post.postType === "need" ? t("Need") : t("Ministry")} ·{" "}
                   {new Date(post.updatedAt).toLocaleDateString()}
                 </p>
                 <p className="truncate text-xl font-semibold text-sand sm:text-2xl">{post.shortTitle}</p>
@@ -154,14 +156,14 @@ export function MyPostsTab() {
                   maxLength={24}
                   required
                   className="rounded-xl bg-ink px-4 py-3 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
-                  aria-label="Short title"
+                  aria-label={t("Short title")}
                 />
                 <input
                   name="title"
                   defaultValue={post.title}
                   maxLength={100}
                   className="rounded-xl bg-ink px-4 py-3 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
-                  aria-label="Quote or passage about your mission"
+                  aria-label={t("Quote or passage about your mission")}
                 />
                 <textarea
                   name="description"
@@ -170,7 +172,7 @@ export function MyPostsTab() {
                   maxLength={400}
                   required
                   className="rounded-xl bg-ink px-4 py-3 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
-                  aria-label="Description"
+                  aria-label={t("Description")}
                 />
                 <div className="flex gap-2">
                   <input
@@ -178,16 +180,16 @@ export function MyPostsTab() {
                     defaultValue={post.city}
                     maxLength={80}
                     className="flex-1 rounded-xl bg-ink px-4 py-3 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
-                    aria-label="City"
-                    placeholder="City"
+                    aria-label={t("City")}
+                    placeholder={t("City")}
                   />
                   <input
                     name="zip"
                     defaultValue={post.zip}
                     maxLength={10}
                     className="w-28 rounded-xl bg-ink px-4 py-3 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
-                    aria-label="ZIP"
-                    placeholder="ZIP"
+                    aria-label={t("ZIP")}
+                    placeholder={t("ZIP")}
                   />
                 </div>
                 <div className="flex gap-2">
@@ -197,14 +199,14 @@ export function MyPostsTab() {
                     className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-lemon px-4 py-3 text-base font-semibold text-ink disabled:opacity-60"
                   >
                     {busy && <Loader2 className="size-5 animate-spin" aria-hidden="true" />}
-                    Save changes
+                    {t("Save changes")}
                   </button>
                   <button
                     type="button"
                     onClick={() => setEditing(null)}
                     className="rounded-full bg-ink px-4 py-3 text-base font-semibold text-sand ring-1 ring-mist/25"
                   >
-                    Cancel
+                    {t("Cancel")}
                   </button>
                 </div>
               </form>
@@ -216,7 +218,7 @@ export function MyPostsTab() {
                   className="inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-2.5 text-base font-medium text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
                 >
                   <Pencil className="size-4" aria-hidden="true" />
-                  Edit
+                  {t("Edit")}
                 </button>
                 <button
                   type="button"
@@ -225,7 +227,7 @@ export function MyPostsTab() {
                   className="inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-2.5 text-base font-medium text-lemon ring-1 ring-lemon/30 transition hover:bg-lemon/10 disabled:opacity-60"
                 >
                   <RefreshCw className="size-4" aria-hidden="true" />
-                  Repost
+                  {t("Repost")}
                 </button>
                 <button
                   type="button"
@@ -233,21 +235,21 @@ export function MyPostsTab() {
                   className="inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-2.5 text-base font-medium text-rose ring-1 ring-rose/30 transition hover:bg-rose/10"
                 >
                   <Trash2 className="size-4" aria-hidden="true" />
-                  Delete
+                  {t("Delete")}
                 </button>
               </div>
             )}
 
             {confirmId === post.id && !isEditing && (
               <div className="flex items-center gap-2 rounded-xl bg-rose/10 p-3 ring-1 ring-rose/30">
-                <p className="flex-1 text-base text-mist/80">Delete this post for good?</p>
+                <p className="flex-1 text-base text-mist/80">{t("Delete this post for good?")}</p>
                 <button
                   type="button"
                   disabled={busy}
                   onClick={() => void handleDelete(post)}
                   className="rounded-full bg-rose px-4 py-2 text-base font-semibold text-white disabled:opacity-60"
                 >
-                  Yes, delete
+                  {t("Yes, delete")}
                 </button>
               </div>
             )}

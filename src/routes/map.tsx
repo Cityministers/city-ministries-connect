@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, List, Search } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { AccountMenu } from "@/components/AccountMenu";
 import { BrandLogo } from "@/components/BrandLogo";
 import { SiteNav } from "@/components/SiteNav";
@@ -54,6 +55,7 @@ export const Route = createFileRoute("/map")({
 });
 
 function MapPage() {
+  const { t } = useTranslation();
   const { place, new: freshId } = Route.useSearch();
   const navigate = Route.useNavigate();
   const [location, setLocation] = useState(place ?? "Portland, OR 97209");
@@ -158,7 +160,7 @@ function MapPage() {
               <Link
                 to="/"
                 className="grid size-9 shrink-0 place-items-center rounded-full bg-ink text-sand ring-1 ring-mist/20 transition hover:bg-ink-soft"
-                aria-label="Back to home"
+                aria-label={t("Back to home")}
               >
                 <ArrowLeft className="size-4" aria-hidden="true" />
               </Link>
@@ -188,31 +190,31 @@ function MapPage() {
                   setLocation(e.target.value);
                   void navigate({ search: { place: e.target.value }, replace: true });
                 }}
-                placeholder="City or ZIP code"
-                aria-label="Search by city or ZIP code"
+                placeholder={t("City or ZIP code")}
+                aria-label={t("Search by city or ZIP code")}
               />
               <span className="shrink-0 text-[10px] font-medium uppercase tracking-[0.15em] text-mist/40">
-                zip or city
+                {t("zip or city")}
               </span>
             </form>
             <Link
               to="/ministries"
               search={{ place: location }}
               className="grid size-10 shrink-0 place-items-center rounded-full bg-tone-cyan/15 text-tone-cyan ring-1 ring-tone-cyan/45 transition hover:bg-tone-cyan/25"
-              aria-label="List view"
+              aria-label={t("List view")}
             >
               <List className="size-5" aria-hidden="true" />
             </Link>
           </div>
 
           {/* Row 3: create + map type */}
-          <div className="grid w-full grid-cols-3 gap-2" aria-label="Map post controls">
+          <div className="grid w-full grid-cols-3 gap-2" aria-label={t("Map post controls")}>
             <Button
               asChild
               className="h-10 rounded-full bg-tone-emerald/15 px-2 text-sm font-semibold text-tone-emerald shadow-none ring-1 ring-tone-emerald/45 hover:bg-tone-emerald/25 sm:px-5"
             >
-              <Link to="/start" aria-label="Create a ministry post">
-                Create Post
+              <Link to="/start" aria-label={t("Create a ministry post")}>
+                {t("Create Post")}
               </Link>
             </Button>
             <Button
@@ -220,7 +222,7 @@ function MapPage() {
               className="h-10 rounded-full bg-tone-cyan/25 px-2 text-sm font-semibold text-tone-cyan shadow-none ring-1 ring-tone-cyan/55 hover:bg-tone-cyan/35 sm:px-5"
             >
               <Link to="/map" search={{ place: location }} aria-current="page">
-                Ministries
+                {t("Ministries")}
               </Link>
             </Button>
             <Button
@@ -228,7 +230,7 @@ function MapPage() {
               className="h-10 rounded-full bg-tone-indigo/15 px-2 text-sm font-semibold text-tone-indigo shadow-none ring-1 ring-tone-indigo/45 hover:bg-tone-indigo/25 sm:px-5"
             >
               <Link to="/needs" search={{ place: location }}>
-                Needs
+                {t("Needs")}
               </Link>
             </Button>
           </div>
@@ -246,7 +248,7 @@ function MapPage() {
               setPending(b);
               setBounds((prev) => prev ?? b);
             }}
-            label="Ministry map. Drag to explore other neighborhoods."
+            label={t("Ministry map. Drag to explore other neighborhoods.")}
             className="map-fade h-[60dvh] min-h-[320px] w-full"
           />
           {moved && (
@@ -255,7 +257,7 @@ function MapPage() {
               onClick={() => setBounds(pending)}
               className="absolute left-1/2 top-3 z-10 -translate-x-1/2 rounded-full bg-ink-soft px-4 py-2 text-sm font-semibold text-sand shadow-lg ring-1 ring-mist/25 transition hover:bg-ink-soft/80 hover:ring-mist/40"
             >
-              Search this area
+              {t("Search this area")}
             </button>
           )}
         </div>
@@ -273,21 +275,21 @@ function MapPage() {
                     : "text-mist hover:text-sand"
                 }`}
               >
-                {m === "view" ? "In this view" : m === "near" ? "Nearest to me" : "Churches"}
+                {m === "view" ? t("In this view") : m === "near" ? t("Nearest to me") : t("Churches")}
               </button>
             ))}
           </div>
           <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-mist/40">
             {mode === "church"
-              ? `${churchList.length} churches`
-              : `${list.length + (mode === "near" ? churchList.length : 0)} nearby`}
+              ? t("{{count}} churches", { count: churchList.length })
+              : t("{{count}} nearby", { count: list.length + (mode === "near" ? churchList.length : 0) })}
           </p>
         </div>
 
 
         {!hasHome && (
           <p className="mt-2 text-xs text-mist/70">
-            Add your ZIP code on your profile to see how far each ministry is from you.
+            {t("Add your ZIP code on your profile to see how far each ministry is from you.")}
           </p>
         )}
 
@@ -355,7 +357,7 @@ function MapPage() {
                         {c.name}
                       </span>
                       <span className="block truncate text-xs text-mist/70">
-                        Church · {c.city}
+                        {t("Church")} · {c.city}
                         {c.zip ? ` ${c.zip}` : ""}
                       </span>
                     </span>
@@ -369,8 +371,8 @@ function MapPage() {
           {(mode === "church" ? churchList.length === 0 : list.length === 0 && (mode !== "near" || churchList.length === 0)) && (
             <li className="rounded-2xl bg-ink-soft p-4 text-center text-sm text-mist/70">
               {mode === "church"
-                ? "No churches on the map yet."
-                : "No ministries in this area yet — drag the map to look around."}
+                ? t("No churches on the map yet.")
+                : t("No ministries in this area yet — drag the map to look around.")}
             </li>
           )}
         </ul>
@@ -386,24 +388,24 @@ function MapPage() {
             to="/start"
             className="inline-flex w-full items-center justify-center rounded-full bg-lemon px-8 py-3.5 text-lg font-bold text-ink ring-1 ring-lemon/60 transition-transform hover:-translate-y-0.5 sm:w-auto sm:text-xl"
           >
-            Start Your Ministry
+            {t("Start Your Ministry")}
           </Link>
           {!session && (
             <p className="text-xs text-mist/70">
-              New here?{" "}
+              {t("New here?")}{" "}
               <Link
                 to="/auth"
                 search={{ mode: "signup" }}
                 className="text-sand/90 underline decoration-mist/30 underline-offset-2 hover:decoration-mist/60"
               >
-                Create Account
+                {t("Create Account")}
               </Link>
               <span className="mx-1.5 text-mist/40">·</span>
               <Link
                 to="/auth"
                 className="text-sand/90 underline decoration-mist/30 underline-offset-2 hover:decoration-mist/60"
               >
-                Sign in
+                {t("Sign in")}
               </Link>
             </p>
           )}

@@ -6,8 +6,10 @@ import {
   listMyNotifications,
   markAllNotificationsRead,
 } from "@/lib/notifications.functions";
+import { useTranslation } from "react-i18next";
 
 export function NotificationsTab() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const fetchNotifications = useServerFn(listMyNotifications);
@@ -18,13 +20,12 @@ export function NotificationsTab() {
     queryFn: () => fetchNotifications(),
   });
 
-  if (isLoading) return <p className="py-10 text-center text-lg text-mist/60">Loading…</p>;
+  if (isLoading) return <p className="py-10 text-center text-lg text-mist/60">{t("Loading…")}</p>;
 
   if (!items || items.length === 0) {
     return (
       <p className="rounded-2xl bg-ink-soft/60 p-6 text-center text-lg text-mist/70 ring-1 ring-mist/15">
-        No notifications yet. You&rsquo;ll hear about messages, likes, comments, and new
-        needs near you.
+        {t("No notifications yet. You’ll hear about messages, likes, comments, and new needs near you.")}
       </p>
     );
   }
@@ -42,7 +43,7 @@ export function NotificationsTab() {
         className="inline-flex w-fit items-center gap-1.5 self-end rounded-full bg-ink px-4 py-2.5 text-lg font-medium text-lemon ring-1 ring-lemon/30 transition hover:bg-lemon/10"
       >
         <CheckCheck className="size-5" aria-hidden="true" />
-        Mark all read
+        {t("Mark all read")}
       </button>
 
       {items.map((n) => (

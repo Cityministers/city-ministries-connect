@@ -11,6 +11,7 @@ import {
   ThumbsUp,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { LiveMap, type MapBounds } from "@/components/LiveMap";
 import { useHomePoint, useMapPosts, usePlaceCenter } from "@/lib/use-map-view";
 import { MinistryPost } from "@/components/MinistryPost";
@@ -60,6 +61,7 @@ export const Route = createFileRoute("/needs")({
 });
 
 function NeedsPage() {
+  const { t } = useTranslation();
   const { place, view, new: freshId } = Route.useSearch();
   const navigate = Route.useNavigate();
   const [placeQuery, setPlaceQuery] = useState(place ?? "Portland, OR 97209");
@@ -159,17 +161,17 @@ function NeedsPage() {
               to="/map"
               search={{ place: placeQuery }}
               className="grid size-9 shrink-0 place-items-center rounded-full bg-ink text-sand ring-1 ring-mist/20 transition hover:bg-ink-soft"
-              aria-label="Back to map"
+              aria-label={t("Back to map")}
             >
               <ArrowLeft className="size-4" aria-hidden="true" />
             </Link>
             <h1 className="font-display text-lg font-semibold sm:text-xl">
-              Needs near you
+              {t("Needs near you")}
               <Link
                 to="/needs"
                 search={{ ...(placeQuery ? { place: placeQuery } : {}), view: "list" as const }}
                 className="ml-2 inline-flex items-center text-lemon hover:underline"
-                aria-label={`View list of ${results.length} needs`}
+                aria-label={t("View list of {{count}} needs", { count: results.length })}
               >
                 {results.length}
               </Link>
@@ -192,18 +194,18 @@ function NeedsPage() {
                     replace: true,
                   });
                 }}
-                placeholder="City or ZIP code"
-                aria-label="Search by city or ZIP code"
+                placeholder={t("City or ZIP code")}
+                aria-label={t("Search by city or ZIP code")}
               />
               <span className="shrink-0 text-[10px] font-bold uppercase tracking-widest text-mist/60">
-                Zip or city
+                {t("Zip or city")}
               </span>
             </div>
             <button
               type="button"
               onClick={toggleView}
               className="grid size-10 shrink-0 place-items-center rounded-full bg-tone-cyan/15 text-tone-cyan ring-1 ring-tone-cyan/45 transition hover:bg-tone-cyan/25"
-              aria-label={isMap ? "List view" : "Map view"}
+              aria-label={isMap ? t("List view") : t("Map view")}
             >
               {isMap ? (
                 <List className="size-4" aria-hidden="true" />
@@ -219,17 +221,17 @@ function NeedsPage() {
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search needs, places, people"
-              aria-label="Search needs"
+              placeholder={t("Search needs, places, people")}
+              aria-label={t("Search needs")}
             />
           </div>
-          <div className="grid w-full grid-cols-3 gap-2" aria-label="Map post controls">
+          <div className="grid w-full grid-cols-3 gap-2" aria-label={t("Map post controls")}>
             <Button
               asChild
               className="h-10 rounded-full bg-tone-emerald/15 px-2 text-sm font-semibold text-tone-emerald shadow-none ring-1 ring-tone-emerald/45 hover:bg-tone-emerald/25 sm:px-5"
             >
-              <Link to="/post-need" aria-label="Create a need post">
-                Create Post
+              <Link to="/post-need" aria-label={t("Create a need post")}>
+                {t("Create Post")}
               </Link>
             </Button>
             <Button
@@ -237,7 +239,7 @@ function NeedsPage() {
               className="h-10 rounded-full bg-tone-cyan/15 px-2 text-sm font-semibold text-tone-cyan shadow-none ring-1 ring-tone-cyan/45 hover:bg-tone-cyan/25 sm:px-5"
             >
               <Link to="/map" search={{ place: placeQuery }}>
-                Ministries
+                {t("Ministries")}
               </Link>
             </Button>
             <Button
@@ -249,7 +251,7 @@ function NeedsPage() {
                 search={{ ...(placeQuery ? { place: placeQuery } : {}) }}
                 aria-current="page"
               >
-                Needs
+                {t("Needs")}
               </Link>
             </Button>
           </div>
@@ -268,7 +270,7 @@ function NeedsPage() {
                   setPending(b);
                   setBounds((prev) => prev ?? b);
                 }}
-                label="Needs map. Drag to explore other neighborhoods."
+                label={t("Needs map. Drag to explore other neighborhoods.")}
                 className="map-fade h-[60dvh] min-h-[320px] w-full"
               />
               {moved && (
@@ -277,15 +279,15 @@ function NeedsPage() {
                   onClick={() => setBounds(pending)}
                   className="absolute left-1/2 top-3 z-10 -translate-x-1/2 rounded-full bg-ink-soft px-4 py-2 text-sm font-semibold text-sand shadow-lg ring-1 ring-mist/25 transition hover:bg-ink-soft/80 hover:ring-mist/40"
                 >
-                  Search this area
+                  {t("Search this area")}
                 </button>
               )}
             </div>
             <p className="mt-3 text-center text-[10px] font-medium uppercase tracking-[0.2em] text-mist/40">
-              {inViewList.length} needs in this view
+              {t("{{count}} needs in this view", { count: inViewList.length })}
             </p>
             {points.length === 0 && (
-              <p className="mt-3 text-center text-sm text-mist/80">No needs posted yet.</p>
+              <p className="mt-3 text-center text-sm text-mist/80">{t("No needs posted yet.")}</p>
             )}
           </>
         ) : (
@@ -304,7 +306,7 @@ function NeedsPage() {
                     <span className="size-14 shrink-0 overflow-hidden rounded-xl ring-1 ring-mist/25 sm:size-16">
                       <img
                         src={m.avatarUrl}
-                        alt={`${m.label} — ${m.poster.name}`}
+                        alt={t("{{label}} — {{name}}", { label: m.label, name: m.poster.name })}
                         className="size-full object-cover"
                       />
                     </span>
@@ -359,7 +361,7 @@ function NeedsPage() {
 
         {!isMap && results.length === 0 && (
           <p className="py-16 text-center text-sm text-mist/75">
-            No needs posted in {placeQuery || "your area"} yet.
+            {t("No needs posted in {{place}} yet.", { place: placeQuery || t("your area") })}
           </p>
         )}
 
@@ -368,7 +370,7 @@ function NeedsPage() {
             to="/post-need"
             className="inline-flex items-center justify-center rounded-full bg-lemon px-6 py-3 text-base font-semibold text-ink transition hover:opacity-90"
           >
-            Post a Need
+            {t("Post a Need")}
           </Link>
         </div>
 

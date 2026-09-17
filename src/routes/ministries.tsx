@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, Map, MapPin, MessageCircle, Search, ThumbsUp } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { MinistryPost } from "@/components/MinistryPost";
 import { toneStyles } from "@/data/ministries";
 import { listUserMinistries } from "@/lib/ministries.functions";
@@ -39,6 +40,7 @@ export const Route = createFileRoute("/ministries")({
 });
 
 function MinistriesPage() {
+  const { t } = useTranslation();
   const { place } = Route.useSearch();
   const navigate = Route.useNavigate();
   const [placeQuery, setPlaceQuery] = useState(place ?? "Portland, OR 97209");
@@ -69,16 +71,16 @@ function MinistriesPage() {
               to="/map"
               search={{ place: placeQuery }}
               className="grid size-9 shrink-0 place-items-center rounded-full bg-ink text-sand ring-1 ring-mist/20 transition hover:bg-ink-soft"
-              aria-label="Back to map"
+              aria-label={t("Back to map")}
             >
               <ArrowLeft className="size-4" aria-hidden="true" />
             </Link>
-            <h1 className="font-display text-lg font-semibold sm:text-xl">All ministries</h1>
+            <h1 className="font-display text-lg font-semibold sm:text-xl">{t("All ministries")}</h1>
             <Link
               to="/map"
               search={{ place: placeQuery }}
               className="ml-auto grid size-9 shrink-0 place-items-center rounded-full bg-tone-cyan/15 text-tone-cyan ring-1 ring-tone-cyan/45 transition hover:bg-tone-cyan/25"
-              aria-label="Map view"
+              aria-label={t("Map view")}
             >
               <Map className="size-5" aria-hidden="true" />
             </Link>
@@ -93,11 +95,11 @@ function MinistriesPage() {
                 setPlaceQuery(e.target.value);
                 void navigate({ search: { place: e.target.value }, replace: true });
               }}
-              placeholder="City or ZIP code"
-              aria-label="Search by city or ZIP code"
+              placeholder={t("City or ZIP code")}
+              aria-label={t("Search by city or ZIP code")}
             />
             <span className="shrink-0 text-[10px] font-bold uppercase tracking-widest text-mist/40">
-              Zip or city
+              {t("Zip or city")}
             </span>
           </div>
           <div className="flex items-center gap-2 rounded-full bg-ink px-4 py-2.5 ring-1 ring-mist/20 focus-within:ring-lemon/50">
@@ -107,8 +109,8 @@ function MinistriesPage() {
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search ministries, places, people"
-              aria-label="Search ministries"
+              placeholder={t("Search ministries, places, people")}
+              aria-label={t("Search ministries")}
             />
           </div>
         </div>
@@ -127,7 +129,7 @@ function MinistriesPage() {
                   <span className="size-14 shrink-0 overflow-hidden rounded-xl ring-1 ring-mist/25 sm:size-16">
                     <img
                       src={m.avatarUrl}
-                      alt={`${m.label} — ${m.poster.name}`}
+                      alt={t("{{label}} — {{name}}", { label: m.label, name: m.poster.name })}
                       className="size-full object-cover"
                     />
                   </span>
@@ -179,7 +181,7 @@ function MinistriesPage() {
 
         {results.length === 0 && (
           <p className="py-16 text-center text-sm text-mist/60">
-            No ministries in {placeQuery || "your area"} match “{query}”.
+            {t("No ministries in {{place}} match \u201c{{query}}\u201d.", { place: placeQuery || t("your area"), query })}
           </p>
         )}
 

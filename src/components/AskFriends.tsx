@@ -1,6 +1,7 @@
 import { useServerFn } from "@tanstack/react-start";
 import { Check, Loader2, MessageSquare, Plus, Users } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   createGiftReference,
   deleteGiftReference,
@@ -15,6 +16,7 @@ export default function AskFriends({
   onAddGifts: (gifts: string[]) => void;
   showHeading?: boolean;
 }) {
+  const { t } = useTranslation();
   const create = useServerFn(createGiftReference);
   const list = useServerFn(listGiftReferences);
   const remove = useServerFn(deleteGiftReference);
@@ -37,7 +39,7 @@ export default function AskFriends({
       setReferences((prev) => (prev ? prev.filter((r) => r.id !== id) : prev));
       setConfirmId(null);
     } catch {
-      setError("Couldn't remove that invite. Try again.");
+      setError(t("Couldn't remove that invite. Try again."));
     } finally {
       setRemovingId(null);
     }
@@ -59,7 +61,7 @@ export default function AskFriends({
     setError(null);
     const name = contactName.trim();
     if (name.length < 1) {
-      setError("Add your contact's first name.");
+      setError(t("Add your contact's first name."));
       return;
     }
     setBusy(true);
@@ -68,7 +70,7 @@ export default function AskFriends({
       setContactName("");
       refresh();
     } catch {
-      setError("Couldn't create that link. Try again.");
+      setError(t("Couldn't create that link. Try again."));
     } finally {
       setBusy(false);
     }
@@ -85,7 +87,7 @@ export default function AskFriends({
       setCopiedCode(`${mode}:${code}`);
       setTimeout(() => setCopiedCode(null), 2000);
     } catch {
-      window.prompt("Copy this link and send it to your friend:", text);
+      window.prompt(t("Copy this link and send it to your friend:"), text);
     }
   }
 
@@ -100,7 +102,7 @@ export default function AskFriends({
         >
           <Users className="size-5 text-lemon" aria-hidden="true" />
           <span className="text-lg font-semibold text-sand">
-            Ask friends, family and church leaders
+            {t("Ask friends, family and church leaders")}
           </span>
         </button>
       )}
@@ -108,21 +110,19 @@ export default function AskFriends({
       {open && (
         <div className="mt-4 flex flex-col gap-5">
           <p className="text-base leading-relaxed text-mist/80">
-            Send this link to anyone so they can contribute to helping you discover your spiritual
-            gifts and potential ministries.
+            {t("Send this link to anyone so they can contribute to helping you discover your spiritual gifts and potential ministries.")}
           </p>
 
           <div className="rounded-2xl bg-ink-soft/60 p-4 ring-1 ring-mist/15">
             <span className="text-sm uppercase tracking-wider text-mist/60">
-              Sample text they'll receive
+              {t("Sample text they'll receive")}
             </span>
             <p className="mt-2 text-lg leading-relaxed text-sand">
-              “Hi Maria, I'm trying to discover my spiritual gifts and where I might serve. Would
-              you take a minute to share what you see in me?{" "}
+              {t("\u201cHi Maria, I'm trying to discover my spiritual gifts and where I might serve. Would you take a minute to share what you see in me?")}{" "}
               <span className="text-lemon underline underline-offset-2">
                 cityministers.com/gift-reference/abc123
               </span>
-              ”
+              {t("\u201d")}
             </p>
           </div>
 
@@ -131,8 +131,8 @@ export default function AskFriends({
               value={contactName}
               onChange={(e) => setContactName(e.target.value)}
               maxLength={60}
-              placeholder="Their first name, e.g. Maria"
-              aria-label="Contact first name"
+              placeholder={t("Their first name, e.g. Maria")}
+              aria-label={t("Contact first name")}
               className="rounded-xl bg-ink-soft px-4 py-3.5 text-lg text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
             />
             <button
@@ -145,7 +145,7 @@ export default function AskFriends({
               ) : (
                 <Plus className="size-5" aria-hidden="true" />
               )}
-              Create their link
+              {t("Create their link")}
             </button>
             {error && (
               <p className="rounded-xl bg-rose/15 px-4 py-3 text-base text-rose ring-1 ring-rose/30">
@@ -156,10 +156,10 @@ export default function AskFriends({
 
           {references === null ? (
             <p className="flex items-center gap-2 text-base text-mist/70">
-              <Loader2 className="size-4 animate-spin" aria-hidden="true" /> Loading your invites…
+              <Loader2 className="size-4 animate-spin" aria-hidden="true" /> {t("Loading your invites…")}
             </p>
           ) : references.length === 0 ? (
-            <p className="text-base text-mist/60">No invites yet.</p>
+            <p className="text-base text-mist/60">{t("No invites yet.")}</p>
           ) : (
             <ul className="flex flex-col gap-4">
               {references.map((ref) => (
@@ -176,7 +176,7 @@ export default function AskFriends({
                           : "bg-ink text-mist/70 ring-1 ring-mist/20"
                       }`}
                     >
-                      {ref.respondedAt ? "Answered" : "Waiting"}
+                      {ref.respondedAt ? t("Answered") : t("Waiting")}
                     </span>
                   </div>
 
@@ -210,10 +210,10 @@ export default function AskFriends({
                       >
                         {addedId === ref.id ? (
                           <>
-                            <Check className="size-4" aria-hidden="true" /> Added to your gifts
+                            <Check className="size-4" aria-hidden="true" /> {t("Added to your gifts")}
                           </>
                         ) : (
-                          "Add these gifts"
+                          t("Add these gifts")
                         )}
                       </button>
                     </>
@@ -227,12 +227,12 @@ export default function AskFriends({
                         {copiedCode === `text:${ref.code}` ? (
                           <>
                             <Check className="size-4" aria-hidden="true" />
-                            Copied for texting
+                            {t("Copied for texting")}
                           </>
                         ) : (
                           <>
                             <MessageSquare className="size-4" aria-hidden="true" />
-                            Copy link to text
+                            {t("Copy link to text")}
                           </>
                         )}
                       </button>
@@ -244,10 +244,10 @@ export default function AskFriends({
                         {copiedCode === `url:${ref.code}` ? (
                           <>
                             <Check className="size-4 text-lemon" aria-hidden="true" />
-                            Link copied
+                            {t("Link copied")}
                           </>
                         ) : (
-                          "Copy link only"
+                          t("Copy link only")
                         )}
                       </button>
                     </div>
@@ -256,7 +256,7 @@ export default function AskFriends({
                   {confirmId === ref.id ? (
                     <div className="flex flex-col gap-2 rounded-xl bg-rose/10 p-3 ring-1 ring-rose/30">
                       <p className="text-base leading-relaxed text-rose">
-                        Remove this invite? Their link will stop working.
+                        {t("Remove this invite? Their link will stop working.")}
                       </p>
                       <div className="flex gap-2">
                         <button
@@ -268,14 +268,14 @@ export default function AskFriends({
                           {removingId === ref.id && (
                             <Loader2 className="size-4 animate-spin" aria-hidden="true" />
                           )}
-                          Yes, remove
+                          {t("Yes, remove")}
                         </button>
                         <button
                           type="button"
                           onClick={() => setConfirmId(null)}
                           className="inline-flex flex-1 items-center justify-center rounded-full bg-ink-soft px-4 py-2.5 text-base font-semibold text-sand ring-1 ring-mist/25"
                         >
-                          Keep it
+                          {t("Keep it")}
                         </button>
                       </div>
                     </div>
@@ -285,7 +285,7 @@ export default function AskFriends({
                       onClick={() => setConfirmId(ref.id)}
                       className="inline-flex min-h-9 items-center justify-center self-center text-xs font-medium uppercase tracking-widest text-rose/60 transition hover:text-rose"
                     >
-                      Remove
+                      {t("Remove")}
                     </button>
                   )}
                 </li>

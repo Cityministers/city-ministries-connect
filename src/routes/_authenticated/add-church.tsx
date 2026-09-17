@@ -13,6 +13,7 @@ import {
   X,
 } from "lucide-react";
 import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -58,6 +59,7 @@ const inputClass =
   "w-full min-w-0 rounded-xl bg-ink-soft px-4 py-3.5 text-lg text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50 sm:text-xl";
 
 function AddChurchPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const create = useServerFn(createChurch);
   const save = useServerFn(updateChurch);
@@ -116,11 +118,11 @@ function AddChurchPage() {
     for (const f of files) {
       if (f.type.startsWith("video/")) {
         if (video) {
-          setError("You can add one video.");
+          setError(t("You can add one video."));
           continue;
         }
         if (f.size > MAX_VIDEO_BYTES) {
-          setError("That video is too large — please keep it under 50MB.");
+          setError(t("That video is too large — please keep it under 50MB."));
           continue;
         }
         video = true;
@@ -128,7 +130,7 @@ function AddChurchPage() {
         continue;
       }
       if (photos >= MAX_PHOTOS) {
-        setError(`You can add up to ${MAX_PHOTOS} extra photos.`);
+        setError(t("You can add up to {{count}} extra photos.", { count: MAX_PHOTOS }));
         continue;
       }
       photos += 1;
@@ -144,10 +146,10 @@ function AddChurchPage() {
   async function submitDetails(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    if (name.trim().length < 2) return setError("Add your church's name.");
-    if (city.trim().length < 2) return setError("Add the city your church is in.");
+    if (name.trim().length < 2) return setError(t("Add your church's name."));
+    if (city.trim().length < 2) return setError(t("Add the city your church is in."));
     if (address.trim().length < 5)
-      return setError("Add your street address — your icon sits on that exact spot.");
+      return setError(t("Add your street address — your icon sits on that exact spot."));
 
     setBusy(true);
     try {
@@ -156,7 +158,7 @@ function AddChurchPage() {
         try {
           const { data: userData } = await supabase.auth.getUser();
           const uid = userData.user?.id;
-          if (!uid) throw new Error("Please sign in again.");
+          if (!uid) throw new Error(t("Please sign in again."));
           const upload = await shrinkImage(file);
           const path = `${uid}/church-${Date.now()}.jpg`;
           const { error: upErr } = await supabase.storage
@@ -205,7 +207,7 @@ function AddChurchPage() {
       if (!result.located) {
         setFound(null);
         setError(
-          "We couldn't find that street address. Check the street, city and ZIP — your icon needs an exact address to sit on the map.",
+          t("We couldn't find that street address. Check the street, city and ZIP — your icon needs an exact address to sit on the map."),
         );
         return;
       }
@@ -213,7 +215,7 @@ function AddChurchPage() {
       setStep("checkout");
       window.scrollTo({ top: 0 });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong.");
+      setError(err instanceof Error ? err.message : t("Something went wrong."));
     } finally {
       setBusy(false);
     }
@@ -223,8 +225,8 @@ function AddChurchPage() {
     e.preventDefault();
     setError(null);
     if (!churchId) return;
-    if (cardName.trim().length < 2) return setError("Add the name on the card.");
-    if (cardNumber.replace(/\s/g, "").length < 12) return setError("Add a card number.");
+    if (cardName.trim().length < 2) return setError(t("Add the name on the card."));
+    if (cardNumber.replace(/\s/g, "").length < 12) return setError(t("Add a card number."));
 
     setBusy(true);
     try {
@@ -232,7 +234,7 @@ function AddChurchPage() {
       setBusy(false);
       setLive(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong.");
+      setError(err instanceof Error ? err.message : t("Something went wrong."));
       setBusy(false);
     }
   }
@@ -244,12 +246,12 @@ function AddChurchPage() {
           <Link
             to="/map"
             className="grid size-10 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20 transition hover:bg-ink-soft"
-            aria-label="Back to map"
+            aria-label={t("Back to map")}
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
           </Link>
           <h1 className="font-display text-2xl font-semibold leading-tight sm:text-3xl">
-            {step === "details" ? "Add your church" : "Checkout"}
+            {step === "details" ? t("Add your church") : t("Checkout")}
           </h1>
         </div>
       </header>
@@ -262,20 +264,20 @@ function AddChurchPage() {
                 type="button"
                 onClick={() => fileRef.current?.click()}
                 className="grid size-16 shrink-0 place-items-center overflow-hidden rounded-xl bg-ink text-mist/60 ring-1 ring-mist/25 transition hover:ring-lemon/50"
-                aria-label="Add a photo of your church"
+                aria-label={t("Add a photo of your church")}
               >
                 {preview ? (
-                  <img src={preview} alt="Your church" className="size-full object-cover" />
+                  <img src={preview} alt={t("Your church")} className="size-full object-cover" />
                 ) : (
                   <Camera className="size-6" aria-hidden="true" />
                 )}
               </button>
               <div className="min-w-0">
                 <p className="text-lg font-medium text-sand sm:text-xl">
-                  {name.trim() || "Your church"}
+                  {name.trim() || t("Your church")}
                 </p>
                 <p className="text-base text-mist/60 sm:text-lg">
-                  Add a photo of your building or congregation.
+                  {t("Add a photo of your building or congregation.")}
                 </p>
               </div>
               <input
@@ -289,11 +291,10 @@ function AddChurchPage() {
 
             <div className="flex flex-col gap-3 rounded-2xl bg-ink-soft/60 p-4 ring-1 ring-mist/15">
               <p className="text-base font-semibold text-sand sm:text-lg">
-                More photos and a video
+                {t("More photos and a video")}
               </p>
               <p className="text-base text-mist/60">
-                Add up to {MAX_PHOTOS} more photos and one short video (under 50MB) for your
-                church page.
+                {t("Add up to {{count}} more photos and one short video (under 50MB) for your church page.", { count: MAX_PHOTOS })}
               </p>
               {media.length > 0 && (
                 <div className="grid grid-cols-3 gap-2">
@@ -310,7 +311,7 @@ function AddChurchPage() {
                       <button
                         type="button"
                         onClick={() => removeMedia(item.url)}
-                        aria-label="Remove this file"
+                        aria-label={t("Remove this file")}
                         className="absolute right-1 top-1 grid size-7 place-items-center rounded-full bg-ink/80 text-sand ring-1 ring-mist/30"
                       >
                         <X className="size-4" aria-hidden="true" />
@@ -325,7 +326,7 @@ function AddChurchPage() {
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-ink px-5 py-2.5 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
               >
                 <ImagePlus className="size-5" aria-hidden="true" />
-                Add photos or a video
+                {t("Add photos or a video")}
               </button>
               <input
                 ref={mediaRef}
@@ -342,7 +343,7 @@ function AddChurchPage() {
 
 
             <label className="flex flex-col gap-2 text-base text-mist/80 sm:text-lg">
-              Church name (shows under your icon on the map)
+              {t("Church name (shows under your icon on the map)")}
               <input
                 className={inputClass}
                 value={name}
@@ -354,7 +355,7 @@ function AddChurchPage() {
             </label>
 
             <div className="flex flex-col gap-2 rounded-2xl bg-ink-soft/60 p-4 ring-1 ring-mist/15">
-              <p className="text-base font-semibold text-sand sm:text-lg">Choose your map icon</p>
+              <p className="text-base font-semibold text-sand sm:text-lg">{t("Choose your map icon")}</p>
               <div className="grid grid-cols-3 gap-2.5">
                 {CHURCH_ICONS.map((choice) => {
                   const selected = choice.id === iconId;
@@ -378,18 +379,18 @@ function AddChurchPage() {
               </div>
               <div className="mt-2 flex flex-col items-center gap-1 rounded-xl bg-ink/70 px-3 py-4 ring-1 ring-mist/10">
                 <img
-                  src={placePinDataUrl(iconMarkup(churchIcon(iconId)), name.trim() || "Your church")}
-                  alt="How your church will look on the map"
+                  src={placePinDataUrl(iconMarkup(churchIcon(iconId)), name.trim() || t("Your church"))}
+                  alt={t("How your church will look on the map")}
                   className="h-24 w-auto"
                 />
                 <p className="text-sm text-mist/70">
-                  This sits on your exact street address.
+                  {t("This sits on your exact street address.")}
                 </p>
               </div>
             </div>
 
             <label className="flex flex-col gap-2 text-base text-mist/80 sm:text-lg">
-              About your church
+              {t("About your church")}
               <textarea
                 className="min-h-32 rounded-xl bg-ink-soft px-4 py-3.5 text-lg text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50 sm:text-xl"
                 value={description}
@@ -400,7 +401,7 @@ function AddChurchPage() {
             </label>
 
             <label className="flex flex-col gap-2 text-base text-mist/80 sm:text-lg">
-              Street address
+              {t("Street address")}
               <input
                 className={inputClass}
                 value={address}
@@ -410,13 +411,13 @@ function AddChurchPage() {
                 required
               />
               <span className="text-sm text-mist/60">
-                Your icon is placed on this exact spot, so write it the way mail arrives.
+                {t("Your icon is placed on this exact spot, so write it the way mail arrives.")}
               </span>
             </label>
 
             <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-3">
               <label className="flex min-w-0 flex-col gap-2 text-base text-mist/80 sm:text-lg">
-                City
+                {t("City")}
                 <input
                   className={inputClass}
                   value={city}
@@ -427,7 +428,7 @@ function AddChurchPage() {
                 />
               </label>
               <label className="flex w-24 shrink-0 flex-col gap-2 text-base text-mist/80 sm:w-32 sm:text-lg">
-                ZIP
+                {t("ZIP")}
                 <input
                   className={inputClass}
                   value={zip}
@@ -440,7 +441,7 @@ function AddChurchPage() {
             </div>
 
             <label className="flex flex-col gap-2 text-base text-mist/80 sm:text-lg">
-              Service times
+              {t("Service times")}
               <input
                 className={inputClass}
                 value={serviceTimes}
@@ -452,7 +453,7 @@ function AddChurchPage() {
 
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <label className="flex flex-col gap-2 text-base text-mist/80 sm:text-lg">
-                Phone
+                {t("Phone")}
                 <input
                   className={inputClass}
                   value={phone}
@@ -463,7 +464,7 @@ function AddChurchPage() {
                 />
               </label>
               <label className="flex flex-col gap-2 text-base text-mist/80 sm:text-lg">
-                Website
+                {t("Website")}
                 <input
                   className={inputClass}
                   value={website}
@@ -486,34 +487,34 @@ function AddChurchPage() {
               className="mt-1 inline-flex items-center justify-center gap-2 rounded-full bg-lemon px-6 py-4 text-xl font-semibold text-ink transition hover:opacity-90 disabled:opacity-60 sm:text-2xl"
             >
               {busy && <Loader2 className="size-5 animate-spin" aria-hidden="true" />}
-              {churchId ? "Try this address" : "Continue to checkout"}
+              {churchId ? t("Try this address") : t("Continue to checkout")}
             </button>
             <p className="text-center text-base text-mist/60">
-              $49 per month keeps your church on the map.
+              {t("$49 per month keeps your church on the map.")}
             </p>
           </form>
         ) : (
           <form className="flex flex-col gap-4" onSubmit={(e) => void submitPayment(e)}>
             <div className="rounded-2xl bg-ink-soft/60 p-4 ring-1 ring-mist/15">
               <p className="font-display text-xl font-semibold text-sand">
-                {name.trim() || "Your church"}
+                {name.trim() || t("Your church")}
               </p>
               <p className="mt-1 text-base text-mist/70 sm:text-lg">
-                Church listing — $49.00 per month, cancel any time.
+                {t("Church listing — $49.00 per month, cancel any time.")}
               </p>
               {found && (
                 <p className="mt-2 text-base text-sand/90">
-                  Found on the map: <span className="text-lemon">{found}</span>
+                  {t("Found on the map:")} <span className="text-lemon">{found}</span>
                 </p>
               )}
               <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-lemon/10 px-3 py-1.5 text-sm font-semibold text-lemon ring-1 ring-lemon/30">
                 <ShieldCheck className="size-4" aria-hidden="true" />
-                Test checkout — no card is charged
+                {t("Test checkout — no card is charged")}
               </p>
             </div>
 
             <label className="flex flex-col gap-2 text-base text-mist/80 sm:text-lg">
-              Name on card
+              {t("Name on card")}
               <input
                 className={inputClass}
                 value={cardName}
@@ -525,7 +526,7 @@ function AddChurchPage() {
             </label>
 
             <label className="flex flex-col gap-2 text-base text-mist/80 sm:text-lg">
-              Card number
+              {t("Card number")}
               <input
                 className={inputClass}
                 value={cardNumber}
@@ -539,7 +540,7 @@ function AddChurchPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <label className="flex flex-col gap-2 text-base text-mist/80 sm:text-lg">
-                Expiry
+                {t("Expiry")}
                 <input
                   className={inputClass}
                   value={expiry}
@@ -549,7 +550,7 @@ function AddChurchPage() {
                 />
               </label>
               <label className="flex flex-col gap-2 text-base text-mist/80 sm:text-lg">
-                CVC
+                {t("CVC")}
                 <input
                   className={inputClass}
                   value={cvc}
@@ -577,14 +578,14 @@ function AddChurchPage() {
               ) : (
                 <CreditCard className="size-5" aria-hidden="true" />
               )}
-              Pay $49 and go live
+              {t("Pay $49 and go live")}
             </button>
             <button
               type="button"
               onClick={() => setStep("details")}
               className="text-center text-base text-mist/60 underline decoration-mist/30 underline-offset-2"
             >
-              Back to church details
+              {t("Back to church details")}
             </button>
           </form>
         )}
@@ -597,15 +598,14 @@ function AddChurchPage() {
               <PartyPopper className="size-7" aria-hidden="true" />
             </div>
             <DialogTitle className="font-display text-2xl font-semibold sm:text-3xl">
-              Congratulations!
+              {t("Congratulations!")}
             </DialogTitle>
           </DialogHeader>
           <p className="text-center text-base text-mist/80 sm:text-lg">
-            <span className="font-semibold text-sand">“{name.trim()}”</span> is on the map.
+            <span className="font-semibold text-sand">“{name.trim()}”</span> {t("is on the map.")}
           </p>
           <p className="text-center text-sm text-mist/60">
-            Your church page collects every ministry and need at your church, and your QR code is
-            waiting there.
+            {t("Your church page collects every ministry and need at your church, and your QR code is waiting there.")}
           </p>
           <div className="mt-2 flex flex-col gap-3">
             <button
@@ -623,7 +623,7 @@ function AddChurchPage() {
               className="inline-flex items-center justify-center gap-2 rounded-full bg-lemon px-6 py-3.5 text-lg font-semibold text-ink transition-transform hover:-translate-y-0.5"
             >
               <MapPin className="size-5" aria-hidden="true" />
-              View my church on the map
+              {t("View my church on the map")}
             </button>
             <button
               type="button"
@@ -634,7 +634,7 @@ function AddChurchPage() {
               className="inline-flex items-center justify-center gap-2 rounded-full bg-ink px-6 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/20 transition hover:bg-ink-soft"
             >
               <Church className="size-5" aria-hidden="true" />
-              Go to my church page
+              {t("Go to my church page")}
             </button>
           </div>
         </DialogContent>

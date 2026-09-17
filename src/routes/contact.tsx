@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Mail, MessageSquare } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -24,6 +25,7 @@ export const Route = createFileRoute("/contact")({
 });
 
 function ContactPage() {
+  const { t } = useTranslation();
   const [sent, setSent] = useState(false);
 
   return (
@@ -33,11 +35,11 @@ function ContactPage() {
           <Link
             to="/map"
             className="grid size-10 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20 transition hover:bg-ink-soft"
-            aria-label="Back to map"
+            aria-label={t("Back to map")}
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
           </Link>
-          <h1 className="font-display text-lg font-semibold sm:text-xl">Contact</h1>
+          <h1 className="font-display text-lg font-semibold sm:text-xl">{t("Contact")}</h1>
         </div>
       </header>
 
@@ -46,25 +48,25 @@ function ContactPage() {
           <div className="mx-auto mb-4 grid size-16 place-items-center rounded-2xl bg-lemon/10 text-lemon ring-1 ring-lemon/30">
             <Mail className="size-8" aria-hidden="true" />
           </div>
-          <h2 className="font-display text-2xl font-semibold sm:text-3xl">We'd love to hear from you</h2>
+          <h2 className="font-display text-2xl font-semibold sm:text-3xl">{t("We'd love to hear from you")}</h2>
           <p className="mt-3 text-lg text-mist/80 sm:text-xl">
-            Questions, ideas, or prayer requests — send them our way.
+            {t("Questions, ideas, or prayer requests — send them our way.")}
           </p>
         </div>
 
         {sent ? (
           <div className="rounded-2xl bg-ink-soft/40 p-6 text-center ring-1 ring-mist/15">
             <MessageSquare className="mx-auto mb-3 size-8 text-lemon" aria-hidden="true" />
-            <h3 className="font-display text-xl font-semibold sm:text-2xl">Message sent</h3>
+            <h3 className="font-display text-xl font-semibold sm:text-2xl">{t("Message sent")}</h3>
             <p className="mt-2 text-base text-mist/70 sm:text-lg">
-              Thank you for reaching out. We'll get back to you as soon as we can.
+              {t("Thank you for reaching out. We'll get back to you as soon as we can.")}
             </p>
             <button
               type="button"
               onClick={() => setSent(false)}
               className="mt-4 inline-flex items-center justify-center rounded-full bg-lemon px-5 py-2 text-base font-semibold text-ink transition hover:bg-lemon/90 sm:text-lg"
             >
-              Send another message
+              {t("Send another message")}
             </button>
           </div>
         ) : (
@@ -77,19 +79,19 @@ function ContactPage() {
           >
             <div>
               <label htmlFor="name" className="mb-1.5 block text-base font-medium text-sand sm:text-lg">
-                Name
+                {t("Name")}
               </label>
               <input
                 id="name"
                 type="text"
                 required
                 className="w-full rounded-xl bg-ink px-4 py-3 text-lg text-sand ring-1 ring-mist/20 placeholder:text-mist/50 focus:outline-none focus:ring-lemon/50 sm:text-xl"
-                placeholder="Your name"
+                placeholder={t("Your name")}
               />
             </div>
             <div>
               <label htmlFor="email" className="mb-1.5 block text-base font-medium text-sand sm:text-lg">
-                Email
+                {t("Email")}
               </label>
               <input
                 id="email"
@@ -101,21 +103,21 @@ function ContactPage() {
             </div>
             <div>
               <label htmlFor="message" className="mb-1.5 block text-base font-medium text-sand sm:text-lg">
-                Message
+                {t("Message")}
               </label>
               <textarea
                 id="message"
                 rows={5}
                 required
                 className="w-full rounded-xl bg-ink px-4 py-3 text-lg text-sand ring-1 ring-mist/20 placeholder:text-mist/50 focus:outline-none focus:ring-lemon/50 sm:text-xl"
-                placeholder="How can we help?"
+                placeholder={t("How can we help?")}
               />
             </div>
             <button
               type="submit"
               className="w-full rounded-full bg-lemon px-6 py-3 text-lg font-semibold text-ink transition hover:bg-lemon/90 sm:text-xl"
             >
-              Send message
+              {t("Send message")}
             </button>
           </form>
         )}

@@ -13,6 +13,7 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toneStyles, type Ministry } from "@/data/ministries";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -32,6 +33,7 @@ export function MinistryPost({
   ministry: Ministry;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const fetchState = useServerFn(getMyPostState);
   const like = useServerFn(toggleLike);
@@ -166,7 +168,7 @@ export function MinistryPost({
       setCommentText("");
       setComments(await fetchComments({ data: postRef }));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not post that comment.");
+      setError(err instanceof Error ? err.message : t("Could not post that comment."));
     } finally {
       setBusy(false);
     }
@@ -184,7 +186,7 @@ export function MinistryPost({
       onClose();
       void navigate({ to: "/messages/$conversationId", params: { conversationId } });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not send that message.");
+      setError(err instanceof Error ? err.message : t("Could not send that message."));
       setBusy(false);
     }
   }
@@ -218,7 +220,7 @@ export function MinistryPost({
             ) : (
               <img
                 src={current.url}
-                alt={ministry.mediaAlt ?? `${ministry.label} — ${ministry.poster.name}`}
+                alt={ministry.mediaAlt ?? t("{{label}} — {{name}}", { label: ministry.label, name: ministry.poster.name })}
                 className="h-56 w-full object-cover sm:h-64"
                 loading="lazy"
               />
@@ -233,7 +235,7 @@ export function MinistryPost({
             type="button"
             onClick={onClose}
             className="absolute right-3 top-3 grid size-9 place-items-center rounded-full bg-ink/80 text-sand ring-1 ring-mist/20 transition hover:bg-ink"
-            aria-label="Close post"
+            aria-label={t("Close post")}
           >
             <X className="size-4" aria-hidden="true" />
           </button>
@@ -259,7 +261,7 @@ export function MinistryPost({
                 key={item.url}
                 type="button"
                 onClick={() => setSlide(i)}
-                aria-label={`Show ${item.kind === "video" ? "video" : "photo"} ${i + 1} of ${slides.length}`}
+                aria-label={t("Show {{kind}} {{n}} of {{total}}", { kind: item.kind === "video" ? t("video") : t("photo"), n: i + 1, total: slides.length })}
                 aria-pressed={i === slide}
                 className={`relative size-16 shrink-0 overflow-hidden rounded-xl ring-1 transition ${
                   i === slide ? "ring-2 ring-lemon" : "ring-mist/25 hover:ring-lemon/50"
@@ -267,7 +269,7 @@ export function MinistryPost({
               >
                 {item.kind === "video" ? (
                   <span className="grid size-full place-items-center bg-ink text-xs font-semibold text-sand">
-                    Video
+                    {t("Video")}
                   </span>
                 ) : (
                   <img src={item.url} alt="" className="size-full object-cover" />
@@ -293,7 +295,7 @@ export function MinistryPost({
                 type="button"
                 onClick={() => setMenuOpen((v) => !v)}
                 className="grid size-9 place-items-center rounded-full text-mist/70 ring-1 ring-mist/20 transition hover:bg-ink"
-                aria-label="More options"
+                aria-label={t("More options")}
                 aria-expanded={menuOpen}
               >
                 <MoreVertical className="size-4" aria-hidden="true" />
@@ -309,7 +311,7 @@ export function MinistryPost({
                     className="flex w-full items-center gap-2 px-4 py-3 text-left text-sm text-rose transition hover:bg-ink-soft"
                   >
                     <Flag className="size-4" aria-hidden="true" />
-                    Report Abuse
+                    {t("Report Abuse")}
                   </button>
                 </div>
               )}
@@ -318,7 +320,7 @@ export function MinistryPost({
 
           {reported && (
             <p className="rounded-lg bg-rose/15 px-3 py-2 text-sm text-rose ring-1 ring-rose/30">
-              Thanks — our team will review this post.
+              {t("Thanks — our team will review this post.")}
             </p>
           )}
 
@@ -327,7 +329,7 @@ export function MinistryPost({
               type="button"
               onClick={() => setImageLightboxOpen(true)}
               className="shrink-0 rounded-full transition hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-lemon"
-              aria-label={`Open ${ministry.poster.name}'s profile photo`}
+              aria-label={t("Open {{name}}'s profile photo", { name: ministry.poster.name })}
             >
               {ministry.poster.photo ? (
                 <img
@@ -359,7 +361,7 @@ export function MinistryPost({
                 className="mt-1 text-sm font-medium text-lemon underline-offset-2 hover:underline"
                 aria-expanded={viewingProfile}
               >
-                {viewingProfile ? "Close profile" : "View profile"}
+                {viewingProfile ? t("Close profile") : t("View profile")}
               </button>
             </div>
           </div>
@@ -370,7 +372,7 @@ export function MinistryPost({
                 {ministry.poster.photo ? (
                   <img
                     src={ministry.poster.photo}
-                    alt={`Profile photo of ${ministry.poster.name}`}
+                    alt={t("Profile photo of {{name}}", { name: ministry.poster.name })}
                     className="size-14 shrink-0 rounded-full object-cover ring-2 ring-lemon/40"
                     loading="lazy"
                   />
@@ -402,7 +404,7 @@ export function MinistryPost({
                   {ministry.fullTitle || ministry.label}
                 </span>
                 <span className="rounded-full px-2.5 py-1 ring-1 ring-mist/20">
-                  {live ? likeCount : ministry.likes} likes
+                  {t("{{count}} likes", { count: live ? likeCount : ministry.likes })}
                 </span>
               </div>
               <button
@@ -411,7 +413,7 @@ export function MinistryPost({
                 className="inline-flex w-fit items-center gap-1.5 rounded-full bg-lemon/15 px-3 py-1.5 text-sm font-medium text-lemon ring-1 ring-lemon/40 transition hover:bg-lemon/25"
               >
                 <Send className="size-4" aria-hidden="true" />
-                Message {ministry.poster.name.split(" ")[0]}
+                {t("Message {{name}}", { name: ministry.poster.name.split(" ")[0] })}
               </button>
             </div>
           )}
@@ -442,10 +444,10 @@ export function MinistryPost({
                   : "text-mist/70 ring-mist/20 hover:bg-ink"
               }`}
               aria-pressed={favorited}
-              aria-label={favorited ? "Remove from favorites" : "Save to favorites"}
+              aria-label={favorited ? t("Remove from favorites") : t("Save to favorites")}
             >
               <Heart className="size-5" aria-hidden="true" />
-              {live ? (favorited ? "Saved" : "Save") : ministry.favorites + (favorited ? 1 : 0)}
+              {live ? (favorited ? t("Saved") : t("Save")) : ministry.favorites + (favorited ? 1 : 0)}
             </button>
             <button
               type="button"
@@ -461,9 +463,9 @@ export function MinistryPost({
           {needsAuth && (
             <p className="rounded-lg bg-lemon/10 px-3 py-2 text-sm text-lemon ring-1 ring-lemon/30">
               <Link to="/auth" className="font-semibold underline underline-offset-2">
-                Sign in
+                {t("Sign in")}
               </Link>{" "}
-              to save, like, comment, or message.
+              {t("to save, like, comment, or message.")}
             </p>
           )}
 
@@ -479,7 +481,7 @@ export function MinistryPost({
                 <input
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
-                  placeholder="Leave a kind word"
+                  placeholder={t("Leave a kind word")}
                   maxLength={500}
                   className="flex-1 rounded-full bg-ink px-4 py-2.5 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
                 />
@@ -488,7 +490,7 @@ export function MinistryPost({
                   onClick={() => void handleComment()}
                   disabled={busy}
                   className="grid size-11 shrink-0 place-items-center rounded-full bg-lemon text-ink disabled:opacity-60"
-                  aria-label="Post comment"
+                  aria-label={t("Post comment")}
                 >
                   {busy ? (
                     <Loader2 className="size-5 animate-spin" aria-hidden="true" />
@@ -507,7 +509,7 @@ export function MinistryPost({
                 onChange={(e) => setMessageText(e.target.value)}
                 rows={3}
                 maxLength={1000}
-                placeholder={`Write a note to ${ministry.poster.name}`}
+                placeholder={t("Write a note to {{name}}", { name: ministry.poster.name })}
                 className="rounded-xl bg-ink px-4 py-3 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
               />
               <button
@@ -517,7 +519,7 @@ export function MinistryPost({
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-lemon px-5 py-3 text-base font-semibold text-ink disabled:opacity-60"
               >
                 {busy && <Loader2 className="size-5 animate-spin" aria-hidden="true" />}
-                Send message
+                {t("Send message")}
               </button>
             </div>
           )}
@@ -534,12 +536,12 @@ export function MinistryPost({
               onClick={() => {
                 if (!guard()) return;
                 setMessageOpen(true);
-                setMessageText((t) => t || "Hi! When works for you to meet up?");
+                setMessageText((prev) => prev || t("Hi! When works for you to meet up?"));
               }}
               className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-lemon px-5 py-3 text-base font-semibold text-ink ring-1 ring-lemon/60 transition-transform hover:-translate-y-0.5 sm:text-lg"
             >
               <CalendarClock className="size-5" aria-hidden="true" />
-              Let&rsquo;s set a time
+              {t("Let's set a time")}
             </button>
             <button
               type="button"
@@ -550,14 +552,13 @@ export function MinistryPost({
               className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-ink px-5 py-3 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft sm:text-lg"
             >
               <MessageCircle className="size-5" aria-hidden="true" />
-              Message
+              {t("Message")}
             </button>
           </div>
 
           {!live && (
             <p className="text-center text-xs text-mist/50 sm:text-sm">
-              This is an example ministry — saving and messaging work on posts from real
-              neighbors.
+              {t("This is an example ministry — saving and messaging work on posts from real neighbors.")}
             </p>
           )}
         </div>
@@ -569,19 +570,19 @@ export function MinistryPost({
           onClick={() => setImageLightboxOpen(false)}
           role="dialog"
           aria-modal="true"
-          aria-label={`${ministry.poster.name}'s profile photo`}
+          aria-label={t("{{name}}'s profile photo", { name: ministry.poster.name })}
         >
           <button
             type="button"
             onClick={() => setImageLightboxOpen(false)}
             className="absolute right-4 top-4 grid size-11 place-items-center rounded-full bg-ink/80 text-sand ring-1 ring-mist/20 transition hover:bg-ink"
-            aria-label="Close photo"
+            aria-label={t("Close photo")}
           >
             <X className="size-5" aria-hidden="true" />
           </button>
           <img
             src={ministry.poster.photo}
-            alt={`Profile photo of ${ministry.poster.name}`}
+            alt={t("Profile photo of {{name}}", { name: ministry.poster.name })}
             className="max-h-[85dvh] max-w-full rounded-2xl object-contain ring-1 ring-mist/20"
             onClick={(e) => e.stopPropagation()}
           />

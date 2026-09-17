@@ -18,6 +18,7 @@ import {
   X,
 } from "lucide-react";
 import { Fragment, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import AskFriends from "@/components/AskFriends";
 
 import VoiceAnswer from "@/components/VoiceAnswer";
@@ -243,6 +244,7 @@ export const Route = createFileRoute("/shape")({
 });
 
 function ShapeGate() {
+  const { t } = useTranslation();
   const checkAccess = useServerFn(getShapeAccess);
   const { data, isLoading } = useQuery({
     queryKey: ["shape-access"],
@@ -254,7 +256,7 @@ function ShapeGate() {
     return (
       <div className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-ink px-4 text-sand">
         <Loader2 className="size-8 animate-spin text-lemon" aria-hidden="true" />
-        <p className="text-lg text-mist/80">Loading…</p>
+        <p className="text-lg text-mist/80">{t("Loading…")}</p>
       </div>
     );
   }
@@ -267,6 +269,7 @@ function ShapeGate() {
 }
 
 function SignInPrompt() {
+  const { t } = useTranslation();
   return (
     <div className="flex min-h-dvh flex-col bg-ink font-body text-sand antialiased">
       <header className="border-b border-ink-soft bg-ink-soft/70">
@@ -274,13 +277,13 @@ function SignInPrompt() {
           <Link
             to="/"
             className="grid size-10 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20 transition hover:bg-ink-soft"
-            aria-label="Back to home"
+            aria-label={t("Back to home")}
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
           </Link>
           <div className="min-w-0 flex-1">
             <h1 className="truncate font-display text-xl font-semibold leading-tight sm:text-2xl">
-              Sign in to begin
+              {t("Sign in to begin")}
             </h1>
           </div>
         </div>
@@ -291,11 +294,10 @@ function SignInPrompt() {
           <Sparkles className="size-9 text-lemon" aria-hidden="true" />
         </div>
         <h2 className="mt-6 font-display text-3xl font-semibold leading-tight sm:text-4xl">
-          Your own walkthrough
+          {t("Your own walkthrough")}
         </h2>
         <p className="mx-auto mt-4 max-w-md text-xl leading-relaxed text-mist/85 sm:text-2xl">
-          Create a free account or sign in to start your own walkthrough. Your answers and ministry
-          ideas are private to you.
+          {t("Create a free account or sign in to start your own walkthrough. Your answers and ministry ideas are private to you.")}
         </p>
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-center">
@@ -305,7 +307,7 @@ function SignInPrompt() {
             className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-lemon px-6 py-3.5 text-lg font-bold text-ink transition-transform hover:-translate-y-0.5 sm:flex-initial"
           >
             <HandHeart className="size-5" aria-hidden="true" />
-            Create your account
+            {t("Create your account")}
           </Link>
           <Link
             to="/auth"
@@ -313,14 +315,14 @@ function SignInPrompt() {
             className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-lg font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft/70 sm:flex-initial"
           >
             <Home className="size-5" aria-hidden="true" />
-            Sign in
+            {t("Sign in")}
           </Link>
           <Link
             to="/map"
             className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-lg font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft/70 sm:flex-initial"
           >
             <MapPin className="size-5" aria-hidden="true" />
-            See the map
+            {t("See the map")}
           </Link>
         </div>
       </main>
@@ -329,6 +331,7 @@ function SignInPrompt() {
 }
 
 function ShapePage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { step: requestedStep } = Route.useSearch();
   const load = useServerFn(getShapeProfile);
@@ -516,7 +519,7 @@ function ShapePage() {
     setError(null);
     const latest = answersRef.current;
     if (current.id === "place" && latest.city.trim().length < 2 && latest.zip.trim().length < 4) {
-      setError("Record where you'll serve — say your city or ZIP code.");
+      setError(t("Record where you'll serve — say your city or ZIP code."));
       return;
     }
     void save({ data: latest }).catch(() => {});
@@ -539,7 +542,7 @@ function ShapePage() {
         setSavedIdeas(res.ideas);
       }
     } catch {
-      setError("Something went wrong generating your ideas. Try again.");
+      setError(t("Something went wrong generating your ideas. Try again."));
     } finally {
       setBusy(false);
       window.scrollTo({ top: 0 });
@@ -563,7 +566,7 @@ function ShapePage() {
       });
       setPosted((prev) => ({ ...prev, [index]: true }));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "We couldn't post that one. Try again.");
+      setError(err instanceof Error ? err.message : t("We couldn't post that one. Try again."));
       throw err;
     }
   }
@@ -623,7 +626,7 @@ function ShapePage() {
         source = res.ideas;
         if (res.ideas.length > 0) setSavedIdeas(res.ideas);
       } catch {
-        setError("Something went wrong generating your ideas. Try again.");
+        setError(t("Something went wrong generating your ideas. Try again."));
       } finally {
         setBusy(false);
       }
@@ -632,8 +635,8 @@ function ShapePage() {
     if (picked.length === 0) {
       setError(
         kind === "ministry"
-          ? "We don't have ministry posts for you yet — tap Show my ministry ideas."
-          : "Your answers didn't show a need you'd want to post yet.",
+          ? t("We don't have ministry posts for you yet — tap Show my ministry ideas.")
+          : t("Your answers didn't show a need you'd want to post yet."),
       );
       return;
     }
@@ -646,21 +649,21 @@ function ShapePage() {
     const data = recs.data;
     return (
       <Shell
-        title={panel === "people" ? "People you should meet" : "Posts you should view"}
+        title={panel === "people" ? t("People you should meet") : t("Posts you should view")}
         back={() => setPanel(null)}
         onExit={saveAndExit}
       >
         {recs.isLoading && (
           <p className="flex items-center gap-2 text-base text-mist/80">
             <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-            Looking for matches…
+            {t("Looking for matches…")}
           </p>
         )}
-        {recs.isError && <ErrorNote text="We couldn't load your matches. Try again." />}
+        {recs.isError && <ErrorNote text={t("We couldn't load your matches. Try again.")} />}
 
         {panel === "people" && data && (
           data.people.length === 0 ? (
-            <EmptyMatches text="No close matches yet. As more neighbors finish their answers, they'll show up here." />
+            <EmptyMatches text={t("No close matches yet. As more neighbors finish their answers, they'll show up here.")} />
           ) : (
             <ul className="flex flex-col gap-3">
               {data.people.map((person) => (
@@ -692,13 +695,13 @@ function ShapePage() {
 
         {panel === "posts" && data && (
           data.posts.length === 0 ? (
-            <EmptyMatches text="Nothing nearby matches your answers yet. Check the map to see everything that's posted." />
+            <EmptyMatches text={t("Nothing nearby matches your answers yet. Check the map to see everything that's posted.")} />
           ) : (
             <ul className="flex flex-col gap-3">
               {data.posts.map((post) => (
                 <li key={post.id} className="rounded-2xl bg-ink-soft p-4 ring-1 ring-mist/20">
                   <span className="text-xs font-semibold uppercase tracking-widest text-lemon">
-                    {post.kind === "need" ? "Need" : "Ministry"}
+                    {post.kind === "need" ? t("Need") : t("Ministry")}
                   </span>
                   <p className="font-display text-lg font-semibold text-sand">{post.title}</p>
                   {post.city && <p className="text-xs text-mist/60">{post.city}</p>}
@@ -711,7 +714,7 @@ function ShapePage() {
                     search={{ place: post.city || answers.city }}
                     className="mt-3 inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-sand ring-1 ring-mist/25"
                   >
-                    Open this post
+                    {t("Open this post")}
                   </Link>
                 </li>
               ))}
@@ -725,7 +728,7 @@ function ShapePage() {
           className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/25"
         >
           <ArrowLeft className="size-5" aria-hidden="true" />
-          Back
+          {t("Back")}
         </button>
       </Shell>
     );
@@ -736,9 +739,9 @@ function ShapePage() {
   if (ideas) {
     const allPosted = ideas.every((_, i) => posted[i]);
     return (
-      <Shell title="Ready to post" back={() => setIdeas(null)} onExit={saveAndExit}>
+      <Shell title={t("Ready to post")} back={() => setIdeas(null)} onExit={saveAndExit}>
         <p className="mb-4 text-base text-mist/80 sm:text-lg">
-          Edit anything, then post the ones you want.
+          {t("Edit anything, then post the ones you want.")}
         </p>
         {error && <ErrorNote text={error} />}
 
@@ -753,7 +756,7 @@ function ShapePage() {
           ) : (
             <Send className="size-5" aria-hidden="true" />
           )}
-          {allPosted ? "All posted" : "Post all"}
+          {allPosted ? t("All posted") : t("Post all")}
         </button>
 
         <ul className="flex flex-col gap-4">
@@ -765,11 +768,11 @@ function ShapePage() {
                 </span>
                 <span className="inline-flex items-center gap-1.5 rounded-lg bg-ink px-2.5 py-1 text-sm text-mist/80 ring-1 ring-mist/20">
                   <HeartHandshake className="size-4" aria-hidden="true" />
-                  {idea.kind === "need" ? "A need" : "A ministry"}
+                  {idea.kind === "need" ? t("A need") : t("A ministry")}
                 </span>
                 {idea.familyFriendly && (
                   <span className="inline-flex items-center gap-1.5 rounded-lg bg-ink px-2.5 py-1 text-sm text-mist/80 ring-1 ring-mist/20">
-                    <Users className="size-4" aria-hidden="true" /> Family friendly
+                    <Users className="size-4" aria-hidden="true" /> {t("Family friendly")}
                   </span>
                 )}
               </div>
@@ -777,7 +780,7 @@ function ShapePage() {
               {editing === i ? (
                 <div className="flex flex-col gap-3">
                   <label className="flex flex-col gap-2 text-base text-mist/80">
-                    Short title (shows under the pin)
+                    {t("Short title (shows under the pin)")}
                     <input
                       className={inputClass}
                       value={idea.shortTitle}
@@ -786,7 +789,7 @@ function ShapePage() {
                     />
                   </label>
                   <label className="flex flex-col gap-2 text-base text-mist/80">
-                    Quote or passage about your mission
+                    {t("Quote or passage about your mission")}
                     <input
                       className={inputClass}
                       value={idea.title}
@@ -795,7 +798,7 @@ function ShapePage() {
                     />
                   </label>
                   <label className="flex flex-col gap-2 text-base text-mist/80">
-                    Description
+                    {t("Description")}
                     <textarea
                       className={`${inputClass} min-h-32`}
                       value={idea.description}
@@ -807,7 +810,7 @@ function ShapePage() {
                     onClick={() => setEditing(null)}
                     className="inline-flex items-center justify-center gap-2 rounded-full bg-ink px-5 py-3 text-base font-semibold text-sand ring-1 ring-mist/25"
                   >
-                    <Check className="size-4" aria-hidden="true" /> Done editing
+                    <Check className="size-4" aria-hidden="true" /> {t("Done editing")}
                   </button>
                 </div>
               ) : (
@@ -827,7 +830,7 @@ function ShapePage() {
                   onClick={() => setEditing(editing === i ? null : i)}
                   className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-ink px-5 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/25"
                 >
-                  <Pencil className="size-4" aria-hidden="true" /> Edit
+                  <Pencil className="size-4" aria-hidden="true" /> {t("Edit")}
                 </button>
                 <button
                   type="button"
@@ -837,10 +840,10 @@ function ShapePage() {
                 >
                   {posted[i] ? (
                     <>
-                      <Check className="size-4" aria-hidden="true" /> Posted
+                      <Check className="size-4" aria-hidden="true" /> {t("Posted")}
                     </>
                   ) : (
-                    "Post"
+                    t("Post")
                   )}
                 </button>
               </div>
@@ -854,7 +857,7 @@ function ShapePage() {
             onClick={() => void navigate({ to: "/map" })}
             className="inline-flex items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-lg font-semibold text-sand ring-1 ring-mist/25"
           >
-            See them on the map
+            {t("See them on the map")}
           </button>
           <button
             type="button"
@@ -866,7 +869,7 @@ function ShapePage() {
             className="inline-flex items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-lg font-semibold text-sand ring-1 ring-mist/25 disabled:opacity-60"
           >
             {busy && <Loader2 className="size-5 animate-spin" aria-hidden="true" />}
-            Show me different ideas
+            {t("Show me different ideas")}
           </button>
           <button
             type="button"
@@ -874,7 +877,7 @@ function ShapePage() {
             className="inline-flex items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-lg font-semibold text-sand ring-1 ring-mist/25"
           >
             <ArrowLeft className="size-5" aria-hidden="true" />
-            See form results
+            {t("See form results")}
           </button>
           <button
             type="button"
@@ -887,7 +890,7 @@ function ShapePage() {
             className="inline-flex items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-lg font-semibold text-sand ring-1 ring-mist/25"
           >
             <RotateCcw className="size-5" aria-hidden="true" />
-            Start over
+            {t("Start over")}
           </button>
         </div>
       </Shell>
@@ -896,17 +899,17 @@ function ShapePage() {
 
   return (
     <Shell
-      title={current.title}
+      title={t(current.title)}
       back={step > 0 ? () => setStep((s) => s - 1) : undefined}
       onExit={saveAndExit}
       showExitAction={false}
     >
       <div className="mb-3 flex items-end justify-between gap-4">
         <span className="text-xs font-semibold uppercase text-mist/70">
-          Step {step + 1} of {steps.length}
+          {t("Step {{step}} of {{total}}", { step: step + 1, total: steps.length })}
         </span>
         <span className="text-xs text-mist/50">
-          {Math.round(((step + 1) / steps.length) * 100)}% complete
+          {t("{{percent}}% complete", { percent: Math.round(((step + 1) / steps.length) * 100) })}
         </span>
       </div>
       <div className="mb-6 h-1 w-full overflow-hidden rounded-full bg-ink-soft">
@@ -918,7 +921,7 @@ function ShapePage() {
 
 
       {current.prompt && (
-        <p className="mb-4 font-display text-3xl font-semibold leading-snug text-sand">{current.prompt}</p>
+        <p className="mb-4 font-display text-3xl font-semibold leading-snug text-sand">{t(current.prompt)}</p>
       )}
 
 
@@ -936,21 +939,21 @@ function ShapePage() {
       ) : current.id === "place" ? (
         <div className="flex flex-col gap-4">
           <label className="flex flex-col gap-2 text-base text-mist/80">
-            City
+            {t("City")}
             <input
               className={inputClass}
               value={answers.city}
               onChange={(e) => set("city", e.target.value)}
-              placeholder="Beaverton"
+              placeholder={t("Beaverton")}
             />
           </label>
           <label className="flex flex-col gap-2 text-base text-mist/80">
-            ZIP code
+            {t("ZIP code")}
             <input
               className={inputClass}
               value={answers.zip}
               onChange={(e) => set("zip", e.target.value)}
-              placeholder="97006"
+              placeholder={t("97006")}
               inputMode="numeric"
             />
           </label>
@@ -997,7 +1000,7 @@ function ShapePage() {
             className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/25 disabled:opacity-60"
           >
             <Sparkles className="size-5 text-lemon" aria-hidden="true" />
-            Your potential ministry posts
+            {t("Your potential ministry posts")}
           </button>
           <button
             type="button"
@@ -1006,7 +1009,7 @@ function ShapePage() {
             className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/25 disabled:opacity-60"
           >
             <HandHeart className="size-5 text-lemon" aria-hidden="true" />
-            Your potential needs posts
+            {t("Your potential needs posts")}
           </button>
           <button
             type="button"
@@ -1017,7 +1020,7 @@ function ShapePage() {
             className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/25"
           >
             <Users className="size-5 text-lemon" aria-hidden="true" />
-            People you should meet
+            {t("People you should meet")}
           </button>
           <button
             type="button"
@@ -1028,7 +1031,7 @@ function ShapePage() {
             className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-base font-semibold text-sand ring-1 ring-mist/25"
           >
             <MapPin className="size-5 text-lemon" aria-hidden="true" />
-            Posts you should view
+            {t("Posts you should view")}
           </button>
         </div>
       )}
@@ -1040,7 +1043,7 @@ function ShapePage() {
           disabled={busy}
           className="inline-flex h-11 items-center justify-center rounded-full border border-sand/20 bg-sand/5 px-5 text-sm font-medium text-sand transition hover:bg-sand/10 disabled:opacity-60"
         >
-          Save &amp; exit
+          {t("Save & exit")}
         </button>
         <button
           type="button"
@@ -1049,7 +1052,7 @@ function ShapePage() {
           className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-ember px-8 text-sm font-semibold text-ink shadow-ember/20 transition hover:shadow-ember/30 active:scale-[0.98] disabled:opacity-60"
         >
           {busy && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}
-          {isLast ? "Show my ministry ideas" : "Next"}
+          {isLast ? t("Show my ministry ideas") : t("Next")}
         </button>
       </div>
 
@@ -1059,13 +1062,13 @@ function ShapePage() {
         disabled={busy}
         className="mt-4 inline-flex min-h-11 w-full items-center justify-center text-xs font-medium uppercase tracking-widest text-rose/60 transition hover:text-rose disabled:opacity-60"
       >
-        Start over
+        {t("Start over")}
       </button>
 
       {showStartOverConfirm && (
         <div className="mt-4 rounded-2xl bg-rose/10 p-4 ring-1 ring-rose/30">
           <p className="mb-4 text-base leading-relaxed text-rose">
-            Starting over will permanently delete all of your saved answers and ministry ideas. You’ll need to complete the walkthrough from the beginning.
+            {t("Starting over will permanently delete all of your saved answers and ministry ideas. You’ll need to complete the walkthrough from the beginning.")}
           </p>
           <div className="flex flex-col gap-3 sm:flex-row">
             <button
@@ -1075,7 +1078,7 @@ function ShapePage() {
               className="inline-flex flex-1 items-center justify-center rounded-full bg-rose px-5 py-3 text-base font-semibold text-ink transition hover:bg-rose/90 disabled:opacity-60"
             >
               {busy && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}
-              Yes, delete everything
+              {t("Yes, delete everything")}
             </button>
             <button
               type="button"
@@ -1083,7 +1086,7 @@ function ShapePage() {
               disabled={busy}
               className="inline-flex flex-1 items-center justify-center rounded-full bg-ink-soft px-5 py-3 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft/80 disabled:opacity-60"
             >
-              Keep my answers
+              {t("Keep my answers")}
             </button>
           </div>
         </div>
@@ -1107,6 +1110,7 @@ function Shell({
   showExitAction?: boolean;
   children: React.ReactNode;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="flex min-h-dvh flex-col bg-ink font-body text-sand antialiased">
       <header className="border-b border-ink-soft bg-ink-soft/70">
@@ -1116,7 +1120,7 @@ function Shell({
               type="button"
               onClick={back}
               className="grid size-10 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20 transition hover:bg-ink-soft"
-              aria-label="Back"
+              aria-label={t("Back")}
             >
               <ArrowLeft className="size-4" aria-hidden="true" />
             </button>
@@ -1125,7 +1129,7 @@ function Shell({
               type="button"
               onClick={onExit}
               className="grid size-10 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20 transition hover:bg-ink-soft"
-              aria-label="Back"
+              aria-label={t("Back")}
             >
               <ArrowLeft className="size-4" aria-hidden="true" />
             </button>
@@ -1133,7 +1137,7 @@ function Shell({
             <Link
               to="/"
               className="grid size-10 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20 transition hover:bg-ink-soft"
-              aria-label="Back"
+              aria-label={t("Back")}
             >
               <ArrowLeft className="size-4" aria-hidden="true" />
             </Link>
@@ -1150,14 +1154,14 @@ function Shell({
               onClick={onExit}
               className="shrink-0 rounded-full bg-ink px-4 py-2 text-base font-semibold text-sand ring-1 ring-mist/20 transition hover:bg-ink-soft"
             >
-              Save &amp; exit
+              {t("Save & exit")}
             </button>
           ) : !onExit ? (
             <Link
               to="/"
               className="shrink-0 rounded-full bg-ink px-4 py-2 text-base font-semibold text-sand ring-1 ring-mist/20 transition hover:bg-ink-soft"
             >
-              Exit
+              {t("Exit")}
             </Link>
           ) : null}
         </div>
@@ -1209,16 +1213,17 @@ function FieldView({
     value: string,
   ) => void;
 }) {
+  const { t } = useTranslation();
   if (field.kind === "children") {
     return (
       <div className="flex flex-col gap-3">
-        <span className="text-base text-mist/80">Your children</span>
+        <span className="text-base text-mist/80">{t("Your children")}</span>
         {answers.children.map((child, i) => (
           <div key={i} className="flex items-center gap-2">
             <input
               className={`${inputClass} min-w-0 flex-1`}
               value={child.name}
-              placeholder="Name"
+              placeholder={t("Name")}
               onChange={(e) =>
                 set(
                   "children",
@@ -1229,7 +1234,7 @@ function FieldView({
             <input
               className={`${inputClass} w-24`}
               value={child.age}
-              placeholder="Age"
+              placeholder={t("Age")}
               inputMode="numeric"
               onChange={(e) =>
                 set(
@@ -1240,7 +1245,7 @@ function FieldView({
             />
             <button
               type="button"
-              aria-label={`Remove child ${i + 1}`}
+              aria-label={t("Remove child {{n}}", { n: i + 1 })}
               onClick={() =>
                 set(
                   "children",
@@ -1258,7 +1263,7 @@ function FieldView({
           onClick={() => set("children", [...answers.children, { name: "", age: "" }])}
           className="inline-flex items-center justify-center gap-2 rounded-xl bg-ink-soft/60 px-4 py-3 text-base font-medium text-sand ring-1 ring-mist/20"
         >
-          <Plus className="size-4" aria-hidden="true" /> Add a child
+          <Plus className="size-4" aria-hidden="true" /> {t("Add a child")}
         </button>
       </div>
     );
@@ -1268,8 +1273,8 @@ function FieldView({
     const value = answers[field.group][field.id] ?? "";
     return (
       <div className="flex flex-col gap-3">
-        <span className="text-base font-medium text-sand">{field.label}</span>
-        <span className="-mt-2 text-sm text-mist/70">Tap one</span>
+        <span className="text-base font-medium text-sand">{t(field.label)}</span>
+        <span className="-mt-2 text-sm text-mist/70">{t("Tap one")}</span>
         <div className="grid gap-3 sm:grid-cols-2">
           {field.options.map((opt) => (
             <button
@@ -1288,7 +1293,7 @@ function FieldView({
                   : "bg-ink-soft/70 text-sand ring-1 ring-mist/40 hover:bg-ink-soft hover:ring-mist/60"
               }`}
             >
-              {opt}
+              {t(opt)}
             </button>
           ))}
         </div>
@@ -1300,21 +1305,21 @@ function FieldView({
     const value = answers[field.key] as string;
     return (
       <label className="flex flex-col gap-2 text-base text-mist/80">
-        {field.label}
+        {t(field.label)}
         {field.kind === "longtext" ? (
           <textarea
             rows={4}
             value={value}
             onChange={(e) => set(field.key, e.target.value as ShapeAnswers[typeof field.key])}
             className="min-h-28 rounded-2xl bg-ink/60 px-4 py-3 text-base leading-relaxed text-sand ring-1 ring-mist/20 outline-none placeholder:text-mist/50 focus:ring-lemon/60"
-            placeholder="Write your answer here…"
+            placeholder={t("Write your answer here…")}
           />
         ) : (
           <input
             className={inputClass}
             value={value}
             onChange={(e) => set(field.key, e.target.value as ShapeAnswers[typeof field.key])}
-            placeholder="Write your answer here…"
+            placeholder={t("Write your answer here…")}
           />
         )}
       </label>
@@ -1326,8 +1331,8 @@ function FieldView({
     const value = answers[field.key] as string;
     return (
       <div className="flex flex-col gap-3">
-        <span className="text-base font-medium text-sand">{field.label}</span>
-        <span className="-mt-2 text-sm text-mist/70">Tap one</span>
+        <span className="text-base font-medium text-sand">{t(field.label)}</span>
+        <span className="-mt-2 text-sm text-mist/70">{t("Tap one")}</span>
         <div className="flex flex-wrap gap-2.5">
           {field.options.map((opt) => (
             <button
@@ -1343,7 +1348,7 @@ function FieldView({
                   : "bg-ink-soft/70 text-sand ring-1 ring-mist/40 hover:bg-ink-soft hover:ring-mist/60"
               }`}
             >
-              {opt}
+              {t(opt)}
             </button>
           ))}
         </div>
@@ -1355,10 +1360,10 @@ function FieldView({
   const list = answers[key];
   return (
     <div className="flex flex-col gap-3">
-      <span className="text-base font-medium text-sand">{field.label}</span>
+      <span className="text-base font-medium text-sand">{t(field.label)}</span>
       <span className="-mt-2 text-sm text-mist/70">
-        Tap every one that fits — tap again to unselect
-        {list.length > 0 ? ` · ${list.length} selected` : ""}
+        {t("Tap every one that fits — tap again to unselect")}
+        {list.length > 0 ? ` · ${t("{{count}} selected", { count: list.length })}` : ""}
       </span>
       <div className="flex flex-wrap gap-2.5">
         {field.options.map((opt) => {
@@ -1375,7 +1380,7 @@ function FieldView({
                   : "bg-ink-soft/70 text-sand ring-1 ring-mist/45 hover:bg-ink-soft hover:ring-mist/70"
               }`}
             >
-              {opt}
+              {t(opt)}
             </button>
           );
         })}
@@ -1391,52 +1396,53 @@ function Review({
   answers: ShapeAnswers;
   onEdit?: (stepId: string) => void;
 }) {
+  const { t } = useTranslation();
   const kids = answers.children.filter((c) => c.name.trim() || c.age.trim());
   const rows: Array<[string, string, string]> = [
-    ["Serving in", [answers.city, answers.zip].filter(Boolean).join(" ") || "—", "place"],
+    [t("Serving in"), [answers.city, answers.zip].filter(Boolean).join(" ") || "—", "place"],
     [
-      "You",
+      t("You"),
       [answers.firstName, answers.ageRange, answers.marital].filter(Boolean).join(" · ") || "—",
       "about",
     ],
     [
-      "Family",
+      t("Family"),
       kids.length > 0
-        ? kids.map((c) => `${c.name || "Child"}${c.age ? ` (${c.age})` : ""}`).join(", ")
-        : "No children listed",
+        ? kids.map((c) => `${c.name || t("Child")}${c.age ? ` (${c.age})` : ""}`).join(", ")
+        : t("No children listed"),
       "family",
     ],
-    ["Spiritual gifts", answers.gifts.join(", ") || "—", "gifts"],
-    ["Heart", answers.heart.join(", ") || "—", "heart"],
-    ["Abilities", answers.abilities.join(", ") || "—", "abilities"],
+    [t("Spiritual gifts"), answers.gifts.join(", ") || "—", "gifts"],
+    [t("Heart"), answers.heart.join(", ") || "—", "heart"],
+    [t("Abilities"), answers.abilities.join(", ") || "—", "abilities"],
     [
-      "Personality",
+      t("Personality"),
       Object.values(answers.personality).filter(Boolean).join(" · ") || "—",
       "personality",
     ],
-    ["Experiences", answers.experiences.join(", ") || "—", "experiences"],
+    [t("Experiences"), answers.experiences.join(", ") || "—", "experiences"],
     [
-      "Resources",
+      t("Resources"),
       [answers.resources.join(", "), answers.budget].filter(Boolean).join(" · ") || "—",
       "resources",
     ],
-    ["Served before", answers.pastService.join(", ") || "—", "service-history"],
+    [t("Served before"), answers.pastService.join(", ") || "—", "service-history"],
     [
-      "Serving with",
+      t("Serving with"),
       [answers.familyServe.join(", "), answers.availableTimes.join(", ")]
         .filter(Boolean)
         .join(" · ") || "—",
       "family-serve",
     ],
     [
-      "Scope",
+      t("Scope"),
       [answers.travel, answers.frequency, answers.groupSize, answers.kidsWelcome]
         .filter(Boolean)
         .join(" · ") || "—",
       "scope",
     ],
     [
-      "Dream & barrier",
+      t("Dream & barrier"),
       [answers.dreamNote, answers.biggestBarrier].filter(Boolean).join(" · ") || "—",
       "dream",
     ],
@@ -1454,7 +1460,7 @@ function Review({
                 onClick={() => onEdit(stepId)}
                 className="shrink-0 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider text-ember ring-1 ring-ember/40 transition hover:bg-ember/10"
               >
-                Edit
+                {t("Edit")}
               </button>
             )}
           </div>

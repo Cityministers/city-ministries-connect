@@ -558,6 +558,30 @@ export type Database = {
         }
         Relationships: []
       }
+      post_translations: {
+        Row: {
+          content_hash: string
+          created_at: string
+          id: string
+          lang: string
+          translated: string
+        }
+        Insert: {
+          content_hash: string
+          created_at?: string
+          id?: string
+          lang: string
+          translated: string
+        }
+        Update: {
+          content_hash?: string
+          created_at?: string
+          id?: string
+          lang?: string
+          translated?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

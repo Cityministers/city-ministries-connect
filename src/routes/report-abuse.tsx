@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, Search, ShieldAlert } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import {
   listReportTargets,
@@ -50,6 +51,7 @@ const statusCopy: Record<string, string> = {
 };
 
 function ReportAbusePage() {
+  const { t } = useTranslation();
   const send = useServerFn(submitAbuseReport);
   const track = useServerFn(trackAbuseReport);
 
@@ -92,7 +94,7 @@ function ReportAbusePage() {
       setEmail("");
       setDetails("");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      setError(err instanceof Error ? err.message : t("Something went wrong. Please try again."));
     } finally {
       setBusy(false);
     }
@@ -105,10 +107,10 @@ function ReportAbusePage() {
     setLooking(true);
     try {
       const res = await track({ data: { code: lookup } });
-      if (!res) setTrackError("We couldn't find a report with that code.");
+      if (!res) setTrackError(t("We couldn't find a report with that code."));
       else setTracked(res);
     } catch {
-      setTrackError("We couldn't check that code right now. Please try again.");
+      setTrackError(t("We couldn't check that code right now. Please try again."));
     } finally {
       setLooking(false);
     }
@@ -121,11 +123,11 @@ function ReportAbusePage() {
           <Link
             to="/map"
             className="grid size-10 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20 transition hover:bg-ink-soft"
-            aria-label="Back to map"
+            aria-label={t("Back to map")}
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
           </Link>
-          <h1 className="font-display text-lg font-semibold sm:text-xl">Report Abuse</h1>
+          <h1 className="font-display text-lg font-semibold sm:text-xl">{t("Report Abuse")}</h1>
         </div>
       </header>
 
@@ -134,19 +136,18 @@ function ReportAbusePage() {
           <div className="mx-auto mb-4 grid size-16 place-items-center rounded-2xl bg-rose/10 text-rose ring-1 ring-rose/30">
             <ShieldAlert className="size-8" aria-hidden="true" />
           </div>
-          <h2 className="font-display text-2xl font-semibold sm:text-3xl">Keep our community safe</h2>
+          <h2 className="font-display text-2xl font-semibold sm:text-3xl">{t("Keep our community safe")}</h2>
           <p className="mt-3 text-base text-mist/80 sm:text-lg">
-            Tell us what happened. If you point to a specific need or ministry, it is hidden from the
-            map right away while a reviewer looks at it.
+            {t("Tell us what happened. If you point to a specific need or ministry, it is hidden from the map right away while a reviewer looks at it.")}
           </p>
         </div>
 
         {code ? (
           <div className="rounded-2xl bg-ink-soft/40 p-6 text-center ring-1 ring-mist/15">
             <ShieldAlert className="mx-auto mb-3 size-8 text-lemon" aria-hidden="true" />
-            <h3 className="font-display text-lg font-semibold">Report received</h3>
+            <h3 className="font-display text-lg font-semibold">{t("Report received")}</h3>
             <p className="mt-2 text-sm text-mist/70">
-              Save this code to check the response later.
+              {t("Save this code to check the response later.")}
             </p>
             <p className="mt-3 font-mono text-2xl font-semibold text-lemon">{code}</p>
             <button
@@ -154,14 +155,14 @@ function ReportAbusePage() {
               onClick={() => setCode(null)}
               className="mt-5 inline-flex items-center justify-center rounded-full bg-lemon px-5 py-2 text-sm font-semibold text-ink transition hover:bg-lemon/90"
             >
-              Submit another report
+              {t("Submit another report")}
             </button>
           </div>
         ) : (
           <form className="space-y-4" onSubmit={onSubmit}>
             <div>
               <label htmlFor="reason" className="mb-1.5 block text-sm font-medium text-sand">
-                Reason
+                {t("Reason")}
               </label>
               <select
                 id="reason"
@@ -170,10 +171,10 @@ function ReportAbusePage() {
                 onChange={(e) => setReason(e.target.value)}
                 className="w-full rounded-xl bg-ink px-4 py-3 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
               >
-                <option value="">Select a reason</option>
+                <option value="">{t("Select a reason")}</option>
                 {reasons.map((r) => (
                   <option key={r} value={r}>
-                    {r}
+                    {t(r)}
                   </option>
                 ))}
               </select>
@@ -181,7 +182,7 @@ function ReportAbusePage() {
 
             <div>
               <label htmlFor="target" className="mb-1.5 block text-sm font-medium text-sand">
-                What are you reporting? <span className="text-mist/60">(optional)</span>
+                {t("What are you reporting?")} <span className="text-mist/60">{t("(optional)")}</span>
               </label>
               <select
                 id="target"
@@ -189,10 +190,10 @@ function ReportAbusePage() {
                 onChange={(e) => setTarget(e.target.value)}
                 className="w-full rounded-xl bg-ink px-4 py-3 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
               >
-                <option value="">Not about a specific post</option>
-                {(targets.data ?? []).map((t) => (
-                  <option key={`${t.type}:${t.id}`} value={`${t.type}:${t.id}`}>
-                    {t.label}
+                <option value="">{t("Not about a specific post")}</option>
+                {(targets.data ?? []).map((tg) => (
+                  <option key={`${tg.type}:${tg.id}`} value={`${tg.type}:${tg.id}`}>
+                    {t(tg.label)}
                   </option>
                 ))}
               </select>
@@ -200,7 +201,7 @@ function ReportAbusePage() {
 
             <div>
               <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-sand">
-                Your email <span className="text-mist/60">(optional, so we can reply)</span>
+                {t("Your email")} <span className="text-mist/60">{t("(optional, so we can reply)")}</span>
               </label>
               <input
                 id="email"
@@ -214,7 +215,7 @@ function ReportAbusePage() {
 
             <div>
               <label htmlFor="details" className="mb-1.5 block text-sm font-medium text-sand">
-                Details
+                {t("Details")}
               </label>
               <textarea
                 id="details"
@@ -223,7 +224,7 @@ function ReportAbusePage() {
                 value={details}
                 onChange={(e) => setDetails(e.target.value)}
                 className="w-full rounded-xl bg-ink px-4 py-3 text-base text-sand ring-1 ring-mist/20 placeholder:text-mist/50 focus:outline-none focus:ring-lemon/50"
-                placeholder="Describe what happened. Include names or places if you know them."
+                placeholder={t("Describe what happened. Include names or places if you know them.")}
               />
             </div>
 
@@ -234,31 +235,31 @@ function ReportAbusePage() {
               disabled={busy}
               className="w-full rounded-full bg-rose px-6 py-3 text-base font-semibold text-white transition hover:bg-rose/90 disabled:opacity-60"
             >
-              {busy ? "Sending…" : "Submit report"}
+              {busy ? t("Sending…") : t("Submit report")}
             </button>
           </form>
         )}
 
         <section className="mt-12 rounded-2xl bg-ink-soft/40 p-5 ring-1 ring-mist/15 sm:p-6">
-          <h3 className="font-display text-xl font-semibold">Check on a report</h3>
+          <h3 className="font-display text-xl font-semibold">{t("Check on a report")}</h3>
           <p className="mt-1 text-sm text-mist/70">
-            Enter the code you were given to see where your report stands.
+            {t("Enter the code you were given to see where your report stands.")}
           </p>
           <form className="mt-4 flex gap-2" onSubmit={onTrack}>
             <input
               value={lookup}
               onChange={(e) => setLookup(e.target.value)}
               required
-              placeholder="CM-XXXXXX"
+              placeholder={t("CM-XXXXXX")}
               className="min-w-0 flex-1 rounded-xl bg-ink px-4 py-3 text-base uppercase text-sand ring-1 ring-mist/20 placeholder:text-mist/50 focus:outline-none focus:ring-lemon/50"
-              aria-label="Report code"
+              aria-label={t("Report code")}
             />
             <button
               type="submit"
               disabled={looking}
               className="inline-flex items-center gap-1.5 rounded-full bg-lemon px-5 py-3 text-sm font-semibold text-ink transition hover:bg-lemon/90 disabled:opacity-60"
             >
-              <Search className="size-4" aria-hidden="true" /> Check
+              <Search className="size-4" aria-hidden="true" /> {t("Check")}
             </button>
           </form>
 
@@ -268,11 +269,14 @@ function ReportAbusePage() {
             <div className="mt-4 rounded-xl bg-ink p-4 ring-1 ring-mist/15">
               <p className="font-mono text-sm text-lemon">{tracked.trackingCode}</p>
               <p className="mt-2 font-display text-lg font-semibold">
-                {statusCopy[tracked.status] ?? tracked.status}
+                {t(statusCopy[tracked.status] ?? tracked.status)}
               </p>
               <p className="mt-1 text-sm text-mist/70">
-                Reported for {tracked.reason} on {new Date(tracked.createdAt).toLocaleDateString()} ·
-                last update {new Date(tracked.updatedAt).toLocaleDateString()}
+                {t("Reported for {{reason}} on {{createdDate}} · last update {{updatedDate}}", {
+                  reason: tracked.reason,
+                  createdDate: new Date(tracked.createdAt).toLocaleDateString(),
+                  updatedDate: new Date(tracked.updatedAt).toLocaleDateString(),
+                })}
               </p>
               {tracked.adminNotes ? (
                 <p className="mt-3 text-sm leading-relaxed text-mist/80">{tracked.adminNotes}</p>

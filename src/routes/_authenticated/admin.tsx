@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, Check, EyeOff, ShieldCheck, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import {
   adminListNeeds,
@@ -53,18 +54,20 @@ const statusStyles: Record<string, string> = {
 };
 
 function Pill({ value }: { value: string }) {
+  const { t } = useTranslation();
   return (
     <span
       className={`rounded-full px-2.5 py-1 text-xs font-semibold uppercase tracking-wide ring-1 ${
         statusStyles[value] ?? "bg-mist/15 text-mist ring-mist/30"
       }`}
     >
-      {value}
+      {t(value)}
     </span>
   );
 }
 
 function AdminPage() {
+  const { t } = useTranslation();
   const [tab, setTab] = useState<"needs" | "churches" | "reports" | "feedback">("needs");
   const qc = useQueryClient();
 
@@ -113,7 +116,7 @@ function AdminPage() {
 
   const blocked =
     needs.isError || reports.isError
-      ? "This page is only for site admins."
+      ? t("This page is only for site admins.")
       : null;
 
   return (
@@ -123,11 +126,11 @@ function AdminPage() {
           <Link
             to="/map"
             className="grid size-10 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20 transition hover:bg-ink-soft"
-            aria-label="Back to map"
+            aria-label={t("Back to map")}
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
           </Link>
-          <h1 className="font-display text-lg font-semibold sm:text-xl">Review Center</h1>
+          <h1 className="font-display text-lg font-semibold sm:text-xl">{t("Review Center")}</h1>
         </div>
       </header>
 
@@ -140,25 +143,25 @@ function AdminPage() {
         ) : (
           <>
             <div className="mb-6 flex flex-wrap gap-2">
-              {(["needs", "churches", "reports", "feedback"] as const).map((t) => (
+              {(["needs", "churches", "reports", "feedback"] as const).map((tabItem) => (
                 <button
-                  key={t}
+                  key={tabItem}
                   type="button"
-                  onClick={() => setTab(t)}
+                  onClick={() => setTab(tabItem)}
                   className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                    tab === t
+                    tab === tabItem
                       ? "bg-lemon text-ink"
                       : "bg-ink-soft/50 text-mist ring-1 ring-mist/20 hover:bg-ink-soft"
                   }`}
                 >
-                  {t === "needs"
-                    ? "Posted needs"
-                    : t === "churches"
-                      ? "Churches"
-                      : t === "reports"
-                        ? "Abuse reports"
-                        : "Feedback"}
-                  {t === "reports" && (reports.data?.filter((r) => r.status === "new").length ?? 0) > 0
+                  {tabItem === "needs"
+                    ? t("Posted needs")
+                    : tabItem === "churches"
+                      ? t("Churches")
+                      : tabItem === "reports"
+                        ? t("Abuse reports")
+                        : t("Feedback")}
+                  {tabItem === "reports" && (reports.data?.filter((r) => r.status === "new").length ?? 0) > 0
                     ? ` (${reports.data?.filter((r) => r.status === "new").length})`
                     : ""}
                 </button>
@@ -168,9 +171,9 @@ function AdminPage() {
             {tab === "needs" ? (
               <section className="space-y-3">
                 {needs.isLoading ? (
-                  <p className="text-mist/70">Loading…</p>
+                  <p className="text-mist/70">{t("Loading…")}</p>
                 ) : (needs.data?.length ?? 0) === 0 ? (
-                  <p className="text-mist/70">No needs have been posted yet.</p>
+                  <p className="text-mist/70">{t("No needs have been posted yet.")}</p>
                 ) : (
                   needs.data!.map((n) => (
                     <article
@@ -182,12 +185,14 @@ function AdminPage() {
                         <Pill value={n.status} />
                         {n.reportCount > 0 ? (
                           <span className="rounded-full bg-rose/15 px-2.5 py-1 text-xs font-semibold text-rose ring-1 ring-rose/30">
-                            {n.reportCount} report{n.reportCount === 1 ? "" : "s"}
+                            {n.reportCount === 1
+                              ? t("{{count}} report", { count: n.reportCount })
+                              : t("{{count}} reports", { count: n.reportCount })}
                           </span>
                         ) : null}
                       </div>
                       <p className="mt-1 text-sm text-mist/70">
-                        {n.posterName} · {[n.city, n.zip].filter(Boolean).join(" ") || "No location"} ·{" "}
+                        {n.posterName} · {[n.city, n.zip].filter(Boolean).join(" ") || t("No location")} ·{" "}
                         {new Date(n.createdAt).toLocaleDateString()}
                       </p>
                       <p className="mt-3 text-sm leading-relaxed text-mist/80">{n.description}</p>
@@ -199,7 +204,7 @@ function AdminPage() {
                           onClick={() => needMutation.mutate({ id: n.id, status: "active" })}
                           className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-4 py-2 text-sm font-semibold text-emerald-300 ring-1 ring-emerald-400/30 transition hover:bg-emerald-500/25 disabled:opacity-40"
                         >
-                          <Check className="size-4" aria-hidden="true" /> Approve
+                          <Check className="size-4" aria-hidden="true" /> {t("Approve")}
                         </button>
                         <button
                           type="button"
@@ -207,7 +212,7 @@ function AdminPage() {
                           onClick={() => needMutation.mutate({ id: n.id, status: "hidden" })}
                           className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/15 px-4 py-2 text-sm font-semibold text-amber-300 ring-1 ring-amber-400/30 transition hover:bg-amber-500/25 disabled:opacity-40"
                         >
-                          <EyeOff className="size-4" aria-hidden="true" /> Hide
+                          <EyeOff className="size-4" aria-hidden="true" /> {t("Hide")}
                         </button>
                         <button
                           type="button"
@@ -215,7 +220,7 @@ function AdminPage() {
                           onClick={() => needMutation.mutate({ id: n.id, status: "removed" })}
                           className="inline-flex items-center gap-1.5 rounded-full bg-rose/15 px-4 py-2 text-sm font-semibold text-rose ring-1 ring-rose/30 transition hover:bg-rose/25 disabled:opacity-40"
                         >
-                          <Trash2 className="size-4" aria-hidden="true" /> Remove
+                          <Trash2 className="size-4" aria-hidden="true" /> {t("Remove")}
                         </button>
                       </div>
                     </article>
@@ -225,9 +230,9 @@ function AdminPage() {
             ) : tab === "churches" ? (
               <section className="space-y-3">
                 {churches.isLoading ? (
-                  <p className="text-mist/70">Loading…</p>
+                  <p className="text-mist/70">{t("Loading…")}</p>
                 ) : (churches.data?.length ?? 0) === 0 ? (
-                  <p className="text-mist/70">No churches have signed up yet.</p>
+                  <p className="text-mist/70">{t("No churches have signed up yet.")}</p>
                 ) : (
                   churches.data!.map((c) => (
                     <ChurchCard
@@ -248,9 +253,9 @@ function AdminPage() {
             ) : tab === "feedback" ? (
               <section className="space-y-3">
                 {feedback.isLoading ? (
-                  <p className="text-mist/70">Loading…</p>
+                  <p className="text-mist/70">{t("Loading…")}</p>
                 ) : (feedback.data?.length ?? 0) === 0 ? (
-                  <p className="text-mist/70">No feedback has been sent yet.</p>
+                  <p className="text-mist/70">{t("No feedback has been sent yet.")}</p>
                 ) : (
                   feedback.data!.map((f) => (
                     <article
@@ -259,31 +264,31 @@ function AdminPage() {
                     >
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="rounded-full bg-lemon/15 px-2.5 py-1 text-xs font-semibold text-lemon ring-1 ring-lemon/30">
-                          {f.overall}/5 overall
+                          {t("{{n}}/5 overall", { n: f.overall })}
                         </span>
                         <span className="text-sm text-mist/70">
                           {new Date(f.createdAt).toLocaleString()}
                         </span>
                       </div>
                       <p className="mt-2 text-sm text-mist/70">
-                        Ease {f.ease ?? "—"}/5 · Look {f.design ?? "—"}/5 · Speed {f.speed ?? "—"}/5
+                        {t("Ease {{ease}}/5 · Look {{design}}/5 · Speed {{speed}}/5", { ease: f.ease ?? "—", design: f.design ?? "—", speed: f.speed ?? "—" })}
                         {f.email ? ` · ${f.email}` : ""}
                       </p>
                       {f.likes ? (
                         <p className="mt-3 text-sm leading-relaxed text-mist/80">
-                          <span className="font-semibold text-sand">Likes: </span>
+                          <span className="font-semibold text-sand">{t("Likes: ")}</span>
                           {f.likes}
                         </p>
                       ) : null}
                       {f.changes ? (
                         <p className="mt-2 text-sm leading-relaxed text-mist/80">
-                          <span className="font-semibold text-sand">Would change: </span>
+                          <span className="font-semibold text-sand">{t("Would change: ")}</span>
                           {f.changes}
                         </p>
                       ) : null}
                       {f.additions ? (
                         <p className="mt-2 text-sm leading-relaxed text-mist/80">
-                          <span className="font-semibold text-sand">Should add: </span>
+                          <span className="font-semibold text-sand">{t("Should add: ")}</span>
                           {f.additions}
                         </p>
                       ) : null}
@@ -294,9 +299,9 @@ function AdminPage() {
             ) : (
               <section className="space-y-3">
                 {reports.isLoading ? (
-                  <p className="text-mist/70">Loading…</p>
+                  <p className="text-mist/70">{t("Loading…")}</p>
                 ) : (reports.data?.length ?? 0) === 0 ? (
-                  <p className="text-mist/70">No reports yet. That's good news.</p>
+                  <p className="text-mist/70">{t("No reports yet. That's good news.")}</p>
                 ) : (
                   reports.data!.map((r) => (
                     <ReportCard
@@ -327,6 +332,7 @@ function ReportCard({
   pending: boolean;
   onSave: (status: ReportStatus, notes: string) => void;
 }) {
+  const { t } = useTranslation();
   const [status, setStatus] = useState<ReportStatus>(report.status);
   const [notes, setNotes] = useState(report.adminNotes);
 
@@ -348,17 +354,17 @@ function ReportCard({
           value={status}
           onChange={(e) => setStatus(e.target.value as ReportStatus)}
           className="rounded-xl bg-ink px-3 py-2 text-sm text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
-          aria-label="Report status"
+          aria-label={t("Report status")}
         >
-          <option value="new">New</option>
-          <option value="reviewing">Reviewing</option>
-          <option value="resolved">Resolved</option>
-          <option value="dismissed">Dismissed</option>
+          <option value="new">{t("New")}</option>
+          <option value="reviewing">{t("Reviewing")}</option>
+          <option value="resolved">{t("Resolved")}</option>
+          <option value="dismissed">{t("Dismissed")}</option>
         </select>
         <input
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          placeholder="Note for the person who reported this"
+          placeholder={t("Note for the person who reported this")}
           className="rounded-xl bg-ink px-3 py-2 text-sm text-sand ring-1 ring-mist/20 placeholder:text-mist/50 focus:outline-none focus:ring-lemon/50"
         />
         <button
@@ -367,7 +373,7 @@ function ReportCard({
           onClick={() => onSave(status, notes)}
           className="rounded-full bg-lemon px-4 py-2 text-sm font-semibold text-ink transition hover:bg-lemon/90 disabled:opacity-50"
         >
-          Save
+          {t("Save")}
         </button>
       </div>
     </article>
@@ -391,6 +397,7 @@ function ChurchCard({
   onStatus: (status: "active" | "inactive") => void;
   onDelete: () => void;
 }) {
+  const { t } = useTranslation();
   const [months, setMonths] = useState(1);
   const [confirming, setConfirming] = useState(false);
 
@@ -405,21 +412,21 @@ function ChurchCard({
         <Pill value={state === "on the map" ? "active" : state === "past due" ? "hidden" : "removed"} />
         {!church.located ? (
           <span className="rounded-full bg-amber-500/15 px-2.5 py-1 text-xs font-semibold text-amber-300 ring-1 ring-amber-400/30">
-            address not found
+            {t("address not found")}
           </span>
         ) : null}
       </div>
       <p className="mt-1 text-sm text-mist/70">
         {church.ownerName}
         {church.ownerEmail ? ` · ${church.ownerEmail}` : ""} ·{" "}
-        {[church.address, church.city, church.zip].filter(Boolean).join(", ") || "No address"}
+        {[church.address, church.city, church.zip].filter(Boolean).join(", ") || t("No address")}
       </p>
       <p className="mt-2 text-sm text-mist/80">
-        Paid through:{" "}
+        {t("Paid through:")}{" "}
         <span className={overdue ? "font-semibold text-rose" : "font-semibold text-sand"}>
-          {end ? end.toLocaleDateString() : "never paid"}
+          {end ? end.toLocaleDateString() : t("never paid")}
         </span>{" "}
-        · Total paid {money(church.paidCents)} · Joined{" "}
+        · {t("Total paid {{amount}}", { amount: money(church.paidCents) })} · {t("Joined")}{" "}
         {new Date(church.createdAt).toLocaleDateString()}
       </p>
 
@@ -427,12 +434,14 @@ function ChurchCard({
         <select
           value={months}
           onChange={(e) => setMonths(Number(e.target.value))}
-          aria-label="Months to add"
+          aria-label={t("Months to add")}
           className="rounded-xl bg-ink px-3 py-2 text-sm text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
         >
           {[1, 3, 6, 12].map((m) => (
             <option key={m} value={m}>
-              {m} month{m === 1 ? "" : "s"} · {money(4900 * m)}
+              {m === 1
+                ? t("{{count}} month · {{price}}", { count: m, price: money(4900 * m) })
+                : t("{{count}} months · {{price}}", { count: m, price: money(4900 * m) })}
             </option>
           ))}
         </select>
@@ -442,7 +451,7 @@ function ChurchCard({
           onClick={() => onPay(months)}
           className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-4 py-2 text-sm font-semibold text-emerald-300 ring-1 ring-emerald-400/30 transition hover:bg-emerald-500/25 disabled:opacity-40"
         >
-          <Check className="size-4" aria-hidden="true" /> Record payment
+          <Check className="size-4" aria-hidden="true" /> {t("Record payment")}
         </button>
         {church.status === "active" ? (
           <button
@@ -451,7 +460,7 @@ function ChurchCard({
             onClick={() => onStatus("inactive")}
             className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/15 px-4 py-2 text-sm font-semibold text-amber-300 ring-1 ring-amber-400/30 transition hover:bg-amber-500/25 disabled:opacity-40"
           >
-            <EyeOff className="size-4" aria-hidden="true" /> Take off the map
+            <EyeOff className="size-4" aria-hidden="true" /> {t("Take off the map")}
           </button>
         ) : (
           <button
@@ -460,7 +469,7 @@ function ChurchCard({
             onClick={() => onStatus("active")}
             className="inline-flex items-center gap-1.5 rounded-full bg-lemon/15 px-4 py-2 text-sm font-semibold text-lemon ring-1 ring-lemon/30 transition hover:bg-lemon/25 disabled:opacity-40"
           >
-            <Check className="size-4" aria-hidden="true" /> Put on the map
+            <Check className="size-4" aria-hidden="true" /> {t("Put on the map")}
           </button>
         )}
         <Link
@@ -468,14 +477,14 @@ function ChurchCard({
           params={{ id: church.id }}
           className="rounded-full bg-ink-soft/60 px-4 py-2 text-sm font-semibold text-mist ring-1 ring-mist/20 transition hover:bg-ink-soft"
         >
-          Open page
+          {t("Open page")}
         </Link>
       </div>
 
       {confirming ? (
         <div className="mt-4 rounded-2xl bg-rose/10 p-4 ring-1 ring-rose/30">
           <p className="text-sm text-sand">
-            Delete this church for good? Its page, posts links and payment records go with it.
+            {t("Delete this church for good? Its page, posts links and payment records go with it.")}
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
             <button
@@ -484,14 +493,14 @@ function ChurchCard({
               onClick={onDelete}
               className="rounded-full bg-rose/20 px-4 py-2 text-sm font-semibold text-rose ring-1 ring-rose/40 transition hover:bg-rose/30 disabled:opacity-40"
             >
-              Yes, delete it
+              {t("Yes, delete it")}
             </button>
             <button
               type="button"
               onClick={() => setConfirming(false)}
               className="rounded-full bg-ink-soft/60 px-4 py-2 text-sm font-semibold text-mist ring-1 ring-mist/20 transition hover:bg-ink-soft"
             >
-              Keep it
+              {t("Keep it")}
             </button>
           </div>
         </div>
@@ -501,7 +510,7 @@ function ChurchCard({
           onClick={() => setConfirming(true)}
           className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-rose/80 transition hover:text-rose"
         >
-          <Trash2 className="size-3.5" aria-hidden="true" /> Delete church
+          <Trash2 className="size-3.5" aria-hidden="true" /> {t("Delete church")}
         </button>
       )}
 
@@ -510,7 +519,7 @@ function ChurchCard({
           {church.payments.map((p) => (
             <li key={p.id}>
               {new Date(p.createdAt).toLocaleDateString()} · {money(p.amountCents)} ·{" "}
-              {p.isMock ? "test checkout" : "recorded by admin"}
+              {p.isMock ? t("test checkout") : t("recorded by admin")}
             </li>
           ))}
         </ul>

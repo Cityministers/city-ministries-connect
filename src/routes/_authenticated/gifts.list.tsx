@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, ArrowRight, BookOpen, Check, Loader2, Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { BIBLICAL_GIFTS, emptyAnswers, type ShapeAnswers } from "@/data/shape";
 import { getShapeProfile, saveShapeProfile } from "@/lib/shape.functions";
 
@@ -27,6 +28,7 @@ export const Route = createFileRoute("/_authenticated/gifts/list")({
 });
 
 function GiftsListPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const load = useServerFn(getShapeProfile);
   const save = useServerFn(saveShapeProfile);
@@ -89,7 +91,7 @@ function GiftsListPage() {
       await save({ data: answers });
       void navigate({ to: "/shape", search: {} });
     } catch {
-      setError("We couldn't save your picks. Try again.");
+      setError(t("We couldn't save your picks. Try again."));
       setSaving(false);
     }
   }
@@ -101,13 +103,13 @@ function GiftsListPage() {
           <Link
             to="/gifts"
             className="grid size-10 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20 transition hover:bg-ink-soft"
-            aria-label="Back"
+            aria-label={t("Back")}
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
           </Link>
           <div className="min-w-0 flex-1">
             <h1 className="truncate font-display text-xl font-semibold leading-tight sm:text-2xl">
-              Your Spiritual Gifts
+              {t("Your Spiritual Gifts")}
             </h1>
           </div>
         </div>
@@ -121,17 +123,16 @@ function GiftsListPage() {
           className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-youversion px-6 py-3.5 text-lg font-semibold text-white transition active:translate-y-0.5 hover:bg-youversion/90"
         >
           <BookOpen className="size-5" aria-hidden="true" />
-          What are spiritual gifts?
+          {t("What are spiritual gifts?")}
         </a>
 
         <p className="mt-6 text-xl leading-relaxed text-mist/85 sm:text-2xl">
-          Tap every gift you believe applies to you. There are no wrong answers — you can change
-          these later.
+          {t("Tap every gift you believe applies to you. There are no wrong answers — you can change these later.")}
         </p>
 
         {answers === null ? (
           <p className="mt-8 flex items-center gap-2 text-lg text-mist/70">
-            <Loader2 className="size-5 animate-spin" aria-hidden="true" /> Loading your answers…
+            <Loader2 className="size-5 animate-spin" aria-hidden="true" /> {t("Loading your answers…")}
           </p>
         ) : (
           <>
@@ -151,7 +152,7 @@ function GiftsListPage() {
                     }`}
                   >
                     {on && <Check className="size-4" aria-hidden="true" />}
-                    {gift}
+                    {t(gift)}
                   </button>
                 );
               })}
@@ -159,7 +160,9 @@ function GiftsListPage() {
 
             <div className="mt-8">
               <h2 className="font-display text-lg font-semibold text-sand">
-                Add your own gift{customGifts.length > 0 ? `s (${customGifts.length}/3)` : "s (up to 3)"}
+                {customGifts.length > 0
+                  ? t("Add your own gifts ({{count}}/3)", { count: customGifts.length })
+                  : t("Add your own gifts (up to 3)")}
               </h2>
 
               {customGifts.length > 0 && (
@@ -170,9 +173,9 @@ function GiftsListPage() {
                       type="button"
                       onClick={() => removeCustomGift(gift)}
                       className="inline-flex items-center gap-2 rounded-full bg-lemon px-4 py-3 text-lg font-semibold text-ink transition hover:bg-lemon/90"
-                      aria-label={`Remove ${gift}`}
+                      aria-label={t("Remove {{gift}}", { gift })}
                     >
-                      {gift}
+                      {t(gift)}
                       <X className="size-4" aria-hidden="true" />
                     </button>
                   ))}
@@ -191,7 +194,7 @@ function GiftsListPage() {
                         addCustomGift();
                       }
                     }}
-                    placeholder="Type a gift and tap Add"
+                    placeholder={t("Type a gift and tap Add")}
                     maxLength={60}
                     className="flex-1 rounded-full bg-ink-soft px-5 py-3 text-base text-sand placeholder:text-mist/50 ring-1 ring-mist/20 focus:outline-none focus:ring-2 focus:ring-lemon"
                   />
@@ -202,7 +205,7 @@ function GiftsListPage() {
                     className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-ink-soft px-4 py-3 text-base font-semibold text-sand ring-1 ring-mist/20 transition hover:bg-ink-soft/70 disabled:opacity-60"
                   >
                     <Plus className="size-4" aria-hidden="true" />
-                    Add
+                    {t("Add")}
                   </button>
                 </div>
               )}
@@ -225,7 +228,7 @@ function GiftsListPage() {
               ) : (
                 <ArrowRight className="size-5" aria-hidden="true" />
               )}
-              Next
+              {t("Next")}
             </button>
           </>
         )}

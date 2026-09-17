@@ -1,6 +1,7 @@
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowRight, Loader2, Mic, Pencil, RotateCcw, Square } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { transcribeAnswer } from "@/lib/transcribe.functions";
 
 type Props = {
@@ -72,6 +73,7 @@ export default function VoiceAnswer({
   maxSeconds = 90,
 }: Props) {
   const transcribe = useServerFn(transcribeAnswer);
+  const { t } = useTranslation();
 
   const [mode, setMode] = useState<"voice" | "write">("voice");
   const [recording, setRecording] = useState(false);
@@ -111,7 +113,7 @@ export default function VoiceAnswer({
       stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     } catch {
       setError(
-        "We can't hear you. Allow microphone access in your browser, then tap Record again.",
+        t("We can't hear you. Allow microphone access in your browser, then tap Record again."),
       );
       return;
     }
@@ -155,7 +157,7 @@ export default function VoiceAnswer({
         if (res.error) setError(res.error);
         if (res.text) onTextCb(res.text);
       } catch {
-        setError("We couldn't turn that recording into words. Try again.");
+        setError(t("We couldn't turn that recording into words. Try again."));
       } finally {
         setBusy(false);
       }
@@ -181,7 +183,7 @@ export default function VoiceAnswer({
     const blob = encodeWav(chunksRef.current, rate);
     chunksRef.current = [];
     if (blob.size < 4096) {
-      setError("That recording was empty — try again and speak after tapping Record.");
+      setError(t("That recording was empty — try again and speak after tapping Record."));
       return;
     }
 
@@ -192,7 +194,7 @@ export default function VoiceAnswer({
       if (res.error) setError(res.error);
       if (res.text) onText(res.text);
     } catch {
-      setError("We couldn't turn that recording into words. Try again.");
+      setError(t("We couldn't turn that recording into words. Try again."));
     } finally {
       setBusy(false);
     }
@@ -227,28 +229,27 @@ export default function VoiceAnswer({
           >
             {busy ? (
               <>
-                <Loader2 className="size-5 animate-spin" aria-hidden="true" /> Processing your
-                answer…
+                <Loader2 className="size-5 animate-spin" aria-hidden="true" /> {t("Processing your answer…")}
               </>
             ) : recording ? (
               <>
-                <Square className="size-5" aria-hidden="true" /> Done talking · {mmss}
+                <Square className="size-5" aria-hidden="true" /> {t("Done talking · {{time}}", { time: mmss })}
               </>
             ) : value ? (
               <>
-                <RotateCcw className="size-5" aria-hidden="true" /> Record again
+                <RotateCcw className="size-5" aria-hidden="true" /> {t("Record again")}
               </>
             ) : (
               <>
-                <Mic className="size-5" aria-hidden="true" /> Just talk, we do the rest
+                <Mic className="size-5" aria-hidden="true" /> {t("Just talk, we do the rest")}
               </>
             )}
           </button>
           <button
             type="button"
             onClick={() => void toWriting()}
-            aria-label="Write my answer instead"
-            title="Write my answer instead"
+            aria-label={t("Write my answer instead")}
+            title={t("Write my answer instead")}
             className="inline-flex size-12 shrink-0 items-center justify-center rounded-full bg-ink-soft/70 text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
           >
             <Pencil className="size-5" aria-hidden="true" />
@@ -260,14 +261,14 @@ export default function VoiceAnswer({
             value={value}
             onChange={(e) => onText(e.target.value)}
             rows={4}
-            placeholder="Write your answer here…"
+            placeholder={t("Write your answer here…")}
             className="min-h-28 flex-1 rounded-2xl bg-ink/60 px-4 py-3 text-base leading-relaxed text-sand ring-1 ring-mist/20 outline-none placeholder:text-mist/50 focus:ring-lemon/60"
           />
           <button
             type="button"
             onClick={() => setMode("voice")}
-            aria-label="Talk my answer instead"
-            title="Talk my answer instead"
+            aria-label={t("Talk my answer instead")}
+            title={t("Talk my answer instead")}
             className="inline-flex size-12 shrink-0 items-center justify-center rounded-full bg-ink-soft/70 text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
           >
             <Mic className="size-5" aria-hidden="true" />
@@ -297,7 +298,7 @@ export default function VoiceAnswer({
           onClick={() => void nextQuestion()}
           className="inline-flex items-center justify-center gap-2 rounded-full bg-lemon px-6 py-4 text-lg font-semibold text-ink transition hover:-translate-y-0.5"
         >
-          Next Question <ArrowRight className="size-5" aria-hidden="true" />
+          {t("Next Question")} <ArrowRight className="size-5" aria-hidden="true" />
         </button>
       )}
 
@@ -312,7 +313,7 @@ export default function VoiceAnswer({
               onClick={() => onNext?.()}
               className="inline-flex items-center justify-center gap-2 rounded-full bg-lemon px-6 py-4 text-lg font-semibold text-ink transition hover:-translate-y-0.5"
             >
-              Next Question <ArrowRight className="size-5" aria-hidden="true" />
+              {t("Next Question")} <ArrowRight className="size-5" aria-hidden="true" />
             </button>
           )}
         </div>
