@@ -10,9 +10,9 @@ export type TranslatedPair = {
   description: string | null;
   /** True while the translation is being fetched. */
   loading: boolean;
-  /** True when translation failed and the original is shown. */
-  failed: boolean;
-  /** True when a translation is being displayed. */
+  /** True when a translation is available (whether currently shown or not). */
+  hasTranslation: boolean;
+  /** True when the translated text is currently displayed. */
   showingTranslation: boolean;
   /** Toggle between the translation and the original text. */
   toggle: () => void;
@@ -79,7 +79,7 @@ export function useTranslatedPost(title: string, description: string | null): Tr
     title: displayTitle,
     description: displayDescription,
     loading: lang !== "en" && state === "loading",
-    failed,
+    hasTranslation: lang !== "en" && state === "ready" && !failed,
     showingTranslation: lang !== "en" && translatedAvailable,
     toggle: () => setShowOriginal((v) => !v),
   };

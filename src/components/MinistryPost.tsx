@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useTranslatedPost } from "@/lib/use-post-translation";
 import { toneStyles, type Ministry } from "@/data/ministries";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -34,6 +35,7 @@ export function MinistryPost({
   onClose: () => void;
 }) {
   const { t } = useTranslation();
+  const translated = useTranslatedPost(ministry.label, ministry.description);
   const navigate = useNavigate();
   const fetchState = useServerFn(getMyPostState);
   const like = useServerFn(toggleLike);
@@ -284,7 +286,7 @@ export function MinistryPost({
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-sm font-medium uppercase tracking-[0.2em] text-mist/50 sm:text-base">
-                {ministry.label} · {ministry.neighborhood}
+                {translated.title} · {ministry.neighborhood}
               </p>
               <h2 className="font-display text-3xl font-semibold text-sand sm:text-4xl">
                 {ministry.poster.name}
@@ -419,7 +421,19 @@ export function MinistryPost({
           )}
 
 
-          <p className="text-xl leading-relaxed text-sand/85 sm:text-2xl">{ministry.description}</p>
+          <p className="text-xl leading-relaxed text-sand/85 sm:text-2xl">{translated.description}</p>
+          {translated.loading ? (
+            <p className="text-sm text-mist/60">{t("Translating…")}</p>
+          ) : null}
+          {translated.hasTranslation ? (
+            <button
+              type="button"
+              onClick={translated.toggle}
+              className="w-fit text-sm font-medium text-lemon underline decoration-lemon/40 underline-offset-4 transition hover:decoration-lemon"
+            >
+              {translated.showingTranslation ? t("See original") : t("See translation")}
+            </button>
+          ) : null}
 
           <div className="flex items-center gap-2 border-y border-mist/15 py-3">
             <button
