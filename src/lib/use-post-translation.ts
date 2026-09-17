@@ -69,10 +69,10 @@ export function useTranslatedPost(title: string, description: string | null): Tr
   const failed = state === "error";
   const translatedAvailable = state === "ready" && !showOriginal;
   const displayTitle =
-    lang !== "en" && translatedAvailable && texts.title ? texts.title : title;
+    lang !== "en" && translatedAvailable && texts["title"] ? texts["title"] : title;
   const displayDescription =
-    lang !== "en" && translatedAvailable && texts.description
-      ? texts.description
+    lang !== "en" && translatedAvailable && texts["description"]
+      ? texts["description"]
       : description;
 
   return {
