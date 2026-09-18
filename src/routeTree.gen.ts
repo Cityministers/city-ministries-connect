@@ -21,6 +21,7 @@ import { Route as MapRouteImport } from './routes/map'
 import { Route as MinistriesRouteImport } from './routes/ministries'
 import { Route as MinistryMindsetRouteImport } from './routes/ministry-mindset'
 import { Route as NeedsRouteImport } from './routes/needs'
+import { Route as RecommendationsDemoRouteImport } from './routes/recommendations-demo'
 import { Route as ReportAbuseRouteImport } from './routes/report-abuse'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ShapeRouteImport } from './routes/shape'
@@ -98,6 +99,11 @@ const MinistryMindsetRoute = MinistryMindsetRouteImport.update({
 const NeedsRoute = NeedsRouteImport.update({
   id: '/needs',
   path: '/needs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecommendationsDemoRoute = RecommendationsDemoRouteImport.update({
+  id: '/recommendations-demo',
+  path: '/recommendations-demo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReportAbuseRoute = ReportAbuseRouteImport.update({
@@ -212,6 +218,7 @@ export interface FileRoutesByFullPath {
   '/ministries': typeof MinistriesRoute
   '/ministry-mindset': typeof MinistryMindsetRoute
   '/needs': typeof NeedsRoute
+  '/recommendations-demo': typeof RecommendationsDemoRoute
   '/report-abuse': typeof ReportAbuseRoute
   '/reset-password': typeof ResetPasswordRoute
   '/shape': typeof ShapeRoute
@@ -244,6 +251,7 @@ export interface FileRoutesByTo {
   '/ministries': typeof MinistriesRoute
   '/ministry-mindset': typeof MinistryMindsetRoute
   '/needs': typeof NeedsRoute
+  '/recommendations-demo': typeof RecommendationsDemoRoute
   '/report-abuse': typeof ReportAbuseRoute
   '/reset-password': typeof ResetPasswordRoute
   '/shape': typeof ShapeRoute
@@ -278,6 +286,7 @@ export interface FileRoutesById {
   '/ministries': typeof MinistriesRoute
   '/ministry-mindset': typeof MinistryMindsetRoute
   '/needs': typeof NeedsRoute
+  '/recommendations-demo': typeof RecommendationsDemoRoute
   '/report-abuse': typeof ReportAbuseRoute
   '/reset-password': typeof ResetPasswordRoute
   '/shape': typeof ShapeRoute
@@ -312,6 +321,7 @@ export interface FileRouteTypes {
     | '/ministries'
     | '/ministry-mindset'
     | '/needs'
+    | '/recommendations-demo'
     | '/report-abuse'
     | '/reset-password'
     | '/shape'
@@ -344,6 +354,7 @@ export interface FileRouteTypes {
     | '/ministries'
     | '/ministry-mindset'
     | '/needs'
+    | '/recommendations-demo'
     | '/report-abuse'
     | '/reset-password'
     | '/shape'
@@ -377,6 +388,7 @@ export interface FileRouteTypes {
     | '/ministries'
     | '/ministry-mindset'
     | '/needs'
+    | '/recommendations-demo'
     | '/report-abuse'
     | '/reset-password'
     | '/shape'
@@ -411,6 +423,7 @@ export interface RootRouteChildren {
   MinistriesRoute: typeof MinistriesRoute
   MinistryMindsetRoute: typeof MinistryMindsetRoute
   NeedsRoute: typeof NeedsRoute
+  RecommendationsDemoRoute: typeof RecommendationsDemoRoute
   ReportAbuseRoute: typeof ReportAbuseRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   ShapeRoute: typeof ShapeRoute
@@ -505,6 +518,13 @@ declare module '@tanstack/react-router' {
       path: '/needs'
       fullPath: '/needs'
       preLoaderRoute: typeof NeedsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recommendations-demo': {
+      id: '/recommendations-demo'
+      path: '/recommendations-demo'
+      fullPath: '/recommendations-demo'
+      preLoaderRoute: typeof RecommendationsDemoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/report-abuse': {
@@ -688,6 +708,7 @@ const rootRouteChildren: RootRouteChildren = {
   MinistriesRoute: MinistriesRoute,
   MinistryMindsetRoute: MinistryMindsetRoute,
   NeedsRoute: NeedsRoute,
+  RecommendationsDemoRoute: RecommendationsDemoRoute,
   ReportAbuseRoute: ReportAbuseRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   ShapeRoute: ShapeRoute,
