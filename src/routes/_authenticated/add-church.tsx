@@ -372,7 +372,7 @@ function AddChurchPage() {
                       }`}
                     >
                       <choice.icon className="size-7" aria-hidden="true" />
-                      {choice.label}
+                      {t(choice.label)}
                     </button>
                   );
                 })}

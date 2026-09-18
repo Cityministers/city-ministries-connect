@@ -403,7 +403,7 @@ export function MinistryPost({
               </div>
               <div className="flex flex-wrap gap-2 text-sm text-mist/70 sm:text-base">
                 <span className="rounded-full px-2.5 py-1 ring-1 ring-mist/20">
-                  {ministry.fullTitle || ministry.label}
+                  {ministry.fullTitle || t(ministry.label)}
                 </span>
                 <span className="rounded-full px-2.5 py-1 ring-1 ring-mist/20">
                   {t("{{count}} likes", { count: live ? likeCount : ministry.likes })}

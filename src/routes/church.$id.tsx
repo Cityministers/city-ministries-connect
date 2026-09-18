@@ -641,7 +641,7 @@ function ChurchPage() {
                           }`}
                         >
                           <choice.icon className="size-5" aria-hidden="true" />
-                          {choice.label}
+                          {t(choice.label)}
                         </button>
                       ))}
                     </div>

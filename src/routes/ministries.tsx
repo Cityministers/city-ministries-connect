@@ -142,10 +142,10 @@ function MinistriesPage() {
                 )}
                 <span className="flex min-w-0 flex-1 flex-col gap-2">
                   <span className="font-display text-3xl font-semibold text-sand sm:text-4xl">
-                    {m.label}
+                    {t(m.label)}
                   </span>
                   <span className="line-clamp-2 text-lg leading-relaxed text-mist/80 sm:text-xl">
-                    {m.description}
+                    {t(m.description)}
                   </span>
                   <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-base text-mist/60 sm:text-lg">
                     <span className="inline-flex items-center gap-1.5">
