@@ -14,20 +14,11 @@ export const LANGUAGES = [
   { code: "tl", name: "Tagalog" },
   { code: "ht", name: "Kreyòl Ayisyen" },
   { code: "am", name: "አማርኛ" },
-  { code: "so", name: "Soomaali" },
-  { code: "uk", name: "Українська" },
-  { code: "hi", name: "हिन्दी" },
-  { code: "ja", name: "日本語" },
-  { code: "sw", name: "Kiswahili" },
-  { code: "de", name: "Deutsch" },
-  { code: "it", name: "Italiano" },
-  { code: "pl", name: "Polski" },
-  { code: "fa", name: "فارسی" },
 ] as const;
 
 export type LanguageCode = (typeof LANGUAGES)[number]["code"];
 
-export const RTL_LANGS = new Set<string>(["ar", "fa"]);
+export const RTL_LANGS = new Set<string>(["ar"]);
 
 const LANGUAGE_CODES = new Set<string>(LANGUAGES.map((l) => l.code));
 const loadedLanguages = new Set<string>(["en"]);
