@@ -338,10 +338,10 @@ function PostNeedPage() {
                           </span>
                           <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                             <span className="font-display text-lg font-semibold text-sand sm:text-xl">
-                              {m.label}
+                              {t(m.label)}
                             </span>
                             <span className="line-clamp-2 text-base leading-relaxed text-mist/70 sm:text-lg">
-                              {m.description}
+                              {t(m.description)}
                             </span>
                           </span>
                         </button>
