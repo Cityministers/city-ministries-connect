@@ -172,8 +172,15 @@
     border-color: var(--color-border);
   }
 
+  html {
+    background-color: var(--color-ink);
+    color-scheme: dark;
+  }
+
   body {
-    background-color: var(--color-background);
+    min-height: 100dvh;
+    margin: 0;
+    background-color: var(--color-ink);
     color: var(--color-foreground);
   }
 }
