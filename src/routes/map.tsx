@@ -185,6 +185,11 @@ function MapPage() {
       void navigate({ to: "/church/$id", params: { id: id.slice("church-".length) } });
       return;
     }
+    if (id.startsWith("prayer-")) {
+      setActivePrayerId(id.slice("prayer-".length));
+      if (id !== highlightId) setHighlightId(null);
+      return;
+    }
     setActiveId(id);
     if (id !== highlightId) setHighlightId(null);
   }
