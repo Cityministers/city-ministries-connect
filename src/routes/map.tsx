@@ -1,13 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, List, Search } from "lucide-react";
+import { ArrowLeft, HandHeart, List, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AccountMenu } from "@/components/AccountMenu";
 import { BrandLogo } from "@/components/BrandLogo";
 import { SiteNav } from "@/components/SiteNav";
 import { MinistryPost } from "@/components/MinistryPost";
+import { PrayerPost } from "@/components/PrayerPost";
 import { Button } from "@/components/ui/button";
 import { toneStyles } from "@/data/ministries";
 import { LiveMap, type MapBounds } from "@/components/LiveMap";
@@ -17,12 +18,16 @@ import { formatMiles, milesBetween } from "@/lib/distance";
 
 import { listChurches } from "@/lib/churches.functions";
 import { iconMarkup } from "@/lib/map-icon";
+import { PRAYER_PIN_COLOR } from "@/lib/map-tones";
 import { listUserMinistries } from "@/lib/ministries.functions";
+import { listPublicPrayers } from "@/lib/prayers.functions";
 import { toMinistry } from "@/lib/user-ministries";
 import { useHomePoint, useMapPosts, usePlaceCenter } from "@/lib/use-map-view";
 
 export const Route = createFileRoute("/map")({
-  validateSearch: (search: Record<string, unknown>): { place?: string; new?: string } => {
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { place?: string; new?: string; mode?: "prayer" } => {
     const raw = search["place"];
     const place = (
       typeof raw === "string" || typeof raw === "number" ? String(raw) : ""
@@ -31,6 +36,7 @@ export const Route = createFileRoute("/map")({
     return {
       ...(place.length > 0 ? { place } : {}),
       ...(fresh.length > 0 ? { new: fresh } : {}),
+      ...(search["mode"] === "prayer" ? { mode: "prayer" as const } : {}),
     };
   },
   head: () => ({
@@ -56,12 +62,19 @@ export const Route = createFileRoute("/map")({
 
 function MapPage() {
   const { t } = useTranslation();
-  const { place, new: freshId } = Route.useSearch();
+  const { place, new: freshId, mode: freshMode } = Route.useSearch();
   const navigate = Route.useNavigate();
   const [location, setLocation] = useState(place ?? "Portland, OR 97209");
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [activePrayerId, setActivePrayerId] = useState<string | null>(null);
   const [highlightId, setHighlightId] = useState<string | null>(
-    freshId ? (freshId.startsWith("church-") ? freshId : `user-${freshId}`) : null,
+    freshId
+      ? freshId.startsWith("church-")
+        ? freshId
+        : freshMode === "prayer"
+          ? `prayer-${freshId}`
+          : `user-${freshId}`
+      : null,
   );
   const session = useSession();
 
@@ -78,7 +91,9 @@ function MapPage() {
   const center = usePlaceCenter(location);
   const { origin, hasHome } = useHomePoint(Boolean(session), center);
 
-  const [mode, setMode] = useState<"view" | "near" | "church">("view");
+  const [mode, setMode] = useState<"view" | "near" | "church" | "prayer">(
+    freshMode === "prayer" ? "prayer" : "view",
+  );
   const [bounds, setBounds] = useState<MapBounds | null>(null);
   const [pending, setPending] = useState<MapBounds | null>(null);
   const moved = mode === "view" && pending !== null && pending !== bounds;
@@ -87,7 +102,7 @@ function MapPage() {
     all,
     origin,
     mode === "view" ? bounds : null,
-    mode === "church" ? "near" : mode,
+    mode === "view" ? "view" : "near",
     session?.user?.id ?? null,
     highlightId,
   );
@@ -116,9 +131,38 @@ function MapPage() {
         })),
     [churches, highlightId],
   );
+
+  // Prayers posted to the whole map — their own pin colour and their own filter.
+  const fetchPrayers = useServerFn(listPublicPrayers);
+  const { data: prayers, refetch: refetchPrayers } = useQuery({
+    queryKey: ["public-prayers"],
+    queryFn: () => fetchPrayers(),
+  });
+  const prayerPoints = useMemo(
+    () =>
+      (prayers ?? [])
+        .filter((p) => p.lat != null && p.lng != null)
+        .map((p) => ({
+          id: `prayer-${p.id}`,
+          lat: p.lat as number,
+          lng: p.lng as number,
+          title: p.shortTitle,
+          color: PRAYER_PIN_COLOR,
+          glyph: iconMarkup(HandHeart),
+          highlight: highlightId === `prayer-${p.id}`,
+        })),
+    [prayers, highlightId],
+  );
+  const activePrayer = (prayers ?? []).find((p) => p.id === activePrayerId);
+
   const allPoints = useMemo(
-    () => (mode === "church" ? churchPoints : [...points, ...churchPoints]),
-    [points, churchPoints, mode],
+    () =>
+      mode === "church"
+        ? churchPoints
+        : mode === "prayer"
+          ? prayerPoints
+          : [...points, ...churchPoints],
+    [points, churchPoints, prayerPoints, mode],
   );
 
   /** Churches with a distance from home, nearest first. */
@@ -142,6 +186,11 @@ function MapPage() {
   function selectPoint(id: string) {
     if (id.startsWith("church-")) {
       void navigate({ to: "/church/$id", params: { id: id.slice("church-".length) } });
+      return;
+    }
+    if (id.startsWith("prayer-")) {
+      setActivePrayerId(id.slice("prayer-".length));
+      if (id !== highlightId) setHighlightId(null);
       return;
     }
     setActiveId(id);
@@ -263,9 +312,9 @@ function MapPage() {
           )}
         </div>
 
-        <div className="mt-3 flex items-center justify-between gap-3">
-          <div className="flex rounded-full bg-ink-soft p-1 ring-1 ring-mist/15">
-            {(["view", "near", "church"] as const).map((m) => (
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap rounded-full bg-ink-soft p-1 ring-1 ring-mist/15">
+            {(["view", "near", "church", "prayer"] as const).map((m) => (
               <button
                 key={m}
                 type="button"
@@ -276,14 +325,22 @@ function MapPage() {
                     : "text-mist hover:text-sand"
                 }`}
               >
-                {m === "view" ? t("In this view") : m === "near" ? t("Nearest to me") : t("Churches")}
+                {m === "view"
+                  ? t("In this view")
+                  : m === "near"
+                    ? t("Nearest to me")
+                    : m === "church"
+                      ? t("Churches")
+                      : t("Prayers")}
               </button>
             ))}
           </div>
           <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-mist/40">
             {mode === "church"
               ? t("{{count}} churches", { count: churchList.length })
-              : t("{{count}} nearby", { count: list.length + (mode === "near" ? churchList.length : 0) })}
+              : mode === "prayer"
+                ? t("{{count}} prayers", { count: prayerPoints.length })
+                : t("{{count}} nearby", { count: list.length + (mode === "near" ? churchList.length : 0) })}
           </p>
         </div>
 
@@ -295,7 +352,34 @@ function MapPage() {
         )}
 
         <ul className="mt-3 space-y-2">
-          {mode !== "church" &&
+          {mode === "prayer" &&
+            (prayers ?? []).map((p) => (
+              <li key={p.id}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActivePrayerId(p.id);
+                    if (`prayer-${p.id}` !== highlightId) setHighlightId(null);
+                  }}
+                  className="flex w-full items-center gap-3 rounded-2xl bg-ink-soft p-3 text-left ring-1 ring-tone-purple/25 transition hover:ring-tone-purple/50"
+                >
+                  <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-tone-purple/15 text-tone-purple ring-1 ring-tone-purple/40">
+                    <HandHeart className="size-5" aria-hidden="true" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate font-heading text-lg text-sand sm:text-base">
+                      {p.shortTitle}
+                    </span>
+                    <span className="block truncate text-xs text-mist/70">
+                      {p.posterName}
+                      {p.city ? ` · ${p.city}` : ""}
+                      {p.zip ? ` ${p.zip}` : ""}
+                    </span>
+                  </span>
+                </button>
+              </li>
+            ))}
+          {mode !== "church" && mode !== "prayer" &&
             list.map(({ post: m, distance }) => (
             <li key={m.id}>
               <button
@@ -369,17 +453,43 @@ function MapPage() {
                 </li>
               );
             })}
-          {(mode === "church" ? churchList.length === 0 : list.length === 0 && (mode !== "near" || churchList.length === 0)) && (
+          {(mode === "church"
+            ? churchList.length === 0
+            : mode === "prayer"
+              ? (prayers ?? []).length === 0
+              : list.length === 0 && (mode !== "near" || churchList.length === 0)) && (
             <li className="rounded-2xl bg-ink-soft p-4 text-center text-sm text-mist/70">
               {mode === "church"
                 ? t("No churches on the map yet.")
-                : t("No ministries in this area yet — drag the map to look around.")}
+                : mode === "prayer"
+                  ? t("No prayers on the map yet — be the first to post one.")
+                  : t("No ministries in this area yet — drag the map to look around.")}
             </li>
           )}
         </ul>
 
+        {mode === "prayer" && (
+          <Link
+            to="/post-prayer"
+            className="mt-4 inline-flex items-center justify-center gap-2 self-start rounded-full bg-ember px-6 py-3 text-base font-semibold text-ink shadow-[0_0_18px_-4px_var(--color-ember)] transition hover:opacity-90"
+          >
+            <HandHeart className="size-5" aria-hidden="true" />
+            {t("Post a Prayer")}
+          </Link>
+        )}
+
 
         {active && <MinistryPost ministry={active} onClose={() => setActiveId(null)} />}
+        {activePrayer && (
+          <PrayerPost
+            prayer={activePrayer}
+            canRemove={Boolean(
+              activePrayer.ownerId && activePrayer.ownerId === session?.user?.id,
+            )}
+            onClose={() => setActivePrayerId(null)}
+            onRemoved={() => void refetchPrayers()}
+          />
+        )}
       </main>
 
       {/* CTA */}

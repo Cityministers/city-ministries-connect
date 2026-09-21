@@ -629,6 +629,62 @@ export type Database = {
         }
         Relationships: []
       }
+      prayers: {
+        Row: {
+          anonymous: boolean
+          body: string
+          church_id: string | null
+          city: string
+          created_at: string
+          id: string
+          lat: number | null
+          lng: number | null
+          owner_id: string
+          short_title: string
+          status: string
+          updated_at: string
+          zip: string
+        }
+        Insert: {
+          anonymous?: boolean
+          body?: string
+          church_id?: string | null
+          city?: string
+          created_at?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          owner_id: string
+          short_title?: string
+          status?: string
+          updated_at?: string
+          zip?: string
+        }
+        Update: {
+          anonymous?: boolean
+          body?: string
+          church_id?: string | null
+          city?: string
+          created_at?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          owner_id?: string
+          short_title?: string
+          status?: string
+          updated_at?: string
+          zip?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prayers_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
