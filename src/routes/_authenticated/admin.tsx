@@ -21,6 +21,11 @@ import {
   adminDeleteChurch,
   type AdminChurchDTO,
 } from "@/lib/church-admin.functions";
+import {
+  listFeedbackReplies,
+  replyToFeedback,
+  type FeedbackReplyDTO,
+} from "@/lib/feedback-reply.functions";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
