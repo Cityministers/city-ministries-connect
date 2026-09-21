@@ -304,6 +304,9 @@ function ProfilePage() {
             )}
 
             {/* Church scan codes */}
+            <ChurchCodeCards />
+
+            {/* Notifications */}
 
             {/* Notifications */}
             <Link
@@ -350,7 +353,6 @@ function ProfilePage() {
             {tab === "favorites" && <FavoritesTab />}
             {tab === "gifts" && <GiftRepliesTab />}
             {tab === "notifications" && <NotificationsTab />}
-            {tab === "qr" && <ChurchQrTab />}
 
             {tab === "account" && (
               <>
