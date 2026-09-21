@@ -67,6 +67,22 @@ export function ChurchCodeCards() {
     },
   });
 
+  // New prayers on each wall since this person last looked.
+  const fetchCounts = useServerFn(churchPrayerCounts);
+  const churchIds = (data ?? []).map((c) => c.id);
+  const { data: counts } = useQuery({
+    queryKey: ["church-prayer-counts", churchIds.join(",")],
+    queryFn: () => fetchCounts({ data: { churchIds } }),
+    enabled: churchIds.length > 0,
+  });
+  const markSeen = useServerFn(markChurchPrayersSeen);
+  const seen = useMutation({
+    mutationFn: (churchId: string) => markSeen({ data: { churchId } }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["church-prayer-counts"] });
+    },
+  });
+
   useEffect(() => {
     if (typeof window === "undefined" || !data || data.length === 0) return;
     let alive = true;
