@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { HandHeart, Loader2, Trash2, X } from "lucide-react";
+import { HandHelping, Loader2, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { deletePrayer, type PrayerDTO } from "@/lib/prayers.functions";
@@ -53,7 +53,7 @@ export function PrayerPost({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="relative grid h-40 w-full place-items-center bg-tone-purple/15 text-tone-purple sm:h-44">
-          <HandHeart className="size-16 opacity-80" aria-hidden="true" />
+          <HandHelping className="size-16 opacity-80" aria-hidden="true" />
           <button
             type="button"
             onClick={onClose}

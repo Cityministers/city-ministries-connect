@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, HandHeart, Loader2, MapPin, PartyPopper, UserCircle } from "lucide-react";
+import { ArrowLeft, HandHelping, Loader2, MapPin, PartyPopper, UserCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -238,7 +238,7 @@ function PostPrayerPage() {
             {busy ? (
               <Loader2 className="size-5 animate-spin" aria-hidden="true" />
             ) : (
-              <HandHeart className="size-5" aria-hidden="true" />
+              <HandHelping className="size-5" aria-hidden="true" />
             )}
             {t("Post this prayer")}
           </button>
@@ -266,7 +266,7 @@ function PostPrayerPage() {
                 params={{ id: posted.churchId }}
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-lemon px-6 py-3.5 text-lg font-semibold text-ink transition-transform hover:-translate-y-0.5"
               >
-                <HandHeart className="size-5" aria-hidden="true" />
+                <HandHelping className="size-5" aria-hidden="true" />
                 {t("See the prayer wall")}
               </Link>
             ) : (
