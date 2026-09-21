@@ -370,6 +370,50 @@ export type Database = {
         }
         Relationships: []
       }
+      feedback_replies: {
+        Row: {
+          body: string
+          created_at: string
+          delivered: boolean
+          error: string | null
+          feedback_id: string
+          id: string
+          sender_id: string
+          subject: string
+          to_email: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          delivered?: boolean
+          error?: string | null
+          feedback_id: string
+          id?: string
+          sender_id: string
+          subject: string
+          to_email: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          delivered?: boolean
+          error?: string | null
+          feedback_id?: string
+          id?: string
+          sender_id?: string
+          subject?: string
+          to_email?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedback_replies_feedback_id_fkey"
+            columns: ["feedback_id"]
+            isOneToOne: false
+            referencedRelation: "app_feedback"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       geo_cache: {
         Row: {
           city: string
