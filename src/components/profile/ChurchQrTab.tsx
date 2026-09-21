@@ -1,10 +1,16 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { MapPin, QrCode, X } from "lucide-react";
+import { MapPin, MoreVertical, QrCode, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { listChurchesIAttend } from "@/lib/churches.functions";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { leaveChurch, listChurchesIAttend } from "@/lib/churches.functions";
 
 /**
  * Scan codes for the churches this person attends, shown inline on the
