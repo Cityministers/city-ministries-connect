@@ -224,7 +224,7 @@ export const listPendingChurchPrayers = createServerFn({ method: "POST" })
   });
 
 async function ownsChurchPrayer(
-  supabase: { from: ReturnType<typeof publicClient>["from"] },
+  supabase: ReturnType<typeof publicClient>,
   userId: string,
   prayerId: string,
 ) {
