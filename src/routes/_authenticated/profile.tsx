@@ -9,7 +9,6 @@ import {
   Loader2,
   LogOut,
   Pencil,
-  QrCode,
   ShieldCheck,
   TriangleAlert,
 } from "lucide-react";
@@ -305,8 +304,6 @@ function ProfilePage() {
 
             {/* Church scan codes */}
             <ChurchCodeCards />
-
-            {/* Notifications */}
 
             {/* Notifications */}
             <Link
