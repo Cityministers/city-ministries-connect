@@ -49,7 +49,6 @@ export function MinistryPost({
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [favorited, setFavorited] = useState(false);
-  const [viewingProfile, setViewingProfile] = useState(false);
   const [imageLightboxOpen, setImageLightboxOpen] = useState(false);
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
   const [needsAuth, setNeedsAuth] = useState(false);
