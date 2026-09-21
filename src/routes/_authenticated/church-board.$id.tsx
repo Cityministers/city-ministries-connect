@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 
 import {
   addChurchMember,
+  decideChurchMember,
   listChurchBoard,
   listChurchMembers,
   removeChurchMember,
@@ -53,6 +54,11 @@ function ChurchBoardPage() {
   const members = useQuery({
     queryKey: ["church-members", id],
     queryFn: () => fetchMembers({ data: { churchId: id } }),
+  });
+  const decideMember = useServerFn(decideChurchMember);
+  const attendees = useQuery({
+    queryKey: ["church-attendees-pending", id],
+    queryFn: () => fetchMembers({ data: { churchId: id, status: "pending" } }),
   });
 
   const refresh = () =>
