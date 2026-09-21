@@ -179,7 +179,7 @@ export const startConversation = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) =>
     z
       .object({
-        postType: z.enum(["ministry", "need"]),
+        postType: z.enum(["ministry", "need", "prayer"]),
         postId: z.string().uuid(),
         body: z.string().trim().min(1).max(1000),
       })

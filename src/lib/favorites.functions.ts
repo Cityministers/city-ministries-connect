@@ -3,12 +3,12 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const postRef = z.object({
-  postType: z.enum(["ministry", "need"]),
+  postType: z.enum(["ministry", "need", "prayer"]),
   postId: z.string().uuid(),
 });
 
 export type SavedPostDTO = {
-  postType: "ministry" | "need";
+  postType: "ministry" | "need" | "prayer";
   postId: string;
   shortTitle: string;
   title: string;

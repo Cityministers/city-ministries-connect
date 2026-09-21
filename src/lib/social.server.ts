@@ -8,7 +8,8 @@ export async function getPostOwner(
   postId: string,
 ): Promise<{ ownerId: string; shortTitle: string } | null> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const table = postType === "need" ? "user_needs" : "user_ministries";
+  const table =
+    postType === "need" ? "user_needs" : postType === "prayer" ? "prayers" : "user_ministries";
   const { data } = await supabaseAdmin
     .from(table)
     .select("owner_id, short_title")
