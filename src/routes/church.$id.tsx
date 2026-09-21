@@ -891,6 +891,26 @@ function ChurchPage() {
                           <span className="block truncate text-xs text-mist/70">{p.posterName}</span>
                         </span>
                       </button>
+                      {canModerate && (
+                        <div className="mt-1 flex items-center justify-end gap-2">
+                          <button
+                            type="button"
+                            onClick={() => void moderateWallPrayer(p.id, "hide")}
+                            className="inline-flex items-center gap-1.5 rounded-full bg-ink px-3 py-1.5 text-xs font-semibold text-mist/80 ring-1 ring-mist/25 transition hover:text-sand"
+                          >
+                            <EyeOff className="size-3.5" aria-hidden="true" />
+                            {t("Hide")}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => void moderateWallPrayer(p.id, "delete")}
+                            className="inline-flex items-center gap-1.5 rounded-full bg-ink px-3 py-1.5 text-xs font-semibold text-rose ring-1 ring-rose/35 transition hover:bg-rose/10"
+                          >
+                            <Trash2 className="size-3.5" aria-hidden="true" />
+                            {t("Delete")}
+                          </button>
+                        </div>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -945,31 +965,7 @@ function ChurchPage() {
                     <li key={p.linkId}>
                       <PostRow post={p} />
                     </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null}
-              {canModerate && (
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => void moderateWallPrayer(p.id, "hide")}
-                    className="inline-flex items-center gap-1.5 rounded-full bg-ink px-3 py-1.5 text-xs font-semibold text-mist/80 ring-1 ring-mist/25 transition hover:text-sand"
-                  >
-                    <EyeOff className="size-3.5" aria-hidden="true" />
-                    {t("Hide")}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => void moderateWallPrayer(p.id, "delete")}
-                    className="inline-flex items-center gap-1.5 rounded-full bg-ink px-3 py-1.5 text-xs font-semibold text-rose ring-1 ring-rose/35 transition hover:bg-rose/10"
-                  >
-                    <Trash2 className="size-3.5" aria-hidden="true" />
-                    {t("Delete")}
-                  </button>
-                </div>
-              )}
-            </li>
+                  ))}
                 </ul>
               )}
             </section>
