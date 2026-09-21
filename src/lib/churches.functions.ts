@@ -696,6 +696,7 @@ export type ChurchMemberDTO = {
   name: string;
   photoUrl: string | null;
   createdAt: string;
+  role: "member" | "moderator";
 };
 
 async function assertChurchOwner(
@@ -801,7 +802,7 @@ export const listChurchMembers = createServerFn({ method: "POST" })
     await assertChurchOwner(context, data.churchId);
     const { data: rows } = await context.supabase
       .from("church_members")
-      .select("id, user_id, created_at")
+      .select("id, user_id, role, created_at")
       .eq("church_id", data.churchId)
       .eq("status", data.status ?? "approved")
       .order("created_at", { ascending: false });
@@ -827,6 +828,7 @@ export const listChurchMembers = createServerFn({ method: "POST" })
         name: p?.display_name || "A neighbor",
         photoUrl: raw ? (raw.startsWith("http") ? raw : (urlByPath.get(raw) ?? null)) : null,
         createdAt: r.created_at,
+        role: r.role === "moderator" ? "moderator" : "member",
       };
     });
   });
