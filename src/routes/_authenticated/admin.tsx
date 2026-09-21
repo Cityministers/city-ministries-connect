@@ -86,6 +86,18 @@ function AdminPage() {
   const reports = useQuery({ queryKey: ["admin", "reports"], queryFn: () => fetchReports() });
   const feedback = useQuery({ queryKey: ["admin", "feedback"], queryFn: () => fetchFeedback() });
 
+  const fetchReplies = useServerFn(listFeedbackReplies);
+  const sendReply = useServerFn(replyToFeedback);
+  const replies = useQuery({
+    queryKey: ["admin", "feedback-replies"],
+    queryFn: () => fetchReplies(),
+  });
+  const replyMutation = useMutation({
+    mutationFn: (input: { feedbackId: string; subject: string; message: string }) =>
+      sendReply({ data: input }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "feedback-replies"] }),
+  });
+
   const needMutation = useMutation({
     mutationFn: (input: { id: string; status: "active" | "hidden" | "removed" }) =>
       setNeedStatus({ data: input }),
