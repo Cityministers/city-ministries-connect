@@ -12,6 +12,7 @@ import {
   listChurchMembers,
   removeChurchMember,
   setChurchPostStatus,
+  setMemberRole,
 } from "@/lib/churches.functions";
 import {
   approveChurchPrayer,
@@ -89,6 +90,12 @@ function ChurchBoardPage() {
     mutationFn: (memberId: string) => untrust({ data: { churchId: id, memberId } }),
     onSuccess: refresh,
   });
+  const setRole = useServerFn(setMemberRole);
+  const roleMutation = useMutation({
+    mutationFn: (input: { memberId: string; role: "member" | "moderator" }) =>
+      setRole({ data: { churchId: id, ...input } }),
+    onSuccess: refresh,
+  });
 
   const attendMutation = useMutation({
     mutationFn: (input: { memberId: string; decision: "approved" | "declined" }) =>
@@ -121,7 +128,8 @@ function ChurchBoardPage() {
     decideMutation.isPending ||
     trustMutation.isPending ||
     untrustMutation.isPending ||
-    attendMutation.isPending;
+    attendMutation.isPending ||
+    roleMutation.isPending;
   const blocked = board.isError
     ? t("This page is only for the church that owns this listing.")
     : null;
