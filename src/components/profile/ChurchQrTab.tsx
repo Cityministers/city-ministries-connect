@@ -176,6 +176,21 @@ export function ChurchCodeCards() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
+            <Link
+              to="/church/$id"
+              params={{ id: c.id }}
+              hash="prayer-wall"
+              onClick={() => seen.mutate(c.id)}
+              className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-4 py-2.5 text-base font-semibold text-prayer ring-1 ring-prayer/40 transition hover:bg-ink-soft"
+            >
+              <HandHelping className="size-5" aria-hidden="true" />
+              {t("Prayer Requests")}
+              {(counts?.[c.id] ?? 0) > 0 && (
+                <span className="rounded-full bg-prayer px-2 py-0.5 text-xs font-bold text-ink">
+                  {counts?.[c.id]}
+                </span>
+              )}
+            </Link>
             <button
               type="button"
               onClick={() => setOpenId(c.id)}
