@@ -14,6 +14,7 @@ export const LANGUAGES = [
   { code: "tl", name: "Tagalog" },
   { code: "ht", name: "Kreyòl Ayisyen" },
   { code: "am", name: "አማርኛ" },
+  { code: "ha", name: "Hausa" },
 ] as const;
 
 export type LanguageCode = (typeof LANGUAGES)[number]["code"];
