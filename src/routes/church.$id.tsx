@@ -783,7 +783,7 @@ function ChurchPage() {
               </section>
             )}
 
-            <section className="flex flex-col gap-3">
+            <section id="prayer-wall" className="flex flex-col gap-3 scroll-mt-20">
               <h2 className="font-display text-xl font-semibold">{t("Prayer wall")}</h2>
               {(prayers ?? []).length === 0 ? (
                 <p className="rounded-2xl bg-ink-soft p-4 text-base text-mist/70">
