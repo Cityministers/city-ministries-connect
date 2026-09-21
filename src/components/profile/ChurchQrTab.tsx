@@ -136,7 +136,7 @@ export function ChurchCodeCards() {
             <img
               src={codes[open.id]}
               alt={t("Scan code for {{name}}", { name: open.name })}
-              className="w-full max-w-sm rounded-2xl bg-white p-3"
+              className="w-full max-w-52 rounded-2xl bg-white p-2.5"
             />
           ) : (
             <p className="text-base text-mist/60">{t("Loading…")}</p>
