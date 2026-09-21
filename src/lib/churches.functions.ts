@@ -903,6 +903,41 @@ export const removeChurchMember = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+/** The church creator promotes a member to prayer moderator (or returns them to a member). */
+export const setMemberRole = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) =>
+    z
+      .object({
+        churchId: z.string().uuid(),
+        memberId: z.string().uuid(),
+        role: z.enum(["member", "moderator"]),
+      })
+      .parse(data),
+  )
+  .handler(async ({ data, context }) => {
+    const church = await assertChurchOwner(context, data.churchId);
+    const { data: member } = await context.supabase
+      .from("church_members")
+      .update({ role: data.role })
+      .eq("id", data.memberId)
+      .eq("church_id", data.churchId)
+      .select("user_id")
+      .maybeSingle();
+    if (!member) throw new Error("That member is not on this church anymore.");
+    if (data.role === "moderator") {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      await supabaseAdmin.from("notifications").insert({
+        user_id: member.user_id,
+        kind: "church_post",
+        title: `${church.name} made you a prayer moderator`,
+        body: "You can approve, hide and remove prayers on the church wall.",
+        link: `/church/${data.churchId}`,
+      });
+    }
+    return { ok: true };
+  });
+
 /** The churches this member owns. */
 export const listMyChurches = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
