@@ -237,6 +237,49 @@ function ChurchBoardPage() {
                 </div>
 
                 <div className="space-y-3">
+                  <h2 className="font-display text-lg font-semibold">{t("Prayer requests")}</h2>
+                  {(pendingPrayers.data?.length ?? 0) === 0 ? (
+                    <p className="text-mist/70">{t("No prayer requests are waiting right now.")}</p>
+                  ) : (
+                    pendingPrayers.data!.map((p) => (
+                      <article
+                        key={p.id}
+                        className="rounded-2xl bg-ink-soft/40 p-4 ring-1 ring-prayer/25 sm:p-5"
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-prayer/15 text-prayer ring-1 ring-prayer/40">
+                            <HandHelping className="size-5" aria-hidden="true" />
+                          </span>
+                          <div className="min-w-0">
+                            <h3 className="font-display text-lg font-semibold">{p.shortTitle}</h3>
+                            <p className="text-sm text-mist/70">{p.posterName}</p>
+                          </div>
+                        </div>
+                        <p className="mt-3 text-sm leading-relaxed text-mist/80">{p.body}</p>
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            disabled={prayerMutation.isPending}
+                            onClick={() => prayerMutation.mutate({ id: p.id, decision: "approve" })}
+                            className="inline-flex items-center gap-1.5 rounded-full bg-tone-emerald/15 px-4 py-2 text-sm font-semibold text-tone-emerald ring-1 ring-tone-emerald/45 transition hover:bg-tone-emerald/25 disabled:opacity-40"
+                          >
+                            <Check className="size-4" aria-hidden="true" /> {t("Approve")}
+                          </button>
+                          <button
+                            type="button"
+                            disabled={prayerMutation.isPending}
+                            onClick={() => prayerMutation.mutate({ id: p.id, decision: "decline" })}
+                            className="inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-2 text-sm font-semibold text-rose ring-1 ring-rose/35 transition hover:bg-rose/10 disabled:opacity-40"
+                          >
+                            <X className="size-4" aria-hidden="true" /> {t("Decline")}
+                          </button>
+                        </div>
+                      </article>
+                    ))
+                  )}
+                </div>
+
+                <div className="space-y-3">
                   <h2 className="font-display text-lg font-semibold">{t("Already on your board")}</h2>
                   {approved.length === 0 ? (
                     <p className="text-mist/70">{t("Nothing is listed at your church yet.")}</p>
