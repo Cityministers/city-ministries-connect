@@ -552,3 +552,108 @@ function ChurchCard({
     </article>
   );
 }
+
+/** Send a real email reply to someone who left feedback, and show past replies. */
+function FeedbackReply({
+  email,
+  replies,
+  pending,
+  onSend,
+}: {
+  email: string;
+  replies: FeedbackReplyDTO[];
+  pending: boolean;
+  onSend: (subject: string, message: string) => Promise<{ sent: boolean; reason?: string }>;
+}) {
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+  const [subject, setSubject] = useState("Thank you for your feedback");
+  const [message, setMessage] = useState("");
+  const [result, setResult] = useState<string | null>(null);
+
+  if (!email) {
+    return (
+      <p className="mt-3 text-sm text-mist/60">
+        {t("No email address was given, so this one can't be answered.")}
+      </p>
+    );
+  }
+
+  return (
+    <div className="mt-4 border-t border-mist/15 pt-3">
+      {replies.length > 0 ? (
+        <ul className="mb-3 space-y-2">
+          {replies.map((r) => (
+            <li key={r.id} className="rounded-xl bg-ink/50 p-3 text-sm text-mist/75">
+              <p className="text-xs text-mist/55">
+                {new Date(r.createdAt).toLocaleString()} ·{" "}
+                {r.delivered ? t("Sent") : t("Not sent")}
+                {r.error ? ` · ${r.error}` : ""}
+              </p>
+              <p className="mt-1 font-semibold text-sand">{r.subject}</p>
+              <p className="mt-1 whitespace-pre-wrap">{r.body}</p>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+
+      {open ? (
+        <div className="space-y-2">
+          <input
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+            placeholder={t("Subject")}
+            className="w-full rounded-xl bg-ink px-3 py-2 text-sm text-sand ring-1 ring-mist/20"
+          />
+          <textarea
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            rows={5}
+            placeholder={t("Write your reply to {{email}}", { email })}
+            className="w-full rounded-xl bg-ink px-3 py-2 text-sm text-sand ring-1 ring-mist/20"
+          />
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              disabled={pending || !message.trim() || !subject.trim()}
+              onClick={async () => {
+                setResult(null);
+                try {
+                  const res = await onSend(subject.trim(), message.trim());
+                  if (res.sent) {
+                    setMessage("");
+                    setOpen(false);
+                    setResult(t("Reply sent to {{email}}.", { email }));
+                  } else {
+                    setResult(t("It couldn't be sent: {{reason}}", { reason: res.reason ?? "" }));
+                  }
+                } catch (e) {
+                  setResult(e instanceof Error ? e.message : t("It couldn't be sent."));
+                }
+              }}
+              className="rounded-full bg-ember px-4 py-2 text-sm font-semibold text-ink transition hover:opacity-90 disabled:opacity-50"
+            >
+              {pending ? t("Sending…") : t("Send reply")}
+            </button>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="rounded-full px-3 py-2 text-sm text-mist/70 hover:text-sand"
+            >
+              {t("Cancel")}
+            </button>
+          </div>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+        >
+          {replies.length > 0 ? t("Reply again") : t("Reply by email")}
+        </button>
+      )}
+      {result ? <p className="mt-2 text-sm text-mist/70">{result}</p> : null}
+    </div>
+  );
+}
