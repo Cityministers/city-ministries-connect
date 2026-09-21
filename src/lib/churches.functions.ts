@@ -538,6 +538,7 @@ export const requestChurchPost = createServerFn({ method: "POST" })
       .select("id")
       .eq("church_id", data.churchId)
       .eq("user_id", context.userId)
+      .eq("status", "approved")
       .maybeSingle();
     const status = trusted ? "approved" : "pending";
 
