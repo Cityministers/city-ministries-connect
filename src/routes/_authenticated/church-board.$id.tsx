@@ -67,6 +67,7 @@ function ChurchBoardPage() {
       qc.invalidateQueries({ queryKey: ["church-members", id] }),
       qc.invalidateQueries({ queryKey: ["church", id] }),
       qc.invalidateQueries({ queryKey: ["church-requests", id] }),
+      qc.invalidateQueries({ queryKey: ["church-attendees-pending", id] }),
     ]);
 
   const decideMutation = useMutation({
@@ -84,8 +85,17 @@ function ChurchBoardPage() {
     onSuccess: refresh,
   });
 
+  const attendMutation = useMutation({
+    mutationFn: (input: { memberId: string; decision: "approved" | "declined" }) =>
+      decideMember({ data: { churchId: id, ...input } }),
+    onSuccess: refresh,
+  });
+
   const busy =
-    decideMutation.isPending || trustMutation.isPending || untrustMutation.isPending;
+    decideMutation.isPending ||
+    trustMutation.isPending ||
+    untrustMutation.isPending ||
+    attendMutation.isPending;
   const blocked = board.isError
     ? t("This page is only for the church that owns this listing.")
     : null;
