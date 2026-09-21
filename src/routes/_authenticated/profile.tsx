@@ -41,13 +41,12 @@ const TABS = [
   { key: "account", label: "Account" },
 ] as const;
 
-type TabKey = (typeof TABS)[number]["key"] | "notifications" | "qr";
+type TabKey = (typeof TABS)[number]["key"] | "notifications";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   validateSearch: (search: Record<string, unknown>): { tab: TabKey } => {
     const raw = String(search["tab"] ?? "notifications");
     if (raw === "notifications") return { tab: "notifications" };
-    if (raw === "qr") return { tab: "qr" };
     const match = TABS.find((t) => t.key === raw);
     return { tab: match ? match.key : "notifications" };
   },
@@ -305,18 +304,6 @@ function ProfilePage() {
             )}
 
             {/* Church scan codes */}
-            <Link
-              to="/profile"
-              search={{ tab: "qr" }}
-              className={`flex items-center justify-center gap-3 rounded-2xl px-5 py-4 text-xl font-bold transition ${
-                tab === "qr"
-                  ? "bg-lemon text-ink"
-                  : "bg-ink-soft text-sand ring-1 ring-mist/20 hover:bg-ink-soft/70"
-              }`}
-            >
-              <QrCode className="size-6" aria-hidden="true" />
-              {t("My church code")}
-            </Link>
 
             {/* Notifications */}
             <Link
