@@ -117,6 +117,13 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
     neighborhood: "Beaverton, OR",
     media: postCoffee,
     mediaAlt: "Two cups of coffee on a cafe table",
+    gallery: [
+      { url: postCoffee, kind: "image" },
+      { url: postCoffee2, kind: "image" },
+      { url: postCoffee4, kind: "image" },
+      { url: postCoffee3, kind: "image" },
+      { url: postCoffeeClip, kind: "video" },
+    ],
     poster: {
       name: "Maria S.",
       photo: posterMaria,
@@ -137,6 +144,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
     neighborhood: "Downtown Portland",
     poster: {
       name: "Pastor Sam D.",
+      photo: posterSam,
       bio: "As each has received a gift, use it to serve one another, as good stewards of God's varied grace.",
     },
     likes: 62,
