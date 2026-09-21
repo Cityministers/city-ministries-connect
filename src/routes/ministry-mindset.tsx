@@ -50,7 +50,7 @@ const givingPassages = [
   },
   {
     ref: "Matthew 23:11",
-    text: "The greatest among you will be your servant.",
+    text: "You are simply his hands as He dwells within you through the Spirit.",
   },
 ];
 
