@@ -61,6 +61,28 @@ export const listMyFavorites = createServerFn({ method: "GET" })
       }
     }
 
+    const prayerIds = favs.filter((f) => f.post_type === "prayer").map((f) => f.post_id);
+    if (prayerIds.length > 0) {
+      const { data: prayerRows } = await supabaseAdmin
+        .from("prayers")
+        .select("id, short_title, body, city, zip")
+        .in("id", prayerIds);
+      for (const row of prayerRows ?? []) {
+        out.push({
+          postType: "prayer",
+          postId: row.id,
+          shortTitle: row.short_title,
+          title: row.short_title,
+          description: row.body,
+          city: row.city ?? "",
+          zip: row.zip ?? "",
+          photoUrl: null,
+          savedAt:
+            favs.find((f) => f.post_id === row.id)?.created_at ?? new Date().toISOString(),
+        });
+      }
+    }
+
     if (paths.length > 0) {
       const { data: signed } = await supabaseAdmin.storage
         .from("ministry-avatars")
