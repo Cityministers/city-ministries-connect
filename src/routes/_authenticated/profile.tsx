@@ -304,6 +304,20 @@ function ProfilePage() {
               </p>
             )}
 
+            {/* Church scan codes */}
+            <Link
+              to="/profile"
+              search={{ tab: "qr" }}
+              className={`flex items-center justify-center gap-3 rounded-2xl px-5 py-4 text-xl font-bold transition ${
+                tab === "qr"
+                  ? "bg-lemon text-ink"
+                  : "bg-ink-soft text-sand ring-1 ring-mist/20 hover:bg-ink-soft/70"
+              }`}
+            >
+              <QrCode className="size-6" aria-hidden="true" />
+              {t("My church code")}
+            </Link>
+
             {/* Notifications */}
             <Link
               to="/profile"
@@ -349,6 +363,7 @@ function ProfilePage() {
             {tab === "favorites" && <FavoritesTab />}
             {tab === "gifts" && <GiftRepliesTab />}
             {tab === "notifications" && <NotificationsTab />}
+            {tab === "qr" && <ChurchQrTab />}
 
             {tab === "account" && (
               <>
