@@ -110,6 +110,7 @@ export type Database = {
           church_id: string
           created_at: string
           id: string
+          role: string
           status: string
           user_id: string
         }
@@ -118,6 +119,7 @@ export type Database = {
           church_id: string
           created_at?: string
           id?: string
+          role?: string
           status?: string
           user_id: string
         }
@@ -126,6 +128,7 @@ export type Database = {
           church_id?: string
           created_at?: string
           id?: string
+          role?: string
           status?: string
           user_id?: string
         }
@@ -956,7 +959,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_church_moderator: {
+        Args: { _church_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"

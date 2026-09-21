@@ -696,6 +696,7 @@ export type ChurchMemberDTO = {
   name: string;
   photoUrl: string | null;
   createdAt: string;
+  role: "member" | "moderator";
 };
 
 async function assertChurchOwner(
@@ -801,7 +802,7 @@ export const listChurchMembers = createServerFn({ method: "POST" })
     await assertChurchOwner(context, data.churchId);
     const { data: rows } = await context.supabase
       .from("church_members")
-      .select("id, user_id, created_at")
+      .select("id, user_id, role, created_at")
       .eq("church_id", data.churchId)
       .eq("status", data.status ?? "approved")
       .order("created_at", { ascending: false });
@@ -827,6 +828,7 @@ export const listChurchMembers = createServerFn({ method: "POST" })
         name: p?.display_name || "A neighbor",
         photoUrl: raw ? (raw.startsWith("http") ? raw : (urlByPath.get(raw) ?? null)) : null,
         createdAt: r.created_at,
+        role: r.role === "moderator" ? "moderator" : "member",
       };
     });
   });
@@ -898,6 +900,41 @@ export const removeChurchMember = createServerFn({ method: "POST" })
       .eq("id", data.memberId)
       .eq("church_id", data.churchId);
     if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/** The church creator promotes a member to prayer moderator (or returns them to a member). */
+export const setMemberRole = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) =>
+    z
+      .object({
+        churchId: z.string().uuid(),
+        memberId: z.string().uuid(),
+        role: z.enum(["member", "moderator"]),
+      })
+      .parse(data),
+  )
+  .handler(async ({ data, context }) => {
+    const church = await assertChurchOwner(context, data.churchId);
+    const { data: member } = await context.supabase
+      .from("church_members")
+      .update({ role: data.role })
+      .eq("id", data.memberId)
+      .eq("church_id", data.churchId)
+      .select("user_id")
+      .maybeSingle();
+    if (!member) throw new Error("That member is not on this church anymore.");
+    if (data.role === "moderator") {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      await supabaseAdmin.from("notifications").insert({
+        user_id: member.user_id,
+        kind: "church_post",
+        title: `${church.name} made you a prayer moderator`,
+        body: "You can approve, hide and remove prayers on the church wall.",
+        link: `/church/${data.churchId}`,
+      });
+    }
     return { ok: true };
   });
 

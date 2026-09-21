@@ -109,14 +109,13 @@ async function decorate(
 const COLUMNS =
   "id, owner_id, church_id, short_title, body, city, zip, lat, lng, anonymous, image_url, created_at";
 
-/** Prayers posted to the whole map — church prayers never appear here. */
+/** Prayers shown on the map — public prayers plus prayers a church approved. */
 export const listPublicPrayers = createServerFn({ method: "GET" }).handler(
   async (): Promise<PrayerDTO[]> => {
     const supabase = publicClient();
     const { data, error } = await supabase
       .from("prayers")
       .select(COLUMNS)
-      .is("church_id", null)
       .eq("status", "active")
       .order("created_at", { ascending: false })
       .limit(200);
@@ -200,18 +199,31 @@ export const createPrayer = createServerFn({ method: "POST" })
     return { id: row.id, pending: Boolean(data.churchId) };
   });
 
-/** Prayers waiting for the pastor's review at a church the caller owns. */
+/** Prayers waiting for review at a church the caller owns or moderates. */
 export const listPendingChurchPrayers = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => z.object({ churchId: z.string().uuid() }).parse(data))
   .handler(async ({ data, context }): Promise<PrayerDTO[]> => {
     const { data: church } = await context.supabase
       .from("churches")
-      .select("id")
+      .select("id, owner_id")
       .eq("id", data.churchId)
-      .eq("owner_id", context.userId)
       .maybeSingle();
     if (!church) return [];
+
+    let mayReview = church.owner_id === context.userId;
+    if (!mayReview) {
+      const { data: mod } = await context.supabase
+        .from("church_members")
+        .select("id")
+        .eq("church_id", data.churchId)
+        .eq("user_id", context.userId)
+        .eq("role", "moderator")
+        .eq("status", "approved")
+        .maybeSingle();
+      mayReview = Boolean(mod);
+    }
+    if (!mayReview) return [];
 
     const { data: rows } = await context.supabase
       .from("prayers")
@@ -223,6 +235,7 @@ export const listPendingChurchPrayers = createServerFn({ method: "POST" })
     return decorate(publicClient(), (rows ?? []) as Row[]);
   });
 
+/** Prayer + church when the caller may moderate it: the church's owner or an approved moderator. */
 async function ownsChurchPrayer(
   supabase: ReturnType<typeof publicClient>,
   userId: string,
@@ -230,17 +243,27 @@ async function ownsChurchPrayer(
 ) {
   const { data: prayer } = await supabase
     .from("prayers")
-    .select("id, owner_id, church_id, short_title")
+    .select("id, owner_id, church_id, short_title, lat, lng")
     .eq("id", prayerId)
     .maybeSingle();
   if (!prayer?.church_id) return null;
   const { data: church } = await supabase
     .from("churches")
-    .select("id, name")
+    .select("id, name, owner_id, lat, lng")
     .eq("id", prayer.church_id)
-    .eq("owner_id", userId)
     .maybeSingle();
   if (!church) return null;
+  if (church.owner_id !== userId) {
+    const { data: mod } = await supabase
+      .from("church_members")
+      .select("id")
+      .eq("church_id", prayer.church_id)
+      .eq("user_id", userId)
+      .eq("role", "moderator")
+      .eq("status", "approved")
+      .maybeSingle();
+    if (!mod) return null;
+  }
   return { prayer, church };
 }
 
@@ -252,9 +275,15 @@ export const approveChurchPrayer = createServerFn({ method: "POST" })
     const found = await ownsChurchPrayer(context.supabase, context.userId, data.id);
     if (!found) throw new Error("You can only review prayers at your own church.");
 
+    // Approved prayers join the map: they take the church's own coordinates
+    // unless the poster already placed them somewhere.
     const { error } = await context.supabase
       .from("prayers")
-      .update({ status: "active" })
+      .update({
+        status: "active",
+        lat: found.prayer.lat ?? found.church.lat,
+        lng: found.prayer.lng ?? found.church.lng,
+      })
       .eq("id", data.id);
     if (error) throw new Error(error.message);
 
@@ -334,22 +363,42 @@ export const deletePrayer = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => z.object({ id: z.string().uuid() }).parse(data))
   .handler(async ({ data, context }) => {
-    // RLS allows the poster and the owner of the church it sits under.
+    // RLS allows the poster, the church owner and the church's moderators.
     const { error } = await context.supabase.from("prayers").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
 
-/** Whether the signed-in visitor may remove a prayer (poster or church owner). */
+/** Hides a prayer (poster, church owner or moderator): off the wall and map, record kept. */
+export const hidePrayer = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({ id: z.string().uuid() }).parse(data))
+  .handler(async ({ data, context }) => {
+    // RLS allows the poster, the church owner and the church's moderators.
+    const { error } = await context.supabase
+      .from("prayers")
+      .update({ status: "hidden" })
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/** Whether the signed-in visitor may moderate a prayer (poster, church owner or moderator). */
 export const myPrayerPowers = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data: churches } = await context.supabase
-      .from("churches")
-      .select("id")
-      .eq("owner_id", context.userId);
+    const [churches, modRows] = await Promise.all([
+      context.supabase.from("churches").select("id").eq("owner_id", context.userId),
+      context.supabase
+        .from("church_members")
+        .select("church_id")
+        .eq("user_id", context.userId)
+        .eq("role", "moderator")
+        .eq("status", "approved"),
+    ]);
     return {
       userId: context.userId,
-      churchIds: (churches ?? []).map((c) => c.id),
+      churchIds: (churches.data ?? []).map((c) => c.id),
+      moderatorChurchIds: [...new Set((modRows.data ?? []).map((m) => m.church_id))],
     };
   });

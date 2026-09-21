@@ -12,6 +12,7 @@ import {
   listChurchMembers,
   removeChurchMember,
   setChurchPostStatus,
+  setMemberRole,
 } from "@/lib/churches.functions";
 import {
   approveChurchPrayer,
@@ -89,6 +90,12 @@ function ChurchBoardPage() {
     mutationFn: (memberId: string) => untrust({ data: { churchId: id, memberId } }),
     onSuccess: refresh,
   });
+  const setRole = useServerFn(setMemberRole);
+  const roleMutation = useMutation({
+    mutationFn: (input: { memberId: string; role: "member" | "moderator" }) =>
+      setRole({ data: { churchId: id, ...input } }),
+    onSuccess: refresh,
+  });
 
   const attendMutation = useMutation({
     mutationFn: (input: { memberId: string; decision: "approved" | "declined" }) =>
@@ -121,7 +128,8 @@ function ChurchBoardPage() {
     decideMutation.isPending ||
     trustMutation.isPending ||
     untrustMutation.isPending ||
-    attendMutation.isPending;
+    attendMutation.isPending ||
+    roleMutation.isPending;
   const blocked = board.isError
     ? t("This page is only for the church that owns this listing.")
     : null;
@@ -367,6 +375,9 @@ function ChurchBoardPage() {
                 <p className="text-sm text-mist/70">
                   {t("Posts from these people go straight onto your board. Everyone else waits for your approval.")}
                 </p>
+                <p className="text-sm text-mist/70">
+                  {t("Moderators you pick here can approve, hide and remove prayers on your wall.")}
+                </p>
                 {members.isLoading ? (
                   <p className="text-mist/70">{t("Loading…")}</p>
                 ) : (members.data?.length ?? 0) === 0 ? (
@@ -392,20 +403,43 @@ function ChurchBoardPage() {
                           </span>
                         )}
                         <div className="min-w-0">
-                          <p className="font-heading text-base text-sand">{m.name}</p>
+                          <p className="font-heading text-base text-sand">
+                            {m.name}
+                            {m.role === "moderator" && (
+                              <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-lemon/15 px-2 py-0.5 align-middle text-xs font-semibold text-lemon ring-1 ring-lemon/40">
+                                <ShieldCheck className="size-3" aria-hidden="true" />
+                                {t("Moderator")}
+                              </span>
+                            )}
+                          </p>
                           <p className="text-sm text-mist/60">
                             {t("Trusted {{date}}", { date: new Date(m.createdAt).toLocaleDateString() })}
                           </p>
                         </div>
                       </div>
-                      <button
-                        type="button"
-                        disabled={busy}
-                        onClick={() => untrustMutation.mutate(m.id)}
-                        className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-rose ring-1 ring-rose/35 transition hover:bg-rose/10 disabled:opacity-40"
-                      >
-                        {t("Remove")}
-                      </button>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <button
+                          type="button"
+                          disabled={busy}
+                          onClick={() =>
+                            roleMutation.mutate({
+                              memberId: m.id,
+                              role: m.role === "moderator" ? "member" : "moderator",
+                            })
+                          }
+                          className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-lemon ring-1 ring-lemon/35 transition hover:bg-lemon/10 disabled:opacity-40"
+                        >
+                          {m.role === "moderator" ? t("Remove moderator") : t("Make moderator")}
+                        </button>
+                        <button
+                          type="button"
+                          disabled={busy}
+                          onClick={() => untrustMutation.mutate(m.id)}
+                          className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-rose ring-1 ring-rose/35 transition hover:bg-rose/10 disabled:opacity-40"
+                        >
+                          {t("Remove")}
+                        </button>
+                      </div>
                     </article>
                   ))
                 )}
