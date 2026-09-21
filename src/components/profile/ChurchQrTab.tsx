@@ -1,0 +1,127 @@
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { MapPin, QrCode, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { listChurchesIAttend } from "@/lib/churches.functions";
+
+/** Scan codes for the churches this person attends, ready to show someone else. */
+export function ChurchQrTab() {
+  const { t } = useTranslation();
+  const fetchChurches = useServerFn(listChurchesIAttend);
+  const { data, isLoading } = useQuery({
+    queryKey: ["churches-i-attend"],
+    queryFn: () => fetchChurches(),
+  });
+
+  const [openId, setOpenId] = useState<string | null>(null);
+  const [codes, setCodes] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !data || data.length === 0) return;
+    let alive = true;
+    void import("qrcode").then(async (mod) => {
+      const next: Record<string, string> = {};
+      for (const c of data) {
+        next[c.id] = await mod.default.toDataURL(`${window.location.origin}/church/${c.id}`, {
+          width: 1024,
+          margin: 2,
+          errorCorrectionLevel: "M",
+          color: { dark: "#171320", light: "#ffffff" },
+        });
+      }
+      if (alive) setCodes(next);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [data]);
+
+  if (isLoading) return <p className="py-8 text-center text-base text-mist/60">{t("Loading…")}</p>;
+
+  if (!data || data.length === 0) {
+    return (
+      <p className="rounded-2xl bg-ink-soft/60 p-5 text-base text-mist/70 ring-1 ring-mist/15">
+        {t("You're not part of a church here yet. Open your church's page and tap “I attend this church”.")}
+      </p>
+    );
+  }
+
+  const open = data.find((c) => c.id === openId) ?? null;
+
+  return (
+    <>
+      <div className="flex flex-col gap-3">
+        {data.map((c) => (
+          <article
+            key={c.id}
+            className="flex items-center gap-3 rounded-2xl bg-ink-soft/60 p-4 ring-1 ring-mist/15"
+          >
+            {c.photoUrl ? (
+              <img
+                src={c.photoUrl}
+                alt={c.name}
+                className="size-14 shrink-0 rounded-xl object-cover ring-1 ring-mist/20"
+              />
+            ) : (
+              <span className="grid size-14 shrink-0 place-items-center rounded-xl bg-ink text-lemon ring-1 ring-mist/20">
+                <QrCode className="size-6" aria-hidden="true" />
+              </span>
+            )}
+            <div className="min-w-0 flex-1">
+              <p className="truncate font-display text-lg font-semibold text-sand">{c.name}</p>
+              <p className="truncate text-sm text-mist/60">
+                {c.address ? `${c.address}, ` : ""}
+                {c.city} {c.zip}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setOpenId(c.id)}
+              className="inline-flex shrink-0 items-center gap-2 rounded-full bg-lemon px-4 py-2.5 text-base font-semibold text-ink transition hover:opacity-90"
+            >
+              <QrCode className="size-5" aria-hidden="true" />
+              {t("Show code")}
+            </button>
+          </article>
+        ))}
+      </div>
+
+      {open && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-ink/95 p-6">
+          <button
+            type="button"
+            onClick={() => setOpenId(null)}
+            aria-label={t("Close")}
+            className="absolute right-4 top-4 grid size-11 place-items-center rounded-full bg-ink-soft text-sand ring-1 ring-mist/25"
+          >
+            <X className="size-5" aria-hidden="true" />
+          </button>
+          <p className="text-center font-display text-2xl font-semibold text-sand">{open.name}</p>
+          {codes[open.id] ? (
+            <img
+              src={codes[open.id]}
+              alt={t("Scan code for {{name}}", { name: open.name })}
+              className="w-full max-w-sm rounded-2xl bg-white p-3"
+            />
+          ) : (
+            <p className="text-base text-mist/60">{t("Loading…")}</p>
+          )}
+          <p className="text-center text-base text-mist/70">
+            {open.address ? `${open.address}, ` : ""}
+            {open.city} {open.zip}
+          </p>
+          <Link
+            to="/map"
+            search={{ place: `${open.city} ${open.zip}`.trim(), new: open.id }}
+            className="inline-flex items-center gap-2 rounded-full bg-ink-soft px-5 py-3 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft/70"
+          >
+            <MapPin className="size-5 text-lemon" aria-hidden="true" />
+            {t("See it on the map")}
+          </Link>
+        </div>
+      )}
+    </>
+  );
+}
