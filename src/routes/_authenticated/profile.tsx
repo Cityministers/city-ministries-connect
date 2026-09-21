@@ -311,7 +311,7 @@ function ProfilePage() {
               search={{ tab: "notifications" }}
               className={`flex items-center justify-center gap-3 rounded-2xl px-5 py-4 text-xl font-bold transition ${
                 tab === "notifications"
-                  ? "bg-lemon text-ink"
+                  ? "bg-wine text-[#f2e6df] ring-1 ring-wine-deep"
                   : "bg-ink-soft text-sand ring-1 ring-mist/20 hover:bg-ink-soft/70"
               }`}
             >

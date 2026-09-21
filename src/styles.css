@@ -19,6 +19,8 @@
   --color-emerald-light: oklch(0.65 0.15 165);
   --color-emerald-dark: oklch(0.35 0.08 165);
   --color-youversion: oklch(0.5 0.172 25.5); /* Bible app icon red #B0282A */
+  --color-wine: oklch(0.4 0.085 15); /* Cathedral Wine #5B2333 */
+  --color-wine-deep: oklch(0.34 0.075 15); /* #4A1C2A */
   --color-sand: oklch(0.88 0.04 90);
   --color-mist: oklch(0.72 0.04 240);
 
