@@ -6,8 +6,12 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { listChurchesIAttend } from "@/lib/churches.functions";
 
-/** Scan codes for the churches this person attends, ready to show someone else. */
-export function ChurchQrTab() {
+/**
+ * Scan codes for the churches this person attends, shown inline on the
+ * profile. Tapping "Show code" opens the full-screen scannable popup.
+ * Renders nothing while loading or when the person attends no church.
+ */
+export function ChurchCodeCards() {
   const { t } = useTranslation();
   const fetchChurches = useServerFn(listChurchesIAttend);
   const { data, isLoading } = useQuery({
@@ -38,15 +42,7 @@ export function ChurchQrTab() {
     };
   }, [data]);
 
-  if (isLoading) return <p className="py-8 text-center text-base text-mist/60">{t("Loading…")}</p>;
-
-  if (!data || data.length === 0) {
-    return (
-      <p className="rounded-2xl bg-ink-soft/60 p-5 text-base text-mist/70 ring-1 ring-mist/15">
-        {t("You're not part of a church here yet. Open your church's page and tap “I attend this church”.")}
-      </p>
-    );
-  }
+  if (isLoading || !data || data.length === 0) return null;
 
   const open = data.find((c) => c.id === openId) ?? null;
 

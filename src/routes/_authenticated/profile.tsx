@@ -16,7 +16,7 @@ import {
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
-import { ChurchQrTab } from "@/components/profile/ChurchQrTab";
+import { ChurchCodeCards } from "@/components/profile/ChurchQrTab";
 import { FavoritesTab } from "@/components/profile/FavoritesTab";
 import { MailboxTab } from "@/components/profile/MailboxTab";
 import { GiftRepliesTab } from "@/components/profile/GiftRepliesTab";
