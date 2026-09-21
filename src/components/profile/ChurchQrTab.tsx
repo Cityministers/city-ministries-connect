@@ -67,33 +67,55 @@ export function ChurchCodeCards() {
         {data.map((c) => (
           <article
             key={c.id}
-            className="flex items-center gap-3 rounded-2xl bg-ink-soft/60 p-4 ring-1 ring-mist/15"
+            className="rounded-2xl bg-ink-soft/60 p-4 ring-1 ring-mist/15"
           >
-            {c.photoUrl ? (
-              <img
-                src={c.photoUrl}
-                alt={c.name}
-                className="size-14 shrink-0 rounded-xl object-cover ring-1 ring-mist/20"
-              />
-            ) : (
-              <span className="grid size-14 shrink-0 place-items-center rounded-xl bg-ink text-lemon ring-1 ring-mist/20">
-                <QrCode className="size-6" aria-hidden="true" />
-              </span>
-            )}
-            <div className="min-w-0 flex-1">
-              <p className="truncate font-display text-lg font-semibold text-sand">{c.name}</p>
-              <p className="truncate text-sm text-mist/60">
-                {c.address ? `${c.address}, ` : ""}
-                {c.city} {c.zip}
-              </p>
+            <div className="flex items-center gap-3">
+              {c.photoUrl ? (
+                <img
+                  src={c.photoUrl}
+                  alt={c.name}
+                  className="size-12 shrink-0 rounded-xl object-cover ring-1 ring-mist/20"
+                />
+              ) : (
+                <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-ink text-lemon ring-1 ring-mist/20">
+                  <QrCode className="size-5" aria-hidden="true" />
+                </span>
+              )}
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-display text-base font-semibold text-sand">{c.name}</p>
+                <p className="truncate text-sm text-mist/60">
+                  {c.address ? `${c.address}, ` : ""}
+                  {c.city} {c.zip}
+                </p>
+              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    aria-label={t("More options")}
+                    className="grid size-9 shrink-0 place-items-center rounded-full text-mist/70 transition hover:bg-ink hover:text-sand"
+                  >
+                    <MoreVertical className="size-5" aria-hidden="true" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem
+                    onSelect={() => removeChurch.mutate(c.id)}
+                    className="text-rose-400 focus:text-rose-300"
+                  >
+                    <Trash2 className="size-4" aria-hidden="true" />
+                    {t("Remove from my profile")}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
             <button
               type="button"
               onClick={() => setOpenId(c.id)}
-              className="inline-flex shrink-0 items-center gap-2 rounded-full bg-lemon px-4 py-2.5 text-base font-semibold text-ink transition hover:opacity-90"
+              className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full bg-lemon px-4 py-2.5 text-base font-semibold text-ink transition hover:opacity-90"
             >
               <QrCode className="size-5" aria-hidden="true" />
-              {t("Show code")}
+              {t("Show my church code")}
             </button>
           </article>
         ))}
