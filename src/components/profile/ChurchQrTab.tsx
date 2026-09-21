@@ -1,7 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { Check, MapPin, MoreVertical, QrCode, Share2, Trash2, X } from "lucide-react";
+import {
+  Check,
+  HandHelping,
+  MapPin,
+  MoreVertical,
+  QrCode,
+  Share2,
+  Trash2,
+  X,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -11,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { leaveChurch, listChurchesIAttend } from "@/lib/churches.functions";
+import { churchPrayerCounts, markChurchPrayersSeen } from "@/lib/prayers.functions";
 
 /**
  * Scan codes for the churches this person attends, shown inline on the
