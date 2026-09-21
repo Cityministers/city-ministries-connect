@@ -5,6 +5,7 @@ import {
   ArrowLeft,
   Check,
   Clock,
+  EyeOff,
   Globe,
   HandHelping,
   Loader2,
@@ -13,6 +14,7 @@ import {
   QrCode,
   Settings2,
   Share2,
+  Trash2,
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -23,7 +25,15 @@ import { BrandLogo } from "@/components/BrandLogo";
 import { PrayerPost } from "@/components/PrayerPost";
 import { useSession } from "@/hooks/useSession";
 import { CHURCH_ICONS, churchIcon } from "@/lib/church-icons";
-import { listChurchPrayers } from "@/lib/prayers.functions";
+import {
+  approveChurchPrayer,
+  declineChurchPrayer,
+  deletePrayer,
+  hidePrayer,
+  listChurchPrayers,
+  listPendingChurchPrayers,
+  myPrayerPowers,
+} from "@/lib/prayers.functions";
 import {
   getChurch,
   listChurchRequests,
@@ -139,6 +149,41 @@ function ChurchPage() {
     queryKey: ["church-prayers", id],
     queryFn: () => fetchPrayers({ data: { churchId: id } }),
   });
+
+  // The church's owner and its chosen moderators look after the wall together.
+  const powersFn = useServerFn(myPrayerPowers);
+  const { data: powers } = useQuery({
+    queryKey: ["my-prayer-powers", session?.user?.id],
+    queryFn: () => powersFn(),
+    enabled: Boolean(session?.user?.id),
+  });
+  const canModerate = isOwner || Boolean(powers?.moderatorChurchIds?.includes(id));
+
+  const fetchPendingWallPrayers = useServerFn(listPendingChurchPrayers);
+  const { data: pendingWallPrayers } = useQuery({
+    queryKey: ["church-prayers-pending", id],
+    queryFn: () => fetchPendingWallPrayers({ data: { churchId: id } }),
+    enabled: canModerate,
+  });
+  const approveWallPrayer = useServerFn(approveChurchPrayer);
+  const declineWallPrayer = useServerFn(declineChurchPrayer);
+  const hideWallPrayer = useServerFn(hidePrayer);
+  const removeWallPrayer = useServerFn(deletePrayer);
+
+  async function decideWallPrayer(prayerId: string, decision: "approve" | "decline") {
+    if (decision === "approve") await approveWallPrayer({ data: { id: prayerId } });
+    else await declineWallPrayer({ data: { id: prayerId } });
+    await queryClient.invalidateQueries({ queryKey: ["church-prayers-pending", id] });
+    await queryClient.invalidateQueries({ queryKey: ["church-prayers", id] });
+  }
+
+  async function moderateWallPrayer(prayerId: string, action: "hide" | "delete") {
+    if (action === "hide") await hideWallPrayer({ data: { id: prayerId } });
+    else await removeWallPrayer({ data: { id: prayerId } });
+    await queryClient.invalidateQueries({ queryKey: ["church-prayers", id] });
+    await queryClient.invalidateQueries({ queryKey: ["church-prayers-pending", id] });
+  }
+
   const [activePrayerId, setActivePrayerId] = useState<string | null>(null);
   const activePrayer = (prayers ?? []).find((p) => p.id === activePrayerId);
 
