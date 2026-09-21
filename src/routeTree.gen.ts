@@ -31,6 +31,7 @@ import { Route as AuthenticatedAddChurchRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedCreateMinistryRouteImport } from './routes/_authenticated/create-ministry'
 import { Route as AuthenticatedPostNeedRouteImport } from './routes/_authenticated/post-need'
+import { Route as AuthenticatedPostPrayerRouteImport } from './routes/_authenticated/post-prayer'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedWelcomeRouteImport } from './routes/_authenticated/welcome'
 import { Route as ChurchIdRouteImport } from './routes/church.$id'
@@ -152,6 +153,11 @@ const AuthenticatedPostNeedRoute = AuthenticatedPostNeedRouteImport.update({
   path: '/post-need',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPostPrayerRoute = AuthenticatedPostPrayerRouteImport.update({
+  id: '/post-prayer',
+  path: '/post-prayer',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -228,6 +234,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRoute
   '/create-ministry': typeof AuthenticatedCreateMinistryRoute
   '/post-need': typeof AuthenticatedPostNeedRoute
+  '/post-prayer': typeof AuthenticatedPostPrayerRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/church/$id': typeof ChurchIdRoute
@@ -261,6 +268,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRoute
   '/create-ministry': typeof AuthenticatedCreateMinistryRoute
   '/post-need': typeof AuthenticatedPostNeedRoute
+  '/post-prayer': typeof AuthenticatedPostPrayerRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/church/$id': typeof ChurchIdRoute
@@ -296,6 +304,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/create-ministry': typeof AuthenticatedCreateMinistryRoute
   '/_authenticated/post-need': typeof AuthenticatedPostNeedRoute
+  '/_authenticated/post-prayer': typeof AuthenticatedPostPrayerRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/welcome': typeof AuthenticatedWelcomeRoute
   '/church/$id': typeof ChurchIdRoute
@@ -331,6 +340,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/create-ministry'
     | '/post-need'
+    | '/post-prayer'
     | '/profile'
     | '/welcome'
     | '/church/$id'
@@ -364,6 +374,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/create-ministry'
     | '/post-need'
+    | '/post-prayer'
     | '/profile'
     | '/welcome'
     | '/church/$id'
@@ -398,6 +409,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/create-ministry'
     | '/_authenticated/post-need'
+    | '/_authenticated/post-prayer'
     | '/_authenticated/profile'
     | '/_authenticated/welcome'
     | '/church/$id'
@@ -590,6 +602,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPostNeedRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/post-prayer': {
+      id: '/_authenticated/post-prayer'
+      path: '/post-prayer'
+      fullPath: '/post-prayer'
+      preLoaderRoute: typeof AuthenticatedPostPrayerRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/profile': {
       id: '/_authenticated/profile'
       path: '/profile'
@@ -668,6 +687,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedCreateMinistryRoute: typeof AuthenticatedCreateMinistryRoute
   AuthenticatedPostNeedRoute: typeof AuthenticatedPostNeedRoute
+  AuthenticatedPostPrayerRoute: typeof AuthenticatedPostPrayerRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedWelcomeRoute: typeof AuthenticatedWelcomeRoute
   AuthenticatedChurchBoardIdRoute: typeof AuthenticatedChurchBoardIdRoute
@@ -682,6 +702,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedCreateMinistryRoute: AuthenticatedCreateMinistryRoute,
   AuthenticatedPostNeedRoute: AuthenticatedPostNeedRoute,
+  AuthenticatedPostPrayerRoute: AuthenticatedPostPrayerRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedWelcomeRoute: AuthenticatedWelcomeRoute,
   AuthenticatedChurchBoardIdRoute: AuthenticatedChurchBoardIdRoute,
