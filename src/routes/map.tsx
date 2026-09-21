@@ -22,7 +22,9 @@ import { toMinistry } from "@/lib/user-ministries";
 import { useHomePoint, useMapPosts, usePlaceCenter } from "@/lib/use-map-view";
 
 export const Route = createFileRoute("/map")({
-  validateSearch: (search: Record<string, unknown>): { place?: string; new?: string } => {
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { place?: string; new?: string; mode?: "prayer" } => {
     const raw = search["place"];
     const place = (
       typeof raw === "string" || typeof raw === "number" ? String(raw) : ""
@@ -31,6 +33,7 @@ export const Route = createFileRoute("/map")({
     return {
       ...(place.length > 0 ? { place } : {}),
       ...(fresh.length > 0 ? { new: fresh } : {}),
+      ...(search["mode"] === "prayer" ? { mode: "prayer" as const } : {}),
     };
   },
   head: () => ({
