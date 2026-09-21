@@ -83,7 +83,6 @@ export function MinistryPost({
     setReported(false);
     setLiked(false);
     setFavorited(false);
-    setViewingProfile(false);
     setImageLightboxOpen(false);
     setNeedsAuth(false);
     setComments(null);
