@@ -52,8 +52,17 @@ export function PrayerPost({
         className="flex max-h-[92dvh] w-full max-w-md flex-col overflow-y-auto rounded-b-2xl bg-ink-soft shadow-[0_20px_50px_-20px_rgba(0,0,0,.9)] ring-1 ring-mist/20 sm:rounded-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="relative grid h-40 w-full place-items-center bg-prayer/15 text-prayer sm:h-44">
-          <HandHelping className="size-16 opacity-80" aria-hidden="true" />
+        <div className="relative grid h-40 w-full place-items-center overflow-hidden bg-prayer/15 text-prayer sm:h-44">
+          {prayer.imageUrl ? (
+            <img
+              src={prayer.imageUrl}
+              alt=""
+              loading="lazy"
+              className="absolute inset-0 size-full object-cover"
+            />
+          ) : (
+            <HandHelping className="size-16 opacity-80" aria-hidden="true" />
+          )}
           <button
             type="button"
             onClick={onClose}
