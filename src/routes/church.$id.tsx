@@ -130,6 +130,15 @@ function ChurchPage() {
   const attendStatus = attendOverride ?? attendData?.status ?? "none";
   const setAttendStatus = (s: "none" | "pending" | "approved") => setAttendOverride(s);
 
+  // The church's own prayer wall — these prayers never appear on the map.
+  const fetchPrayers = useServerFn(listChurchPrayers);
+  const { data: prayers, refetch: refetchPrayers } = useQuery({
+    queryKey: ["church-prayers", id],
+    queryFn: () => fetchPrayers({ data: { churchId: id } }),
+  });
+  const [activePrayerId, setActivePrayerId] = useState<string | null>(null);
+  const activePrayer = (prayers ?? []).find((p) => p.id === activePrayerId);
+
   const [qr, setQr] = useState<string | null>(null);
   const [pageUrl, setPageUrl] = useState("");
   const [copied, setCopied] = useState(false);
@@ -772,6 +781,45 @@ function ChurchPage() {
             )}
 
             <section className="flex flex-col gap-3">
+              <h2 className="font-display text-xl font-semibold">{t("Prayer wall")}</h2>
+              {(prayers ?? []).length === 0 ? (
+                <p className="rounded-2xl bg-ink-soft p-4 text-base text-mist/70">
+                  {t("No prayers on this wall yet.")}
+                </p>
+              ) : (
+                <ul className="flex flex-col gap-2">
+                  {(prayers ?? []).map((p) => (
+                    <li key={p.id}>
+                      <button
+                        type="button"
+                        onClick={() => setActivePrayerId(p.id)}
+                        className="flex w-full items-center gap-3 rounded-2xl bg-ink-soft p-3 text-left ring-1 ring-tone-purple/25 transition hover:ring-tone-purple/50"
+                      >
+                        <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-tone-purple/15 text-tone-purple ring-1 ring-tone-purple/40">
+                          <HandHeart className="size-5" aria-hidden="true" />
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate font-heading text-lg text-sand sm:text-base">
+                            {p.shortTitle}
+                          </span>
+                          <span className="block truncate text-xs text-mist/70">{p.posterName}</span>
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <Link
+                to="/post-prayer"
+                search={{ church: id }}
+                className="inline-flex w-fit items-center gap-2 rounded-full bg-ember px-5 py-2.5 text-base font-semibold text-ink shadow-[0_0_18px_-4px_var(--color-ember)] transition hover:opacity-90"
+              >
+                <HandHeart className="size-4" aria-hidden="true" />
+                {t("Post a prayer here")}
+              </Link>
+            </section>
+
+            <section className="flex flex-col gap-3">
               <h2 className="font-display text-xl font-semibold">{t("Posts at this church")}</h2>
               {(data?.posts ?? []).length === 0 ? (
                 <p className="rounded-2xl bg-ink-soft p-4 text-base text-mist/70">
@@ -787,6 +835,17 @@ function ChurchPage() {
                 </ul>
               )}
             </section>
+
+            {activePrayer && (
+              <PrayerPost
+                prayer={activePrayer}
+                canRemove={Boolean(
+                  isOwner || (activePrayer.ownerId && activePrayer.ownerId === session?.user?.id),
+                )}
+                onClose={() => setActivePrayerId(null)}
+                onRemoved={() => void refetchPrayers()}
+              />
+            )}
 
             <section className="flex flex-col gap-3">
               <h2 className="font-display text-xl font-semibold">{t("Public posts nearby")}</h2>
