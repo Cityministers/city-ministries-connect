@@ -125,10 +125,15 @@ export const getConversation = createServerFn({ method: "POST" })
       .eq("id", data.id)
       .maybeSingle();
     let subject = "";
-    let subjectKind: "ministry" | "need" | null = null;
+    let subjectKind: "ministry" | "need" | "prayer" | null = null;
     if (convo?.post_id && convo.post_type) {
       subjectKind = convo.post_type;
-      const table = convo.post_type === "need" ? "user_needs" : "user_ministries";
+      const table =
+        convo.post_type === "need"
+          ? "user_needs"
+          : convo.post_type === "prayer"
+            ? "prayers"
+            : "user_ministries";
       const { data: post } = await supabaseAdmin
         .from(table)
         .select("short_title")
