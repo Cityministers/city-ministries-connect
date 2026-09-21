@@ -9,12 +9,14 @@ import {
   Loader2,
   LogOut,
   Pencil,
+  QrCode,
   ShieldCheck,
   TriangleAlert,
 } from "lucide-react";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
+import { ChurchQrTab } from "@/components/profile/ChurchQrTab";
 import { FavoritesTab } from "@/components/profile/FavoritesTab";
 import { MailboxTab } from "@/components/profile/MailboxTab";
 import { GiftRepliesTab } from "@/components/profile/GiftRepliesTab";
@@ -39,12 +41,13 @@ const TABS = [
   { key: "account", label: "Account" },
 ] as const;
 
-type TabKey = (typeof TABS)[number]["key"] | "notifications";
+type TabKey = (typeof TABS)[number]["key"] | "notifications" | "qr";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   validateSearch: (search: Record<string, unknown>): { tab: TabKey } => {
     const raw = String(search["tab"] ?? "notifications");
     if (raw === "notifications") return { tab: "notifications" };
+    if (raw === "qr") return { tab: "qr" };
     const match = TABS.find((t) => t.key === raw);
     return { tab: match ? match.key : "notifications" };
   },
