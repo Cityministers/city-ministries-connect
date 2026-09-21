@@ -24,6 +24,7 @@
   --color-sand: oklch(0.88 0.04 90);
   --color-mist: oklch(0.72 0.04 240);
   --color-parchment: oklch(0.92 0.03 85); /* soft warm cream #F2E6DF */
+  --color-prayer: oklch(0.72 0.13 250); /* prayer requests, deep sky blue #5AA9FF */
 
   /* Ministry icon tones (match uploaded icon set) */
   --color-tone-rose: oklch(0.68 0.17 15);
