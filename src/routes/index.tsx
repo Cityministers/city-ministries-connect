@@ -117,13 +117,13 @@ function HomePage() {
           </Link>
           <Link
             to="/start"
-            className="inline-flex flex-1 items-center justify-center rounded-full bg-ink-soft px-6 py-3.5 text-xl font-semibold text-sand shadow-lg ring-1 ring-mist/25 transition hover:bg-ink-soft/80 hover:ring-mist/40 sm:flex-initial"
+            className="inline-flex flex-1 items-center justify-center rounded-full bg-slate px-6 py-3.5 text-xl font-semibold text-sand shadow-lg ring-1 ring-mist/30 transition hover:bg-slate-light hover:ring-mist/50 sm:flex-initial"
           >
             {t("Start Your Ministry")}
           </Link>
           <Link
             to="/post-need"
-            className="inline-flex flex-1 items-center justify-center rounded-full bg-ink-soft px-6 py-3.5 text-xl font-semibold text-sand shadow-lg ring-1 ring-mist/25 transition hover:bg-ink-soft/80 hover:ring-mist/40 sm:flex-initial"
+            className="inline-flex flex-1 items-center justify-center rounded-full bg-slate px-6 py-3.5 text-xl font-semibold text-sand shadow-lg ring-1 ring-mist/30 transition hover:bg-slate-light hover:ring-mist/50 sm:flex-initial"
           >
             {t("Post a Need")}
           </Link>
