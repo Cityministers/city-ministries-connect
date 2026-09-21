@@ -136,8 +136,8 @@ function PostPrayerPage() {
                 aria-pressed={place === "map"}
                 className={`rounded-xl px-4 py-3 text-base font-semibold ring-1 transition ${
                   place === "map"
-                    ? "bg-lemon text-ink ring-lemon"
-                    : "bg-ink text-sand ring-mist/25 hover:ring-lemon/50"
+                    ? "bg-prayer text-ink ring-prayer"
+                    : "bg-ink text-sand ring-mist/25 hover:ring-prayer/50"
                 }`}
               >
                 {t("Anywhere on the map")}
@@ -177,8 +177,8 @@ function PostPrayerPage() {
               ))}
             <p className="text-sm text-mist/60">
               {place === "church"
-                ? t("Church prayers stay on that church's prayer wall.")
-                : t("Map prayers glow on the map for anyone who taps Prayers.")}
+                ? t("Church prayers stay on that church's prayer wall — they never go on the map.")
+                : t("Map prayers are different from church prayers: they glow on the map for anyone who taps Prayers, and don't go on any church wall.")}
             </p>
           </div>
 
