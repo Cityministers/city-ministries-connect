@@ -147,7 +147,7 @@ export function ChurchCodeCards() {
           </p>
           <Link
             to="/map"
-            search={{ place: `${open.city} ${open.zip}`.trim(), new: open.id }}
+            search={{ place: `${open.city} ${open.zip}`.trim(), new: `church-${open.id}` }}
             className="inline-flex items-center gap-2 rounded-full bg-ink-soft px-5 py-3 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft/70"
           >
             <MapPin className="size-5 text-lemon" aria-hidden="true" />

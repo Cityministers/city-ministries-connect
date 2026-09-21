@@ -403,6 +403,22 @@ function ChurchPage() {
                     </li>
                   )}
                 </ul>
+                <div className="mt-1 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <Link
+                    to="/create-ministry"
+                    search={{ city: church.city, zip: church.zip, church: church.id }}
+                    className="rounded-full bg-lemon px-5 py-3 text-center text-base font-semibold text-ink transition hover:opacity-90"
+                  >
+                    {t("Post your ministry here")}
+                  </Link>
+                  <Link
+                    to="/post-need"
+                    search={{ church: church.id }}
+                    className="rounded-full bg-ember px-5 py-3 text-center text-base font-semibold text-ink shadow-[0_0_18px_-4px_var(--color-ember)] transition hover:opacity-90"
+                  >
+                    {t("Post your need here")}
+                  </Link>
+                </div>
                 <button
                   type="button"
                   onClick={() => (canNativeShare ? void nativeShare() : setShareOpen((v) => !v))}
@@ -470,22 +486,6 @@ function ChurchPage() {
                 <p className="text-base text-mist/75">
                   {t("Share what you can offer, or what you need. {{name}} reviews each post before it shows up here.", { name: church.name })}
                 </p>
-                <div className="flex flex-wrap gap-2">
-                  <Link
-                    to="/create-ministry"
-                    search={{ city: church.city, zip: church.zip, church: church.id }}
-                    className="rounded-full bg-lemon px-5 py-2.5 text-base font-semibold text-ink transition hover:opacity-90"
-                  >
-                    {t("Post your ministry here")}
-                  </Link>
-                  <Link
-                    to="/post-need"
-                    search={{ church: church.id }}
-                    className="rounded-full bg-ember px-5 py-2.5 text-base font-semibold text-ink shadow-[0_0_18px_-4px_var(--color-ember)] transition hover:opacity-90"
-                  >
-                    {t("Post your need here")}
-                  </Link>
-                </div>
                 <div className="mt-1 border-t border-mist/15 pt-3">
                   {attendStatus === "approved" ? (
                     <Link

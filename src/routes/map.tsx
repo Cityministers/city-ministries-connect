@@ -243,6 +243,7 @@ function MapPage() {
           <LiveMap
             points={allPoints}
             center={mapCenter}
+            zoom={spotlight ? 16 : 12}
             onSelect={selectPoint}
             onBoundsChange={(b) => {
               setPending(b);
