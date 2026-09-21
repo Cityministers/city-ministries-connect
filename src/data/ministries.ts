@@ -32,11 +32,16 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import postCoffee from "@/assets/post-coffee.jpg";
+import postCoffee2 from "@/assets/post-coffee-2.jpg";
+import postCoffee3 from "@/assets/post-coffee-3.jpg";
+import postCoffee4 from "@/assets/post-coffee-4.jpg";
+import postCoffeeClip from "@/assets/post-coffee-clip.mp4";
 import postRide from "@/assets/post-ride.jpg";
 import postClothes from "@/assets/post-clothes.jpg";
 import posterMaria from "@/assets/poster-maria.jpg";
 import posterJames from "@/assets/poster-james.jpg";
 import posterRuth from "@/assets/poster-ruth.jpg";
+import posterSam from "@/assets/poster-sam.jpg";
 
 export type Tone =
   | "rose"
@@ -112,6 +117,13 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
     neighborhood: "Beaverton, OR",
     media: postCoffee,
     mediaAlt: "Two cups of coffee on a cafe table",
+    gallery: [
+      { url: postCoffee, kind: "image" },
+      { url: postCoffee2, kind: "image" },
+      { url: postCoffee4, kind: "image" },
+      { url: postCoffee3, kind: "image" },
+      { url: postCoffeeClip, kind: "video" },
+    ],
     poster: {
       name: "Maria S.",
       photo: posterMaria,
@@ -132,6 +144,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
     neighborhood: "Downtown Portland",
     poster: {
       name: "Pastor Sam D.",
+      photo: posterSam,
       bio: "As each has received a gift, use it to serve one another, as good stewards of God's varied grace.",
     },
     likes: 62,
