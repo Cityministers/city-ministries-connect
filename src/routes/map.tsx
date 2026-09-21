@@ -309,9 +309,9 @@ function MapPage() {
           )}
         </div>
 
-        <div className="mt-3 flex items-center justify-between gap-3">
-          <div className="flex rounded-full bg-ink-soft p-1 ring-1 ring-mist/15">
-            {(["view", "near", "church"] as const).map((m) => (
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap rounded-full bg-ink-soft p-1 ring-1 ring-mist/15">
+            {(["view", "near", "church", "prayer"] as const).map((m) => (
               <button
                 key={m}
                 type="button"
@@ -322,14 +322,22 @@ function MapPage() {
                     : "text-mist hover:text-sand"
                 }`}
               >
-                {m === "view" ? t("In this view") : m === "near" ? t("Nearest to me") : t("Churches")}
+                {m === "view"
+                  ? t("In this view")
+                  : m === "near"
+                    ? t("Nearest to me")
+                    : m === "church"
+                      ? t("Churches")
+                      : t("Prayers")}
               </button>
             ))}
           </div>
           <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-mist/40">
             {mode === "church"
               ? t("{{count}} churches", { count: churchList.length })
-              : t("{{count}} nearby", { count: list.length + (mode === "near" ? churchList.length : 0) })}
+              : mode === "prayer"
+                ? t("{{count}} prayers", { count: prayerPoints.length })
+                : t("{{count}} nearby", { count: list.length + (mode === "near" ? churchList.length : 0) })}
           </p>
         </div>
 
