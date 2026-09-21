@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, Check, ShieldCheck, UserPlus, Users, X } from "lucide-react";
+import { ArrowLeft, Check, HandHelping, ShieldCheck, UserPlus, Users, X } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -13,6 +13,11 @@ import {
   removeChurchMember,
   setChurchPostStatus,
 } from "@/lib/churches.functions";
+import {
+  approveChurchPrayer,
+  declineChurchPrayer,
+  listPendingChurchPrayers,
+} from "@/lib/prayers.functions";
 
 export const Route = createFileRoute("/_authenticated/church-board/$id")({
   head: () => ({
@@ -89,6 +94,27 @@ function ChurchBoardPage() {
     mutationFn: (input: { memberId: string; decision: "approved" | "declined" }) =>
       decideMember({ data: { churchId: id, ...input } }),
     onSuccess: refresh,
+  });
+
+  // Prayers neighbors sent to this church's wall, waiting for the pastor.
+  const fetchPendingPrayers = useServerFn(listPendingChurchPrayers);
+  const approvePrayerFn = useServerFn(approveChurchPrayer);
+  const declinePrayerFn = useServerFn(declineChurchPrayer);
+  const pendingPrayers = useQuery({
+    queryKey: ["church-prayers-pending", id],
+    queryFn: () => fetchPendingPrayers({ data: { churchId: id } }),
+  });
+  const refreshPrayers = () =>
+    Promise.all([
+      qc.invalidateQueries({ queryKey: ["church-prayers-pending", id] }),
+      qc.invalidateQueries({ queryKey: ["church-prayers", id] }),
+    ]);
+  const prayerMutation = useMutation({
+    mutationFn: (input: { id: string; decision: "approve" | "decline" }) =>
+      input.decision === "approve"
+        ? approvePrayerFn({ data: { id: input.id } })
+        : declinePrayerFn({ data: { id: input.id } }),
+    onSuccess: refreshPrayers,
   });
 
   const busy =
