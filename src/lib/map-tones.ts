@@ -15,4 +15,4 @@ export const toneHex: Record<Tone, string> = {
 };
 
 /** Prayer pins share one violet so they read as their own layer on the map. */
-export const PRAYER_PIN_COLOR = "#b98af0";
+export const PRAYER_PIN_COLOR = "#5aa9ff";

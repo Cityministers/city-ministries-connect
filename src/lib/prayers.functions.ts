@@ -18,6 +18,7 @@ export type PrayerDTO = {
   createdAt: string;
   posterName: string;
   posterPhotoUrl: string | null;
+  imageUrl: string | null;
 };
 
 function publicClient() {
@@ -48,6 +49,7 @@ type Row = {
   lat: number | null;
   lng: number | null;
   anonymous: boolean;
+  image_url: string | null;
   created_at: string;
 };
 
@@ -67,9 +69,10 @@ async function decorate(
     for (const p of profiles ?? []) profileById.set(p.id, p);
   }
 
-  const paths = [...profileById.values()]
-    .map((p) => p.avatar_url)
-    .filter((p): p is string => Boolean(p));
+  const paths = [
+    ...[...profileById.values()].map((p) => p.avatar_url),
+    ...rows.map((r) => r.image_url),
+  ].filter((p): p is string => Boolean(p));
   const urlByPath = new Map<string, string>();
   if (paths.length > 0) {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -98,12 +101,13 @@ async function decorate(
       createdAt: r.created_at,
       posterName: r.anonymous ? "Anonymous" : profile?.display_name || "A neighbor",
       posterPhotoUrl: photo,
+      imageUrl: r.image_url ? (urlByPath.get(r.image_url) ?? null) : null,
     };
   });
 }
 
 const COLUMNS =
-  "id, owner_id, church_id, short_title, body, city, zip, lat, lng, anonymous, created_at";
+  "id, owner_id, church_id, short_title, body, city, zip, lat, lng, anonymous, image_url, created_at";
 
 /** Prayers posted to the whole map — church prayers never appear here. */
 export const listPublicPrayers = createServerFn({ method: "GET" }).handler(
@@ -160,11 +164,12 @@ export const listChurchPrayers = createServerFn({ method: "GET" })
 
 const createInput = z.object({
   shortTitle: z.string().trim().min(2).max(60),
-  body: z.string().trim().min(5).max(800),
+  body: z.string().trim().min(5).max(1000),
   city: z.string().trim().max(80).optional().default(""),
   zip: z.string().trim().max(10).optional().default(""),
   churchId: z.string().uuid().nullable().optional().default(null),
   anonymous: z.boolean().optional().default(false),
+  imagePath: z.string().trim().max(300).nullable().optional().default(null),
 });
 
 export const createPrayer = createServerFn({ method: "POST" })
@@ -185,6 +190,7 @@ export const createPrayer = createServerFn({ method: "POST" })
         city: data.city,
         zip: data.zip,
         anonymous: data.anonymous,
+        image_url: data.imagePath,
       })
       .select("id")
       .single();

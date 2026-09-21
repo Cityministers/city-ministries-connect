@@ -637,6 +637,7 @@ export type Database = {
           city: string
           created_at: string
           id: string
+          image_url: string | null
           lat: number | null
           lng: number | null
           owner_id: string
@@ -652,6 +653,7 @@ export type Database = {
           city?: string
           created_at?: string
           id?: string
+          image_url?: string | null
           lat?: number | null
           lng?: number | null
           owner_id: string
@@ -667,6 +669,7 @@ export type Database = {
           city?: string
           created_at?: string
           id?: string
+          image_url?: string | null
           lat?: number | null
           lng?: number | null
           owner_id?: string

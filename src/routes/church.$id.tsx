@@ -6,7 +6,7 @@ import {
   Check,
   Clock,
   Globe,
-  HandHeart,
+  HandHelping,
   Loader2,
   MapPin,
   Phone,
@@ -796,10 +796,10 @@ function ChurchPage() {
                       <button
                         type="button"
                         onClick={() => setActivePrayerId(p.id)}
-                        className="flex w-full items-center gap-3 rounded-2xl bg-ink-soft p-3 text-left ring-1 ring-tone-purple/25 transition hover:ring-tone-purple/50"
+                        className="flex w-full items-center gap-3 rounded-2xl bg-ink-soft p-3 text-left ring-1 ring-prayer/25 transition hover:ring-prayer/50"
                       >
-                        <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-tone-purple/15 text-tone-purple ring-1 ring-tone-purple/40">
-                          <HandHeart className="size-5" aria-hidden="true" />
+                        <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-prayer/15 text-prayer ring-1 ring-prayer/40">
+                          <HandHelping className="size-5" aria-hidden="true" />
                         </span>
                         <span className="min-w-0 flex-1">
                           <span className="block truncate font-heading text-lg text-sand sm:text-base">
@@ -817,7 +817,7 @@ function ChurchPage() {
                 search={{ church: id }}
                 className="inline-flex w-fit items-center gap-2 rounded-full bg-ember px-5 py-2.5 text-base font-semibold text-ink shadow-[0_0_18px_-4px_var(--color-ember)] transition hover:opacity-90"
               >
-                <HandHeart className="size-4" aria-hidden="true" />
+                <HandHelping className="size-4" aria-hidden="true" />
                 {t("Post a prayer here")}
               </Link>
             </section>

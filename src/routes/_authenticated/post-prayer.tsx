@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, HandHeart, Loader2, MapPin, PartyPopper, UserCircle } from "lucide-react";
+import { ArrowLeft, HandHelping, ImagePlus, Loader2, MapPin, PartyPopper, UserCircle, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { listChurchesIAttend } from "@/lib/churches.functions";
+import { toPreviews, uploadMedia, type MediaPreview } from "@/lib/media-upload";
 import { createPrayer } from "@/lib/prayers.functions";
 
 export const Route = createFileRoute("/_authenticated/post-prayer")({
@@ -56,6 +57,7 @@ function PostPrayerPage() {
   const [city, setCity] = useState("");
   const [zip, setZip] = useState("");
   const [anonymous, setAnonymous] = useState(false);
+  const [photo, setPhoto] = useState<MediaPreview | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [posted, setPosted] = useState<{ id: string; shortTitle: string; churchId: string | null } | null>(
@@ -79,6 +81,7 @@ function PostPrayerPage() {
 
     setBusy(true);
     try {
+      const uploaded = photo ? await uploadMedia([photo], "prayer") : [];
       const result = await create({
         data: {
           shortTitle: shortTitle.trim(),
@@ -87,6 +90,7 @@ function PostPrayerPage() {
           zip: place === "map" ? zip.trim() : "",
           churchId: place === "church" ? churchId : null,
           anonymous,
+          imagePath: uploaded[0]?.path ?? null,
         },
       });
       setPosted({
@@ -194,12 +198,48 @@ function PostPrayerPage() {
             <textarea
               value={body}
               onChange={(e) => setBody(e.target.value)}
-              maxLength={800}
+              maxLength={1000}
               rows={6}
               className={field}
               placeholder={t("Share what you'd like prayer for.")}
             />
+            <span className="self-end text-xs text-mist/60">{body.length}/1000</span>
           </label>
+
+          <div className="flex flex-col gap-2">
+            <span className="text-base font-semibold text-sand">{t("Add a photo (optional)")}</span>
+            {photo ? (
+              <div className="relative w-fit">
+                <img
+                  src={photo.url}
+                  alt=""
+                  className="size-32 rounded-xl object-cover ring-1 ring-mist/20"
+                />
+                <button
+                  type="button"
+                  onClick={() => setPhoto(null)}
+                  aria-label={t("Remove photo")}
+                  className="absolute -right-2 -top-2 grid size-8 place-items-center rounded-full bg-ink text-sand ring-1 ring-mist/30"
+                >
+                  <X className="size-4" aria-hidden="true" />
+                </button>
+              </div>
+            ) : (
+              <label className="inline-flex w-fit cursor-pointer items-center gap-2 rounded-full bg-ink px-4 py-2.5 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:ring-lemon/50">
+                <ImagePlus className="size-5" aria-hidden="true" />
+                {t("Choose a photo")}
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) setPhoto(toPreviews([file])[0] ?? null);
+                  }}
+                />
+              </label>
+            )}
+          </div>
 
           {place === "map" && (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -238,7 +278,7 @@ function PostPrayerPage() {
             {busy ? (
               <Loader2 className="size-5 animate-spin" aria-hidden="true" />
             ) : (
-              <HandHeart className="size-5" aria-hidden="true" />
+              <HandHelping className="size-5" aria-hidden="true" />
             )}
             {t("Post this prayer")}
           </button>
@@ -266,7 +306,7 @@ function PostPrayerPage() {
                 params={{ id: posted.churchId }}
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-lemon px-6 py-3.5 text-lg font-semibold text-ink transition-transform hover:-translate-y-0.5"
               >
-                <HandHeart className="size-5" aria-hidden="true" />
+                <HandHelping className="size-5" aria-hidden="true" />
                 {t("See the prayer wall")}
               </Link>
             ) : (

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, HandHeart, List, Search } from "lucide-react";
+import { ArrowLeft, HandHelping, List, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AccountMenu } from "@/components/AccountMenu";
@@ -148,7 +148,7 @@ function MapPage() {
           lng: p.lng as number,
           title: p.shortTitle,
           color: PRAYER_PIN_COLOR,
-          glyph: iconMarkup(HandHeart),
+          glyph: iconMarkup(HandHelping),
           highlight: highlightId === `prayer-${p.id}`,
         })),
     [prayers, highlightId],
@@ -328,7 +328,7 @@ function MapPage() {
                 {m === "view"
                   ? t("In this view")
                   : m === "near"
-                    ? t("Nearest to me")
+                    ? t("Nearest")
                     : m === "church"
                       ? t("Churches")
                       : t("Prayers")}
@@ -361,10 +361,10 @@ function MapPage() {
                     setActivePrayerId(p.id);
                     if (`prayer-${p.id}` !== highlightId) setHighlightId(null);
                   }}
-                  className="flex w-full items-center gap-3 rounded-2xl bg-ink-soft p-3 text-left ring-1 ring-tone-purple/25 transition hover:ring-tone-purple/50"
+                  className="flex w-full items-center gap-3 rounded-2xl bg-ink-soft p-3 text-left ring-1 ring-prayer/25 transition hover:ring-prayer/50"
                 >
-                  <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-tone-purple/15 text-tone-purple ring-1 ring-tone-purple/40">
-                    <HandHeart className="size-5" aria-hidden="true" />
+                  <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-prayer/15 text-prayer ring-1 ring-prayer/40">
+                    <HandHelping className="size-5" aria-hidden="true" />
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate font-heading text-lg text-sand sm:text-base">
@@ -473,7 +473,7 @@ function MapPage() {
             to="/post-prayer"
             className="mt-4 inline-flex items-center justify-center gap-2 self-start rounded-full bg-ember px-6 py-3 text-base font-semibold text-ink shadow-[0_0_18px_-4px_var(--color-ember)] transition hover:opacity-90"
           >
-            <HandHeart className="size-5" aria-hidden="true" />
+            <HandHelping className="size-5" aria-hidden="true" />
             {t("Post a Prayer")}
           </Link>
         )}
