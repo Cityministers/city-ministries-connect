@@ -946,7 +946,9 @@ function ChurchPage() {
               <PrayerPost
                 prayer={activePrayer}
                 canRemove={Boolean(
-                  isOwner || (activePrayer.ownerId && activePrayer.ownerId === session?.user?.id),
+                  isOwner ||
+                    canModerate ||
+                    (activePrayer.ownerId && activePrayer.ownerId === session?.user?.id),
                 )}
                 onClose={() => setActivePrayerId(null)}
                 onRemoved={() => void refetchPrayers()}
