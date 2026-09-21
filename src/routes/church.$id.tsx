@@ -6,6 +6,7 @@ import {
   Check,
   Clock,
   Globe,
+  HandHeart,
   Loader2,
   MapPin,
   Phone,
@@ -19,8 +20,10 @@ import { useTranslation } from "react-i18next";
 import { AccountMenu } from "@/components/AccountMenu";
 import { AutoText } from "@/components/AutoText";
 import { BrandLogo } from "@/components/BrandLogo";
+import { PrayerPost } from "@/components/PrayerPost";
 import { useSession } from "@/hooks/useSession";
 import { CHURCH_ICONS, churchIcon } from "@/lib/church-icons";
+import { listChurchPrayers } from "@/lib/prayers.functions";
 import {
   getChurch,
   listChurchRequests,
