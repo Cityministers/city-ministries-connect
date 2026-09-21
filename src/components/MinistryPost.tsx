@@ -357,68 +357,8 @@ export function MinistryPost({
                 <span className="italic">{ministry.poster.bio}</span>
                 <span className="pl-0.5 text-xl leading-none text-lemon/80" aria-hidden="true">&rdquo;</span>
               </p>
-              <button
-                type="button"
-                onClick={() => setViewingProfile((v) => !v)}
-                className="mt-1 text-sm font-medium text-lemon underline-offset-2 hover:underline"
-                aria-expanded={viewingProfile}
-              >
-                {viewingProfile ? t("Close profile") : t("View profile")}
-              </button>
             </div>
           </div>
-
-          {viewingProfile && (
-            <div className="flex flex-col gap-3 rounded-xl bg-ink/60 p-4 ring-1 ring-mist/15">
-              <div className="flex items-center gap-3">
-                {ministry.poster.photo ? (
-                  <img
-                    src={ministry.poster.photo}
-                    alt={t("Profile photo of {{name}}", { name: ministry.poster.name })}
-                    className="size-14 shrink-0 rounded-full object-cover ring-2 ring-lemon/40"
-                    loading="lazy"
-                  />
-                ) : (
-                  <span
-                    className={`grid size-14 shrink-0 place-items-center rounded-full font-display text-xl ring-1 ${tone}`}
-                    aria-hidden="true"
-                  >
-                    {ministry.poster.name.charAt(0)}
-                  </span>
-                )}
-                <div className="min-w-0">
-                  <p className="font-display text-lg text-sand">{ministry.poster.name}</p>
-                  <p className="text-sm text-mist/70">
-                    {ministry.city || ministry.neighborhood}
-                    {ministry.zip ? ` ${ministry.zip}` : ""}
-                  </p>
-                </div>
-              </div>
-              <div className="border-l-2 border-lemon/40 bg-lemon/[0.06] p-3">
-                <p className="text-base leading-relaxed text-mist/90 sm:text-lg">
-                  <span className="pr-0.5 text-xl leading-none text-lemon/80" aria-hidden="true">&ldquo;</span>
-                  <span className="italic">{ministry.poster.bio}</span>
-                  <span className="pl-0.5 text-xl leading-none text-lemon/80" aria-hidden="true">&rdquo;</span>
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-2 text-sm text-mist/70 sm:text-base">
-                <span className="rounded-full px-2.5 py-1 ring-1 ring-mist/20">
-                  {ministry.fullTitle || t(ministry.label)}
-                </span>
-                <span className="rounded-full px-2.5 py-1 ring-1 ring-mist/20">
-                  {t("{{count}} likes", { count: live ? likeCount : ministry.likes })}
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setMessageOpen(true)}
-                className="inline-flex w-fit items-center gap-1.5 rounded-full bg-lemon/15 px-3 py-1.5 text-sm font-medium text-lemon ring-1 ring-lemon/40 transition hover:bg-lemon/25"
-              >
-                <Send className="size-4" aria-hidden="true" />
-                {t("Message {{name}}", { name: ministry.poster.name.split(" ")[0] })}
-              </button>
-            </div>
-          )}
 
 
           <p className="text-xl leading-relaxed text-sand/85 sm:text-2xl">{translated.description}</p>
