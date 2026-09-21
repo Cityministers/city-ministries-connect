@@ -786,16 +786,24 @@ export const listChurchBoard = createServerFn({ method: "POST" })
     },
   );
 
-/** The people this church lets post without approval. */
+/** The people this church lets post without approval, or those still waiting. */
 export const listChurchMembers = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) => z.object({ churchId: z.string().uuid() }).parse(data))
+  .inputValidator((data: unknown) =>
+    z
+      .object({
+        churchId: z.string().uuid(),
+        status: z.enum(["approved", "pending"]).optional(),
+      })
+      .parse(data),
+  )
   .handler(async ({ data, context }): Promise<ChurchMemberDTO[]> => {
     await assertChurchOwner(context, data.churchId);
     const { data: rows } = await context.supabase
       .from("church_members")
       .select("id, user_id, created_at")
       .eq("church_id", data.churchId)
+      .eq("status", data.status ?? "approved")
       .order("created_at", { ascending: false });
     if (!rows || rows.length === 0) return [];
 
