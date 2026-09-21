@@ -32,11 +32,16 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import postCoffee from "@/assets/post-coffee.jpg";
+import postCoffee2 from "@/assets/post-coffee-2.jpg";
+import postCoffee3 from "@/assets/post-coffee-3.jpg";
+import postCoffee4 from "@/assets/post-coffee-4.jpg";
+import postCoffeeClip from "@/assets/post-coffee-clip.mp4";
 import postRide from "@/assets/post-ride.jpg";
 import postClothes from "@/assets/post-clothes.jpg";
 import posterMaria from "@/assets/poster-maria.jpg";
 import posterJames from "@/assets/poster-james.jpg";
 import posterRuth from "@/assets/poster-ruth.jpg";
+import posterSam from "@/assets/poster-sam.jpg";
 
 export type Tone =
   | "rose"
