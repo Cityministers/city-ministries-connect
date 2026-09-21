@@ -862,8 +862,17 @@ export const addChurchMember = createServerFn({ method: "POST" })
       church_id: data.churchId,
       user_id: memberId,
       added_by: context.userId,
+      status: "approved",
     });
-    if (error && !error.message.includes("duplicate")) throw new Error(error.message);
+    if (error) {
+      if (!error.message.includes("duplicate")) throw new Error(error.message);
+      // They already asked to attend — approving turns that request into a welcome.
+      await context.supabase
+        .from("church_members")
+        .update({ status: "approved" })
+        .eq("church_id", data.churchId)
+        .eq("user_id", memberId);
+    }
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     await supabaseAdmin.from("notifications").insert({
