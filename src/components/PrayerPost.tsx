@@ -52,7 +52,7 @@ export function PrayerPost({
         className="flex max-h-[92dvh] w-full max-w-md flex-col overflow-y-auto rounded-b-2xl bg-ink-soft shadow-[0_20px_50px_-20px_rgba(0,0,0,.9)] ring-1 ring-mist/20 sm:rounded-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="relative grid h-40 w-full place-items-center bg-tone-purple/15 text-tone-purple sm:h-44">
+        <div className="relative grid h-40 w-full place-items-center bg-prayer/15 text-prayer sm:h-44">
           <HandHelping className="size-16 opacity-80" aria-hidden="true" />
           <button
             type="button"
@@ -69,7 +69,7 @@ export function PrayerPost({
               className="absolute bottom-3 left-3 size-11 rounded-xl object-cover ring-1 ring-mist/30"
             />
           ) : (
-            <span className="absolute bottom-3 left-3 grid size-11 place-items-center rounded-xl bg-tone-purple/20 text-lg font-bold text-tone-purple ring-1 ring-tone-purple/40">
+            <span className="absolute bottom-3 left-3 grid size-11 place-items-center rounded-xl bg-prayer/20 text-lg font-bold text-prayer ring-1 ring-prayer/40">
               {prayer.anonymous ? "?" : prayer.posterName.slice(0, 1).toUpperCase()}
             </span>
           )}
