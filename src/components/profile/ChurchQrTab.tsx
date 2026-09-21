@@ -27,6 +27,26 @@ export function ChurchCodeCards() {
 
   const [openId, setOpenId] = useState<string | null>(null);
   const [codes, setCodes] = useState<Record<string, string>>({});
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const shareChurch = async (id: string, name: string) => {
+    const url = `${window.location.origin}/church/${id}`;
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share({ title: name, url });
+        return;
+      } catch {
+        // fall through to copying
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopiedId(id);
+      window.setTimeout(() => setCopiedId((c) => (c === id ? null : c)), 2000);
+    } catch {
+      // clipboard unavailable
+    }
+  };
 
   const queryClient = useQueryClient();
   const leave = useServerFn(leaveChurch);
