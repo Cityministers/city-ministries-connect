@@ -309,6 +309,14 @@ function AdminPage() {
                           {f.additions}
                         </p>
                       ) : null}
+                      <FeedbackReply
+                        email={f.email}
+                        replies={(replies.data ?? []).filter((r) => r.feedbackId === f.id)}
+                        pending={replyMutation.isPending}
+                        onSend={(subject, message) =>
+                          replyMutation.mutateAsync({ feedbackId: f.id, subject, message })
+                        }
+                      />
                     </article>
                   ))
                 )}
