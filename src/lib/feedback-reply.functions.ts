@@ -95,6 +95,7 @@ export const replyToFeedback = createServerFn({ method: "POST" })
 
     let delivered = false;
     let failure: string | null = null;
+    const idempotencyKey = `fb-${data.feedbackId}-${Date.now()}`;
     try {
       const res = await sendLovableEmail(
         {
@@ -105,9 +106,10 @@ export const replyToFeedback = createServerFn({ method: "POST" })
           subject: data.subject,
           html,
           text,
-          purpose: "feedback-reply",
-        },
-        { apiKey: process.env["LOVABLE_API_KEY"]!, idempotencyKey: `fb-${data.feedbackId}-${Date.now()}` },
+          purpose: "transactional",
+          idempotency_key: idempotencyKey,
+        } as any,
+        { apiKey: process.env["LOVABLE_API_KEY"]!, idempotencyKey },
       );
       delivered = res.success !== false;
     } catch (e) {
