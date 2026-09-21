@@ -297,7 +297,9 @@ function PostPrayerPage() {
           </DialogHeader>
           <p className="text-center text-base text-mist/80 sm:text-lg">
             {t("Your prayer")} <span className="font-semibold text-sand">“{posted?.shortTitle}”</span>{" "}
-            {t("is live.")}
+            {posted?.churchId
+              ? t("was sent to the church. It goes on the wall once they approve it.")
+              : t("is live.")}
           </p>
           <div className="mt-2 flex flex-col gap-3">
             {posted?.churchId ? (

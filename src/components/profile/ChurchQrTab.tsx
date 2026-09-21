@@ -1,7 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { Check, MapPin, MoreVertical, QrCode, Share2, Trash2, X } from "lucide-react";
+import {
+  Check,
+  HandHelping,
+  MapPin,
+  MoreVertical,
+  QrCode,
+  Share2,
+  Trash2,
+  X,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -11,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { leaveChurch, listChurchesIAttend } from "@/lib/churches.functions";
+import { churchPrayerCounts, markChurchPrayersSeen } from "@/lib/prayers.functions";
 
 /**
  * Scan codes for the churches this person attends, shown inline on the
@@ -54,6 +64,22 @@ export function ChurchCodeCards() {
     mutationFn: (churchId: string) => leave({ data: { churchId } }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["churches-i-attend"] });
+    },
+  });
+
+  // New prayers on each wall since this person last looked.
+  const fetchCounts = useServerFn(churchPrayerCounts);
+  const churchIds = (data ?? []).map((c) => c.id);
+  const { data: counts } = useQuery({
+    queryKey: ["church-prayer-counts", churchIds.join(",")],
+    queryFn: () => fetchCounts({ data: { churchIds } }),
+    enabled: churchIds.length > 0,
+  });
+  const markSeen = useServerFn(markChurchPrayersSeen);
+  const seen = useMutation({
+    mutationFn: (churchId: string) => markSeen({ data: { churchId } }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["church-prayer-counts"] });
     },
   });
 
@@ -150,6 +176,21 @@ export function ChurchCodeCards() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
+            <Link
+              to="/church/$id"
+              params={{ id: c.id }}
+              hash="prayer-wall"
+              onClick={() => seen.mutate(c.id)}
+              className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-4 py-2.5 text-base font-semibold text-prayer ring-1 ring-prayer/40 transition hover:bg-ink-soft"
+            >
+              <HandHelping className="size-5" aria-hidden="true" />
+              {t("Prayer Requests")}
+              {(counts?.[c.id] ?? 0) > 0 && (
+                <span className="rounded-full bg-prayer px-2 py-0.5 text-xs font-bold text-ink">
+                  {counts?.[c.id]}
+                </span>
+              )}
+            </Link>
             <button
               type="button"
               onClick={() => setOpenId(c.id)}

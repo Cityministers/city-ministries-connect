@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, Check, ShieldCheck, UserPlus, Users, X } from "lucide-react";
+import { ArrowLeft, Check, HandHelping, ShieldCheck, UserPlus, Users, X } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -13,6 +13,11 @@ import {
   removeChurchMember,
   setChurchPostStatus,
 } from "@/lib/churches.functions";
+import {
+  approveChurchPrayer,
+  declineChurchPrayer,
+  listPendingChurchPrayers,
+} from "@/lib/prayers.functions";
 
 export const Route = createFileRoute("/_authenticated/church-board/$id")({
   head: () => ({
@@ -89,6 +94,27 @@ function ChurchBoardPage() {
     mutationFn: (input: { memberId: string; decision: "approved" | "declined" }) =>
       decideMember({ data: { churchId: id, ...input } }),
     onSuccess: refresh,
+  });
+
+  // Prayers neighbors sent to this church's wall, waiting for the pastor.
+  const fetchPendingPrayers = useServerFn(listPendingChurchPrayers);
+  const approvePrayerFn = useServerFn(approveChurchPrayer);
+  const declinePrayerFn = useServerFn(declineChurchPrayer);
+  const pendingPrayers = useQuery({
+    queryKey: ["church-prayers-pending", id],
+    queryFn: () => fetchPendingPrayers({ data: { churchId: id } }),
+  });
+  const refreshPrayers = () =>
+    Promise.all([
+      qc.invalidateQueries({ queryKey: ["church-prayers-pending", id] }),
+      qc.invalidateQueries({ queryKey: ["church-prayers", id] }),
+    ]);
+  const prayerMutation = useMutation({
+    mutationFn: (input: { id: string; decision: "approve" | "decline" }) =>
+      input.decision === "approve"
+        ? approvePrayerFn({ data: { id: input.id } })
+        : declinePrayerFn({ data: { id: input.id } }),
+    onSuccess: refreshPrayers,
   });
 
   const busy =
@@ -203,6 +229,49 @@ function ChurchBoardPage() {
                             className="inline-flex items-center gap-1.5 rounded-full bg-lemon/15 px-4 py-2 text-sm font-semibold text-lemon ring-1 ring-lemon/30 transition hover:bg-lemon/25 disabled:opacity-40"
                           >
                             <UserPlus className="size-4" aria-hidden="true" /> {t("Always allow this person")}
+                          </button>
+                        </div>
+                      </article>
+                    ))
+                  )}
+                </div>
+
+                <div className="space-y-3">
+                  <h2 className="font-display text-lg font-semibold">{t("Prayer requests")}</h2>
+                  {(pendingPrayers.data?.length ?? 0) === 0 ? (
+                    <p className="text-mist/70">{t("No prayer requests are waiting right now.")}</p>
+                  ) : (
+                    pendingPrayers.data!.map((p) => (
+                      <article
+                        key={p.id}
+                        className="rounded-2xl bg-ink-soft/40 p-4 ring-1 ring-prayer/25 sm:p-5"
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-prayer/15 text-prayer ring-1 ring-prayer/40">
+                            <HandHelping className="size-5" aria-hidden="true" />
+                          </span>
+                          <div className="min-w-0">
+                            <h3 className="font-display text-lg font-semibold">{p.shortTitle}</h3>
+                            <p className="text-sm text-mist/70">{p.posterName}</p>
+                          </div>
+                        </div>
+                        <p className="mt-3 text-sm leading-relaxed text-mist/80">{p.body}</p>
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            disabled={prayerMutation.isPending}
+                            onClick={() => prayerMutation.mutate({ id: p.id, decision: "approve" })}
+                            className="inline-flex items-center gap-1.5 rounded-full bg-tone-emerald/15 px-4 py-2 text-sm font-semibold text-tone-emerald ring-1 ring-tone-emerald/45 transition hover:bg-tone-emerald/25 disabled:opacity-40"
+                          >
+                            <Check className="size-4" aria-hidden="true" /> {t("Approve")}
+                          </button>
+                          <button
+                            type="button"
+                            disabled={prayerMutation.isPending}
+                            onClick={() => prayerMutation.mutate({ id: p.id, decision: "decline" })}
+                            className="inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-2 text-sm font-semibold text-rose ring-1 ring-rose/35 transition hover:bg-rose/10 disabled:opacity-40"
+                          >
+                            <X className="size-4" aria-hidden="true" /> {t("Decline")}
                           </button>
                         </div>
                       </article>
