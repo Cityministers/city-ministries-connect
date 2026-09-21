@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 
 import {
   addChurchMember,
+  decideChurchMember,
   listChurchBoard,
   listChurchMembers,
   removeChurchMember,
@@ -54,6 +55,11 @@ function ChurchBoardPage() {
     queryKey: ["church-members", id],
     queryFn: () => fetchMembers({ data: { churchId: id } }),
   });
+  const decideMember = useServerFn(decideChurchMember);
+  const attendees = useQuery({
+    queryKey: ["church-attendees-pending", id],
+    queryFn: () => fetchMembers({ data: { churchId: id, status: "pending" } }),
+  });
 
   const refresh = () =>
     Promise.all([
@@ -61,6 +67,7 @@ function ChurchBoardPage() {
       qc.invalidateQueries({ queryKey: ["church-members", id] }),
       qc.invalidateQueries({ queryKey: ["church", id] }),
       qc.invalidateQueries({ queryKey: ["church-requests", id] }),
+      qc.invalidateQueries({ queryKey: ["church-attendees-pending", id] }),
     ]);
 
   const decideMutation = useMutation({
@@ -78,8 +85,17 @@ function ChurchBoardPage() {
     onSuccess: refresh,
   });
 
+  const attendMutation = useMutation({
+    mutationFn: (input: { memberId: string; decision: "approved" | "declined" }) =>
+      decideMember({ data: { churchId: id, ...input } }),
+    onSuccess: refresh,
+  });
+
   const busy =
-    decideMutation.isPending || trustMutation.isPending || untrustMutation.isPending;
+    decideMutation.isPending ||
+    trustMutation.isPending ||
+    untrustMutation.isPending ||
+    attendMutation.isPending;
   const blocked = board.isError
     ? t("This page is only for the church that owns this listing.")
     : null;
@@ -227,6 +243,58 @@ function ChurchBoardPage() {
               </section>
             ) : (
               <section className="space-y-3">
+                <h2 className="font-display text-lg font-semibold">
+                  {t("Asked to attend your church")}
+                </h2>
+                {(attendees.data?.length ?? 0) === 0 ? (
+                  <p className="text-mist/70">{t("No one is waiting to join right now.")}</p>
+                ) : (
+                  attendees.data!.map((m) => (
+                    <article
+                      key={m.id}
+                      className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-ink-soft/40 p-4 ring-1 ring-mist/15"
+                    >
+                      <div className="flex min-w-0 items-center gap-3">
+                        {m.photoUrl ? (
+                          <img
+                            src={m.photoUrl}
+                            alt={m.name}
+                            className="size-10 rounded-full object-cover ring-1 ring-mist/20"
+                          />
+                        ) : (
+                          <span className="grid size-10 place-items-center rounded-full bg-ink text-mist ring-1 ring-mist/20">
+                            <Users className="size-4" aria-hidden="true" />
+                          </span>
+                        )}
+                        <p className="font-heading text-base text-sand">{m.name}</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          disabled={busy}
+                          onClick={() =>
+                            attendMutation.mutate({ memberId: m.id, decision: "approved" })
+                          }
+                          className="inline-flex items-center gap-1.5 rounded-full bg-tone-emerald/15 px-4 py-2 text-sm font-semibold text-tone-emerald ring-1 ring-tone-emerald/45 transition hover:bg-tone-emerald/25 disabled:opacity-40"
+                        >
+                          <Check className="size-4" aria-hidden="true" /> {t("Approve")}
+                        </button>
+                        <button
+                          type="button"
+                          disabled={busy}
+                          onClick={() =>
+                            attendMutation.mutate({ memberId: m.id, decision: "declined" })
+                          }
+                          className="inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-2 text-sm font-semibold text-rose ring-1 ring-rose/35 transition hover:bg-rose/10 disabled:opacity-40"
+                        >
+                          <X className="size-4" aria-hidden="true" /> {t("Decline")}
+                        </button>
+                      </div>
+                    </article>
+                  ))
+                )}
+
+                <h2 className="pt-4 font-display text-lg font-semibold">{t("Who can post")}</h2>
                 <p className="text-sm text-mist/70">
                   {t("Posts from these people go straight onto your board. Everyone else waits for your approval.")}
                 </p>

@@ -538,6 +538,7 @@ export const requestChurchPost = createServerFn({ method: "POST" })
       .select("id")
       .eq("church_id", data.churchId)
       .eq("user_id", context.userId)
+      .eq("status", "approved")
       .maybeSingle();
     const status = trusted ? "approved" : "pending";
 
@@ -785,16 +786,24 @@ export const listChurchBoard = createServerFn({ method: "POST" })
     },
   );
 
-/** The people this church lets post without approval. */
+/** The people this church lets post without approval, or those still waiting. */
 export const listChurchMembers = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) => z.object({ churchId: z.string().uuid() }).parse(data))
+  .inputValidator((data: unknown) =>
+    z
+      .object({
+        churchId: z.string().uuid(),
+        status: z.enum(["approved", "pending"]).optional(),
+      })
+      .parse(data),
+  )
   .handler(async ({ data, context }): Promise<ChurchMemberDTO[]> => {
     await assertChurchOwner(context, data.churchId);
     const { data: rows } = await context.supabase
       .from("church_members")
       .select("id, user_id, created_at")
       .eq("church_id", data.churchId)
+      .eq("status", data.status ?? "approved")
       .order("created_at", { ascending: false });
     if (!rows || rows.length === 0) return [];
 
@@ -853,8 +862,17 @@ export const addChurchMember = createServerFn({ method: "POST" })
       church_id: data.churchId,
       user_id: memberId,
       added_by: context.userId,
+      status: "approved",
     });
-    if (error && !error.message.includes("duplicate")) throw new Error(error.message);
+    if (error) {
+      if (!error.message.includes("duplicate")) throw new Error(error.message);
+      // They already asked to attend — approving turns that request into a welcome.
+      await context.supabase
+        .from("church_members")
+        .update({ status: "approved" })
+        .eq("church_id", data.churchId)
+        .eq("user_id", memberId);
+    }
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     await supabaseAdmin.from("notifications").insert({
@@ -897,4 +915,131 @@ export const listMyChurches = createServerFn({ method: "POST" })
       rows.map((r) => r.avatar_url).filter((p): p is string => Boolean(p)),
     );
     return rows.map((r) => toChurch(r, urlByPath));
+  });
+
+/** A neighbor asks to be counted as part of this church. */
+export const requestChurchMembership = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({ churchId: z.string().uuid() }).parse(data))
+  .handler(async ({ data, context }): Promise<{ ok: true; status: "pending" | "approved" }> => {
+    const { data: existing } = await context.supabase
+      .from("church_members")
+      .select("id, status")
+      .eq("church_id", data.churchId)
+      .eq("user_id", context.userId)
+      .maybeSingle();
+    if (existing) return { ok: true, status: existing.status === "approved" ? "approved" : "pending" };
+
+    const { error } = await context.supabase.from("church_members").insert({
+      church_id: data.churchId,
+      user_id: context.userId,
+      added_by: null,
+      status: "pending",
+    });
+    if (error) throw new Error(error.message);
+
+    const { data: church } = await context.supabase
+      .from("churches")
+      .select("owner_id, name")
+      .eq("id", data.churchId)
+      .maybeSingle();
+    if (church) {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      await supabaseAdmin.from("notifications").insert({
+        user_id: church.owner_id,
+        kind: "church_post",
+        title: "Someone asked to join your church",
+        body: `A neighbor wants to be listed as part of ${church.name}.`,
+        link: `/church-board/${data.churchId}`,
+      });
+    }
+    return { ok: true, status: "pending" };
+  });
+
+/** Where this person stands with a church: none, waiting, or in. */
+export const myChurchMembershipStatus = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({ churchId: z.string().uuid() }).parse(data))
+  .handler(async ({ data, context }): Promise<{ status: "none" | "pending" | "approved" }> => {
+    const { data: row } = await context.supabase
+      .from("church_members")
+      .select("status")
+      .eq("church_id", data.churchId)
+      .eq("user_id", context.userId)
+      .maybeSingle();
+    if (!row) return { status: "none" };
+    return { status: row.status === "approved" ? "approved" : "pending" };
+  });
+
+/** The churches this person attends, for their profile scan codes. */
+export const listChurchesIAttend = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<ChurchDTO[]> => {
+    const { data: memberships } = await context.supabase
+      .from("church_members")
+      .select("church_id")
+      .eq("user_id", context.userId)
+      .eq("status", "approved");
+    const ids = (memberships ?? []).map((m) => m.church_id);
+    if (ids.length === 0) return [];
+
+    const { data } = await publicClient()
+      .from("churches")
+      .select(CHURCH_COLUMNS)
+      .in("id", ids);
+    const rows = (data ?? []) as ChurchRow[];
+    const urlByPath = await signPaths(
+      rows.map((r) => r.avatar_url).filter((p): p is string => Boolean(p)),
+    );
+    return rows.map((r) => toChurch(r, urlByPath));
+  });
+
+/** The church owner says yes or no to someone who asked to attend. */
+export const decideChurchMember = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) =>
+    z
+      .object({
+        churchId: z.string().uuid(),
+        memberId: z.string().uuid(),
+        decision: z.enum(["approved", "declined"]),
+      })
+      .parse(data),
+  )
+  .handler(async ({ data, context }) => {
+    const church = await assertChurchOwner(context, data.churchId);
+    const { data: row } = await context.supabase
+      .from("church_members")
+      .select("id, user_id")
+      .eq("id", data.memberId)
+      .eq("church_id", data.churchId)
+      .maybeSingle();
+    if (!row) throw new Error("That request is no longer there.");
+
+    if (data.decision === "declined") {
+      const { error } = await context.supabase
+        .from("church_members")
+        .delete()
+        .eq("id", data.memberId)
+        .eq("church_id", data.churchId);
+      if (error) throw new Error(error.message);
+      return { ok: true };
+    }
+
+    const { error } = await context.supabase
+      .from("church_members")
+      .update({ status: "approved" })
+      .eq("id", data.memberId)
+      .eq("church_id", data.churchId);
+    if (error) throw new Error(error.message);
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.from("notifications").insert({
+      user_id: row.user_id,
+      kind: "church_post",
+      title: `${church.name} welcomed you`,
+      body: "Their scan code is now on your profile so you can share their page.",
+      link: "/profile?tab=qr",
+    });
+    return { ok: true };
   });
