@@ -128,6 +128,19 @@ export function ChurchCodeCards() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem
+                    onSelect={(e) => {
+                      e.preventDefault();
+                      void shareChurch(c.id, c.name);
+                    }}
+                  >
+                    {copiedId === c.id ? (
+                      <Check className="size-4" aria-hidden="true" />
+                    ) : (
+                      <Share2 className="size-4" aria-hidden="true" />
+                    )}
+                    {copiedId === c.id ? t("Link copied") : t("Share")}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
                     onSelect={() => removeChurch.mutate(c.id)}
                     className="text-rose-400 focus:text-rose-300"
                   >
