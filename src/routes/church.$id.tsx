@@ -143,7 +143,7 @@ function ChurchPage() {
   const attendStatus = attendOverride ?? attendData?.status ?? "none";
   const setAttendStatus = (s: "none" | "pending" | "approved") => setAttendOverride(s);
 
-  // The church's own prayer wall — these prayers never appear on the map.
+  // The church's own prayer wall.
   const fetchPrayers = useServerFn(listChurchPrayers);
   const { data: prayers, refetch: refetchPrayers } = useQuery({
     queryKey: ["church-prayers", id],
@@ -830,6 +830,44 @@ function ChurchPage() {
 
             <section id="prayer-wall" className="flex flex-col gap-3 scroll-mt-20">
               <h2 className="font-display text-xl font-semibold">{t("Prayer wall")}</h2>
+              {canModerate && (pendingWallPrayers?.length ?? 0) > 0 && (
+                <div className="rounded-2xl bg-ink-soft p-4 ring-1 ring-lemon/40">
+                  <h3 className="font-heading text-base font-semibold text-lemon">
+                    {t("Waiting for approval ({{count}})", { count: pendingWallPrayers!.length })}
+                  </h3>
+                  <ul className="mt-2 flex flex-col gap-2">
+                    {pendingWallPrayers!.map((p) => (
+                      <li
+                        key={p.id}
+                        className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-ink p-3"
+                      >
+                        <span className="min-w-0">
+                          <span className="block truncate font-heading text-base text-sand">
+                            {p.shortTitle}
+                          </span>
+                          <span className="block truncate text-xs text-mist/70">{p.posterName}</span>
+                        </span>
+                        <span className="flex shrink-0 gap-2">
+                          <button
+                            type="button"
+                            onClick={() => void decideWallPrayer(p.id, "approve")}
+                            className="rounded-full bg-lemon px-4 py-1.5 text-sm font-semibold text-ink transition hover:opacity-90"
+                          >
+                            {t("Approve")}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => void decideWallPrayer(p.id, "decline")}
+                            className="rounded-full bg-ink px-4 py-1.5 text-sm font-semibold text-rose ring-1 ring-rose/35 transition hover:bg-rose/10"
+                          >
+                            {t("Decline")}
+                          </button>
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
               {(prayers ?? []).length === 0 ? (
                 <p className="rounded-2xl bg-ink-soft p-4 text-base text-mist/70">
                   {t("No prayers on this wall yet.")}
@@ -907,7 +945,31 @@ function ChurchPage() {
                     <li key={p.linkId}>
                       <PostRow post={p} />
                     </li>
-                  ))}
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+              {canModerate && (
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => void moderateWallPrayer(p.id, "hide")}
+                    className="inline-flex items-center gap-1.5 rounded-full bg-ink px-3 py-1.5 text-xs font-semibold text-mist/80 ring-1 ring-mist/25 transition hover:text-sand"
+                  >
+                    <EyeOff className="size-3.5" aria-hidden="true" />
+                    {t("Hide")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void moderateWallPrayer(p.id, "delete")}
+                    className="inline-flex items-center gap-1.5 rounded-full bg-ink px-3 py-1.5 text-xs font-semibold text-rose ring-1 ring-rose/35 transition hover:bg-rose/10"
+                  >
+                    <Trash2 className="size-3.5" aria-hidden="true" />
+                    {t("Delete")}
+                  </button>
+                </div>
+              )}
+            </li>
                 </ul>
               )}
             </section>
