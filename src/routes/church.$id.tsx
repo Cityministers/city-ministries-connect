@@ -490,6 +490,7 @@ function ChurchPage() {
                   {attendStatus === "approved" ? (
                     <Link
                       to="/profile"
+                      search={{ tab: "notifications" }}
                       className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
                     >
                       {t("You attend here — show the scan code")}
