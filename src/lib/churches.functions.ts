@@ -994,6 +994,20 @@ export const listChurchesIAttend = createServerFn({ method: "POST" })
     return rows.map((r) => toChurch(r, urlByPath));
   });
 
+/** Someone takes a church off their own profile. */
+export const leaveChurch = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({ churchId: z.string().uuid() }).parse(data))
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase
+      .from("church_members")
+      .delete()
+      .eq("church_id", data.churchId)
+      .eq("user_id", context.userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 /** The church owner says yes or no to someone who asked to attend. */
 export const decideChurchMember = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
