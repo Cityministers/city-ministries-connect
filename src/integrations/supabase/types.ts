@@ -106,24 +106,27 @@ export type Database = {
       }
       church_members: {
         Row: {
-          added_by: string
+          added_by: string | null
           church_id: string
           created_at: string
           id: string
+          status: string
           user_id: string
         }
         Insert: {
-          added_by: string
+          added_by?: string | null
           church_id: string
           created_at?: string
           id?: string
+          status?: string
           user_id: string
         }
         Update: {
-          added_by?: string
+          added_by?: string | null
           church_id?: string
           created_at?: string
           id?: string
+          status?: string
           user_id?: string
         }
         Relationships: [
