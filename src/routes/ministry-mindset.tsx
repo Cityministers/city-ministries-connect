@@ -48,7 +48,12 @@ const givingPassages = [
     ref: "2 Corinthians 9:7",
     text: "Each one must give as he has decided in his heart, not reluctantly or under compulsion, for God loves a cheerful giver.",
   },
+  {
+    ref: "Matthew 23:11",
+    text: "The greatest among you will be your servant.",
+  },
 ];
+
 
 const givingCharacters = [
   {
