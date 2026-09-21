@@ -116,6 +116,18 @@ function ChurchPage() {
     enabled: isOwner,
   });
 
+  const attend = useServerFn(requestChurchMembership);
+  const fetchAttendStatus = useServerFn(myChurchMembershipStatus);
+  const [attendBusy, setAttendBusy] = useState(false);
+  const [attendOverride, setAttendOverride] = useState<"none" | "pending" | "approved" | null>(null);
+  const { data: attendData } = useQuery({
+    queryKey: ["church-attendance", id],
+    queryFn: () => fetchAttendStatus({ data: { churchId: id } }),
+    enabled: Boolean(session?.user?.id) && !isOwner,
+  });
+  const attendStatus = attendOverride ?? attendData?.status ?? "none";
+  const setAttendStatus = (s: "none" | "pending" | "approved") => setAttendOverride(s);
+
   const [qr, setQr] = useState<string | null>(null);
   const [pageUrl, setPageUrl] = useState("");
   const [copied, setCopied] = useState(false);
