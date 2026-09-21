@@ -90,24 +90,32 @@ export function ChurchCodeCards() {
             className="rounded-2xl bg-ink-soft/60 p-4 ring-1 ring-mist/15"
           >
             <div className="flex items-center gap-3">
-              {c.photoUrl ? (
-                <img
-                  src={c.photoUrl}
-                  alt={c.name}
-                  className="size-12 shrink-0 rounded-xl object-cover ring-1 ring-mist/20"
-                />
-              ) : (
-                <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-ink text-lemon ring-1 ring-mist/20">
-                  <QrCode className="size-5" aria-hidden="true" />
+              <Link
+                to="/church/$id"
+                params={{ id: c.id }}
+                className="flex min-w-0 flex-1 items-center gap-3 rounded-xl transition hover:opacity-90"
+              >
+                {c.photoUrl ? (
+                  <img
+                    src={c.photoUrl}
+                    alt={c.name}
+                    className="size-12 shrink-0 rounded-xl object-cover ring-1 ring-mist/20"
+                  />
+                ) : (
+                  <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-ink text-lemon ring-1 ring-mist/20">
+                    <QrCode className="size-5" aria-hidden="true" />
+                  </span>
+                )}
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate font-display text-base font-semibold text-sand">
+                    {c.name}
+                  </span>
+                  <span className="block truncate text-sm text-mist/60">
+                    {c.address ? `${c.address}, ` : ""}
+                    {c.city} {c.zip}
+                  </span>
                 </span>
-              )}
-              <div className="min-w-0 flex-1">
-                <p className="truncate font-display text-base font-semibold text-sand">{c.name}</p>
-                <p className="truncate text-sm text-mist/60">
-                  {c.address ? `${c.address}, ` : ""}
-                  {c.city} {c.zip}
-                </p>
-              </div>
+              </Link>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
