@@ -28,6 +28,15 @@ export function ChurchCodeCards() {
   const [openId, setOpenId] = useState<string | null>(null);
   const [codes, setCodes] = useState<Record<string, string>>({});
 
+  const queryClient = useQueryClient();
+  const leave = useServerFn(leaveChurch);
+  const removeChurch = useMutation({
+    mutationFn: (churchId: string) => leave({ data: { churchId } }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["churches-i-attend"] });
+    },
+  });
+
   useEffect(() => {
     if (typeof window === "undefined" || !data || data.length === 0) return;
     let alive = true;
