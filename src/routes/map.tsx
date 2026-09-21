@@ -349,7 +349,34 @@ function MapPage() {
         )}
 
         <ul className="mt-3 space-y-2">
-          {mode !== "church" &&
+          {mode === "prayer" &&
+            (prayers ?? []).map((p) => (
+              <li key={p.id}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActivePrayerId(p.id);
+                    if (`prayer-${p.id}` !== highlightId) setHighlightId(null);
+                  }}
+                  className="flex w-full items-center gap-3 rounded-2xl bg-ink-soft p-3 text-left ring-1 ring-tone-purple/25 transition hover:ring-tone-purple/50"
+                >
+                  <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-tone-purple/15 text-tone-purple ring-1 ring-tone-purple/40">
+                    <HandHeart className="size-5" aria-hidden="true" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate font-heading text-lg text-sand sm:text-base">
+                      {p.shortTitle}
+                    </span>
+                    <span className="block truncate text-xs text-mist/70">
+                      {p.posterName}
+                      {p.city ? ` · ${p.city}` : ""}
+                      {p.zip ? ` ${p.zip}` : ""}
+                    </span>
+                  </span>
+                </button>
+              </li>
+            ))}
+          {mode !== "church" && mode !== "prayer" &&
             list.map(({ post: m, distance }) => (
             <li key={m.id}>
               <button
