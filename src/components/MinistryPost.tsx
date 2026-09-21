@@ -516,7 +516,7 @@ export function MinistryPost({
         </div>
       </div>
 
-      {imageLightboxOpen && ministry.poster.photo && (
+      {imageLightboxOpen && (
         <div
           className="fixed inset-0 z-[60] flex items-center justify-center bg-ink/95 p-4 backdrop-blur-md"
           onClick={() => setImageLightboxOpen(false)}
@@ -532,12 +532,21 @@ export function MinistryPost({
           >
             <X className="size-5" aria-hidden="true" />
           </button>
-          <img
-            src={ministry.poster.photo}
-            alt={t("Profile photo of {{name}}", { name: ministry.poster.name })}
-            className="max-h-[85dvh] max-w-full rounded-2xl object-contain ring-1 ring-mist/20"
-            onClick={(e) => e.stopPropagation()}
-          />
+          {ministry.poster.photo ? (
+            <img
+              src={ministry.poster.photo}
+              alt={t("Profile photo of {{name}}", { name: ministry.poster.name })}
+              className="max-h-[85dvh] max-w-full rounded-2xl object-contain ring-1 ring-mist/20"
+              onClick={(e) => e.stopPropagation()}
+            />
+          ) : (
+            <div
+              className={`grid size-56 place-items-center rounded-full font-display text-7xl ring-1 ${tone}`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {ministry.poster.name.charAt(0)}
+            </div>
+          )}
         </div>
       )}
     </div>
