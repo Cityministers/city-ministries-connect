@@ -3,12 +3,12 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const postRef = z.object({
-  postType: z.enum(["ministry", "need"]),
+  postType: z.enum(["ministry", "need", "prayer"]),
   postId: z.string().uuid(),
 });
 
 export type SavedPostDTO = {
-  postType: "ministry" | "need";
+  postType: "ministry" | "need" | "prayer";
   postId: string;
   shortTitle: string;
   title: string;
@@ -57,6 +57,28 @@ export const listMyFavorites = createServerFn({ method: "GET" })
           zip: row.zip ?? "",
           photoUrl: row.avatar_url,
           savedAt,
+        });
+      }
+    }
+
+    const prayerIds = favs.filter((f) => f.post_type === "prayer").map((f) => f.post_id);
+    if (prayerIds.length > 0) {
+      const { data: prayerRows } = await supabaseAdmin
+        .from("prayers")
+        .select("id, short_title, body, city, zip")
+        .in("id", prayerIds);
+      for (const row of prayerRows ?? []) {
+        out.push({
+          postType: "prayer",
+          postId: row.id,
+          shortTitle: row.short_title,
+          title: row.short_title,
+          description: row.body,
+          city: row.city ?? "",
+          zip: row.zip ?? "",
+          photoUrl: null,
+          savedAt:
+            favs.find((f) => f.post_id === row.id)?.created_at ?? new Date().toISOString(),
         });
       }
     }

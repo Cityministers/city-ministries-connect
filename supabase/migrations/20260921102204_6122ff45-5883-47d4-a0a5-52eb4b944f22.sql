@@ -1,0 +1,1 @@
+ALTER TYPE public.post_kind ADD VALUE IF NOT EXISTS 'prayer';

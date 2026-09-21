@@ -125,10 +125,15 @@ export const getConversation = createServerFn({ method: "POST" })
       .eq("id", data.id)
       .maybeSingle();
     let subject = "";
-    let subjectKind: "ministry" | "need" | null = null;
+    let subjectKind: "ministry" | "need" | "prayer" | null = null;
     if (convo?.post_id && convo.post_type) {
       subjectKind = convo.post_type;
-      const table = convo.post_type === "need" ? "user_needs" : "user_ministries";
+      const table =
+        convo.post_type === "need"
+          ? "user_needs"
+          : convo.post_type === "prayer"
+            ? "prayers"
+            : "user_ministries";
       const { data: post } = await supabaseAdmin
         .from(table)
         .select("short_title")
@@ -179,7 +184,7 @@ export const startConversation = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) =>
     z
       .object({
-        postType: z.enum(["ministry", "need"]),
+        postType: z.enum(["ministry", "need", "prayer"]),
         postId: z.string().uuid(),
         body: z.string().trim().min(1).max(1000),
       })
