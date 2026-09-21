@@ -191,11 +191,143 @@ export const createPrayer = createServerFn({ method: "POST" })
         zip: data.zip,
         anonymous: data.anonymous,
         image_url: data.imagePath,
+        // Prayers sent to a church wait for the pastor; map prayers go live.
+        status: data.churchId ? "pending" : "active",
       })
       .select("id")
       .single();
     if (error) throw new Error(error.message);
-    return { id: row.id };
+    return { id: row.id, pending: Boolean(data.churchId) };
+  });
+
+/** Prayers waiting for the pastor's review at a church the caller owns. */
+export const listPendingChurchPrayers = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({ churchId: z.string().uuid() }).parse(data))
+  .handler(async ({ data, context }): Promise<PrayerDTO[]> => {
+    const { data: church } = await context.supabase
+      .from("churches")
+      .select("id")
+      .eq("id", data.churchId)
+      .eq("owner_id", context.userId)
+      .maybeSingle();
+    if (!church) return [];
+
+    const { data: rows } = await context.supabase
+      .from("prayers")
+      .select(COLUMNS)
+      .eq("church_id", data.churchId)
+      .eq("status", "pending")
+      .order("created_at", { ascending: false })
+      .limit(100);
+    return decorate(publicClient(), (rows ?? []) as Row[]);
+  });
+
+async function ownsChurchPrayer(
+  supabase: { from: ReturnType<typeof publicClient>["from"] },
+  userId: string,
+  prayerId: string,
+) {
+  const { data: prayer } = await supabase
+    .from("prayers")
+    .select("id, owner_id, church_id, short_title")
+    .eq("id", prayerId)
+    .maybeSingle();
+  if (!prayer?.church_id) return null;
+  const { data: church } = await supabase
+    .from("churches")
+    .select("id, name")
+    .eq("id", prayer.church_id)
+    .eq("owner_id", userId)
+    .maybeSingle();
+  if (!church) return null;
+  return { prayer, church };
+}
+
+/** The pastor lets a prayer onto the church wall. */
+export const approveChurchPrayer = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({ id: z.string().uuid() }).parse(data))
+  .handler(async ({ data, context }) => {
+    const found = await ownsChurchPrayer(context.supabase, context.userId, data.id);
+    if (!found) throw new Error("You can only review prayers at your own church.");
+
+    const { error } = await context.supabase
+      .from("prayers")
+      .update({ status: "active" })
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.from("notifications").insert({
+      user_id: found.prayer.owner_id,
+      kind: "prayer_approved",
+      title: "Your prayer is on the wall",
+      body: `${found.church.name} approved "${found.prayer.short_title}".`,
+      link: `/church/${found.church.id}`,
+    });
+    return { ok: true };
+  });
+
+/** The pastor turns a prayer request down. */
+export const declineChurchPrayer = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({ id: z.string().uuid() }).parse(data))
+  .handler(async ({ data, context }) => {
+    const found = await ownsChurchPrayer(context.supabase, context.userId, data.id);
+    if (!found) throw new Error("You can only review prayers at your own church.");
+    const { error } = await context.supabase.from("prayers").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/** How many approved prayers arrived at each church since the caller last looked. */
+export const churchPrayerCounts = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) =>
+    z.object({ churchIds: z.array(z.string().uuid()).max(50) }).parse(data),
+  )
+  .handler(async ({ data, context }): Promise<Record<string, number>> => {
+    if (data.churchIds.length === 0) return {};
+    const { data: views } = await context.supabase
+      .from("church_prayer_views")
+      .select("church_id, last_seen_at")
+      .eq("user_id", context.userId)
+      .in("church_id", data.churchIds);
+    const seenAt = new Map((views ?? []).map((v) => [v.church_id, v.last_seen_at]));
+
+    const { data: rows } = await publicClient()
+      .from("prayers")
+      .select("church_id, created_at")
+      .in("church_id", data.churchIds)
+      .eq("status", "active")
+      .limit(500);
+
+    const counts: Record<string, number> = {};
+    for (const id of data.churchIds) counts[id] = 0;
+    for (const r of rows ?? []) {
+      if (!r.church_id) continue;
+      const since = seenAt.get(r.church_id);
+      if (since && new Date(r.created_at) <= new Date(since)) continue;
+      counts[r.church_id] = (counts[r.church_id] ?? 0) + 1;
+    }
+    return counts;
+  });
+
+/** Remembers that the caller just opened a church's prayer wall. */
+export const markChurchPrayersSeen = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({ churchId: z.string().uuid() }).parse(data))
+  .handler(async ({ data, context }) => {
+    await context.supabase.from("church_prayer_views").upsert(
+      {
+        user_id: context.userId,
+        church_id: data.churchId,
+        last_seen_at: new Date().toISOString(),
+      },
+      { onConflict: "user_id,church_id" },
+    );
+    return { ok: true };
   });
 
 export const deletePrayer = createServerFn({ method: "POST" })
