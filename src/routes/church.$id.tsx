@@ -472,6 +472,45 @@ function ChurchPage() {
                     {t("Post your need here")}
                   </Link>
                 </div>
+                <div className="mt-1 border-t border-mist/15 pt-3">
+                  {attendStatus === "approved" ? (
+                    <Link
+                      to="/profile"
+                      search={{ tab: "qr" }}
+                      className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+                    >
+                      {t("You attend here — show the scan code")}
+                    </Link>
+                  ) : attendStatus === "pending" ? (
+                    <p className="text-base text-mist/70">
+                      {t("Waiting for {{name}} to say yes to you attending.", { name: church.name })}
+                    </p>
+                  ) : session?.user?.id ? (
+                    <button
+                      type="button"
+                      disabled={attendBusy}
+                      onClick={() => {
+                        setAttendBusy(true);
+                        void attend({ data: { churchId: church.id } })
+                          .then((r) => setAttendStatus(r.status))
+                          .finally(() => setAttendBusy(false));
+                      }}
+                      className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft disabled:opacity-60"
+                    >
+                      {t("I attend this church")}
+                    </button>
+                  ) : (
+                    <Link
+                      to="/auth"
+                      className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+                    >
+                      {t("Sign in to say you attend here")}
+                    </Link>
+                  )}
+                  <p className="mt-2 text-sm text-mist/60">
+                    {t("Once they say yes, this church's scan code sits on your profile so you can show it to anyone.")}
+                  </p>
+                </div>
               </section>
             )}
 
