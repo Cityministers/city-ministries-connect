@@ -222,7 +222,8 @@ export function LiveMap({
     const map = mapRef.current;
     if (!map) return;
     map.panTo(center);
-  }, [center.lat, center.lng]);
+    if (typeof zoom === "number" && map.getZoom() !== zoom) map.setZoom(zoom);
+  }, [center.lat, center.lng, zoom]);
 
   // Breathe the halo on a freshly created post.
   const hasHighlight = points.some((p) => p.highlight);
