@@ -450,17 +450,43 @@ function MapPage() {
                 </li>
               );
             })}
-          {(mode === "church" ? churchList.length === 0 : list.length === 0 && (mode !== "near" || churchList.length === 0)) && (
+          {(mode === "church"
+            ? churchList.length === 0
+            : mode === "prayer"
+              ? (prayers ?? []).length === 0
+              : list.length === 0 && (mode !== "near" || churchList.length === 0)) && (
             <li className="rounded-2xl bg-ink-soft p-4 text-center text-sm text-mist/70">
               {mode === "church"
                 ? t("No churches on the map yet.")
-                : t("No ministries in this area yet — drag the map to look around.")}
+                : mode === "prayer"
+                  ? t("No prayers on the map yet — be the first to post one.")
+                  : t("No ministries in this area yet — drag the map to look around.")}
             </li>
           )}
         </ul>
 
+        {mode === "prayer" && (
+          <Link
+            to="/post-prayer"
+            className="mt-4 inline-flex items-center justify-center gap-2 self-start rounded-full bg-ember px-6 py-3 text-base font-semibold text-ink shadow-[0_0_18px_-4px_var(--color-ember)] transition hover:opacity-90"
+          >
+            <HandHeart className="size-5" aria-hidden="true" />
+            {t("Post a Prayer")}
+          </Link>
+        )}
+
 
         {active && <MinistryPost ministry={active} onClose={() => setActiveId(null)} />}
+        {activePrayer && (
+          <PrayerPost
+            prayer={activePrayer}
+            canRemove={Boolean(
+              activePrayer.ownerId && activePrayer.ownerId === session?.user?.id,
+            )}
+            onClose={() => setActivePrayerId(null)}
+            onRemoved={() => void refetchPrayers()}
+          />
+        )}
       </main>
 
       {/* CTA */}
