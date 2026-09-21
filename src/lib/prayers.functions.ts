@@ -1,0 +1,217 @@
+import { createServerFn } from "@tanstack/react-start";
+import { createClient } from "@supabase/supabase-js";
+import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { Database } from "@/integrations/supabase/types";
+
+export type PrayerDTO = {
+  id: string;
+  ownerId: string | null;
+  churchId: string | null;
+  shortTitle: string;
+  body: string;
+  city: string;
+  zip: string;
+  lat: number | null;
+  lng: number | null;
+  anonymous: boolean;
+  createdAt: string;
+  posterName: string;
+  posterPhotoUrl: string | null;
+};
+
+function publicClient() {
+  const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
+  return createClient<Database>(process.env["SUPABASE_URL"]!, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    global: {
+      fetch: (input, init) => {
+        const h = new Headers(init?.headers);
+        if (key.startsWith("sb_") && h.get("Authorization") === `Bearer ${key}`) {
+          h.delete("Authorization");
+        }
+        h.set("apikey", key);
+        return fetch(input, { ...init, headers: h });
+      },
+    },
+  });
+}
+
+type Row = {
+  id: string;
+  owner_id: string;
+  church_id: string | null;
+  short_title: string;
+  body: string;
+  city: string;
+  zip: string | null;
+  lat: number | null;
+  lng: number | null;
+  anonymous: boolean;
+  created_at: string;
+};
+
+/** Adds the poster's name and photo, unless the prayer was posted anonymously. */
+async function decorate(
+  supabase: ReturnType<typeof publicClient>,
+  rows: Row[],
+): Promise<PrayerDTO[]> {
+  const named = rows.filter((r) => !r.anonymous);
+  const ownerIds = [...new Set(named.map((r) => r.owner_id))];
+  const profileById = new Map<string, { display_name: string | null; avatar_url: string | null }>();
+  if (ownerIds.length > 0) {
+    const { data: profiles } = await supabase
+      .from("profiles")
+      .select("id, display_name, avatar_url")
+      .in("id", ownerIds);
+    for (const p of profiles ?? []) profileById.set(p.id, p);
+  }
+
+  const paths = [...profileById.values()]
+    .map((p) => p.avatar_url)
+    .filter((p): p is string => Boolean(p));
+  const urlByPath = new Map<string, string>();
+  if (paths.length > 0) {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: signed } = await supabaseAdmin.storage
+      .from("ministry-avatars")
+      .createSignedUrls(paths, 60 * 60 * 24 * 7);
+    for (const s of signed ?? []) {
+      if (s.path && s.signedUrl) urlByPath.set(s.path, s.signedUrl);
+    }
+  }
+
+  return rows.map((r) => {
+    const profile = r.anonymous ? undefined : profileById.get(r.owner_id);
+    const photo = profile?.avatar_url ? (urlByPath.get(profile.avatar_url) ?? null) : null;
+    return {
+      id: r.id,
+      ownerId: r.anonymous ? null : r.owner_id,
+      churchId: r.church_id,
+      shortTitle: r.short_title,
+      body: r.body,
+      city: r.city,
+      zip: r.zip ?? "",
+      lat: r.lat,
+      lng: r.lng,
+      anonymous: r.anonymous,
+      createdAt: r.created_at,
+      posterName: r.anonymous ? "Anonymous" : profile?.display_name || "A neighbor",
+      posterPhotoUrl: photo,
+    };
+  });
+}
+
+const COLUMNS =
+  "id, owner_id, church_id, short_title, body, city, zip, lat, lng, anonymous, created_at";
+
+/** Prayers posted to the whole map — church prayers never appear here. */
+export const listPublicPrayers = createServerFn({ method: "GET" }).handler(
+  async (): Promise<PrayerDTO[]> => {
+    const supabase = publicClient();
+    const { data, error } = await supabase
+      .from("prayers")
+      .select(COLUMNS)
+      .is("church_id", null)
+      .eq("status", "active")
+      .order("created_at", { ascending: false })
+      .limit(200);
+    if (error || !data) return [];
+
+    // Prayers are placed on the map from their city/ZIP the first time they're listed.
+    const unplaced = data.filter((r) => r.lat == null || r.lng == null);
+    if (unplaced.length > 0) {
+      const { geocodePlaces, placeKey } = await import("./geocode.server");
+      const found = await geocodePlaces(
+        unplaced.map((r) => ({ city: r.city ?? "", zip: r.zip ?? "" })),
+      );
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      for (const r of unplaced) {
+        const point = found.get(placeKey(r.city ?? "", r.zip ?? ""));
+        if (!point) continue;
+        r.lat = point.lat;
+        r.lng = point.lng;
+        await supabaseAdmin
+          .from("prayers")
+          .update({ lat: point.lat, lng: point.lng })
+          .eq("id", r.id);
+      }
+    }
+
+    return decorate(supabase, data as Row[]);
+  },
+);
+
+/** The prayer wall for one church. */
+export const listChurchPrayers = createServerFn({ method: "GET" })
+  .inputValidator((data: unknown) => z.object({ churchId: z.string().uuid() }).parse(data))
+  .handler(async ({ data }): Promise<PrayerDTO[]> => {
+    const supabase = publicClient();
+    const { data: rows, error } = await supabase
+      .from("prayers")
+      .select(COLUMNS)
+      .eq("church_id", data.churchId)
+      .eq("status", "active")
+      .order("created_at", { ascending: false })
+      .limit(200);
+    if (error || !rows) return [];
+    return decorate(supabase, rows as Row[]);
+  });
+
+const createInput = z.object({
+  shortTitle: z.string().trim().min(2).max(60),
+  body: z.string().trim().min(5).max(800),
+  city: z.string().trim().max(80).optional().default(""),
+  zip: z.string().trim().max(10).optional().default(""),
+  churchId: z.string().uuid().nullable().optional().default(null),
+  anonymous: z.boolean().optional().default(false),
+});
+
+export const createPrayer = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => createInput.parse(data))
+  .handler(async ({ data, context }) => {
+    if (!data.churchId && data.city.trim().length < 2 && data.zip.trim().length < 4) {
+      throw new Error("Enter the city or ZIP where this prayer belongs.");
+    }
+
+    const { data: row, error } = await context.supabase
+      .from("prayers")
+      .insert({
+        owner_id: context.userId,
+        church_id: data.churchId,
+        short_title: data.shortTitle,
+        body: data.body,
+        city: data.city,
+        zip: data.zip,
+        anonymous: data.anonymous,
+      })
+      .select("id")
+      .single();
+    if (error) throw new Error(error.message);
+    return { id: row.id };
+  });
+
+export const deletePrayer = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({ id: z.string().uuid() }).parse(data))
+  .handler(async ({ data, context }) => {
+    // RLS allows the poster and the owner of the church it sits under.
+    const { error } = await context.supabase.from("prayers").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/** Whether the signed-in visitor may remove a prayer (poster or church owner). */
+export const myPrayerPowers = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data: churches } = await context.supabase
+      .from("churches")
+      .select("id")
+      .eq("owner_id", context.userId);
+    return {
+      userId: context.userId,
+      churchIds: (churches ?? []).map((c) => c.id),
+    };
+  });
