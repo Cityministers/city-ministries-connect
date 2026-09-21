@@ -59,12 +59,19 @@ export const Route = createFileRoute("/map")({
 
 function MapPage() {
   const { t } = useTranslation();
-  const { place, new: freshId } = Route.useSearch();
+  const { place, new: freshId, mode: freshMode } = Route.useSearch();
   const navigate = Route.useNavigate();
   const [location, setLocation] = useState(place ?? "Portland, OR 97209");
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [activePrayerId, setActivePrayerId] = useState<string | null>(null);
   const [highlightId, setHighlightId] = useState<string | null>(
-    freshId ? (freshId.startsWith("church-") ? freshId : `user-${freshId}`) : null,
+    freshId
+      ? freshId.startsWith("church-")
+        ? freshId
+        : freshMode === "prayer"
+          ? `prayer-${freshId}`
+          : `user-${freshId}`
+      : null,
   );
   const session = useSession();
 
