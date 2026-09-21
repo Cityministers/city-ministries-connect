@@ -88,7 +88,9 @@ function MapPage() {
   const center = usePlaceCenter(location);
   const { origin, hasHome } = useHomePoint(Boolean(session), center);
 
-  const [mode, setMode] = useState<"view" | "near" | "church">("view");
+  const [mode, setMode] = useState<"view" | "near" | "church" | "prayer">(
+    freshMode === "prayer" ? "prayer" : "view",
+  );
   const [bounds, setBounds] = useState<MapBounds | null>(null);
   const [pending, setPending] = useState<MapBounds | null>(null);
   const moved = mode === "view" && pending !== null && pending !== bounds;
@@ -97,7 +99,7 @@ function MapPage() {
     all,
     origin,
     mode === "view" ? bounds : null,
-    mode === "church" ? "near" : mode,
+    mode === "view" ? "view" : "near",
     session?.user?.id ?? null,
     highlightId,
   );
@@ -126,9 +128,38 @@ function MapPage() {
         })),
     [churches, highlightId],
   );
+
+  // Prayers posted to the whole map — their own pin colour and their own filter.
+  const fetchPrayers = useServerFn(listPublicPrayers);
+  const { data: prayers } = useQuery({
+    queryKey: ["public-prayers"],
+    queryFn: () => fetchPrayers(),
+  });
+  const prayerPoints = useMemo(
+    () =>
+      (prayers ?? [])
+        .filter((p) => p.lat != null && p.lng != null)
+        .map((p) => ({
+          id: `prayer-${p.id}`,
+          lat: p.lat as number,
+          lng: p.lng as number,
+          title: p.shortTitle,
+          color: PRAYER_PIN_COLOR,
+          glyph: iconMarkup(HandHeart),
+          highlight: highlightId === `prayer-${p.id}`,
+        })),
+    [prayers, highlightId],
+  );
+  const activePrayer = (prayers ?? []).find((p) => p.id === activePrayerId);
+
   const allPoints = useMemo(
-    () => (mode === "church" ? churchPoints : [...points, ...churchPoints]),
-    [points, churchPoints, mode],
+    () =>
+      mode === "church"
+        ? churchPoints
+        : mode === "prayer"
+          ? prayerPoints
+          : [...points, ...churchPoints],
+    [points, churchPoints, prayerPoints, mode],
   );
 
   /** Churches with a distance from home, nearest first. */
