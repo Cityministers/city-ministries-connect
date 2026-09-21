@@ -1,13 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, List, Search } from "lucide-react";
+import { ArrowLeft, HandHeart, List, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AccountMenu } from "@/components/AccountMenu";
 import { BrandLogo } from "@/components/BrandLogo";
 import { SiteNav } from "@/components/SiteNav";
 import { MinistryPost } from "@/components/MinistryPost";
+import { PrayerPost } from "@/components/PrayerPost";
 import { Button } from "@/components/ui/button";
 import { toneStyles } from "@/data/ministries";
 import { LiveMap, type MapBounds } from "@/components/LiveMap";
@@ -18,6 +19,7 @@ import { formatMiles, milesBetween } from "@/lib/distance";
 import { listChurches } from "@/lib/churches.functions";
 import { iconMarkup } from "@/lib/map-icon";
 import { listUserMinistries } from "@/lib/ministries.functions";
+import { listPublicPrayers } from "@/lib/prayers.functions";
 import { toMinistry } from "@/lib/user-ministries";
 import { useHomePoint, useMapPosts, usePlaceCenter } from "@/lib/use-map-view";
 
@@ -131,7 +133,7 @@ function MapPage() {
 
   // Prayers posted to the whole map — their own pin colour and their own filter.
   const fetchPrayers = useServerFn(listPublicPrayers);
-  const { data: prayers } = useQuery({
+  const { data: prayers, refetch: refetchPrayers } = useQuery({
     queryKey: ["public-prayers"],
     queryFn: () => fetchPrayers(),
   });
