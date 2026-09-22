@@ -160,6 +160,27 @@ function Back({ bleed = false }: { bleed?: boolean }) {
   );
 }
 
+let fontCssPromise: Promise<string> | null = null;
+function getFontCss() {
+  fontCssPromise ??= (async () => {
+    const url =
+      "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:opsz,wght@9..144,600&family=Karla:wght@400;600;700;800&display=swap";
+    let css = await (await fetch(url)).text();
+    const files = Array.from(new Set(css.match(/https:[^)]+\.woff2/g) ?? []));
+    for (const f of files) {
+      const blob = await (await fetch(f)).blob();
+      const data = await new Promise<string>((r) => {
+        const fr = new FileReader();
+        fr.onload = () => r(fr.result as string);
+        fr.readAsDataURL(blob);
+      });
+      css = css.split(f).join(data);
+    }
+    return css;
+  })();
+  return fontCssPromise;
+}
+
 function Preview({ children }: { children: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.3);
@@ -188,7 +209,14 @@ function BusinessCardPage() {
 
   const render = async (key: keyof typeof refs) => {
     await document.fonts.ready;
-    return toPng(refs[key].current!, { pixelRatio: 1, cacheBust: true });
+    const node = refs[key].current!.firstElementChild as HTMLElement;
+    return toPng(node, {
+      pixelRatio: 1,
+      cacheBust: true,
+      width: node.offsetWidth,
+      height: node.offsetHeight,
+      fontEmbedCSS: await getFontCss(),
+    });
   };
   const save = (url: string, name: string) => {
     const a = document.createElement("a");
@@ -261,7 +289,7 @@ function BusinessCardPage() {
       </main>
 
       {/* Full-size offscreen copies used for exporting */}
-      <div aria-hidden="true" style={{ position: "fixed", left: -10000, top: 0 }}>
+      <div aria-hidden="true" style={{ position: "fixed", left: -10000, top: 0, width: "max-content" }}>
         <div ref={refs.front}><Front /></div>
         <div ref={refs.back}><Back /></div>
         <div ref={refs.frontBleed}><Front bleed /></div>
