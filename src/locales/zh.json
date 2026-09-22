@@ -572,7 +572,6 @@
   "Serving with": "服事伙伴",
   "Scope": "服事范围",
   "Dream & barrier": "梦想与阻碍",
-  "Choose the type you want to post": "选择你想发布的类型",
   "Loading": "加载中",
   "One quick step first": "先完成一个简单步骤",
   "Create a free account to post your ministry on your city's map.": "免费注册账号，就能在你所在城市的地图上发布事工。",
@@ -830,5 +829,6 @@
   "How do you like the look and colors?": "你喜欢这里的界面设计和配色吗？",
   "How fast did pages and the map load?": "页面和地图加载得快吗？",
   "Report Abuse — City Ministers": "举报违规行为 — 城市同工",
-  "View": "查看"
+  "View": "查看",
+  "Create a Post": "创建帖子"
 }
