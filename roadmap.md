@@ -10,3 +10,4 @@
 - [ ] Add Hausa to the language menu (translation in progress)
 - [ ] Church moderator role: church creator assigns moderators from the members list; approved prayers appear on the wall and map; moderators and pastors can hide or delete posted prayers
 - [x] Add Create Post, Ministries, and Needs controls above both maps
+- [ ] Standardize ministry, need, and prayer action buttons across the site using the map color scheme, especially church pages
