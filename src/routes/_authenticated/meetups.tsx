@@ -172,7 +172,7 @@ function RespondRow({ meetup: m }: { meetup: MyMeetupDTO }) {
       <button type="button" disabled={busy} onClick={() => go(true)} aria-pressed={m.status === "accepted"} className={`${btn} ${m.status === "accepted" ? "ring-2" : ""} bg-tone-emerald/25 text-sand ring-tone-emerald/55`}>
         {t("Accept")}
       </button>
-      <button type="button" disabled={busy} onClick={() => go(false, true)} className={`${btn} bg-lemon/15 text-sand ring-lemon/45`}>
+      <button type="button" disabled={busy} onClick={() => go(false, true)} className={`${btn} whitespace-nowrap text-sm bg-lemon/15 text-sand ring-lemon/45`}>
         {t("Maybe later")}
       </button>
       <button type="button" disabled={busy} onClick={() => go(false)} aria-pressed={m.status === "declined"} className={`${btn} ${m.status === "declined" ? "ring-2 ring-mist" : ""} bg-ink text-sand ring-mist/40`}>
