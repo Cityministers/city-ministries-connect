@@ -569,7 +569,6 @@
   "Serving with": "Con quién sirves",
   "Scope": "Alcance",
   "Dream & barrier": "Tu sueño y lo que te frena",
-  "Choose the type you want to post": "Elige el tipo de publicación que quieres crear",
   "Loading": "Cargando",
   "One quick step first": "Primero, un paso rápido",
   "Create a free account to post your ministry on your city's map.": "Crea una cuenta gratuita para publicar tu ministerio en el mapa de tu ciudad.",
@@ -831,5 +830,6 @@
   "How do you like the look and colors?": "¿Qué te parecen el diseño y los colores?",
   "How fast did pages and the map load?": "¿Qué tan rápido se cargaron las páginas y el mapa?",
   "Report Abuse — City Ministers": "Denunciar abuso — City Ministers",
-  "View": "Ver"
+  "View": "Ver",
+  "Create a Post": "Crear una publicación"
 }

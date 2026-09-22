@@ -569,7 +569,6 @@
   "Serving with": "함께 섬길 사람",
   "Scope": "사역 범위",
   "Dream & barrier": "꿈과 걸림돌",
-  "Choose the type you want to post": "게시할 유형을 선택하세요",
   "Loading": "불러오는 중",
   "One quick step first": "먼저 간단한 단계 하나만 완료해 주세요",
   "Create a free account to post your ministry on your city's map.": "무료로 가입하고 우리 도시 지도에 사역을 올려보세요.",
@@ -831,5 +830,6 @@
   "How do you like the look and colors?": "디자인과 색상이 마음에 드셨나요?",
   "How fast did pages and the map load?": "페이지와 지도가 얼마나 빨리 표시되었나요?",
   "Report Abuse — City Ministers": "부적절한 이용 신고 — City Ministers",
-  "View": "보기"
+  "View": "보기",
+  "Create a Post": "게시물 만들기"
 }

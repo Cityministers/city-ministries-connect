@@ -130,7 +130,6 @@
   "Choose all that fit": "Zaɓi duk waɗanda suka dace",
   "Choose from": "Zaɓa daga",
   "Choose from ready-made ministry types or create something only you can offer. Add a short title, a description, photos or a video, and the city you serve. Your pin goes on the map right away.": "Zaɓi daga nau'ikan hidimar da aka riga aka shirya, ko ka ƙirƙiri wani abu da kai kaɗai za ka iya bayarwa. Ƙara gajeren take, bayani, hotuna ko bidiyo, da garin da kake yi wa hidima. Alamarka za ta bayyana a taswira nan take.",
-  "Choose the type you want to post": "Zaɓi nau'in abin da kake son wallafawa",
   "Choose your map icon": "Zaɓi alamarka a taswira",
   "Church": "Coci",
   "Church board": "Kwamitin cocin",
@@ -841,5 +840,6 @@
   "{{n}} of 5 stars": "Taurari {{n}} cikin 5",
   "{{n}}/5 overall": "{{n}}/5 gaba ɗaya",
   "{{percent}}% complete": "An kammala {{percent}}%",
-  "View": "Duba"
+  "View": "Duba",
+  "Create a Post": "Ƙirƙiri wani rubutu"
 }
