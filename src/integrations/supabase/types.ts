@@ -526,9 +526,12 @@ export type Database = {
           conversation_id: string
           created_at: string
           id: string
+          lat: number | null
+          lng: number | null
           location: string
           meet_at: string
           recipient_id: string
+          reminder_sent_at: string | null
           requester_id: string
           response_note: string | null
           status: string
@@ -538,9 +541,12 @@ export type Database = {
           conversation_id: string
           created_at?: string
           id?: string
+          lat?: number | null
+          lng?: number | null
           location: string
           meet_at: string
           recipient_id: string
+          reminder_sent_at?: string | null
           requester_id: string
           response_note?: string | null
           status?: string
@@ -550,9 +556,12 @@ export type Database = {
           conversation_id?: string
           created_at?: string
           id?: string
+          lat?: number | null
+          lng?: number | null
           location?: string
           meet_at?: string
           recipient_id?: string
+          reminder_sent_at?: string | null
           requester_id?: string
           response_note?: string | null
           status?: string
