@@ -14,7 +14,7 @@ import { MeetupsCalendar, dayKey } from "@/components/meetup/MeetupsCalendar";
 const MeetupsMap = lazy(() => import("@/components/meetup/MeetupsMap"));
 
 export const Route = createFileRoute("/_authenticated/meetups")({
-  validateSearch: z.object({ id: z.string().optional() }),
+  validateSearch: z.object({ id: z.string().optional(), reschedule: z.string().optional() }),
   head: () => ({
     meta: [
       { title: "My Meetups — City Ministers" },
@@ -30,7 +30,7 @@ export const Route = createFileRoute("/_authenticated/meetups")({
 
 function MeetupsPage() {
   const { t, i18n } = useTranslation();
-  const { id } = Route.useSearch();
+  const { id, reschedule } = Route.useSearch();
   const fetchMeetups = useServerFn(listMyMeetups);
   const { data, isLoading } = useQuery({ queryKey: ["my-meetups"], queryFn: () => fetchMeetups() });
   const [openId, setOpenId] = useState<string | null>(id ?? null);
