@@ -41,7 +41,6 @@ function AuthPage() {
   const [isSignUp, setIsSignUp] = useState(mode === "signup");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -91,7 +90,6 @@ function AuthPage() {
             emailRedirectTo: `${window.location.origin}/auth${
               destination ? `?next=${encodeURIComponent(destination)}` : ""
             }`,
-            data: { display_name: name.trim() },
           },
         });
         if (signUpError) throw signUpError;
@@ -184,18 +182,6 @@ function AuthPage() {
         </div>
 
         <form className="flex flex-col gap-4" onSubmit={(e) => void handleSubmit(e)}>
-          {isSignUp && (
-            <label className="flex flex-col gap-2 text-lg text-sand sm:text-xl">
-              {t("Your name")}
-              <input
-                className="rounded-xl bg-ink-soft px-5 py-4 text-xl text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50 sm:text-2xl"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                maxLength={60}
-                autoComplete="name"
-              />
-            </label>
-          )}
           <label className="flex flex-col gap-2 text-lg text-sand sm:text-xl">
             {t("Email")}
             <input
