@@ -42,7 +42,6 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [agreed, setAgreed] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -85,11 +84,6 @@ function AuthPage() {
     setBusy(true);
     try {
       if (isSignUp) {
-        if (!agreed) {
-          setError(t("Please read and accept the User & Privacy Agreement first."));
-          setBusy(false);
-          return;
-        }
         const { data, error: signUpError } = await supabase.auth.signUp({
           email: email.trim(),
           password,
@@ -142,10 +136,6 @@ function AuthPage() {
 
   async function handleGoogle() {
     setError(null);
-    if (isSignUp && !agreed) {
-      setError(t("Please read and accept the User & Privacy Agreement first."));
-      return;
-    }
     const result = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: `${window.location.origin}/auth${
         destination ? `?next=${encodeURIComponent(destination)}` : ""
@@ -232,24 +222,14 @@ function AuthPage() {
           </label>
 
           {isSignUp && (
-            <label className="mt-1 flex items-start gap-4 rounded-xl bg-ink-soft/60 px-5 py-4 text-base text-mist/80 ring-1 ring-mist/15 sm:text-lg">
-              <input
-                type="checkbox"
-                checked={agreed}
-                onChange={(e) => setAgreed(e.target.checked)}
-                className="mt-1 size-6 shrink-0 accent-lemon"
-              />
-              <span>
-                {t("I have read and agree to the")}{" "}
-                <Link
-                  to="/terms"
-                  className="text-sand underline decoration-mist/40 underline-offset-2"
-                >
-                  {t("User & Privacy Agreement")}
-                </Link>
-                .
-              </span>
-            </label>
+            <p className="mt-1 text-base text-mist/80 sm:text-lg">
+              <Link
+                to="/terms"
+                className="text-sand underline decoration-mist/40 underline-offset-2"
+              >
+                {t("User & Privacy Agreement")}
+              </Link>
+            </p>
           )}
 
           {error && (
@@ -265,7 +245,7 @@ function AuthPage() {
 
           <button
             type="submit"
-            disabled={busy || (isSignUp && !agreed)}
+            disabled={busy}
             className="mt-2 inline-flex items-center justify-center gap-3 rounded-full bg-lemon px-6 py-4 text-xl font-semibold text-ink transition-transform hover:-translate-y-0.5 disabled:opacity-60"
           >
             {busy && <Loader2 className="size-7 animate-spin" aria-hidden="true" />}
