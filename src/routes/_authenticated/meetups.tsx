@@ -33,7 +33,7 @@ function MeetupsPage() {
   const { id, reschedule } = Route.useSearch();
   const fetchMeetups = useServerFn(listMyMeetups);
   const { data, isLoading } = useQuery({ queryKey: ["my-meetups"], queryFn: () => fetchMeetups() });
-  const [openId, setOpenId] = useState<string | null>(id ?? null);
+  const [openId, setOpenId] = useState<string | null>(reschedule === "1" ? null : (id ?? null));
   const [day, setDay] = useState<string | null>(null);
   const list = data ?? [];
   const now = Date.now();
