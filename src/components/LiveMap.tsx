@@ -38,7 +38,7 @@ declare global {
 }
 
 /** Loads the Maps JavaScript API once for the whole app. */
-function loadMaps(): Promise<void> {
+export function loadMaps(): Promise<void> {
   if (typeof window === "undefined") return Promise.resolve();
   if (window.__cmMapsReady) return window.__cmMapsReady;
   window.__cmMapsReady = new Promise<void>((resolve, reject) => {
@@ -65,7 +65,7 @@ function loadMaps(): Promise<void> {
 }
 
 /** Dark, low-contrast basemap so our own pins stay the brightest thing on screen. */
-const DARK_STYLE: google.maps.MapTypeStyle[] = [
+export const DARK_STYLE: google.maps.MapTypeStyle[] = [
   { elementType: "geometry", stylers: [{ color: "#1b1726" }] },
   { elementType: "labels.text.fill", stylers: [{ color: "#8b8aa3" }] },
   { elementType: "labels.text.stroke", stylers: [{ color: "#14111d" }] },
