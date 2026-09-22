@@ -77,7 +77,7 @@ function MeetupsPage() {
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-col gap-5 px-4 py-6">
-      <Link to="/profile" search={{}} className="inline-flex items-center gap-2 text-base text-mist/80">
+      <Link to="/profile" search={{ tab: "notifications" }} className="inline-flex items-center gap-2 text-base text-mist/80">
         <ArrowLeft className="size-5" /> {t("Back to profile")}
       </Link>
       <h1 className="font-display text-3xl text-sand">{t("My meetups")}</h1>
