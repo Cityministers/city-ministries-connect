@@ -52,8 +52,15 @@ export function AccountMenu() {
   const fetchUnread = useServerFn(getUnreadCount);
   const { data: unread } = useQuery({
     queryKey: ["unread-notifications", session?.user?.id ?? "none"],
-    queryFn: () => fetchUnread(),
+    queryFn: async () => {
+      try {
+        return await fetchUnread();
+      } catch {
+        return { unread: 0 };
+      }
+    },
     enabled: Boolean(session?.user?.id),
+    retry: false,
     refetchInterval: 60_000,
   });
   const unreadCount = unread?.unread ?? 0;
