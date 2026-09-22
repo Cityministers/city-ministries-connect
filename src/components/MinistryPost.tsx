@@ -26,6 +26,10 @@ import {
   type CommentDTO,
 } from "@/lib/favorites.functions";
 import { startConversation } from "@/lib/messages.functions";
+import { createMeetupRequest } from "@/lib/meetups.functions";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format } from "date-fns";
 
 export function MinistryPost({
   ministry,
@@ -57,6 +61,11 @@ export function MinistryPost({
   const [commentText, setCommentText] = useState("");
   const [messageOpen, setMessageOpen] = useState(false);
   const [messageText, setMessageText] = useState("");
+  const [meetupMode, setMeetupMode] = useState(false);
+  const [meetDate, setMeetDate] = useState<Date | undefined>();
+  const [meetTime, setMeetTime] = useState("18:00");
+  const [meetLocation, setMeetLocation] = useState("");
+  const createMeetup = useServerFn(createMeetupRequest);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [slide, setSlide] = useState(0);
@@ -177,12 +186,32 @@ export function MinistryPost({
   async function handleSend() {
     if (!postRef || messageText.trim().length === 0) return;
     if (!guard()) return;
+    let meetAtIso: string | null = null;
+    if (meetupMode) {
+      if (!meetDate || !meetTime || meetLocation.trim().length === 0) {
+        setError(t("Please choose a day, time and place."));
+        return;
+      }
+      const [h, m] = meetTime.split(":").map(Number);
+      const when = new Date(meetDate);
+      when.setHours(h ?? 0, m ?? 0, 0, 0);
+      if (when.getTime() < Date.now()) {
+        setError(t("Please choose a time in the future."));
+        return;
+      }
+      meetAtIso = when.toISOString();
+    }
     setBusy(true);
     setError(null);
     try {
       const { conversationId } = await startChat({
         data: { ...postRef, body: messageText.trim() },
       });
+      if (meetAtIso) {
+        await createMeetup({
+          data: { conversationId, meetAt: meetAtIso, location: meetLocation.trim() },
+        });
+      }
       onClose();
       void navigate({ to: "/messages/$conversationId", params: { conversationId } });
     } catch (err) {
