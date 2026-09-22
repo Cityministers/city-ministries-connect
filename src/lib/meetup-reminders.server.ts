@@ -40,7 +40,10 @@ export async function sendMeetupReminders(): Promise<number> {
       pairs.map(([me, other]) => ({
         user_id: me,
         kind: "reminder",
-        title: `Reminder: meetup with ${name.get(other)} tomorrow at ${time}`,
+        title:
+          r.status === "pending"
+            ? `Reminder: meetup with ${name.get(other)} tomorrow at ${time} still needs an answer`
+            : `Reminder: meetup with ${name.get(other)} tomorrow at ${time}`,
         body: r.location.slice(0, 140),
         link: `/meetups?id=${r.id}`,
       })),
