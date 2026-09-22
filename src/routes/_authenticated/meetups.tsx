@@ -156,7 +156,7 @@ function MeetupsPage() {
   );
 }
 
-function RespondRow({ meetup: m, initial }: { meetup: MyMeetupDTO; initial?: RespondIntent }) {
+function RespondRow({ meetup: m, initial }: { meetup: MyMeetupDTO; initial?: RespondIntent | undefined }) {
   const { t } = useTranslation();
   const qc = useQueryClient();
   const [intent, setIntent] = useState<RespondIntent | null>(initial ?? null);
