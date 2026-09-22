@@ -217,7 +217,7 @@ function BusinessCardPage() {
     await document.fonts.ready;
     const node = refs[key].current!.firstElementChild as HTMLElement;
     return toPng(node, {
-      pixelRatio: 1,
+      pixelRatio: 70 / 300,
       cacheBust: true,
       width: node.offsetWidth,
       height: node.offsetHeight,
@@ -263,7 +263,7 @@ function BusinessCardPage() {
     <div className="min-h-dvh bg-ink font-body text-sand">
       <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
         <h1 className="font-display text-3xl font-semibold">City Ministers Business Card</h1>
-        <p className="mt-2 text-mist/80">3.5 x 2 in, 300 dpi. The QR code opens cityministers.com.</p>
+        <p className="mt-2 text-mist/80">3.5 x 2 in, 70 dpi. The QR code opens cityministers.com.</p>
 
         <div className="mt-8 grid gap-8 md:grid-cols-2">
           <section className="flex flex-col gap-3">
