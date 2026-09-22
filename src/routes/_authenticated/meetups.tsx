@@ -156,10 +156,10 @@ function MeetupsPage() {
   );
 }
 
-function RespondRow({ meetup: m }: { meetup: MyMeetupDTO }) {
+function RespondRow({ meetup: m, initial }: { meetup: MyMeetupDTO; initial?: RespondIntent }) {
   const { t } = useTranslation();
   const qc = useQueryClient();
-  const [intent, setIntent] = useState<RespondIntent | null>(null);
+  const [intent, setIntent] = useState<RespondIntent | null>(initial ?? null);
   const pick = (i: RespondIntent) => {
     if ((i === "accept" && m.status === "accepted") || (i === "decline" && m.status === "declined")) return;
     setIntent(i);
@@ -178,6 +178,14 @@ function RespondRow({ meetup: m }: { meetup: MyMeetupDTO }) {
           {t("Decline")}
         </button>
       </div>
+      <button
+        type="button"
+        onClick={() => setIntent("reschedule")}
+        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-4 py-2.5 text-base font-semibold text-sand ring-1 ring-lemon/50 transition active:scale-95"
+      >
+        <CalendarClock className="size-5 text-lemon" />
+        {t("Reschedule")}
+      </button>
       {intent && (
         <MeetupRespondDialog
           meetup={m}
