@@ -86,6 +86,7 @@ function MeetupsPage() {
           <Navigation className="size-5 text-lemon" />
           {t("Open in Maps")}
         </a>
+        <RespondRow meetup={m} />
       </div>
     );
   };
