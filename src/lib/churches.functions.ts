@@ -40,7 +40,7 @@ function galleryPaths(raw: unknown): GalleryItem[] {
 
 export type ChurchPostDTO = {
   linkId: string;
-  kind: "ministry" | "need";
+  kind: "ministry" | "need" | "prayer";
   postId: string;
   title: string;
   description: string;
@@ -203,24 +203,37 @@ export const getChurch = createServerFn({ method: "GET" })
       // Public posts in the same place that aren't attached to any church.
       const place = church.zip || church.city;
       const column = church.zip ? "zip" : "city";
-      const [{ data: nearMinistries }, { data: nearNeeds }, { data: takenLinks }] =
-        await Promise.all([
-          place
-            ? supabase
-                .from("user_ministries")
-                .select("id, owner_id, short_title, title, description, city, zip")
-                .eq(column, place)
-                .limit(40)
-            : Promise.resolve({ data: [] as never[] }),
-          place
-            ? supabase
-                .from("user_needs")
-                .select("id, owner_id, short_title, title, description, city, zip")
-                .eq(column, place)
-                .limit(40)
-            : Promise.resolve({ data: [] as never[] }),
-          supabase.from("church_posts").select("post_id").eq("status", "approved"),
-        ]);
+      const [
+        { data: nearMinistries },
+        { data: nearNeeds },
+        { data: nearPrayers },
+        { data: takenLinks },
+      ] = await Promise.all([
+        place
+          ? supabase
+              .from("user_ministries")
+              .select("id, owner_id, short_title, title, description, city, zip")
+              .eq(column, place)
+              .limit(40)
+          : Promise.resolve({ data: [] as never[] }),
+        place
+          ? supabase
+              .from("user_needs")
+              .select("id, owner_id, short_title, title, description, city, zip")
+              .eq(column, place)
+              .limit(40)
+          : Promise.resolve({ data: [] as never[] }),
+        place
+          ? supabase
+              .from("prayers")
+              .select("id, owner_id, short_title, body, city, zip, anonymous")
+              .is("church_id", null)
+              .eq("status", "active")
+              .eq(column, place)
+              .limit(40)
+          : Promise.resolve({ data: [] as never[] }),
+        supabase.from("church_posts").select("post_id").eq("status", "approved"),
+      ]);
 
       const taken = new Set((takenLinks ?? []).map((l) => l.post_id));
 
@@ -234,6 +247,19 @@ export const getChurch = createServerFn({ method: "GET" })
         zip: string | null;
       };
 
+      type PrayerRow = {
+        id: string;
+        owner_id: string | null;
+        short_title: string | null;
+        body: string;
+        city: string;
+        zip: string | null;
+        anonymous: boolean;
+      };
+
+      const prayerOwnerIds = ((nearPrayers ?? []) as PrayerRow[])
+        .filter((p) => !p.anonymous && p.owner_id)
+        .map((p) => p.owner_id as string);
       const ownerIds = [
         ...new Set(
           [
@@ -241,6 +267,7 @@ export const getChurch = createServerFn({ method: "GET" })
             ...((needs ?? []) as PostRow[]),
             ...((nearMinistries ?? []) as PostRow[]),
             ...((nearNeeds ?? []) as PostRow[]),
+            ...prayerOwnerIds.map((owner_id) => ({ owner_id })),
           ].map((p) => p.owner_id),
         ),
       ];
@@ -269,6 +296,19 @@ export const getChurch = createServerFn({ method: "GET" })
           posterName: nameById.get(p.owner_id) || "A neighbor",
         }));
 
+      const shapePrayers = (rows: PrayerRow[]): ChurchPostDTO[] =>
+        rows.map((p) => ({
+          linkId: `near-prayer-${p.id}`,
+          kind: "prayer" as const,
+          postId: p.id,
+          title: p.short_title || "Prayer request",
+          description: p.body,
+          city: p.city,
+          zip: p.zip ?? "",
+          status: "public",
+          posterName: p.anonymous ? "Anonymous" : (p.owner_id ? nameById.get(p.owner_id) : null) || "A neighbor",
+        }));
+
       const posts = [
         ...shape((ministries ?? []) as PostRow[], "ministry", true),
         ...shape((needs ?? []) as PostRow[], "need", true),
@@ -276,6 +316,7 @@ export const getChurch = createServerFn({ method: "GET" })
       const nearby = [
         ...shape((nearMinistries ?? []) as PostRow[], "ministry", false),
         ...shape((nearNeeds ?? []) as PostRow[], "need", false),
+        ...shapePrayers((nearPrayers ?? []) as PrayerRow[]),
       ].filter((p) => !taken.has(p.postId));
 
       return { church: toChurch(church, urlByPath), posts, nearby: nearby.slice(0, 30) };
