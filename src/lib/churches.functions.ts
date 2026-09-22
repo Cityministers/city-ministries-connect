@@ -247,6 +247,16 @@ export const getChurch = createServerFn({ method: "GET" })
         zip: string | null;
       };
 
+      type PrayerRow = {
+        id: string;
+        owner_id: string | null;
+        short_title: string | null;
+        body: string;
+        city: string;
+        zip: string | null;
+        anonymous: boolean;
+      };
+
       const ownerIds = [
         ...new Set(
           [
@@ -254,6 +264,9 @@ export const getChurch = createServerFn({ method: "GET" })
             ...((needs ?? []) as PostRow[]),
             ...((nearMinistries ?? []) as PostRow[]),
             ...((nearNeeds ?? []) as PostRow[]),
+            ...((nearPrayers ?? []) as PrayerRow[])
+              .filter((p) => !p.anonymous && p.owner_id)
+              .map((p) => p.owner_id as string),
           ].map((p) => p.owner_id),
         ),
       ];
