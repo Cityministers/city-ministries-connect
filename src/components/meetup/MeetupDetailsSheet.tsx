@@ -1,5 +1,5 @@
-import { Link } from "@tanstack/react-router";
-import { CalendarClock, MapPin, MessageCircle, Navigation, X } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
+import { CalendarClock, CalendarX, MapPin, MessageCircle, Navigation, X } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
