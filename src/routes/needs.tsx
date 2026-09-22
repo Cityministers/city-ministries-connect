@@ -227,7 +227,7 @@ function NeedsPage() {
           <>
             <div className="relative">
               <LiveMap
-                points={allPoints}
+                points={points}
                 center={mapCenter}
                 zoom={spotlight ? 16 : 12}
                 onSelect={selectPoint}
