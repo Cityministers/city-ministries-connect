@@ -464,14 +464,14 @@ function ChurchPage() {
                   <Link
                     to="/create-ministry"
                     search={{ city: church.city, zip: church.zip, church: church.id }}
-                    className="rounded-full bg-lemon px-5 py-3 text-center text-base font-semibold text-ink transition hover:opacity-90"
+                    className="rounded-full bg-lemon px-5 py-3.5 text-center text-lg font-bold text-ink transition hover:opacity-90"
                   >
                     {t("Post your ministry here")}
                   </Link>
                   <Link
                     to="/post-need"
                     search={{ church: church.id }}
-                    className="rounded-full bg-ember px-5 py-3 text-center text-base font-semibold text-ink shadow-[0_0_18px_-4px_var(--color-ember)] transition hover:opacity-90"
+                    className="rounded-full bg-ember px-5 py-3.5 text-center text-lg font-bold text-ink shadow-[0_0_18px_-4px_var(--color-ember)] transition hover:opacity-90"
                   >
                     {t("Post your need here")}
                   </Link>
