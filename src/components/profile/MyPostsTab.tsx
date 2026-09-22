@@ -110,7 +110,7 @@ export function MyPostsTab() {
         return (
           <div
             key={`${post.postType}-${post.id}`}
-            className="flex flex-col gap-3 rounded-2xl bg-ink-soft/60 p-4 ring-1 ring-mist/15"
+            className="flex flex-col gap-3 rounded-2xl bg-ink-soft/60 p-4 ring-1 ring-mist/35"
           >
             <div className="flex items-start gap-3">
               {post.photoUrl ? (

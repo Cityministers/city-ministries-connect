@@ -309,10 +309,10 @@ function ProfilePage() {
             <Link
               to="/profile"
               search={{ tab: "notifications" }}
-              className={`flex items-center justify-center gap-3 rounded-2xl px-5 py-4 text-xl font-bold transition ${
+              className={`flex items-center justify-center gap-3 rounded-2xl px-5 py-4 text-xl font-bold transition active:scale-[0.99] ${
                 tab === "notifications"
                   ? "bg-wine text-parchment ring-1 ring-wine-deep"
-                  : "bg-ink-soft text-sand ring-1 ring-mist/20 hover:bg-ink-soft/70"
+                  : "bg-ink-soft text-sand ring-1 ring-mist/35 hover:bg-ink-soft/70"
               }`}
             >
               <Bell className="size-6" aria-hidden="true" />

@@ -57,7 +57,7 @@ export function GiftRepliesTab() {
           answered.map((r) => (
             <article
               key={r.id}
-              className="rounded-2xl bg-ink-soft p-4 ring-1 ring-mist/15"
+              className="rounded-2xl bg-ink-soft p-4 ring-1 ring-mist/35"
             >
               <div className="flex items-baseline justify-between gap-3">
                 <h3 className="text-xl font-semibold text-sand">{r.contactName}</h3>

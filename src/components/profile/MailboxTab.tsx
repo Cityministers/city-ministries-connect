@@ -30,7 +30,7 @@ export function MailboxTab() {
           key={c.id}
           to="/messages/$conversationId"
           params={{ conversationId: c.id }}
-          className="flex items-center gap-3 rounded-2xl bg-ink-soft/60 p-4 ring-1 ring-mist/15 transition hover:bg-ink-soft"
+          className="flex items-center gap-3 rounded-2xl bg-ink-soft/60 p-4 ring-1 ring-mist/35 transition hover:bg-ink-soft active:scale-[0.99]"
         >
           {c.otherPhotoUrl ? (
             <img

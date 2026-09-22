@@ -53,8 +53,8 @@ export function NotificationsTab() {
           onClick={() => {
             if (n.link) void navigate({ href: n.link });
           }}
-          className={`flex items-start gap-3 rounded-2xl p-4 text-left ring-1 transition hover:bg-ink-soft ${
-            n.read ? "bg-ink-soft/40 ring-mist/15" : "bg-lemon/10 ring-lemon/30"
+          className={`flex items-start gap-3 rounded-2xl p-4 text-left ring-1 transition hover:bg-ink-soft active:scale-[0.99] ${
+            n.read ? "bg-ink-soft/40 ring-mist/35" : "bg-lemon/10 ring-lemon/30"
           }`}
         >
           <span className="grid size-12 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20">
