@@ -7,8 +7,8 @@ export async function sendMeetupReminders(): Promise<number> {
   const to = new Date(now + 26 * 3600_000).toISOString();
   const { data: rows } = await supabaseAdmin
     .from("meetup_requests")
-    .select("id, requester_id, recipient_id, meet_at, location")
-    .eq("status", "accepted")
+    .select("id, requester_id, recipient_id, meet_at, location, status")
+    .in("status", ["accepted", "pending"])
     .is("reminder_sent_at", null)
     .gte("meet_at", from)
     .lte("meet_at", to)
