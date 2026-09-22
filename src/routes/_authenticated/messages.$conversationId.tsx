@@ -108,16 +108,17 @@ function ThreadPage() {
               />
             ) : (
             <div
-              key={m.id}
+              key={item.m.id}
               className={`max-w-[85%] rounded-2xl px-4 py-3 text-base leading-relaxed ring-1 ${
-                m.mine
+                item.m.mine
                   ? "self-end bg-lemon/15 text-sand ring-lemon/30"
                   : "self-start bg-ink-soft text-mist/85 ring-mist/15"
               }`}
             >
-              {m.body}
+              {item.m.body}
             </div>
-          ))
+            ),
+          )
         )}
 
         {error && (

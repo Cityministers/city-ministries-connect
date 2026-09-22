@@ -78,6 +78,12 @@ export const listMyConversations = createServerFn({ method: "GET" })
       if (post) subjectByConvo.set(c.id, post.short_title);
     }
 
+    const { data: pendingMeetups } = await supabaseAdmin
+      .from("meetup_requests")
+      .select("conversation_id, requester_id")
+      .in("conversation_id", ids)
+      .eq("status", "pending");
+
     const out: ConversationDTO[] = [];
     for (const c of convos ?? []) {
       const otherId = (others ?? []).find((o) => o.conversation_id === c.id)?.user_id;
@@ -89,7 +95,13 @@ export const listMyConversations = createServerFn({ method: "GET" })
         otherName: profile?.display_name || "A neighbor",
         otherPhotoUrl: await signedAvatar(profile?.avatar_url ?? null),
         subject: subjectByConvo.get(c.id) ?? "",
-        lastMessage: last?.body ?? "",
+        lastMessage: (() => {
+          const pm = (pendingMeetups ?? []).find((p) => p.conversation_id === c.id);
+          if (!pm) return last?.body ?? "";
+          return pm.requester_id === context.userId
+            ? "📅 Meetup request · Awaiting reply"
+            : "📅 Meetup request · Tap to accept or decline";
+        })(),
         lastMessageAt: c.last_message_at,
         unread: Boolean(last && lastRead && last.created_at > lastRead) || Boolean(last && !lastRead),
       });
