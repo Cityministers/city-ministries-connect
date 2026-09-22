@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminLoginRouteImport } from './routes/admin-login'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as BusinessCardRouteImport } from './routes/business-card'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DonateRouteImport } from './routes/donate'
 import { Route as FeedbackRouteImport } from './routes/feedback'
@@ -67,6 +68,11 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BusinessCardRoute = BusinessCardRouteImport.update({
+  id: '/business-card',
+  path: '/business-card',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -230,6 +236,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
+  '/business-card': typeof BusinessCardRoute
   '/contact': typeof ContactRoute
   '/donate': typeof DonateRoute
   '/feedback': typeof FeedbackRoute
@@ -266,6 +273,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
+  '/business-card': typeof BusinessCardRoute
   '/contact': typeof ContactRoute
   '/donate': typeof DonateRoute
   '/feedback': typeof FeedbackRoute
@@ -304,6 +312,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
+  '/business-card': typeof BusinessCardRoute
   '/contact': typeof ContactRoute
   '/donate': typeof DonateRoute
   '/feedback': typeof FeedbackRoute
@@ -342,6 +351,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin-login'
     | '/auth'
+    | '/business-card'
     | '/contact'
     | '/donate'
     | '/feedback'
@@ -378,6 +388,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin-login'
     | '/auth'
+    | '/business-card'
     | '/contact'
     | '/donate'
     | '/feedback'
@@ -415,6 +426,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin-login'
     | '/auth'
+    | '/business-card'
     | '/contact'
     | '/donate'
     | '/feedback'
@@ -453,6 +465,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AuthRoute: typeof AuthRoute
+  BusinessCardRoute: typeof BusinessCardRoute
   ContactRoute: typeof ContactRoute
   DonateRoute: typeof DonateRoute
   FeedbackRoute: typeof FeedbackRoute
@@ -507,6 +520,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/business-card': {
+      id: '/business-card'
+      path: '/business-card'
+      fullPath: '/business-card'
+      preLoaderRoute: typeof BusinessCardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -764,6 +784,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AdminLoginRoute: AdminLoginRoute,
   AuthRoute: AuthRoute,
+  BusinessCardRoute: BusinessCardRoute,
   ContactRoute: ContactRoute,
   DonateRoute: DonateRoute,
   FeedbackRoute: FeedbackRoute,
