@@ -129,7 +129,7 @@ function HomePage() {
           </Link>
           <Link
             to="/needs"
-            className="inline-flex flex-1 items-center justify-center rounded-full border border-slate-lighter bg-slate px-6 py-3.5 text-xl font-semibold text-sand shadow-[0_4px_12px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)] transition hover:bg-slate-light active:translate-y-0.5 sm:flex-initial"
+            className="inline-flex flex-1 items-center justify-center rounded-full bg-tone-emerald/15 px-6 py-3.5 text-xl font-semibold text-tone-emerald shadow-none ring-1 ring-tone-emerald/45 transition hover:bg-tone-emerald/25 sm:flex-initial"
           >
             {t("View Needs")}
           </Link>
