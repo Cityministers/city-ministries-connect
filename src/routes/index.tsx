@@ -241,7 +241,7 @@ function HomePage() {
               {s.title === "Start your own ministry" && (
                 <Link
                   to="/start"
-                  className="inline-flex w-full items-center justify-center rounded-full border border-slate-lighter bg-slate px-5 py-2.5 text-lg font-semibold text-sand shadow-[0_4px_12px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)] transition hover:bg-slate-light active:translate-y-0.5 sm:w-auto sm:self-start"
+                  className="inline-flex w-full items-center justify-center rounded-full bg-tone-cyan/25 px-5 py-2.5 text-lg font-semibold text-sand ring-1 ring-tone-cyan/55 transition hover:bg-tone-cyan/35 active:translate-y-0.5 sm:w-auto sm:self-start"
                 >
                   {t("Start your ministry")}
                 </Link>
@@ -249,7 +249,7 @@ function HomePage() {
               {s.title === "Post a need, or answer one" && (
                 <Link
                   to="/post-need"
-                  className="inline-flex w-full items-center justify-center rounded-full border border-slate-lighter bg-slate px-5 py-2.5 text-lg font-semibold text-sand shadow-[0_4px_12px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)] transition hover:bg-slate-light active:translate-y-0.5 sm:w-auto sm:self-start"
+                  className="inline-flex w-full items-center justify-center rounded-full bg-tone-indigo/15 px-5 py-2.5 text-lg font-semibold text-sand ring-1 ring-tone-indigo/45 transition hover:bg-tone-indigo/25 active:translate-y-0.5 sm:w-auto sm:self-start"
                 >
                   {t("Post a Need")}
                 </Link>
@@ -316,7 +316,7 @@ function HomePage() {
           </p>
           <Link
             to="/start"
-            className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-lemon px-8 py-3.5 text-2xl font-bold text-ink transition-transform hover:-translate-y-0.5 sm:w-auto"
+            className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-tone-cyan/25 px-8 py-3.5 text-2xl font-bold text-sand ring-1 ring-tone-cyan/55 transition hover:bg-tone-cyan/35 sm:w-auto"
           >
             {t("Start Your Ministry")}
           </Link>

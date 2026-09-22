@@ -126,13 +126,13 @@ function AboutPage() {
         <div className="mt-10 flex flex-wrap justify-center gap-3">
           <Link
             to="/start"
-            className="rounded-full bg-lemon px-6 py-3 text-base font-semibold text-ink transition hover:bg-lemon/90"
+            className="rounded-full bg-tone-cyan/25 px-6 py-3 text-base font-semibold text-sand ring-1 ring-tone-cyan/55 transition hover:bg-tone-cyan/35"
           >
             {t("Start your ministry")}
           </Link>
           <Link
             to="/needs"
-            className="rounded-full bg-ink-soft/60 px-6 py-3 text-base font-semibold text-sand ring-1 ring-mist/20 transition hover:bg-ink-soft"
+            className="rounded-full bg-tone-indigo/15 px-6 py-3 text-base font-semibold text-sand ring-1 ring-tone-indigo/45 transition hover:bg-tone-indigo/25"
           >
             {t("View needs")}
           </Link>
