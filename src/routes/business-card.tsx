@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import QRCode from "qrcode";
-import { toPng } from "html-to-image";
+import { toJpeg } from "html-to-image";
 import { jsPDF } from "jspdf";
 import { Download, HandHeart, Heart, Loader2 } from "lucide-react";
 import seal from "@/assets/cm-seal.png";
@@ -216,8 +216,10 @@ function BusinessCardPage() {
   const render = async (key: keyof typeof refs) => {
     await document.fonts.ready;
     const node = refs[key].current!.firstElementChild as HTMLElement;
-    return toPng(node, {
-      pixelRatio: 70 / 300,
+    return toJpeg(node, {
+      pixelRatio: 1,
+      quality: 0.95,
+      backgroundColor: "#070812",
       cacheBust: true,
       width: node.offsetWidth,
       height: node.offsetHeight,
