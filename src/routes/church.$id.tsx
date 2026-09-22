@@ -80,7 +80,7 @@ function PostRow({ post }: { post: ChurchPostDTO }) {
     >
       <span className="flex items-center gap-2">
         <span
-          className={`rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ${
+          className={`rounded-full px-2.5 py-1 text-sm font-semibold ring-1 ${
             post.kind === "ministry"
               ? "bg-tone-emerald/15 text-tone-emerald ring-tone-emerald/40"
               : "bg-tone-indigo/15 text-tone-indigo ring-tone-indigo/40"
@@ -88,14 +88,14 @@ function PostRow({ post }: { post: ChurchPostDTO }) {
         >
           {post.kind === "ministry" ? t("Ministry") : t("Need")}
         </span>
-        <span className="truncate font-heading text-lg text-sand">
+        <span className="truncate font-heading text-xl text-sand">
           <AutoText text={post.title} />
         </span>
       </span>
-      <span className="line-clamp-2 text-sm text-mist/70">
+      <span className="line-clamp-2 text-base text-mist/70">
         <AutoText text={post.description} />
       </span>
-      <span className="text-xs text-mist/50">
+      <span className="text-sm text-mist/50">
         {post.posterName} · {post.city}
         {post.zip ? ` ${post.zip}` : ""}
       </span>
@@ -359,7 +359,7 @@ function ChurchPage() {
 
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
         {isLoading ? (
-          <p className="py-16 text-center text-sm text-mist/60">{t("Loading…")}</p>
+          <p className="py-16 text-center text-base text-mist/60">{t("Loading…")}</p>
         ) : !church ? (
           <div className="rounded-2xl bg-ink-soft p-6 text-center">
             <h1 className="font-display text-2xl font-semibold">{t("We couldn't find that church")}</h1>
@@ -416,7 +416,7 @@ function ChurchPage() {
                       {church.name}
                     </h1>
                     {church.status !== "active" && (
-                      <p className="mt-1 text-sm font-semibold text-rose">
+                      <p className="mt-1 text-base font-semibold text-rose">
                         {t("Not on the map right now")}
                       </p>
                     )}
@@ -479,7 +479,7 @@ function ChurchPage() {
                 <button
                   type="button"
                   onClick={() => (canNativeShare ? void nativeShare() : setShareOpen((v) => !v))}
-                  className="mt-1 inline-flex w-fit items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+                  className="mt-1 inline-flex w-fit items-center gap-2 rounded-full bg-ink px-4 py-2 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
                 >
                   <Share2 className="size-4 text-lemon" aria-hidden="true" />
                   {t("Share")}
@@ -489,7 +489,7 @@ function ChurchPage() {
                     <button
                       type="button"
                       onClick={() => void copyLink()}
-                      className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+                      className="rounded-full bg-ink px-4 py-2 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
                     >
                       {copied ? t("Link copied") : t("Copy link")}
                     </button>
@@ -501,7 +501,7 @@ function ChurchPage() {
                     </a>
                     <a
                       href={`sms:?&body=${encodedText}%20${encodedUrl}`}
-                      className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+                      className="rounded-full bg-ink px-4 py-2 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
                     >
                       {t("Text message")}
                     </a>
@@ -509,7 +509,7 @@ function ChurchPage() {
                       href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+                      className="rounded-full bg-ink px-4 py-2 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
                     >
                       {t("Facebook")}
                     </a>
@@ -525,7 +525,7 @@ function ChurchPage() {
                       <button
                         type="button"
                         onClick={() => void nativeShare()}
-                        className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+                        className="rounded-full bg-ink px-4 py-2 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
                       >
                         {t("More…")}
                       </button>
@@ -578,7 +578,7 @@ function ChurchPage() {
                       {t("Sign in to say you attend here")}
                     </Link>
                   )}
-                  <p className="mt-2 text-sm text-mist/60">
+                  <p className="mt-2 text-base text-mist/60">
                     {t("Once they say yes, this church's scan code sits on your profile so you can show it to anyone.")}
                   </p>
                 </div>
@@ -610,7 +610,7 @@ function ChurchPage() {
                       {t("Put this on your overhead, screen or bulletin. Anyone who scans it lands right here, on your page.")}
                     </p>
                     {pageUrl && (
-                      <p className="truncate rounded-lg bg-ink-soft px-3 py-2 text-sm text-mist/70 ring-1 ring-mist/15">
+                      <p className="truncate rounded-lg bg-ink-soft px-3 py-2 text-base text-mist/70 ring-1 ring-mist/15">
                         {pageUrl}
                       </p>
                     )}
@@ -704,7 +704,7 @@ function ChurchPage() {
 
                 <div className="flex flex-col gap-3 rounded-xl bg-ink p-4 ring-1 ring-mist/15">
                   <p className="font-semibold text-sand">{t("Your church board")}</p>
-                  <p className="text-sm text-mist/60">
+                  <p className="text-base text-mist/60">
                     {(requests ?? []).length === 0
                       ? t("No one is waiting right now.")
                       : t("{{count}} posts are waiting for your approval", { count: (requests ?? []).length })}
@@ -712,7 +712,7 @@ function ChurchPage() {
                   <Link
                     to="/church-board/$id"
                     params={{ id }}
-                    className="inline-flex w-fit items-center gap-1.5 rounded-full bg-lemon px-5 py-2.5 text-sm font-semibold text-ink"
+                    className="inline-flex w-fit items-center gap-1.5 rounded-full bg-lemon px-5 py-2.5 text-base font-semibold text-ink"
                   >
                     <Check className="size-4" aria-hidden="true" />
                     {t("Review requests")}
@@ -796,7 +796,7 @@ function ChurchPage() {
                         placeholder={t("Website")}
                       />
                     </div>
-                    {error && <p className="text-sm text-rose">{error}</p>}
+                    {error && <p className="text-base text-rose">{error}</p>}
                     <div className="flex gap-2">
                       <button
                         type="submit"
@@ -845,20 +845,20 @@ function ChurchPage() {
                           <span className="block truncate font-heading text-base text-sand">
                             {p.shortTitle}
                           </span>
-                          <span className="block truncate text-xs text-mist/70">{p.posterName}</span>
+                          <span className="block truncate text-sm text-mist/70">{p.posterName}</span>
                         </span>
                         <span className="flex shrink-0 gap-2">
                           <button
                             type="button"
                             onClick={() => void decideWallPrayer(p.id, "approve")}
-                            className="rounded-full bg-lemon px-4 py-1.5 text-sm font-semibold text-ink transition hover:opacity-90"
+                            className="rounded-full bg-lemon px-4 py-1.5 text-base font-semibold text-ink transition hover:opacity-90"
                           >
                             {t("Approve")}
                           </button>
                           <button
                             type="button"
                             onClick={() => void decideWallPrayer(p.id, "decline")}
-                            className="rounded-full bg-ink px-4 py-1.5 text-sm font-semibold text-rose ring-1 ring-rose/35 transition hover:bg-rose/10"
+                            className="rounded-full bg-ink px-4 py-1.5 text-base font-semibold text-rose ring-1 ring-rose/35 transition hover:bg-rose/10"
                           >
                             {t("Decline")}
                           </button>
@@ -885,10 +885,10 @@ function ChurchPage() {
                           <HandHelping className="size-5" aria-hidden="true" />
                         </span>
                         <span className="min-w-0 flex-1">
-                          <span className="block truncate font-heading text-lg text-sand sm:text-base">
+                          <span className="block truncate font-heading text-lg text-sand">
                             {p.shortTitle}
                           </span>
-                          <span className="block truncate text-xs text-mist/70">{p.posterName}</span>
+                          <span className="block truncate text-sm text-mist/70">{p.posterName}</span>
                         </span>
                       </button>
                       {canModerate && (
@@ -896,7 +896,7 @@ function ChurchPage() {
                           <button
                             type="button"
                             onClick={() => void moderateWallPrayer(p.id, "hide")}
-                            className="inline-flex items-center gap-1.5 rounded-full bg-ink px-3 py-1.5 text-xs font-semibold text-mist/80 ring-1 ring-mist/25 transition hover:text-sand"
+                            className="inline-flex items-center gap-1.5 rounded-full bg-ink px-3 py-1.5 text-sm font-semibold text-mist/80 ring-1 ring-mist/25 transition hover:text-sand"
                           >
                             <EyeOff className="size-3.5" aria-hidden="true" />
                             {t("Hide")}
@@ -904,7 +904,7 @@ function ChurchPage() {
                           <button
                             type="button"
                             onClick={() => void moderateWallPrayer(p.id, "delete")}
-                            className="inline-flex items-center gap-1.5 rounded-full bg-ink px-3 py-1.5 text-xs font-semibold text-rose ring-1 ring-rose/35 transition hover:bg-rose/10"
+                            className="inline-flex items-center gap-1.5 rounded-full bg-ink px-3 py-1.5 text-sm font-semibold text-rose ring-1 ring-rose/35 transition hover:bg-rose/10"
                           >
                             <Trash2 className="size-3.5" aria-hidden="true" />
                             {t("Delete")}
