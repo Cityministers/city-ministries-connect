@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { listMyMeetups, type MyMeetupDTO } from "@/lib/meetups.functions";
 import { MeetupDetailsSheet, directionsUrl } from "@/components/meetup/MeetupDetailsSheet";
+import { MeetupsCalendar, dayKey } from "@/components/meetup/MeetupsCalendar";
 
 const MeetupsMap = lazy(() => import("@/components/meetup/MeetupsMap"));
 
@@ -31,6 +32,7 @@ function MeetupsPage() {
   const fetchMeetups = useServerFn(listMyMeetups);
   const { data, isLoading } = useQuery({ queryKey: ["my-meetups"], queryFn: () => fetchMeetups() });
   const [openId, setOpenId] = useState<string | null>(id ?? null);
+  const [day, setDay] = useState<string | null>(null);
   const list = data ?? [];
   const now = Date.now();
   const upcoming = list.filter((m) => new Date(m.meetAt).getTime() >= now - 3600_000);
@@ -94,6 +96,19 @@ function MeetupsPage() {
         <ArrowLeft className="size-5" /> {t("Back to profile")}
       </Link>
       <h1 className="font-display text-3xl text-sand">{t("My meetups")}</h1>
+
+      <MeetupsCalendar meetups={list} selected={day} onSelect={setDay} />
+      {day && (
+        <section className="flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm uppercase tracking-[0.15em] text-lemon/80">{t("On this day")}</h2>
+            <button type="button" onClick={() => setDay(null)} className="text-base font-semibold text-lemon">
+              {t("Show all")}
+            </button>
+          </div>
+          {list.filter((m) => dayKey(new Date(m.meetAt)) === day).map(row)}
+        </section>
+      )}
 
       {pins.length > 0 && (
         <Suspense fallback={<div className="h-72 animate-pulse rounded-2xl bg-ink-soft" />}>
