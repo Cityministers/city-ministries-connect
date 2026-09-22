@@ -11,17 +11,17 @@ import { useSession } from "@/hooks/useSession";
 export const Route = createFileRoute("/start")({
   head: () => ({
     meta: [
-      { title: "Choose your ministry type — City Ministers" },
+      { title: "Create a Post — City Ministers" },
       {
         name: "description",
         content:
-          "Pick the kind of ministry you want to offer — a coffee chat, a local ride, prayer, handyman help, and more — then post it to your city's map.",
+          "Pick the kind of post you want to make — a ministry, a need, or a prayer — then share it on your city's map.",
       },
-      { property: "og:title", content: "Choose your ministry type — City Ministers" },
+      { property: "og:title", content: "Create a Post — City Ministers" },
       {
         property: "og:description",
         content:
-          "Pick from every City Ministers category and post your gift to the neighborhood map.",
+          "Post a ministry, a need, or a prayer on the City Ministers neighborhood map.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -57,9 +57,8 @@ function StartPage() {
           </Link>
           <div>
             <h1 className="font-display text-lg font-semibold leading-tight sm:text-xl">
-              {t("Start Your Ministry")}
+              {t("Create a Post")}
             </h1>
-            <p className="text-xs text-mist/70">{t("Choose the type you want to post")}</p>
           </div>
         </div>
       </header>
