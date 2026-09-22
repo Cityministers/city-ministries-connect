@@ -80,9 +80,9 @@ export const listMyConversations = createServerFn({ method: "GET" })
 
     const { data: pendingMeetups } = await supabaseAdmin
       .from("meetup_requests")
-      .select("conversation_id, requester_id")
+      .select("conversation_id, requester_id, status, updated_at")
       .in("conversation_id", ids)
-      .eq("status", "pending");
+      .order("updated_at", { ascending: false });
 
     const out: ConversationDTO[] = [];
     for (const c of convos ?? []) {
@@ -98,6 +98,10 @@ export const listMyConversations = createServerFn({ method: "GET" })
         lastMessage: (() => {
           const pm = (pendingMeetups ?? []).find((p) => p.conversation_id === c.id);
           if (!pm) return last?.body ?? "";
+          if (pm.status !== "pending") {
+            if (last && last.created_at > pm.updated_at) return last.body;
+            return pm.status === "accepted" ? "📅 Meetup accepted" : "📅 Meetup declined";
+          }
           return pm.requester_id === context.userId
             ? "📅 Meetup request · Awaiting reply"
             : "📅 Meetup request · Tap to accept or decline";
