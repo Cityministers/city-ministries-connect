@@ -57,9 +57,18 @@ function MeetupsPage() {
           className="flex flex-col gap-1 rounded-xl text-left transition active:scale-[0.99] active:opacity-80"
         >
           <div className="flex items-center justify-between gap-2">
-            <p className="text-lg font-semibold text-sand">{m.otherName}</p>
+            <div className="flex min-w-0 items-center gap-2">
+              {m.otherAvatar ? (
+                <img src={m.otherAvatar} alt="" className="size-10 shrink-0 rounded-full object-cover ring-1 ring-mist/35" />
+              ) : (
+                <span className="grid size-10 shrink-0 place-items-center rounded-full bg-ink font-semibold text-sand ring-1 ring-mist/35">
+                  {m.otherName.charAt(0).toUpperCase()}
+                </span>
+              )}
+              <p className="truncate text-lg font-semibold text-sand">{m.otherName}</p>
+            </div>
             <span
-              className={`rounded-full px-3 py-1 text-sm font-semibold ring-1 ${
+              className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1 text-sm font-semibold ring-1 ${
                 m.status === "accepted"
                   ? "bg-tone-emerald/20 text-tone-emerald ring-tone-emerald/40"
                   : m.status === "declined" ? "bg-ink text-mist/80 ring-mist/40" : "bg-lemon/15 text-lemon ring-lemon/30"
@@ -139,7 +148,9 @@ function MeetupsPage() {
         </>
       )}
 
-      {open && <MeetupDetailsSheet meetup={open} onClose={() => setOpenId(null)} />}
+      {open && (
+        <MeetupDetailsSheet meetup={open} onClose={() => setOpenId(null)} actions={<RespondRow meetup={open} />} />
+      )}
     </main>
   );
 }

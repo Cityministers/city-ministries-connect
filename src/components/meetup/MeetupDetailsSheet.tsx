@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { CalendarClock, CalendarX, MapPin, MessageCircle, Navigation, X } from "lucide-react";
-import { useState } from "react";
+import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
 export type MeetupDetails = {
@@ -12,6 +12,7 @@ export type MeetupDetails = {
   photoUrl?: string | null;
   status: "pending" | "accepted" | "declined";
   otherName: string;
+  otherAvatar?: string | null;
   conversationId?: string;
 };
 
@@ -20,25 +21,19 @@ export function directionsUrl(m: Pick<MeetupDetails, "lat" | "lng" | "location">
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
 }
 
-function staticMap(lat: number, lng: number) {
-  const key = import.meta.env["VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY"] as string | undefined;
-  if (!key) return null;
-  const style = [
-    "style=element:geometry|color:0x1b1726",
-    "style=element:labels.text.fill|color:0x8b8aa3",
-    "style=feature:road|element:geometry|color:0x2c2640",
-    "style=feature:water|color:0x0e0c16",
-  ].join("&");
-  return `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=16&size=640x320&scale=2&markers=color:0xf2c14e|${lat},${lng}&${style}&key=${key}`;
-}
-
-/** Full meetup details with a pressable map that opens directions. */
-export function MeetupDetailsSheet({ meetup, onClose }: { meetup: MeetupDetails; onClose: () => void }) {
+/** Full meetup details with a tappable directions link. */
+export function MeetupDetailsSheet({
+  meetup,
+  onClose,
+  actions,
+}: {
+  meetup: MeetupDetails;
+  onClose: () => void;
+  actions?: ReactNode;
+}) {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const when = new Date(meetup.meetAt);
-  const [imgFailed, setImgFailed] = useState(false);
-  const img = meetup.lat != null && meetup.lng != null ? staticMap(meetup.lat, meetup.lng) : null;
   const status =
     meetup.status === "accepted" ? t("Accepted") : meetup.status === "declined" ? t("Declined") : t("Awaiting reply");
 
@@ -71,11 +66,20 @@ export function MeetupDetailsSheet({ meetup, onClose }: { meetup: MeetupDetails;
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-3">
-          <div>
-            <p className="text-sm uppercase tracking-[0.15em] text-lemon/80">{status}</p>
-            <h2 className="font-display text-2xl text-sand">
-              {t("Meetup with {{name}}", { name: meetup.otherName })}
-            </h2>
+          <div className="flex min-w-0 items-center gap-3">
+            {meetup.otherAvatar ? (
+              <img src={meetup.otherAvatar} alt="" className="size-14 shrink-0 rounded-full object-cover ring-1 ring-mist/35" />
+            ) : (
+              <span className="grid size-14 shrink-0 place-items-center rounded-full bg-ink font-display text-2xl text-sand ring-1 ring-mist/35">
+                {meetup.otherName.charAt(0).toUpperCase()}
+              </span>
+            )}
+            <div className="min-w-0">
+              <p className="whitespace-nowrap text-sm uppercase tracking-[0.15em] text-lemon/80">{status}</p>
+              <h2 className="font-display text-2xl text-sand">
+                {t("Meetup with {{name}}", { name: meetup.otherName })}
+              </h2>
+            </div>
           </div>
           <button
             type="button"
@@ -102,20 +106,12 @@ export function MeetupDetailsSheet({ meetup, onClose }: { meetup: MeetupDetails;
           href={directionsUrl(meetup)}
           target="_blank"
           rel="noreferrer"
-          className="group relative block overflow-hidden rounded-xl ring-1 ring-lemon/40"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-4 py-3 text-base font-semibold text-sand ring-1 ring-lemon/50 transition active:opacity-80"
         >
-          {img && !imgFailed ? (
-            <img onError={() => setImgFailed(true)} src={img} alt={t("Map of the meetup spot")} className="h-48 w-full object-cover" />
-          ) : (
-            <div className="grid h-40 place-items-center bg-ink pb-10 text-mist/70">
-              <MapPin className="size-8 text-lemon" />
-            </div>
-          )}
-          <span className="absolute inset-x-3 bottom-3 inline-flex items-center justify-center gap-2 rounded-full bg-ink/90 px-4 py-2.5 text-base font-semibold text-sand ring-1 ring-lemon/50">
-            <Navigation className="size-5 text-lemon" />
-            {t("Open in Maps for directions")}
-          </span>
+          <Navigation className="size-5 text-lemon" />
+          {t("Open in Maps")}
         </a>
+        {actions}
         {meetup.conversationId && (
           <div className="flex flex-col gap-2">
             <button
