@@ -1,11 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { ArrowLeft, CalendarClock, Loader2, MapPin, Navigation } from "lucide-react";
 import { lazy, Suspense, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
-import { listMyMeetups, type MyMeetupDTO } from "@/lib/meetups.functions";
+import { listMyMeetups, respondToMeetup, type MyMeetupDTO } from "@/lib/meetups.functions";
 import { MeetupDetailsSheet, directionsUrl } from "@/components/meetup/MeetupDetailsSheet";
 import { MeetupsCalendar, dayKey } from "@/components/meetup/MeetupsCalendar";
 
@@ -140,5 +141,46 @@ function MeetupsPage() {
 
       {open && <MeetupDetailsSheet meetup={open} onClose={() => setOpenId(null)} />}
     </main>
+  );
+}
+
+function RespondRow({ meetup: m }: { meetup: MyMeetupDTO }) {
+  const { t } = useTranslation();
+  const qc = useQueryClient();
+  const respond = useServerFn(respondToMeetup);
+  const [busy, setBusy] = useState(false);
+  const [later, setLater] = useState(false);
+
+  if (m.status !== "pending") return null;
+  if (m.mine)
+    return <p className="text-center text-sm text-mist/75">{t("Waiting for their reply")}</p>;
+  if (later)
+    return <p className="text-center text-sm text-mist/75">{t("We let them know you'll reply later.")}</p>;
+
+  const go = async (accept: boolean, maybe = false) => {
+    setBusy(true);
+    try {
+      await respond({ data: { id: m.id, accept, later: maybe || undefined } });
+      if (maybe) setLater(true);
+      else await qc.invalidateQueries({ queryKey: ["my-meetups"] });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : t("Something went wrong"));
+    } finally {
+      setBusy(false);
+    }
+  };
+  const btn = "flex-1 rounded-full px-3 py-2.5 text-base font-semibold ring-1 transition active:scale-95 disabled:opacity-50";
+  return (
+    <div className="flex gap-2">
+      <button type="button" disabled={busy} onClick={() => go(true)} className={`${btn} bg-tone-emerald/25 text-sand ring-tone-emerald/55`}>
+        {t("Accept")}
+      </button>
+      <button type="button" disabled={busy} onClick={() => go(false, true)} className={`${btn} bg-lemon/15 text-sand ring-lemon/45`}>
+        {t("Maybe later")}
+      </button>
+      <button type="button" disabled={busy} onClick={() => go(false)} className={`${btn} bg-ink text-sand ring-mist/40`}>
+        {t("Decline")}
+      </button>
+    </div>
   );
 }
