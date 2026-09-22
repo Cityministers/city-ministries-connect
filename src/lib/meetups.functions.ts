@@ -105,23 +105,26 @@ export const respondToMeetup = createServerFn({ method: "POST" })
       .select("id, conversation_id, requester_id, recipient_id, status, location")
       .eq("id", data.id)
       .maybeSingle();
-    if (!row || row.recipient_id !== context.userId) throw new Error("Meetup not found.");
-    if (row.status !== "pending") throw new Error("This meetup was already answered.");
+    if (!row || (row.recipient_id !== context.userId && row.requester_id !== context.userId))
+      throw new Error("Meetup not found.");
+    const otherId = row.requester_id === context.userId ? row.recipient_id : row.requester_id;
+    const { notifyUser, displayNameOf } = await import("./social.server");
+    const name = await displayNameOf(context.userId);
 
     if (data.later) {
-      const { notifyUser, displayNameOf } = await import("./social.server");
       await notifyUser({
-        userId: row.requester_id,
+        userId: otherId,
         actorId: context.userId,
         kind: "message",
-        title: `${await displayNameOf(context.userId)} will get back to you about your meetup`,
+        title: `${name} will get back to you about your meetup`,
         body: row.location.slice(0, 140),
         link: `/messages/${row.conversation_id}`,
       });
       return { ok: true };
     }
 
-    const { error } = await context.supabase
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
       .from("meetup_requests")
       .update({
         status: data.accept ? "accepted" : "declined",
@@ -130,10 +133,8 @@ export const respondToMeetup = createServerFn({ method: "POST" })
       .eq("id", data.id);
     if (error) throw new Error(error.message);
 
-    const { notifyUser, displayNameOf } = await import("./social.server");
-    const name = await displayNameOf(context.userId);
     await notifyUser({
-      userId: row.requester_id,
+      userId: otherId,
       actorId: context.userId,
       kind: "message",
       title: data.accept ? `${name} accepted your meetup` : `${name} declined your meetup`,
@@ -158,7 +159,6 @@ export const listMyMeetups = createServerFn({ method: "GET" })
       .select(
         "id, conversation_id, meet_at, location, lat, lng, status, response_note, requester_id, recipient_id, created_at",
       )
-      .or(`requester_id.eq.${context.userId},recipient_id.eq.${context.userId}`)
       .neq("status", "declined")
       .order("meet_at", { ascending: true })
       .limit(200);
