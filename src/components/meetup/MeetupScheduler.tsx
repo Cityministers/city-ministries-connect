@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, MapPin, X } from "lucide-react";
+import { Camera, ChevronLeft, ChevronRight, MapPin, X } from "lucide-react";
 import { lazy, Suspense, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -15,6 +15,8 @@ type Props = {
   onLocation: (v: string) => void;
   pin: LatLng | null;
   onPin: (p: LatLng | null) => void;
+  photo?: File | null;
+  onPhoto?: (f: File | null) => void;
 };
 
 const sameDay = (a: Date, b: Date) =>
@@ -198,6 +200,31 @@ export function MeetupScheduler(p: Props) {
           {t("Pin exact location (optional)")}
         </button>
       )}
+      {p.onPhoto &&
+        (p.photo ? (
+          <div className="flex items-center gap-3 rounded-xl bg-ink-soft p-2 ring-1 ring-lemon/40">
+            <img src={URL.createObjectURL(p.photo)} alt="" className="size-16 rounded-lg object-cover" />
+            <span className="flex-1 text-base text-sand">{t("Photo attached")}</span>
+            <button type="button" onClick={() => p.onPhoto?.(null)} aria-label={t("Remove")} className="p-2">
+              <X className="size-5 text-mist/70" />
+            </button>
+          </div>
+        ) : (
+          <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-ink-soft px-4 py-3.5 text-lg font-semibold text-sand ring-1 ring-lemon/40">
+            <Camera className="size-5 text-lemon" />
+            {t("Add a photo (optional)")}
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f && f.size <= 10 * 1024 * 1024) p.onPhoto?.(f);
+                e.target.value = "";
+              }}
+            />
+          </label>
+        ))}
     </div>
   );
 }

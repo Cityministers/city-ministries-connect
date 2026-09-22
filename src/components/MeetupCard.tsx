@@ -75,6 +75,9 @@ export function MeetupCard({
         onClick={() => setOpen(true)}
         className="-mx-2 block w-[calc(100%+1rem)] rounded-xl px-2 py-1 text-left transition active:bg-ink"
       >
+      {meetup.photoUrl && (
+        <img src={meetup.photoUrl} alt="" className="mb-2 max-h-44 w-full rounded-lg object-cover" />
+      )}
       <p className="flex items-center gap-2 text-lg font-semibold text-sand">
         <CalendarClock className="size-5 text-lemon" aria-hidden="true" />
         {day} · {time}

@@ -530,6 +530,7 @@ export type Database = {
           lng: number | null
           location: string
           meet_at: string
+          photo_path: string | null
           recipient_id: string
           reminder_sent_at: string | null
           requester_id: string
@@ -545,6 +546,7 @@ export type Database = {
           lng?: number | null
           location: string
           meet_at: string
+          photo_path?: string | null
           recipient_id: string
           reminder_sent_at?: string | null
           requester_id: string
@@ -560,6 +562,7 @@ export type Database = {
           lng?: number | null
           location?: string
           meet_at?: string
+          photo_path?: string | null
           recipient_id?: string
           reminder_sent_at?: string | null
           requester_id?: string

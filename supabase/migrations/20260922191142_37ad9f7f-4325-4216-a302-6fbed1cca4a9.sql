@@ -1,0 +1,1 @@
+ALTER TABLE public.meetup_requests ADD COLUMN IF NOT EXISTS photo_path text;
