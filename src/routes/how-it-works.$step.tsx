@@ -145,7 +145,7 @@ function TutorialPage() {
           {isLast ? (
             <Link
               to="/"
-              className="group inline-flex items-center gap-2 rounded-full bg-lemon px-8 py-3.5 text-sm font-semibold text-ink ring-1 ring-lemon/60 transition-transform hover:-translate-y-0.5"
+              className="group inline-flex items-center gap-2 rounded-full bg-tone-cyan/25 px-8 py-3.5 text-sm font-semibold text-sand ring-1 ring-tone-cyan/55 transition hover:bg-tone-cyan/35"
             >
               Start Your Ministry
               <ArrowRight

@@ -468,14 +468,14 @@ function ChurchPage() {
                   <Link
                     to="/create-ministry"
                     search={{ city: church.city, zip: church.zip, church: church.id }}
-                    className="rounded-full bg-lemon px-5 py-3.5 text-center text-lg font-bold text-ink transition hover:opacity-90"
+                    className="rounded-full bg-tone-cyan/25 px-5 py-3.5 text-center text-lg font-bold text-sand ring-1 ring-tone-cyan/55 transition hover:bg-tone-cyan/35"
                   >
                     {t("Post your ministry here")}
                   </Link>
                   <Link
                     to="/post-need"
                     search={{ church: church.id }}
-                    className="rounded-full bg-ember px-5 py-3.5 text-center text-lg font-bold text-ink shadow-[0_0_18px_-4px_var(--color-ember)] transition hover:opacity-90"
+                    className="rounded-full bg-tone-indigo/15 px-5 py-3.5 text-center text-lg font-bold text-sand ring-1 ring-tone-indigo/45 transition hover:bg-tone-indigo/25"
                   >
                     {t("Post your need here")}
                   </Link>
@@ -939,7 +939,7 @@ function ChurchPage() {
               <Link
                 to="/post-prayer"
                 search={{ church: id }}
-                className="inline-flex w-fit items-center gap-2 rounded-full bg-ember px-5 py-2.5 text-base font-semibold text-ink shadow-[0_0_18px_-4px_var(--color-ember)] transition hover:opacity-90"
+                className="inline-flex w-fit items-center gap-2 rounded-full bg-prayer/20 px-5 py-2.5 text-base font-semibold text-parchment ring-1 ring-prayer/55 transition hover:bg-prayer/30"
               >
                 <HandHelping className="size-4" aria-hidden="true" />
                 {t("Post a prayer here")}

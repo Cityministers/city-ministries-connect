@@ -114,7 +114,7 @@ function StartPage() {
             <div className="grid gap-3 sm:grid-cols-2">
               <Link
                 to="/create-ministry"
-                className="rounded-2xl bg-lemon px-5 py-4 text-center text-base font-semibold text-ink transition-transform hover:-translate-y-0.5"
+                className="rounded-2xl bg-tone-cyan/25 px-5 py-4 text-center text-base font-semibold text-sand ring-1 ring-tone-cyan/55 transition hover:bg-tone-cyan/35"
               >
                 {t("Create a unique ministry")}
               </Link>

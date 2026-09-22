@@ -471,7 +471,7 @@ function MapPage() {
         {mode === "prayer" && (
           <Link
             to="/post-prayer"
-            className="mt-4 inline-flex items-center justify-center gap-2 self-start rounded-full bg-ember px-6 py-3 text-base font-semibold text-ink shadow-[0_0_18px_-4px_var(--color-ember)] transition hover:opacity-90"
+            className="mt-4 inline-flex items-center justify-center gap-2 self-start rounded-full bg-prayer/20 px-6 py-3 text-base font-semibold text-parchment ring-1 ring-prayer/55 transition hover:bg-prayer/30"
           >
             <HandHelping className="size-5" aria-hidden="true" />
             {t("Post a Prayer")}
@@ -497,7 +497,7 @@ function MapPage() {
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-4 px-4 py-6 text-center sm:px-6 sm:py-8">
           <Link
             to="/start"
-            className="inline-flex w-full items-center justify-center rounded-full bg-lemon px-8 py-3.5 text-lg font-bold text-ink ring-1 ring-lemon/60 transition-transform hover:-translate-y-0.5 sm:w-auto sm:text-xl"
+            className="inline-flex w-full items-center justify-center rounded-full bg-tone-cyan/25 px-8 py-3.5 text-lg font-bold text-sand ring-1 ring-tone-cyan/55 transition hover:bg-tone-cyan/35 sm:w-auto sm:text-xl"
           >
             {t("Start Your Ministry")}
           </Link>
