@@ -1,0 +1,1 @@
+ALTER TABLE public.meetup_requests ADD COLUMN IF NOT EXISTS lat double precision, ADD COLUMN IF NOT EXISTS lng double precision, ADD COLUMN IF NOT EXISTS reminder_sent_at timestamptz;

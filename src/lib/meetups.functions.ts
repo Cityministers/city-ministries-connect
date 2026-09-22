@@ -6,6 +6,8 @@ export type MeetupDTO = {
   id: string;
   meetAt: string;
   location: string;
+  lat: number | null;
+  lng: number | null;
   status: "pending" | "accepted" | "declined";
   responseNote: string | null;
   mine: boolean;
@@ -21,6 +23,8 @@ export const createMeetupRequest = createServerFn({ method: "POST" })
         conversationId: z.string().uuid(),
         meetAt: z.string().datetime(),
         location: z.string().trim().min(1).max(200),
+        lat: z.number().min(-90).max(90).optional(),
+        lng: z.number().min(-180).max(180).optional(),
       })
       .parse(data),
   )
@@ -44,6 +48,8 @@ export const createMeetupRequest = createServerFn({ method: "POST" })
       recipient_id: other,
       meet_at: data.meetAt,
       location: data.location,
+      lat: data.lat ?? null,
+      lng: data.lng ?? null,
     });
     if (error) throw new Error(error.message);
 
@@ -65,13 +71,15 @@ export const listMeetupsForConversation = createServerFn({ method: "POST" })
   .handler(async ({ data, context }): Promise<MeetupDTO[]> => {
     const { data: rows } = await context.supabase
       .from("meetup_requests")
-      .select("id, meet_at, location, status, response_note, requester_id, created_at")
+      .select("id, meet_at, location, lat, lng, status, response_note, requester_id, created_at")
       .eq("conversation_id", data.conversationId)
       .order("created_at", { ascending: true });
     return (rows ?? []).map((r) => ({
       id: r.id,
       meetAt: r.meet_at,
       location: r.location,
+      lat: r.lat,
+      lng: r.lng,
       status: r.status as MeetupDTO["status"],
       responseNote: r.response_note,
       mine: r.requester_id === context.userId,
@@ -119,4 +127,52 @@ export const respondToMeetup = createServerFn({ method: "POST" })
       link: `/messages/${row.conversation_id}`,
     });
     return { ok: true };
+  });
+
+export type MyMeetupDTO = MeetupDTO & {
+  conversationId: string;
+  otherName: string;
+  otherAvatar: string | null;
+};
+
+/** Every meetup the signed-in person sent or received, soonest first. */
+export const listMyMeetups = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<MyMeetupDTO[]> => {
+    const { data: rows } = await context.supabase
+      .from("meetup_requests")
+      .select(
+        "id, conversation_id, meet_at, location, lat, lng, status, response_note, requester_id, recipient_id, created_at",
+      )
+      .or(`requester_id.eq.${context.userId},recipient_id.eq.${context.userId}`)
+      .neq("status", "declined")
+      .order("meet_at", { ascending: true })
+      .limit(200);
+    const list = rows ?? [];
+    const otherIds = [
+      ...new Set(list.map((r) => (r.requester_id === context.userId ? r.recipient_id : r.requester_id))),
+    ];
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: profs } = otherIds.length
+      ? await supabaseAdmin.from("profiles").select("id, display_name, avatar_url").in("id", otherIds)
+      : { data: [] as { id: string; display_name: string | null; avatar_url: string | null }[] };
+    const byId = new Map((profs ?? []).map((p) => [p.id, p]));
+    return list.map((r) => {
+      const other = r.requester_id === context.userId ? r.recipient_id : r.requester_id;
+      const p = byId.get(other);
+      return {
+        id: r.id,
+        conversationId: r.conversation_id,
+        meetAt: r.meet_at,
+        location: r.location,
+        lat: r.lat,
+        lng: r.lng,
+        status: r.status as MeetupDTO["status"],
+        responseNote: r.response_note,
+        mine: r.requester_id === context.userId,
+        createdAt: r.created_at,
+        otherName: p?.display_name || "A neighbor",
+        otherAvatar: p?.avatar_url ?? null,
+      };
+    });
   });

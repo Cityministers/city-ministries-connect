@@ -30,6 +30,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedAddChurchRouteImport } from './routes/_authenticated/add-church'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedCreateMinistryRouteImport } from './routes/_authenticated/create-ministry'
+import { Route as AuthenticatedMeetupsRouteImport } from './routes/_authenticated/meetups'
 import { Route as AuthenticatedPostNeedRouteImport } from './routes/_authenticated/post-need'
 import { Route as AuthenticatedPostPrayerRouteImport } from './routes/_authenticated/post-prayer'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
@@ -42,6 +43,7 @@ import { Route as AuthenticatedGiftsIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedGiftsInviteRouteImport } from './routes/_authenticated/gifts.invite'
 import { Route as AuthenticatedGiftsListRouteImport } from './routes/_authenticated/gifts.list'
 import { Route as AuthenticatedMessagesConversationIdRouteImport } from './routes/_authenticated/messages.$conversationId'
+import { Route as ApiPublicMeetupRemindersRouteImport } from './routes/api/public/meetup-reminders'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -148,6 +150,11 @@ const AuthenticatedCreateMinistryRoute =
     path: '/create-ministry',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedMeetupsRoute = AuthenticatedMeetupsRouteImport.update({
+  id: '/meetups',
+  path: '/meetups',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedPostNeedRoute = AuthenticatedPostNeedRouteImport.update({
   id: '/post-need',
   path: '/post-need',
@@ -211,6 +218,12 @@ const AuthenticatedMessagesConversationIdRoute =
     path: '/messages/$conversationId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicMeetupRemindersRoute =
+  ApiPublicMeetupRemindersRouteImport.update({
+    id: '/api/public/meetup-reminders',
+    path: '/api/public/meetup-reminders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -233,6 +246,7 @@ export interface FileRoutesByFullPath {
   '/add-church': typeof AuthenticatedAddChurchRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/create-ministry': typeof AuthenticatedCreateMinistryRoute
+  '/meetups': typeof AuthenticatedMeetupsRoute
   '/post-need': typeof AuthenticatedPostNeedRoute
   '/post-prayer': typeof AuthenticatedPostPrayerRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -244,6 +258,7 @@ export interface FileRoutesByFullPath {
   '/gifts/invite': typeof AuthenticatedGiftsInviteRoute
   '/gifts/list': typeof AuthenticatedGiftsListRoute
   '/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
+  '/api/public/meetup-reminders': typeof ApiPublicMeetupRemindersRoute
   '/gifts/': typeof AuthenticatedGiftsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -267,6 +282,7 @@ export interface FileRoutesByTo {
   '/add-church': typeof AuthenticatedAddChurchRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/create-ministry': typeof AuthenticatedCreateMinistryRoute
+  '/meetups': typeof AuthenticatedMeetupsRoute
   '/post-need': typeof AuthenticatedPostNeedRoute
   '/post-prayer': typeof AuthenticatedPostPrayerRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -278,6 +294,7 @@ export interface FileRoutesByTo {
   '/gifts/invite': typeof AuthenticatedGiftsInviteRoute
   '/gifts/list': typeof AuthenticatedGiftsListRoute
   '/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
+  '/api/public/meetup-reminders': typeof ApiPublicMeetupRemindersRoute
   '/gifts': typeof AuthenticatedGiftsIndexRoute
 }
 export interface FileRoutesById {
@@ -303,6 +320,7 @@ export interface FileRoutesById {
   '/_authenticated/add-church': typeof AuthenticatedAddChurchRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/create-ministry': typeof AuthenticatedCreateMinistryRoute
+  '/_authenticated/meetups': typeof AuthenticatedMeetupsRoute
   '/_authenticated/post-need': typeof AuthenticatedPostNeedRoute
   '/_authenticated/post-prayer': typeof AuthenticatedPostPrayerRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
@@ -314,6 +332,7 @@ export interface FileRoutesById {
   '/_authenticated/gifts/invite': typeof AuthenticatedGiftsInviteRoute
   '/_authenticated/gifts/list': typeof AuthenticatedGiftsListRoute
   '/_authenticated/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
+  '/api/public/meetup-reminders': typeof ApiPublicMeetupRemindersRoute
   '/_authenticated/gifts/': typeof AuthenticatedGiftsIndexRoute
 }
 export interface FileRouteTypes {
@@ -339,6 +358,7 @@ export interface FileRouteTypes {
     | '/add-church'
     | '/admin'
     | '/create-ministry'
+    | '/meetups'
     | '/post-need'
     | '/post-prayer'
     | '/profile'
@@ -350,6 +370,7 @@ export interface FileRouteTypes {
     | '/gifts/invite'
     | '/gifts/list'
     | '/messages/$conversationId'
+    | '/api/public/meetup-reminders'
     | '/gifts/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -373,6 +394,7 @@ export interface FileRouteTypes {
     | '/add-church'
     | '/admin'
     | '/create-ministry'
+    | '/meetups'
     | '/post-need'
     | '/post-prayer'
     | '/profile'
@@ -384,6 +406,7 @@ export interface FileRouteTypes {
     | '/gifts/invite'
     | '/gifts/list'
     | '/messages/$conversationId'
+    | '/api/public/meetup-reminders'
     | '/gifts'
   id:
     | '__root__'
@@ -408,6 +431,7 @@ export interface FileRouteTypes {
     | '/_authenticated/add-church'
     | '/_authenticated/admin'
     | '/_authenticated/create-ministry'
+    | '/_authenticated/meetups'
     | '/_authenticated/post-need'
     | '/_authenticated/post-prayer'
     | '/_authenticated/profile'
@@ -419,6 +443,7 @@ export interface FileRouteTypes {
     | '/_authenticated/gifts/invite'
     | '/_authenticated/gifts/list'
     | '/_authenticated/messages/$conversationId'
+    | '/api/public/meetup-reminders'
     | '/_authenticated/gifts/'
   fileRoutesById: FileRoutesById
 }
@@ -444,6 +469,7 @@ export interface RootRouteChildren {
   ChurchIdRoute: typeof ChurchIdRoute
   GiftReferenceCodeRoute: typeof GiftReferenceCodeRoute
   HowItWorksStepRoute: typeof HowItWorksStepRoute
+  ApiPublicMeetupRemindersRoute: typeof ApiPublicMeetupRemindersRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -595,6 +621,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCreateMinistryRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/meetups': {
+      id: '/_authenticated/meetups'
+      path: '/meetups'
+      fullPath: '/meetups'
+      preLoaderRoute: typeof AuthenticatedMeetupsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/post-need': {
       id: '/_authenticated/post-need'
       path: '/post-need'
@@ -679,6 +712,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMessagesConversationIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/meetup-reminders': {
+      id: '/api/public/meetup-reminders'
+      path: '/api/public/meetup-reminders'
+      fullPath: '/api/public/meetup-reminders'
+      preLoaderRoute: typeof ApiPublicMeetupRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -686,6 +726,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAddChurchRoute: typeof AuthenticatedAddChurchRoute
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedCreateMinistryRoute: typeof AuthenticatedCreateMinistryRoute
+  AuthenticatedMeetupsRoute: typeof AuthenticatedMeetupsRoute
   AuthenticatedPostNeedRoute: typeof AuthenticatedPostNeedRoute
   AuthenticatedPostPrayerRoute: typeof AuthenticatedPostPrayerRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
@@ -701,6 +742,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAddChurchRoute: AuthenticatedAddChurchRoute,
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedCreateMinistryRoute: AuthenticatedCreateMinistryRoute,
+  AuthenticatedMeetupsRoute: AuthenticatedMeetupsRoute,
   AuthenticatedPostNeedRoute: AuthenticatedPostNeedRoute,
   AuthenticatedPostPrayerRoute: AuthenticatedPostPrayerRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
@@ -738,6 +780,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChurchIdRoute: ChurchIdRoute,
   GiftReferenceCodeRoute: GiftReferenceCodeRoute,
   HowItWorksStepRoute: HowItWorksStepRoute,
+  ApiPublicMeetupRemindersRoute: ApiPublicMeetupRemindersRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

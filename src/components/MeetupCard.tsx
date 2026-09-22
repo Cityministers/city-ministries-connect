@@ -3,6 +3,7 @@ import { CalendarClock, Check, Loader2, MapPin, X } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { respondToMeetup, type MeetupDTO } from "@/lib/meetups.functions";
+import { MeetupDetailsSheet } from "@/components/meetup/MeetupDetailsSheet";
 
 export function MeetupCard({
   meetup,
@@ -19,6 +20,7 @@ export function MeetupCard({
   const [declining, setDeclining] = useState(false);
   const [note, setNote] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
 
   const when = new Date(meetup.meetAt);
   const day = when.toLocaleDateString(i18n.language, {
@@ -68,6 +70,11 @@ export function MeetupCard({
         </p>
         {statusChip}
       </div>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="-mx-2 block w-[calc(100%+1rem)] rounded-xl px-2 py-1 text-left transition active:bg-ink"
+      >
       <p className="flex items-center gap-2 text-lg font-semibold text-sand">
         <CalendarClock className="size-5 text-lemon" aria-hidden="true" />
         {day} · {time}
@@ -76,6 +83,10 @@ export function MeetupCard({
         <MapPin className="size-5 text-lemon" aria-hidden="true" />
         {meetup.location}
       </p>
+      <p className="mt-1 text-sm font-semibold text-lemon">
+        {meetup.lat != null ? t("Tap for details and map") : t("Tap for details")}
+      </p>
+      </button>
       {meetup.responseNote && (
         <p className="mt-2 rounded-lg bg-ink px-3 py-2 text-base text-mist/85">{meetup.responseNote}</p>
       )}
@@ -117,6 +128,9 @@ export function MeetupCard({
         </div>
       )}
       {error && <p className="mt-2 text-sm text-rose">{error}</p>}
+      {open && (
+        <MeetupDetailsSheet meetup={{ ...meetup, otherName }} onClose={() => setOpen(false)} />
+      )}
     </div>
   );
 }
