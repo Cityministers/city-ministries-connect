@@ -30,6 +30,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedAddChurchRouteImport } from './routes/_authenticated/add-church'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedCreateMinistryRouteImport } from './routes/_authenticated/create-ministry'
+import { Route as AuthenticatedMeetupsRouteImport } from './routes/_authenticated/meetups'
 import { Route as AuthenticatedPostNeedRouteImport } from './routes/_authenticated/post-need'
 import { Route as AuthenticatedPostPrayerRouteImport } from './routes/_authenticated/post-prayer'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
@@ -149,6 +150,11 @@ const AuthenticatedCreateMinistryRoute =
     path: '/create-ministry',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedMeetupsRoute = AuthenticatedMeetupsRouteImport.update({
+  id: '/meetups',
+  path: '/meetups',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedPostNeedRoute = AuthenticatedPostNeedRouteImport.update({
   id: '/post-need',
   path: '/post-need',
@@ -240,6 +246,7 @@ export interface FileRoutesByFullPath {
   '/add-church': typeof AuthenticatedAddChurchRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/create-ministry': typeof AuthenticatedCreateMinistryRoute
+  '/meetups': typeof AuthenticatedMeetupsRoute
   '/post-need': typeof AuthenticatedPostNeedRoute
   '/post-prayer': typeof AuthenticatedPostPrayerRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -275,6 +282,7 @@ export interface FileRoutesByTo {
   '/add-church': typeof AuthenticatedAddChurchRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/create-ministry': typeof AuthenticatedCreateMinistryRoute
+  '/meetups': typeof AuthenticatedMeetupsRoute
   '/post-need': typeof AuthenticatedPostNeedRoute
   '/post-prayer': typeof AuthenticatedPostPrayerRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -312,6 +320,7 @@ export interface FileRoutesById {
   '/_authenticated/add-church': typeof AuthenticatedAddChurchRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/create-ministry': typeof AuthenticatedCreateMinistryRoute
+  '/_authenticated/meetups': typeof AuthenticatedMeetupsRoute
   '/_authenticated/post-need': typeof AuthenticatedPostNeedRoute
   '/_authenticated/post-prayer': typeof AuthenticatedPostPrayerRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
@@ -349,6 +358,7 @@ export interface FileRouteTypes {
     | '/add-church'
     | '/admin'
     | '/create-ministry'
+    | '/meetups'
     | '/post-need'
     | '/post-prayer'
     | '/profile'
@@ -384,6 +394,7 @@ export interface FileRouteTypes {
     | '/add-church'
     | '/admin'
     | '/create-ministry'
+    | '/meetups'
     | '/post-need'
     | '/post-prayer'
     | '/profile'
@@ -420,6 +431,7 @@ export interface FileRouteTypes {
     | '/_authenticated/add-church'
     | '/_authenticated/admin'
     | '/_authenticated/create-ministry'
+    | '/_authenticated/meetups'
     | '/_authenticated/post-need'
     | '/_authenticated/post-prayer'
     | '/_authenticated/profile'
@@ -609,6 +621,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCreateMinistryRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/meetups': {
+      id: '/_authenticated/meetups'
+      path: '/meetups'
+      fullPath: '/meetups'
+      preLoaderRoute: typeof AuthenticatedMeetupsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/post-need': {
       id: '/_authenticated/post-need'
       path: '/post-need'
@@ -707,6 +726,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAddChurchRoute: typeof AuthenticatedAddChurchRoute
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedCreateMinistryRoute: typeof AuthenticatedCreateMinistryRoute
+  AuthenticatedMeetupsRoute: typeof AuthenticatedMeetupsRoute
   AuthenticatedPostNeedRoute: typeof AuthenticatedPostNeedRoute
   AuthenticatedPostPrayerRoute: typeof AuthenticatedPostPrayerRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
@@ -722,6 +742,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAddChurchRoute: AuthenticatedAddChurchRoute,
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedCreateMinistryRoute: AuthenticatedCreateMinistryRoute,
+  AuthenticatedMeetupsRoute: AuthenticatedMeetupsRoute,
   AuthenticatedPostNeedRoute: AuthenticatedPostNeedRoute,
   AuthenticatedPostPrayerRoute: AuthenticatedPostPrayerRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
