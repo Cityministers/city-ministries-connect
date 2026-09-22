@@ -47,7 +47,7 @@ function ThreadPage() {
     queryFn: () => fetchMeetups({ data: { conversationId } }),
   });
   const timeline = [
-    ...X((m) => ({ kind: "msg" as const, at: m.createdAt, m })),
+    ...(thread?.messages ?? []).map((m) => ({ kind: "msg" as const, at: m.createdAt, m })),
     ...(meetups ?? []).map((mu) => ({ kind: "meetup" as const, at: mu.createdAt, mu })),
   ].sort((a, b) => a.at.localeCompare(b.at));
 
