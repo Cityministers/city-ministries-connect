@@ -6,7 +6,7 @@ import { lazy, Suspense, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { listMyMeetups, type MyMeetupDTO } from "@/lib/meetups.functions";
-import { MeetupDetailsSheet } from "@/components/meetup/MeetupDetailsSheet";
+import { MeetupDetailsSheet, directionsUrl } from "@/components/meetup/MeetupDetailsSheet";
 
 const MeetupsMap = lazy(() => import("@/components/meetup/MeetupsMap"));
 
