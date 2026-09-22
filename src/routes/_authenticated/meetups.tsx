@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, CalendarClock, Loader2, MapPin } from "lucide-react";
+import { ArrowLeft, CalendarClock, Loader2, MapPin, Navigation } from "lucide-react";
 import { lazy, Suspense, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
@@ -44,34 +44,47 @@ function MeetupsPage() {
   const row = (m: MyMeetupDTO) => {
     const when = new Date(m.meetAt);
     return (
-      <button
+      <div
         key={m.id}
-        type="button"
-        onClick={() => setOpenId(m.id)}
-        className="flex w-full flex-col gap-1 rounded-2xl bg-ink-soft p-4 text-left ring-1 ring-mist/35 transition active:scale-[0.99] active:opacity-80"
+        className="flex w-full flex-col gap-2 rounded-2xl bg-ink-soft p-4 ring-1 ring-mist/35"
       >
-        <div className="flex items-center justify-between gap-2">
-          <p className="text-lg font-semibold text-sand">{m.otherName}</p>
-          <span
-            className={`rounded-full px-3 py-1 text-sm font-semibold ring-1 ${
-              m.status === "accepted"
-                ? "bg-tone-emerald/20 text-tone-emerald ring-tone-emerald/40"
-                : "bg-lemon/15 text-lemon ring-lemon/30"
-            }`}
-          >
-            {m.status === "accepted" ? t("Accepted") : t("Awaiting reply")}
-          </span>
-        </div>
-        <p className="flex items-center gap-2 text-base text-sand">
-          <CalendarClock className="size-5 text-lemon" />
-          {when.toLocaleDateString(i18n.language, { weekday: "short", month: "short", day: "numeric" })} ·{" "}
-          {when.toLocaleTimeString(i18n.language, { hour: "numeric", minute: "2-digit" })}
-        </p>
-        <p className="flex items-center gap-2 text-base text-mist/85">
-          <MapPin className="size-5 text-lemon" />
-          {m.location}
-        </p>
-      </button>
+        <button
+          type="button"
+          onClick={() => setOpenId(m.id)}
+          className="flex flex-col gap-1 rounded-xl text-left transition active:scale-[0.99] active:opacity-80"
+        >
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-lg font-semibold text-sand">{m.otherName}</p>
+            <span
+              className={`rounded-full px-3 py-1 text-sm font-semibold ring-1 ${
+                m.status === "accepted"
+                  ? "bg-tone-emerald/20 text-tone-emerald ring-tone-emerald/40"
+                  : "bg-lemon/15 text-lemon ring-lemon/30"
+              }`}
+            >
+              {m.status === "accepted" ? t("Accepted") : t("Awaiting reply")}
+            </span>
+          </div>
+          <p className="flex items-center gap-2 text-base text-sand">
+            <CalendarClock className="size-5 text-lemon" />
+            {when.toLocaleDateString(i18n.language, { weekday: "short", month: "short", day: "numeric" })} ·{" "}
+            {when.toLocaleTimeString(i18n.language, { hour: "numeric", minute: "2-digit" })}
+          </p>
+          <p className="flex items-center gap-2 text-base text-mist/85">
+            <MapPin className="size-5 text-lemon" />
+            {m.location}
+          </p>
+        </button>
+        <a
+          href={directionsUrl(m)}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-4 py-2.5 text-base font-semibold text-sand ring-1 ring-lemon/50 transition active:opacity-80"
+        >
+          <Navigation className="size-5 text-lemon" />
+          {t("Open in Maps")}
+        </a>
+      </div>
     );
   };
 
