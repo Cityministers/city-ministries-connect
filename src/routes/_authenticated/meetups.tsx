@@ -97,7 +97,7 @@ function MeetupsPage() {
           <Navigation className="size-5 text-lemon" />
           {t("Open in Maps")}
         </a>
-        <RespondRow meetup={m} />
+        <RespondRow meetup={m} initial={reschedule === "1" && m.id === id ? "reschedule" : undefined} />
       </div>
     );
   };
