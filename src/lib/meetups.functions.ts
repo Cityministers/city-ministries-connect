@@ -8,11 +8,24 @@ export type MeetupDTO = {
   location: string;
   lat: number | null;
   lng: number | null;
+  photoUrl: string | null;
   status: "pending" | "accepted" | "declined";
   responseNote: string | null;
   mine: boolean;
   createdAt: string;
 };
+
+async function signPhotos(rows: { photo_path: string | null }[]) {
+  const paths = rows.map((r) => r.photo_path).filter((x): x is string => !!x);
+  const out = new Map<string, string>();
+  if (!paths.length) return out;
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data } = await supabaseAdmin.storage
+    .from("ministry-avatars")
+    .createSignedUrls(paths, 60 * 60 * 24 * 7);
+  for (const d of data ?? []) if (d.path && d.signedUrl) out.set(d.path, d.signedUrl);
+  return out;
+}
 
 /** Attaches a meetup request (day, time, place) to a conversation. */
 export const createMeetupRequest = createServerFn({ method: "POST" })
@@ -25,10 +38,14 @@ export const createMeetupRequest = createServerFn({ method: "POST" })
         location: z.string().trim().min(1).max(200),
         lat: z.number().min(-90).max(90).optional(),
         lng: z.number().min(-180).max(180).optional(),
+        photoPath: z.string().max(300).optional(),
       })
       .parse(data),
   )
   .handler(async ({ data, context }) => {
+    if (data.photoPath && !data.photoPath.startsWith(`${context.userId}/`)) {
+      throw new Error("Invalid photo.");
+    }
     if (new Date(data.meetAt).getTime() < Date.now() - 60_000) {
       throw new Error("Please choose a time in the future.");
     }
@@ -50,6 +67,7 @@ export const createMeetupRequest = createServerFn({ method: "POST" })
       location: data.location,
       lat: data.lat ?? null,
       lng: data.lng ?? null,
+      photo_path: data.photoPath ?? null,
     });
     if (error) throw new Error(error.message);
 
@@ -71,10 +89,12 @@ export const listMeetupsForConversation = createServerFn({ method: "POST" })
   .handler(async ({ data, context }): Promise<MeetupDTO[]> => {
     const { data: rows } = await context.supabase
       .from("meetup_requests")
-      .select("id, meet_at, location, lat, lng, status, response_note, requester_id, created_at")
+      .select("id, meet_at, location, lat, lng, photo_path, status, response_note, requester_id, created_at")
       .eq("conversation_id", data.conversationId)
       .order("created_at", { ascending: true });
+    const urls = await signPhotos(rows ?? []);
     return (rows ?? []).map((r) => ({
+      photoUrl: r.photo_path ? urls.get(r.photo_path) ?? null : null,
       id: r.id,
       meetAt: r.meet_at,
       location: r.location,
@@ -157,7 +177,7 @@ export const listMyMeetups = createServerFn({ method: "GET" })
     const { data: rows } = await context.supabase
       .from("meetup_requests")
       .select(
-        "id, conversation_id, meet_at, location, lat, lng, status, response_note, requester_id, recipient_id, created_at",
+        "id, conversation_id, meet_at, location, lat, lng, photo_path, status, response_note, requester_id, recipient_id, created_at",
       )
       .neq("status", "declined")
       .order("meet_at", { ascending: true })
@@ -171,6 +191,7 @@ export const listMyMeetups = createServerFn({ method: "GET" })
       ? await supabaseAdmin.from("profiles").select("id, display_name, avatar_url").in("id", otherIds)
       : { data: [] as { id: string; display_name: string | null; avatar_url: string | null }[] };
     const byId = new Map((profs ?? []).map((p) => [p.id, p]));
+    const urls = await signPhotos(list);
     return list.map((r) => {
       const other = r.requester_id === context.userId ? r.recipient_id : r.requester_id;
       const p = byId.get(other);
@@ -181,6 +202,7 @@ export const listMyMeetups = createServerFn({ method: "GET" })
         location: r.location,
         lat: r.lat,
         lng: r.lng,
+        photoUrl: r.photo_path ? urls.get(r.photo_path) ?? null : null,
         status: r.status as MeetupDTO["status"],
         responseNote: r.response_note,
         mine: r.requester_id === context.userId,

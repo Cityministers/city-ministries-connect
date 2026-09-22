@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, MapPin, X } from "lucide-react";
+import { Camera, ChevronLeft, ChevronRight, MapPin, X } from "lucide-react";
 import { lazy, Suspense, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -15,6 +15,8 @@ type Props = {
   onLocation: (v: string) => void;
   pin: LatLng | null;
   onPin: (p: LatLng | null) => void;
+  photo?: File | null;
+  onPhoto?: (f: File | null) => void;
 };
 
 const sameDay = (a: Date, b: Date) =>
