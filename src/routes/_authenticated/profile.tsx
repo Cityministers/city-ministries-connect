@@ -305,6 +305,16 @@ function ProfilePage() {
             {/* Church scan codes */}
             <ChurchCodeCards />
 
+            {/* Meetups calendar + map */}
+            <Link
+              to="/meetups"
+              search={{}}
+              className="flex items-center justify-center gap-3 rounded-2xl bg-ink-soft px-5 py-4 text-xl font-bold text-sand ring-1 ring-lemon/45 transition active:scale-[0.99] active:opacity-80"
+            >
+              <CalendarClock className="size-6 text-lemon" aria-hidden="true" />
+              {t("My meetups & map")}
+            </Link>
+
             {/* Notifications */}
             <Link
               to="/profile"
