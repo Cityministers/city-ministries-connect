@@ -1,9 +1,9 @@
-import { useServerFn } from "@tanstack/react-start";
-import { CalendarClock, Check, Loader2, MapPin, X } from "lucide-react";
+import { CalendarClock, Check, MapPin, X } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { respondToMeetup, type MeetupDTO } from "@/lib/meetups.functions";
+import type { MeetupDTO } from "@/lib/meetups.functions";
 import { MeetupDetailsSheet } from "@/components/meetup/MeetupDetailsSheet";
+import { MeetupRespondDialog, type RespondIntent } from "@/components/meetup/MeetupRespondDialog";
 
 export function MeetupCard({
   meetup,
@@ -15,11 +15,7 @@ export function MeetupCard({
   onChanged: () => void;
 }) {
   const { t, i18n } = useTranslation();
-  const respond = useServerFn(respondToMeetup);
-  const [busy, setBusy] = useState(false);
-  const [declining, setDeclining] = useState(false);
-  const [note, setNote] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [intent, setIntent] = useState<RespondIntent | null>(null);
   const [open, setOpen] = useState(false);
 
   const when = new Date(meetup.meetAt);
@@ -29,19 +25,6 @@ export function MeetupCard({
     day: "numeric",
   });
   const time = when.toLocaleTimeString(i18n.language, { hour: "numeric", minute: "2-digit" });
-
-  async function answer(accept: boolean) {
-    setBusy(true);
-    setError(null);
-    try {
-      await respond({ data: { id: meetup.id, accept, note: note.trim() || undefined } });
-      onChanged();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t("Something went wrong."));
-    } finally {
-      setBusy(false);
-    }
-  }
 
   const statusChip =
     meetup.status === "accepted" ? (
@@ -95,42 +78,23 @@ export function MeetupCard({
       )}
 
       {!meetup.mine && meetup.status === "pending" && (
-        <div className="mt-3 flex flex-col gap-2">
-          {declining && (
-            <textarea
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              maxLength={500}
-              rows={2}
-              placeholder={t("Suggest another time (optional)")}
-              className="rounded-lg bg-ink px-3 py-2 text-base text-sand ring-1 ring-mist/20 focus:outline-none"
-            />
-          )}
-          <div className="flex gap-2">
-            {!declining && (
-              <button
-                type="button"
-                disabled={busy}
-                onClick={() => void answer(true)}
-                className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-tone-emerald/25 px-4 py-3 text-base font-semibold text-sand ring-1 ring-tone-emerald/55 disabled:opacity-60"
-              >
-                {busy ? <Loader2 className="size-5 animate-spin" /> : <Check className="size-5" />}
-                {t("Accept")}
-              </button>
-            )}
-            <button
-              type="button"
-              disabled={busy}
-              onClick={() => (declining ? void answer(false) : setDeclining(true))}
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-ink px-4 py-3 text-base font-semibold text-sand ring-1 ring-mist/30 disabled:opacity-60"
-            >
-              <X className="size-5" />
-              {declining ? t("Send decline") : t("Decline")}
-            </button>
-          </div>
+        <div className="mt-3 flex gap-2">
+          <button type="button" onClick={() => setIntent("accept")} className="inline-flex flex-1 items-center justify-center gap-1 rounded-full bg-tone-emerald/25 px-3 py-3 text-base font-semibold text-sand ring-1 ring-tone-emerald/55">
+            <Check className="size-5" />
+            {t("Accept")}
+          </button>
+          <button type="button" onClick={() => setIntent("later")} className="flex-1 whitespace-nowrap rounded-full bg-lemon/15 px-3 py-3 text-sm font-semibold text-sand ring-1 ring-lemon/45">
+            {t("Maybe later")}
+          </button>
+          <button type="button" onClick={() => setIntent("decline")} className="inline-flex flex-1 items-center justify-center gap-1 rounded-full bg-ink px-3 py-3 text-base font-semibold text-sand ring-1 ring-mist/30">
+            <X className="size-5" />
+            {t("Decline")}
+          </button>
         </div>
       )}
-      {error && <p className="mt-2 text-sm text-rose">{error}</p>}
+      {intent && (
+        <MeetupRespondDialog meetup={meetup} otherName={otherName} intent={intent} onClose={() => setIntent(null)} onDone={onChanged} />
+      )}
       {open && (
         <MeetupDetailsSheet meetup={{ ...meetup, otherName }} onClose={() => setOpen(false)} />
       )}
