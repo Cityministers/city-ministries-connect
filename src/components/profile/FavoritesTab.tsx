@@ -33,7 +33,7 @@ export function FavoritesTab() {
         return (
           <div
             key={`${item.postType}-${item.postId}`}
-            className="flex flex-col gap-3 rounded-2xl bg-ink-soft/60 p-4 ring-1 ring-mist/15"
+            className="flex flex-col gap-3 rounded-2xl bg-ink-soft/60 p-4 ring-1 ring-mist/35 transition active:scale-[0.99]"
           >
             <button
               type="button"

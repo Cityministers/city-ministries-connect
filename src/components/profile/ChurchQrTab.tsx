@@ -113,7 +113,7 @@ export function ChurchCodeCards() {
         {data.map((c) => (
           <article
             key={c.id}
-            className="rounded-2xl bg-ink-soft/60 p-4 ring-1 ring-mist/15"
+            className="rounded-2xl bg-ink-soft/60 p-4 ring-1 ring-mist/35 transition active:scale-[0.99]"
           >
             <div className="flex items-center gap-3">
               <Link
