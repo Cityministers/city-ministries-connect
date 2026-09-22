@@ -45,15 +45,15 @@ export function MeetupCard({
 
   const statusChip =
     meetup.status === "accepted" ? (
-      <span className="rounded-full bg-tone-emerald/20 px-3 py-1 text-sm font-semibold text-tone-emerald ring-1 ring-tone-emerald/40">
+      <span className="whitespace-nowrap rounded-full bg-tone-emerald/20 px-3 py-1 text-sm font-semibold text-tone-emerald ring-1 ring-tone-emerald/40">
         {t("Accepted")}
       </span>
     ) : meetup.status === "declined" ? (
-      <span className="rounded-full bg-rose/15 px-3 py-1 text-sm font-semibold text-rose ring-1 ring-rose/30">
+      <span className="whitespace-nowrap rounded-full bg-rose/15 px-3 py-1 text-sm font-semibold text-rose ring-1 ring-rose/30">
         {t("Declined")}
       </span>
     ) : meetup.mine ? (
-      <span className="rounded-full bg-lemon/15 px-3 py-1 text-sm font-semibold text-lemon ring-1 ring-lemon/30">
+      <span className="whitespace-nowrap rounded-full bg-lemon/15 px-3 py-1 text-sm font-semibold text-lemon ring-1 ring-lemon/30">
         {t("Awaiting reply")}
       </span>
     ) : null;
