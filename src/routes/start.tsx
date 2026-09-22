@@ -140,7 +140,7 @@ function StartPage() {
               )}
             </div>
 
-            <p className="mb-4 text-sm font-semibold uppercase tracking-wider text-sand/90">
+            <p className="mt-6 mb-5 pt-2 text-center text-sm font-semibold uppercase tracking-wider text-sand/90 sm:text-left">
               {t("Or choose a pre-made ministry")}
             </p>
 
