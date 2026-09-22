@@ -553,7 +553,7 @@ function ChurchPage() {
                     <Link
                       to="/profile"
                       search={{ tab: "notifications" }}
-                      className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+                      className="inline-flex items-center gap-2 rounded-full bg-ink-soft px-6 py-3 text-base font-bold text-sand shadow-[0_2px_10px_-2px_rgba(0,0,0,0.6)] ring-1 ring-lemon/50 transition hover:bg-ink active:scale-[0.98]"
                     >
                       {t("You attend here — show the scan code")}
                     </Link>
@@ -571,14 +571,14 @@ function ChurchPage() {
                           .then((r) => setAttendStatus(r.status))
                           .finally(() => setAttendBusy(false));
                       }}
-                      className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft disabled:opacity-60"
+                      className="inline-flex items-center gap-2 rounded-full bg-ink-soft px-6 py-3 text-base font-bold text-sand shadow-[0_2px_10px_-2px_rgba(0,0,0,0.6)] ring-1 ring-lemon/50 transition hover:bg-ink active:scale-[0.98] disabled:opacity-60"
                     >
                       {t("I attend this church")}
                     </button>
                   ) : (
                     <Link
                       to="/auth"
-                      className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+                      className="inline-flex items-center gap-2 rounded-full bg-ink-soft px-6 py-3 text-base font-bold text-sand shadow-[0_2px_10px_-2px_rgba(0,0,0,0.6)] ring-1 ring-lemon/50 transition hover:bg-ink active:scale-[0.98]"
                     >
                       {t("Sign in to say you attend here")}
                     </Link>
