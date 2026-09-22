@@ -61,7 +61,7 @@ export function MeetupRespondDialog({
 
   const [message, setMessage] = useState(template);
   const [busy, setBusy] = useState(false);
-  const [resched, setResched] = useState(false);
+  const [resched, setResched] = useState(intent === "reschedule");
   const [date, setDate] = useState<Date | undefined>();
   const [time, setTime] = useState("18:00");
   const [location, setLocation] = useState(m.location);
@@ -80,7 +80,13 @@ export function MeetupRespondDialog({
       : "";
 
   const title =
-    intent === "accept" ? t("Accept this meetup") : intent === "later" ? t("Maybe later") : t("Decline this meetup");
+    intent === "reschedule"
+      ? t("Suggest a new time")
+      : intent === "accept"
+        ? t("Accept this meetup")
+        : intent === "later"
+          ? t("Maybe later")
+          : t("Decline this meetup");
 
   async function send() {
     setBusy(true);
