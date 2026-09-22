@@ -45,9 +45,14 @@ function ThreadPage() {
   useEffect(() => {
     if (draft) {
       setText(draft);
-      void navigate({ search: {}, replace: true });
+      void navigate({
+        to: "/messages/$conversationId",
+        params: { conversationId },
+        search: { draft: undefined },
+        replace: true,
+      });
     }
-  }, [draft, navigate]);
+  }, [draft, navigate, conversationId]);
 
   const { data: thread, refetch, isLoading } = useQuery({
     queryKey: ["conversation", conversationId],
