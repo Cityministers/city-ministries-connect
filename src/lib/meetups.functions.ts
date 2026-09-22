@@ -159,7 +159,6 @@ export const listMyMeetups = createServerFn({ method: "GET" })
       .select(
         "id, conversation_id, meet_at, location, lat, lng, status, response_note, requester_id, recipient_id, created_at",
       )
-      .or(`requester_id.eq.${context.userId},recipient_id.eq.${context.userId}`)
       .neq("status", "declined")
       .order("meet_at", { ascending: true })
       .limit(200);

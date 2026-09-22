@@ -62,10 +62,10 @@ function MeetupsPage() {
               className={`rounded-full px-3 py-1 text-sm font-semibold ring-1 ${
                 m.status === "accepted"
                   ? "bg-tone-emerald/20 text-tone-emerald ring-tone-emerald/40"
-                  : "bg-lemon/15 text-lemon ring-lemon/30"
+                  : m.status === "declined" ? "bg-ink text-mist/80 ring-mist/40" : "bg-lemon/15 text-lemon ring-lemon/30"
               }`}
             >
-              {m.status === "accepted" ? t("Accepted") : t("Awaiting reply")}
+              {m.status === "accepted" ? t("Accepted") : m.status === "declined" ? t("Declined") : t("Awaiting reply")}
             </span>
           </div>
           <p className="flex items-center gap-2 text-base text-sand">
@@ -151,9 +151,6 @@ function RespondRow({ meetup: m }: { meetup: MyMeetupDTO }) {
   const [busy, setBusy] = useState(false);
   const [later, setLater] = useState(false);
 
-  if (m.status !== "pending") return null;
-  if (m.mine)
-    return <p className="text-center text-sm text-mist/75">{t("Waiting for their reply")}</p>;
   if (later)
     return <p className="text-center text-sm text-mist/75">{t("We let them know you'll reply later.")}</p>;
 
@@ -172,13 +169,13 @@ function RespondRow({ meetup: m }: { meetup: MyMeetupDTO }) {
   const btn = "flex-1 rounded-full px-3 py-2.5 text-base font-semibold ring-1 transition active:scale-95 disabled:opacity-50";
   return (
     <div className="flex gap-2">
-      <button type="button" disabled={busy} onClick={() => go(true)} className={`${btn} bg-tone-emerald/25 text-sand ring-tone-emerald/55`}>
+      <button type="button" disabled={busy} onClick={() => go(true)} aria-pressed={m.status === "accepted"} className={`${btn} ${m.status === "accepted" ? "ring-2" : ""} bg-tone-emerald/25 text-sand ring-tone-emerald/55`}>
         {t("Accept")}
       </button>
       <button type="button" disabled={busy} onClick={() => go(false, true)} className={`${btn} bg-lemon/15 text-sand ring-lemon/45`}>
         {t("Maybe later")}
       </button>
-      <button type="button" disabled={busy} onClick={() => go(false)} className={`${btn} bg-ink text-sand ring-mist/40`}>
+      <button type="button" disabled={busy} onClick={() => go(false)} aria-pressed={m.status === "declined"} className={`${btn} ${m.status === "declined" ? "ring-2 ring-mist" : ""} bg-ink text-sand ring-mist/40`}>
         {t("Decline")}
       </button>
     </div>
