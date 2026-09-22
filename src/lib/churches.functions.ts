@@ -203,24 +203,37 @@ export const getChurch = createServerFn({ method: "GET" })
       // Public posts in the same place that aren't attached to any church.
       const place = church.zip || church.city;
       const column = church.zip ? "zip" : "city";
-      const [{ data: nearMinistries }, { data: nearNeeds }, { data: takenLinks }] =
-        await Promise.all([
-          place
-            ? supabase
-                .from("user_ministries")
-                .select("id, owner_id, short_title, title, description, city, zip")
-                .eq(column, place)
-                .limit(40)
-            : Promise.resolve({ data: [] as never[] }),
-          place
-            ? supabase
-                .from("user_needs")
-                .select("id, owner_id, short_title, title, description, city, zip")
-                .eq(column, place)
-                .limit(40)
-            : Promise.resolve({ data: [] as never[] }),
-          supabase.from("church_posts").select("post_id").eq("status", "approved"),
-        ]);
+      const [
+        { data: nearMinistries },
+        { data: nearNeeds },
+        { data: nearPrayers },
+        { data: takenLinks },
+      ] = await Promise.all([
+        place
+          ? supabase
+              .from("user_ministries")
+              .select("id, owner_id, short_title, title, description, city, zip")
+              .eq(column, place)
+              .limit(40)
+          : Promise.resolve({ data: [] as never[] }),
+        place
+          ? supabase
+              .from("user_needs")
+              .select("id, owner_id, short_title, title, description, city, zip")
+              .eq(column, place)
+              .limit(40)
+          : Promise.resolve({ data: [] as never[] }),
+        place
+          ? supabase
+              .from("prayers")
+              .select("id, owner_id, short_title, body, city, zip, anonymous")
+              .is("church_id", null)
+              .eq("status", "active")
+              .eq(column, place)
+              .limit(40)
+          : Promise.resolve({ data: [] as never[] }),
+        supabase.from("church_posts").select("post_id").eq("status", "approved"),
+      ]);
 
       const taken = new Set((takenLinks ?? []).map((l) => l.post_id));
 
