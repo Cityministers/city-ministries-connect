@@ -295,6 +295,19 @@ export const getChurch = createServerFn({ method: "GET" })
           posterName: nameById.get(p.owner_id) || "A neighbor",
         }));
 
+      const shapePrayers = (rows: PrayerRow[]): ChurchPostDTO[] =>
+        rows.map((p) => ({
+          linkId: `near-prayer-${p.id}`,
+          kind: "prayer" as const,
+          postId: p.id,
+          title: p.short_title || "Prayer request",
+          description: p.body,
+          city: p.city,
+          zip: p.zip ?? "",
+          status: "public",
+          posterName: p.anonymous ? "Anonymous" : (p.owner_id ? nameById.get(p.owner_id) : null) || "A neighbor",
+        }));
+
       const posts = [
         ...shape((ministries ?? []) as PostRow[], "ministry", true),
         ...shape((needs ?? []) as PostRow[], "need", true),
@@ -302,6 +315,7 @@ export const getChurch = createServerFn({ method: "GET" })
       const nearby = [
         ...shape((nearMinistries ?? []) as PostRow[], "ministry", false),
         ...shape((nearNeeds ?? []) as PostRow[], "need", false),
+        ...shapePrayers((nearPrayers ?? []) as PrayerRow[]),
       ].filter((p) => !taken.has(p.postId));
 
       return { church: toChurch(church, urlByPath), posts, nearby: nearby.slice(0, 30) };
