@@ -14,7 +14,7 @@ import { MeetupsCalendar, dayKey } from "@/components/meetup/MeetupsCalendar";
 const MeetupsMap = lazy(() => import("@/components/meetup/MeetupsMap"));
 
 export const Route = createFileRoute("/_authenticated/meetups")({
-  validateSearch: z.object({ id: z.string().optional() }),
+  validateSearch: z.object({ id: z.string().optional(), reschedule: z.string().optional() }),
   head: () => ({
     meta: [
       { title: "My Meetups — City Ministers" },
@@ -30,10 +30,10 @@ export const Route = createFileRoute("/_authenticated/meetups")({
 
 function MeetupsPage() {
   const { t, i18n } = useTranslation();
-  const { id } = Route.useSearch();
+  const { id, reschedule } = Route.useSearch();
   const fetchMeetups = useServerFn(listMyMeetups);
   const { data, isLoading } = useQuery({ queryKey: ["my-meetups"], queryFn: () => fetchMeetups() });
-  const [openId, setOpenId] = useState<string | null>(id ?? null);
+  const [openId, setOpenId] = useState<string | null>(reschedule === "1" ? null : (id ?? null));
   const [day, setDay] = useState<string | null>(null);
   const list = data ?? [];
   const now = Date.now();
@@ -97,7 +97,7 @@ function MeetupsPage() {
           <Navigation className="size-5 text-lemon" />
           {t("Open in Maps")}
         </a>
-        <RespondRow meetup={m} />
+        <RespondRow meetup={m} initial={reschedule === "1" && m.id === id ? "reschedule" : undefined} />
       </div>
     );
   };
@@ -156,10 +156,10 @@ function MeetupsPage() {
   );
 }
 
-function RespondRow({ meetup: m }: { meetup: MyMeetupDTO }) {
+function RespondRow({ meetup: m, initial }: { meetup: MyMeetupDTO; initial?: RespondIntent | undefined }) {
   const { t } = useTranslation();
   const qc = useQueryClient();
-  const [intent, setIntent] = useState<RespondIntent | null>(null);
+  const [intent, setIntent] = useState<RespondIntent | null>(initial ?? null);
   const pick = (i: RespondIntent) => {
     if ((i === "accept" && m.status === "accepted") || (i === "decline" && m.status === "declined")) return;
     setIntent(i);
@@ -178,6 +178,14 @@ function RespondRow({ meetup: m }: { meetup: MyMeetupDTO }) {
           {t("Decline")}
         </button>
       </div>
+      <button
+        type="button"
+        onClick={() => setIntent("reschedule")}
+        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-4 py-2.5 text-base font-semibold text-sand ring-1 ring-lemon/50 transition active:scale-95"
+      >
+        <CalendarClock className="size-5 text-lemon" />
+        {t("Reschedule")}
+      </button>
       {intent && (
         <MeetupRespondDialog
           meetup={m}

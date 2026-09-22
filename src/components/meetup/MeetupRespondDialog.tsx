@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { respondToMeetup, rescheduleMeetup } from "@/lib/meetups.functions";
 import { MeetupScheduler, type LatLng } from "./MeetupScheduler";
 
-export type RespondIntent = "accept" | "later" | "decline";
+export type RespondIntent = "accept" | "later" | "decline" | "reschedule";
 
 type M = {
   id: string;
@@ -44,6 +44,7 @@ export function MeetupRespondDialog({
   const vars = { day: fmtDay(when), time: fmtTime(when), place: m.location };
 
   const template = (): string => {
+    if (intent === "reschedule") return "";
     if (intent === "accept")
       return m.status === "declined"
         ? t("Good news! It turns out I can make it after all. See you on {{day}} at {{time}}.", vars)
@@ -60,7 +61,7 @@ export function MeetupRespondDialog({
 
   const [message, setMessage] = useState(template);
   const [busy, setBusy] = useState(false);
-  const [resched, setResched] = useState(false);
+  const [resched, setResched] = useState(intent === "reschedule");
   const [date, setDate] = useState<Date | undefined>();
   const [time, setTime] = useState("18:00");
   const [location, setLocation] = useState(m.location);
@@ -79,7 +80,13 @@ export function MeetupRespondDialog({
       : "";
 
   const title =
-    intent === "accept" ? t("Accept this meetup") : intent === "later" ? t("Maybe later") : t("Decline this meetup");
+    intent === "reschedule"
+      ? t("Suggest a new time")
+      : intent === "accept"
+        ? t("Accept this meetup")
+        : intent === "later"
+          ? t("Maybe later")
+          : t("Decline this meetup");
 
   async function send() {
     setBusy(true);
@@ -195,14 +202,16 @@ export function MeetupRespondDialog({
           <button type="button" onClick={onClose} className="flex-1 rounded-full bg-ink px-4 py-3 text-base font-semibold text-sand ring-1 ring-mist/30">
             {t("Back")}
           </button>
-          <button
-            type="button"
-            onClick={() => { const next = !resched; setResched(next); setMessage(next ? reschedMsg(newAt(), location) : template()); }}
-            className="inline-flex flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-ink px-3 py-3 text-sm font-semibold text-sand ring-1 ring-lemon/50"
-          >
-            <CalendarClock className="size-4 text-lemon" />
-            {resched ? t("Keep this time") : t("Suggest a new time")}
-          </button>
+          {intent !== "reschedule" && (
+            <button
+              type="button"
+              onClick={() => { const next = !resched; setResched(next); setMessage(next ? reschedMsg(newAt(), location) : template()); }}
+              className="inline-flex flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-ink px-3 py-3 text-sm font-semibold text-sand ring-1 ring-lemon/50"
+            >
+              <CalendarClock className="size-4 text-lemon" />
+              {resched ? t("Keep this time") : t("Suggest a new time")}
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { Bell, CheckCheck } from "lucide-react";
+import { Bell, CalendarClock, CheckCheck } from "lucide-react";
 import {
   listMyNotifications,
   markAllNotificationsRead,
@@ -47,27 +47,41 @@ export function NotificationsTab() {
       </button>
 
       {items.map((n) => (
-        <button
+        <div
           key={n.id}
-          type="button"
-          onClick={() => {
-            if (n.link) void navigate({ href: n.link });
-          }}
-          className={`flex items-start gap-3 rounded-2xl p-4 text-left ring-1 transition hover:bg-ink-soft active:scale-[0.99] ${
+          className={`flex flex-col gap-2 rounded-2xl p-4 ring-1 ${
             n.read ? "bg-ink-soft/40 ring-mist/35" : "bg-lemon/10 ring-lemon/30"
           }`}
         >
-          <span className="grid size-12 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20">
-            <Bell className="size-6" aria-hidden="true" />
-          </span>
-          <span className="min-w-0 flex-1">
-            <span className="block text-lg font-semibold text-sand">{n.title}</span>
-            {n.body && <span className="block text-lg text-mist/70">{n.body}</span>}
-            <span className="mt-1 block text-base text-mist/50">
-              {new Date(n.createdAt).toLocaleString()}
+          <button
+            type="button"
+            onClick={() => {
+              if (n.link) void navigate({ href: n.link });
+            }}
+            className="flex items-start gap-3 text-left transition active:scale-[0.99]"
+          >
+            <span className="grid size-12 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20">
+              <Bell className="size-6" aria-hidden="true" />
             </span>
-          </span>
-        </button>
+            <span className="min-w-0 flex-1">
+              <span className="block text-lg font-semibold text-sand">{n.title}</span>
+              {n.body && <span className="block text-lg text-mist/70">{n.body}</span>}
+              <span className="mt-1 block text-base text-mist/50">
+                {new Date(n.createdAt).toLocaleString()}
+              </span>
+            </span>
+          </button>
+          {n.kind === "reminder" && n.link && (
+            <button
+              type="button"
+              onClick={() => void navigate({ href: `${n.link}${n.link?.includes("?") ? "&" : "?"}reschedule=1` })}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-4 py-2.5 text-lg font-semibold text-sand ring-1 ring-lemon/50 transition active:scale-95"
+            >
+              <CalendarClock className="size-5 text-lemon" aria-hidden="true" />
+              {t("Reschedule")}
+            </button>
+          )}
+        </div>
       ))}
     </div>
   );

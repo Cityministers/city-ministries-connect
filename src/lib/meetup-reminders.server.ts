@@ -7,8 +7,8 @@ export async function sendMeetupReminders(): Promise<number> {
   const to = new Date(now + 26 * 3600_000).toISOString();
   const { data: rows } = await supabaseAdmin
     .from("meetup_requests")
-    .select("id, requester_id, recipient_id, meet_at, location")
-    .eq("status", "accepted")
+    .select("id, requester_id, recipient_id, meet_at, location, status")
+    .in("status", ["accepted", "pending"])
     .is("reminder_sent_at", null)
     .gte("meet_at", from)
     .lte("meet_at", to)
@@ -40,7 +40,10 @@ export async function sendMeetupReminders(): Promise<number> {
       pairs.map(([me, other]) => ({
         user_id: me,
         kind: "reminder",
-        title: `Reminder: meetup with ${name.get(other)} tomorrow at ${time}`,
+        title:
+          r.status === "pending"
+            ? `Reminder: meetup with ${name.get(other)} tomorrow at ${time} still needs an answer`
+            : `Reminder: meetup with ${name.get(other)} tomorrow at ${time}`,
         body: r.location.slice(0, 140),
         link: `/meetups?id=${r.id}`,
       })),
