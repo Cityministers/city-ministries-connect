@@ -72,21 +72,25 @@ const inputClass =
 
 function PostRow({ post }: { post: ChurchPostDTO }) {
   const { t } = useTranslation();
+  const label = post.kind === "prayer" ? t("Prayer") : post.kind === "ministry" ? t("Ministry") : t("Need");
   return (
     <Link
-      to={post.kind === "ministry" ? "/ministries" : "/needs"}
-      search={{ place: post.zip || post.city }}
+      to={post.kind === "ministry" ? "/ministries" : post.kind === "need" ? "/needs" : "/map"}
+      search={post.kind === "prayer" ? { place: post.zip || post.city, mode: "prayer" } : { place: post.zip || post.city }}
       className="flex w-full flex-col gap-1 rounded-2xl bg-ink-soft p-4 text-left ring-1 ring-mist/10 transition hover:ring-mist/30"
     >
       <span className="flex items-center gap-2">
         <span
-          className={`rounded-full px-2.5 py-1 text-sm font-semibold ring-1 ${
+          className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-sm font-semibold ring-1 ${
             post.kind === "ministry"
               ? "bg-tone-emerald/15 text-tone-emerald ring-tone-emerald/40"
-              : "bg-tone-indigo/15 text-tone-indigo ring-tone-indigo/40"
+              : post.kind === "need"
+                ? "bg-tone-indigo/15 text-tone-indigo ring-tone-indigo/40"
+                : "bg-prayer/15 text-prayer ring-prayer/40"
           }`}
         >
-          {post.kind === "ministry" ? t("Ministry") : t("Need")}
+          {post.kind === "prayer" && <HandHelping className="size-4" aria-hidden="true" />}
+          {label}
         </span>
         <span className="truncate font-heading text-xl text-sand">
           <AutoText text={post.title} />
