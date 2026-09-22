@@ -571,7 +571,7 @@ function ChurchPage() {
                       search={{ tab: "notifications" }}
                       className="inline-flex items-center gap-2 rounded-full bg-ink-soft px-6 py-3 text-base font-bold text-sand shadow-[0_2px_10px_-2px_rgba(0,0,0,0.6)] ring-1 ring-lemon/50 transition hover:bg-ink active:scale-[0.98]"
                     >
-                      {t("You attend here — show the scan code")}
+                      {t("Show my scan code")}
                     </Link>
                   ) : attendStatus === "pending" ? (
                     <p className="text-base text-mist/70">
