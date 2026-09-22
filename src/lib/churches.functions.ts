@@ -257,6 +257,9 @@ export const getChurch = createServerFn({ method: "GET" })
         anonymous: boolean;
       };
 
+      const prayerOwnerIds = ((nearPrayers ?? []) as PrayerRow[])
+        .filter((p) => !p.anonymous && p.owner_id)
+        .map((p) => p.owner_id as string);
       const ownerIds = [
         ...new Set(
           [
@@ -264,9 +267,7 @@ export const getChurch = createServerFn({ method: "GET" })
             ...((needs ?? []) as PostRow[]),
             ...((nearMinistries ?? []) as PostRow[]),
             ...((nearNeeds ?? []) as PostRow[]),
-            ...((nearPrayers ?? []) as PrayerRow[])
-              .filter((p) => !p.anonymous && p.owner_id)
-              .map((p) => p.owner_id as string),
+            ...prayerOwnerIds.map((owner_id) => ({ owner_id })),
           ].map((p) => p.owner_id),
         ),
       ];
