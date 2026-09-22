@@ -1,14 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, Loader2, Send } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { z } from "zod";
 import { getConversation, sendMessage } from "@/lib/messages.functions";
 import { MeetupCard } from "@/components/MeetupCard";
 import { listMeetupsForConversation } from "@/lib/meetups.functions";
 
 export const Route = createFileRoute("/_authenticated/messages/$conversationId")({
+  validateSearch: z.object({ draft: z.string().optional() }),
   head: () => ({
     meta: [
       { title: "Messages — City Ministers" },
@@ -31,11 +33,26 @@ export const Route = createFileRoute("/_authenticated/messages/$conversationId")
 function ThreadPage() {
   const { t } = useTranslation();
   const { conversationId } = Route.useParams();
+  const { draft } = Route.useSearch();
+  const navigate = useNavigate();
   const fetchThread = useServerFn(getConversation);
   const send = useServerFn(sendMessage);
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // A meetup detail sheet can arrive with a ready-made reply in the composer.
+  useEffect(() => {
+    if (draft) {
+      setText(draft);
+      void navigate({
+        to: "/messages/$conversationId",
+        params: { conversationId },
+        search: { draft: undefined },
+        replace: true,
+      });
+    }
+  }, [draft, navigate, conversationId]);
 
   const { data: thread, refetch, isLoading } = useQuery({
     queryKey: ["conversation", conversationId],
