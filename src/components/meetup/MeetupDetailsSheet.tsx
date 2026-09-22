@@ -34,11 +34,28 @@ function staticMap(lat: number, lng: number) {
 /** Full meetup details with a pressable map that opens directions. */
 export function MeetupDetailsSheet({ meetup, onClose }: { meetup: MeetupDetails; onClose: () => void }) {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const when = new Date(meetup.meetAt);
   const [imgFailed, setImgFailed] = useState(false);
   const img = meetup.lat != null && meetup.lng != null ? staticMap(meetup.lat, meetup.lng) : null;
   const status =
     meetup.status === "accepted" ? t("Accepted") : meetup.status === "declined" ? t("Declined") : t("Awaiting reply");
+
+  /** Opens the conversation with a ready-made reply the person just presses send on. */
+  const draftMessage = (body: string) => {
+    if (!meetup.conversationId) return;
+    void navigate({
+      to: "/messages/$conversationId",
+      params: { conversationId: meetup.conversationId },
+      search: { draft: body },
+    });
+  };
+  const cancelMessage = t(
+    "Hi! I'm sorry, but I need to cancel our meetup. I hope we can find another time soon.",
+  );
+  const rescheduleMessage = t(
+    "Hi! Could we reschedule our meetup? Let me know what days and times work best for you.",
+  );
 
   return (
     <div
