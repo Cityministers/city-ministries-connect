@@ -202,14 +202,16 @@ export function MeetupRespondDialog({
           <button type="button" onClick={onClose} className="flex-1 rounded-full bg-ink px-4 py-3 text-base font-semibold text-sand ring-1 ring-mist/30">
             {t("Back")}
           </button>
-          <button
-            type="button"
-            onClick={() => { const next = !resched; setResched(next); setMessage(next ? reschedMsg(newAt(), location) : template()); }}
-            className="inline-flex flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-ink px-3 py-3 text-sm font-semibold text-sand ring-1 ring-lemon/50"
-          >
-            <CalendarClock className="size-4 text-lemon" />
-            {resched ? t("Keep this time") : t("Suggest a new time")}
-          </button>
+          {intent !== "reschedule" && (
+            <button
+              type="button"
+              onClick={() => { const next = !resched; setResched(next); setMessage(next ? reschedMsg(newAt(), location) : template()); }}
+              className="inline-flex flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-ink px-3 py-3 text-sm font-semibold text-sand ring-1 ring-lemon/50"
+            >
+              <CalendarClock className="size-4 text-lemon" />
+              {resched ? t("Keep this time") : t("Suggest a new time")}
+            </button>
+          )}
         </div>
       </div>
     </div>
