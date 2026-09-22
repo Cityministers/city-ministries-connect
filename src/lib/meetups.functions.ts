@@ -223,3 +223,61 @@ export const listMyMeetups = createServerFn({ method: "GET" })
       };
     });
   });
+
+/** Declines the old meetup and sends a new request with a new day, time and place. */
+export const rescheduleMeetup = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        meetAt: z.string().datetime(),
+        location: z.string().trim().min(1).max(200),
+        lat: z.number().min(-90).max(90).optional(),
+        lng: z.number().min(-180).max(180).optional(),
+        message: z.string().trim().min(1).max(2000),
+      })
+      .parse(data),
+  )
+  .handler(async ({ data, context }) => {
+    if (new Date(data.meetAt).getTime() < Date.now() - 60_000) {
+      throw new Error("Please choose a time in the future.");
+    }
+    const { data: row } = await context.supabase
+      .from("meetup_requests")
+      .select("id, conversation_id, requester_id, recipient_id, photo_path")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (!row || (row.recipient_id !== context.userId && row.requester_id !== context.userId))
+      throw new Error("Meetup not found.");
+    const otherId = row.requester_id === context.userId ? row.recipient_id : row.requester_id;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.from("meetup_requests").update({ status: "declined" }).eq("id", row.id);
+    const { error: mErr } = await context.supabase.from("messages").insert({
+      conversation_id: row.conversation_id,
+      sender_id: context.userId,
+      body: data.message,
+    });
+    if (mErr) throw new Error(mErr.message);
+    const { error } = await supabaseAdmin.from("meetup_requests").insert({
+      conversation_id: row.conversation_id,
+      requester_id: context.userId,
+      recipient_id: otherId,
+      meet_at: data.meetAt,
+      location: data.location,
+      lat: data.lat ?? null,
+      lng: data.lng ?? null,
+      photo_path: row.photo_path,
+    });
+    if (error) throw new Error(error.message);
+    const { notifyUser, displayNameOf } = await import("./social.server");
+    await notifyUser({
+      userId: otherId,
+      actorId: context.userId,
+      kind: "message",
+      title: `${await displayNameOf(context.userId)} suggested a new meetup time`,
+      body: data.location.slice(0, 140),
+      link: `/messages/${row.conversation_id}`,
+    });
+    return { ok: true };
+  });
