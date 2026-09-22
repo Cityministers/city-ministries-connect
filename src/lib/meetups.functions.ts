@@ -116,6 +116,7 @@ export const respondToMeetup = createServerFn({ method: "POST" })
         accept: z.boolean(),
         later: z.boolean().optional(),
         note: z.string().trim().max(500).optional(),
+        message: z.string().trim().max(2000).optional(),
       })
       .parse(data),
   )
@@ -131,17 +132,27 @@ export const respondToMeetup = createServerFn({ method: "POST" })
     const { notifyUser, displayNameOf } = await import("./social.server");
     const name = await displayNameOf(context.userId);
 
+    if (data.message) {
+      const { error: mErr } = await context.supabase.from("messages").insert({
+        conversation_id: row.conversation_id,
+        sender_id: context.userId,
+        body: data.message,
+      });
+      if (mErr) throw new Error(mErr.message);
+    }
+
     if (data.later) {
       await notifyUser({
         userId: otherId,
         actorId: context.userId,
         kind: "message",
         title: `${name} will get back to you about your meetup`,
-        body: row.location.slice(0, 140),
+        body: (data.message || row.location).slice(0, 140),
         link: `/messages/${row.conversation_id}`,
       });
       return { ok: true };
     }
+
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin
