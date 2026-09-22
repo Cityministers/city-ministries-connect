@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import QRCode from "qrcode";
-import { toPng } from "html-to-image";
+import { toJpeg } from "html-to-image";
 import { jsPDF } from "jspdf";
 import { Download, HandHeart, Heart, Loader2 } from "lucide-react";
 import seal from "@/assets/cm-seal.png";
@@ -216,8 +216,10 @@ function BusinessCardPage() {
   const render = async (key: keyof typeof refs) => {
     await document.fonts.ready;
     const node = refs[key].current!.firstElementChild as HTMLElement;
-    return toPng(node, {
-      pixelRatio: 70 / 300,
+    return toJpeg(node, {
+      pixelRatio: 1,
+      quality: 0.95,
+      backgroundColor: "#070812",
       cacheBust: true,
       width: node.offsetWidth,
       height: node.offsetHeight,
@@ -235,15 +237,15 @@ function BusinessCardPage() {
     try { await fn(); } finally { setBusy(null); }
   };
 
-  const png = (key: keyof typeof refs, name: string) => run(key, async () => save(await render(key), name));
+  const jpg = (key: keyof typeof refs, name: string) => run(key, async () => save(await render(key), name));
   const pdf = (bleed: boolean) =>
     run(bleed ? "pdfB" : "pdf", async () => {
       const w = bleed ? 3.75 : 3.5;
       const h = bleed ? 2.25 : 2;
       const doc = new jsPDF({ orientation: "landscape", unit: "in", format: [w, h] });
-      doc.addImage(await render(bleed ? "frontBleed" : "front"), "PNG", 0, 0, w, h);
+      doc.addImage(await render(bleed ? "frontBleed" : "front"), "JPEG", 0, 0, w, h);
       doc.addPage([w, h], "landscape");
-      doc.addImage(await render(bleed ? "backBleed" : "back"), "PNG", 0, 0, w, h);
+      doc.addImage(await render(bleed ? "backBleed" : "back"), "JPEG", 0, 0, w, h);
       doc.save(bleed ? "CityMinisters_Card_Print_Bleed.pdf" : "CityMinisters_Card.pdf");
     });
 
@@ -263,23 +265,23 @@ function BusinessCardPage() {
     <div className="min-h-dvh bg-ink font-body text-sand">
       <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
         <h1 className="font-display text-3xl font-semibold">City Ministers Business Card</h1>
-        <p className="mt-2 text-mist/80">3.5 x 2 in, 70 dpi. The QR code opens cityministers.com.</p>
+        <p className="mt-2 text-mist/80">3.5 x 2 in, 300 dpi JPEG. The QR code opens cityministers.com.</p>
 
         <div className="mt-8 grid gap-8 md:grid-cols-2">
           <section className="flex flex-col gap-3">
             <h2 className="font-display text-xl">Front</h2>
             <Preview><Front /></Preview>
             <div className="flex flex-wrap gap-2">
-              <Btn2 id="front" onClick={() => png("front", "CityMinisters_Card_Front.png")}>PNG</Btn2>
-              <Btn2 id="frontBleed" onClick={() => png("frontBleed", "CityMinisters_Card_Front_Bleed.png")}>PNG with bleed</Btn2>
+              <Btn2 id="front" onClick={() => jpg("front", "CityMinisters_Card_Front.jpg")}>JPEG</Btn2>
+              <Btn2 id="frontBleed" onClick={() => jpg("frontBleed", "CityMinisters_Card_Front_Bleed.jpg")}>JPEG with bleed</Btn2>
             </div>
           </section>
           <section className="flex flex-col gap-3">
             <h2 className="font-display text-xl">Back</h2>
             <Preview><Back /></Preview>
             <div className="flex flex-wrap gap-2">
-              <Btn2 id="back" onClick={() => png("back", "CityMinisters_Card_Back.png")}>PNG</Btn2>
-              <Btn2 id="backBleed" onClick={() => png("backBleed", "CityMinisters_Card_Back_Bleed.png")}>PNG with bleed</Btn2>
+              <Btn2 id="back" onClick={() => jpg("back", "CityMinisters_Card_Back.jpg")}>JPEG</Btn2>
+              <Btn2 id="backBleed" onClick={() => jpg("backBleed", "CityMinisters_Card_Back_Bleed.jpg")}>JPEG with bleed</Btn2>
             </div>
           </section>
         </div>
