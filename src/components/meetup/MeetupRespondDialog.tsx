@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { respondToMeetup, rescheduleMeetup } from "@/lib/meetups.functions";
 import { MeetupScheduler, type LatLng } from "./MeetupScheduler";
 
-export type RespondIntent = "accept" | "later" | "decline";
+export type RespondIntent = "accept" | "later" | "decline" | "reschedule";
 
 type M = {
   id: string;
@@ -44,6 +44,7 @@ export function MeetupRespondDialog({
   const vars = { day: fmtDay(when), time: fmtTime(when), place: m.location };
 
   const template = (): string => {
+    if (intent === "reschedule") return "";
     if (intent === "accept")
       return m.status === "declined"
         ? t("Good news! It turns out I can make it after all. See you on {{day}} at {{time}}.", vars)
