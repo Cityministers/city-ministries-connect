@@ -43,7 +43,7 @@ export function MeetupCard({
 
   const statusChip =
     meetup.status === "accepted" ? (
-      <span className="rounded-full bg-tone-green/20 px-3 py-1 text-sm font-semibold text-tone-green ring-1 ring-tone-green/40">
+      <span className="rounded-full bg-tone-emerald/20 px-3 py-1 text-sm font-semibold text-tone-emerald ring-1 ring-tone-emerald/40">
         {t("Accepted")}
       </span>
     ) : meetup.status === "declined" ? (
@@ -98,7 +98,7 @@ export function MeetupCard({
                 type="button"
                 disabled={busy}
                 onClick={() => void answer(true)}
-                className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-tone-green/25 px-4 py-3 text-base font-semibold text-sand ring-1 ring-tone-green/55 disabled:opacity-60"
+                className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-tone-emerald/25 px-4 py-3 text-base font-semibold text-sand ring-1 ring-tone-emerald/55 disabled:opacity-60"
               >
                 {busy ? <Loader2 className="size-5 animate-spin" /> : <Check className="size-5" />}
                 {t("Accept")}
