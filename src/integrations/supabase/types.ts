@@ -521,6 +521,53 @@ export type Database = {
         }
         Relationships: []
       }
+      meetup_requests: {
+        Row: {
+          conversation_id: string
+          created_at: string
+          id: string
+          location: string
+          meet_at: string
+          recipient_id: string
+          requester_id: string
+          response_note: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          conversation_id: string
+          created_at?: string
+          id?: string
+          location: string
+          meet_at: string
+          recipient_id: string
+          requester_id: string
+          response_note?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          location?: string
+          meet_at?: string
+          recipient_id?: string
+          requester_id?: string
+          response_note?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meetup_requests_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           body: string

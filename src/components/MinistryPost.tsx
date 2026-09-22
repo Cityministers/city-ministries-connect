@@ -26,6 +26,10 @@ import {
   type CommentDTO,
 } from "@/lib/favorites.functions";
 import { startConversation } from "@/lib/messages.functions";
+import { createMeetupRequest } from "@/lib/meetups.functions";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format } from "date-fns";
 
 export function MinistryPost({
   ministry,
@@ -57,6 +61,11 @@ export function MinistryPost({
   const [commentText, setCommentText] = useState("");
   const [messageOpen, setMessageOpen] = useState(false);
   const [messageText, setMessageText] = useState("");
+  const [meetupMode, setMeetupMode] = useState(false);
+  const [meetDate, setMeetDate] = useState<Date | undefined>();
+  const [meetTime, setMeetTime] = useState("18:00");
+  const [meetLocation, setMeetLocation] = useState("");
+  const createMeetup = useServerFn(createMeetupRequest);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [slide, setSlide] = useState(0);
@@ -177,12 +186,32 @@ export function MinistryPost({
   async function handleSend() {
     if (!postRef || messageText.trim().length === 0) return;
     if (!guard()) return;
+    let meetAtIso: string | null = null;
+    if (meetupMode) {
+      if (!meetDate || !meetTime || meetLocation.trim().length === 0) {
+        setError(t("Please choose a day, time and place."));
+        return;
+      }
+      const [h, m] = meetTime.split(":").map(Number);
+      const when = new Date(meetDate);
+      when.setHours(h ?? 0, m ?? 0, 0, 0);
+      if (when.getTime() < Date.now()) {
+        setError(t("Please choose a time in the future."));
+        return;
+      }
+      meetAtIso = when.toISOString();
+    }
     setBusy(true);
     setError(null);
     try {
       const { conversationId } = await startChat({
         data: { ...postRef, body: messageText.trim() },
       });
+      if (meetAtIso) {
+        await createMeetup({
+          data: { conversationId, meetAt: meetAtIso, location: meetLocation.trim() },
+        });
+      }
       onClose();
       void navigate({ to: "/messages/$conversationId", params: { conversationId } });
     } catch (err) {
@@ -464,6 +493,48 @@ export function MinistryPost({
                 placeholder={t("Write a note to {{name}}", { name: ministry.poster.name })}
                 className="rounded-xl bg-ink px-4 py-3 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
               />
+              {meetupMode && (
+                <div className="flex flex-col gap-2 rounded-xl bg-ink p-3 ring-1 ring-lemon/30">
+                  <div className="flex gap-2">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <button
+                          type="button"
+                          className="flex flex-1 items-center gap-2 rounded-lg bg-ink-soft px-3 py-3 text-left text-base text-sand ring-1 ring-mist/25"
+                        >
+                          <CalendarClock className="size-5 text-lemon" aria-hidden="true" />
+                          {meetDate ? format(meetDate, "EEE, MMM d") : t("Pick a day")}
+                        </button>
+                      </PopoverTrigger>
+                      <PopoverContent className="z-[60] w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={meetDate}
+                          onSelect={setMeetDate}
+                          disabled={(d) => d < new Date(new Date().setHours(0, 0, 0, 0))}
+                          initialFocus
+                          className="pointer-events-auto p-3"
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <input
+                      type="time"
+                      value={meetTime}
+                      onChange={(e) => setMeetTime(e.target.value)}
+                      aria-label={t("Time")}
+                      className="w-32 rounded-lg bg-ink-soft px-3 py-3 text-base text-sand ring-1 ring-mist/25 [color-scheme:dark]"
+                    />
+                  </div>
+                  <input
+                    value={meetLocation}
+                    onChange={(e) => setMeetLocation(e.target.value)}
+                    maxLength={200}
+                    placeholder={t("Where? e.g. coffee shop on Main St")}
+                    aria-label={t("Location")}
+                    className="rounded-lg bg-ink-soft px-3 py-3 text-base text-sand ring-1 ring-mist/25 focus:outline-none focus:ring-lemon/50"
+                  />
+                </div>
+              )}
               <button
                 type="button"
                 onClick={() => void handleSend()}
@@ -471,7 +542,7 @@ export function MinistryPost({
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-lemon px-5 py-3 text-base font-semibold text-ink disabled:opacity-60"
               >
                 {busy && <Loader2 className="size-5 animate-spin" aria-hidden="true" />}
-                {t("Send message")}
+                {meetupMode ? t("Send meetup request") : t("Send message")}
               </button>
             </div>
           )}
@@ -488,6 +559,7 @@ export function MinistryPost({
               onClick={() => {
                 if (!guard()) return;
                 setMessageOpen(true);
+                setMeetupMode(true);
                 setMessageText((prev) => prev || t("Hi! When works for you to meet up?"));
               }}
               className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-lemon px-5 py-3 text-base font-semibold text-ink ring-1 ring-lemon/60 transition-transform hover:-translate-y-0.5 sm:text-lg"
@@ -499,6 +571,7 @@ export function MinistryPost({
               type="button"
               onClick={() => {
                 if (!guard()) return;
+                setMeetupMode(false);
                 setMessageOpen((v) => !v);
               }}
               className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-ink px-5 py-3 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft sm:text-lg"

@@ -5,6 +5,8 @@ import { ArrowLeft, Loader2, Send } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getConversation, sendMessage } from "@/lib/messages.functions";
+import { MeetupCard } from "@/components/MeetupCard";
+import { listMeetupsForConversation } from "@/lib/meetups.functions";
 
 export const Route = createFileRoute("/_authenticated/messages/$conversationId")({
   head: () => ({
@@ -39,6 +41,15 @@ function ThreadPage() {
     queryKey: ["conversation", conversationId],
     queryFn: () => fetchThread({ data: { id: conversationId } }),
   });
+  const fetchMeetups = useServerFn(listMeetupsForConversation);
+  const { data: meetups, refetch: refetchMeetups } = useQuery({
+    queryKey: ["meetups", conversationId],
+    queryFn: () => fetchMeetups({ data: { conversationId } }),
+  });
+  const timeline = [
+    ...(thread?.messages ?? []).map((m) => ({ kind: "msg" as const, at: m.createdAt, m })),
+    ...(meetups ?? []).map((mu) => ({ kind: "meetup" as const, at: mu.createdAt, mu })),
+  ].sort((a, b) => a.at.localeCompare(b.at));
 
   async function handleSend(e: React.FormEvent) {
     e.preventDefault();
@@ -87,18 +98,27 @@ function ThreadPage() {
         {isLoading ? (
           <p className="py-10 text-center text-base text-mist/60">{t("Loading…")}</p>
         ) : (
-          (thread?.messages ?? []).map((m) => (
+          timeline.map((item) =>
+            item.kind === "meetup" ? (
+              <MeetupCard
+                key={item.mu.id}
+                meetup={item.mu}
+                otherName={thread?.otherName ?? ""}
+                onChanged={() => void refetchMeetups()}
+              />
+            ) : (
             <div
-              key={m.id}
+              key={item.m.id}
               className={`max-w-[85%] rounded-2xl px-4 py-3 text-base leading-relaxed ring-1 ${
-                m.mine
+                item.m.mine
                   ? "self-end bg-lemon/15 text-sand ring-lemon/30"
                   : "self-start bg-ink-soft text-mist/85 ring-mist/15"
               }`}
             >
-              {m.body}
+              {item.m.body}
             </div>
-          ))
+            ),
+          )
         )}
 
         {error && (
