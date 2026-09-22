@@ -98,7 +98,21 @@ function StartPage() {
       ) : (
         <>
           <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 pb-28 sm:px-6 sm:py-8">
-            <div className="mb-6 grid gap-3 sm:grid-cols-2">
+            <div className="mb-3 grid gap-3 sm:grid-cols-2">
+              <Link
+                to="/post-need"
+                className="rounded-2xl bg-tone-indigo/15 px-5 py-4 text-center text-base font-semibold text-tone-indigo ring-1 ring-tone-indigo/45 transition hover:bg-tone-indigo/25"
+              >
+                {t("Post a Need")}
+              </Link>
+              <Link
+                to="/post-prayer"
+                className="rounded-2xl bg-prayer/20 px-5 py-4 text-center text-base font-semibold text-parchment ring-1 ring-prayer/55 transition hover:bg-prayer/30"
+              >
+                {t("Post a Prayer")}
+              </Link>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
               <Link
                 to="/create-ministry"
                 className="rounded-2xl bg-lemon px-5 py-4 text-center text-base font-semibold text-ink transition-transform hover:-translate-y-0.5"
