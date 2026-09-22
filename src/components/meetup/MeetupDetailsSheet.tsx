@@ -42,14 +42,14 @@ export function MeetupDetailsSheet({ meetup, onClose }: { meetup: MeetupDetails;
 
   return (
     <div
-      className="fixed inset-0 z-[70] flex items-end justify-center bg-ink/80 backdrop-blur-sm sm:items-center sm:p-4"
+      className="fixed inset-0 z-[70] flex items-start justify-center bg-ink/80 px-0 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur-sm sm:items-center sm:p-4"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-label={t("Meetup details")}
     >
       <div
-        className="flex max-h-[92dvh] w-full max-w-md flex-col gap-4 overflow-y-auto rounded-t-2xl bg-ink-soft p-5 ring-1 ring-mist/25 sm:rounded-2xl"
+        className="flex max-h-[calc(100dvh-1.5rem-env(safe-area-inset-top))] w-full max-w-md flex-col gap-4 overflow-y-auto rounded-b-2xl bg-ink-soft p-5 ring-1 ring-mist/25 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:rounded-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-3">
