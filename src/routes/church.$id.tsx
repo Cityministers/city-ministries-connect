@@ -482,14 +482,24 @@ function ChurchPage() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => (canNativeShare ? void nativeShare() : setShareOpen((v) => !v))}
-                  className="mt-1 inline-flex w-fit items-center gap-2 rounded-full bg-ink px-4 py-2 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+                  aria-expanded={shareOpen}
+                  onClick={() => setShareOpen((v) => !v)}
+                  className="mt-1 inline-flex w-fit items-center gap-2 rounded-full bg-ink-soft px-6 py-3 text-base font-bold text-sand shadow-[0_2px_10px_-2px_rgba(0,0,0,0.6)] ring-1 ring-lemon/50 transition hover:bg-ink active:scale-[0.98]"
                 >
-                  <Share2 className="size-4 text-lemon" aria-hidden="true" />
+                  <Share2 className="size-5 text-lemon" aria-hidden="true" />
                   {t("Share")}
                 </button>
                 {shareOpen && (
                   <div className="flex flex-wrap gap-2">
+                    {canNativeShare && (
+                      <button
+                        type="button"
+                        onClick={() => void nativeShare()}
+                        className="rounded-full bg-lemon px-4 py-2 text-base font-bold text-ink transition hover:opacity-90"
+                      >
+                        {t("Share…")}
+                      </button>
+                    )}
                     <button
                       type="button"
                       onClick={() => void copyLink()}
