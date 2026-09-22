@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { CalendarClock, MapPin, MessageCircle, Navigation, X } from "lucide-react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 export type MeetupDetails = {
@@ -34,6 +35,7 @@ function staticMap(lat: number, lng: number) {
 export function MeetupDetailsSheet({ meetup, onClose }: { meetup: MeetupDetails; onClose: () => void }) {
   const { t, i18n } = useTranslation();
   const when = new Date(meetup.meetAt);
+  const [imgFailed, setImgFailed] = useState(false);
   const img = meetup.lat != null && meetup.lng != null ? staticMap(meetup.lat, meetup.lng) : null;
   const status =
     meetup.status === "accepted" ? t("Accepted") : meetup.status === "declined" ? t("Declined") : t("Awaiting reply");
@@ -81,10 +83,10 @@ export function MeetupDetailsSheet({ meetup, onClose }: { meetup: MeetupDetails;
           rel="noreferrer"
           className="group relative block overflow-hidden rounded-xl ring-1 ring-lemon/40"
         >
-          {img ? (
-            <img src={img} alt={t("Map of the meetup spot")} className="h-48 w-full object-cover" />
+          {img && !imgFailed ? (
+            <img onError={() => setImgFailed(true)} src={img} alt={t("Map of the meetup spot")} className="h-48 w-full object-cover" />
           ) : (
-            <div className="grid h-32 place-items-center bg-ink text-mist/70">
+            <div className="grid h-40 place-items-center bg-ink pb-10 text-mist/70">
               <MapPin className="size-8 text-lemon" />
             </div>
           )}
