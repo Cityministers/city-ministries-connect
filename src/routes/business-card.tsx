@@ -217,7 +217,7 @@ function BusinessCardPage() {
     await document.fonts.ready;
     const node = refs[key].current!.firstElementChild as HTMLElement;
     return toPng(node, {
-      pixelRatio: 1,
+      pixelRatio: 70 / 300,
       cacheBust: true,
       width: node.offsetWidth,
       height: node.offsetHeight,
