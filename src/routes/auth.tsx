@@ -91,7 +91,6 @@ function AuthPage() {
             emailRedirectTo: `${window.location.origin}/auth${
               destination ? `?next=${encodeURIComponent(destination)}` : ""
             }`,
-            data: { display_name: name.trim() },
           },
         });
         if (signUpError) throw signUpError;
