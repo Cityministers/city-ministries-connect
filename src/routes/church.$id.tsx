@@ -484,14 +484,14 @@ function ChurchPage() {
                   <Link
                     to="/post-prayer"
                     search={{ church: church.id }}
-                    className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-prayer px-5 py-3.5 text-lg font-bold text-ink shadow-[0_0_18px_-4px_var(--color-prayer)] transition hover:opacity-90"
+                    className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-prayer px-5 py-3.5 text-lg font-bold text-parchment shadow-[0_0_18px_-4px_var(--color-prayer)] transition hover:opacity-90"
                   >
                     <HandHelping className="size-5" aria-hidden="true" />
                     {t("Post a prayer here")}
                   </Link>
                   <a
                     href="#prayer-wall"
-                    className="inline-flex items-center gap-1.5 rounded-full bg-ink px-5 py-3.5 text-lg font-bold text-sand ring-1 ring-prayer/60 transition hover:bg-ink-soft"
+                    className="inline-flex items-center justify-center gap-1.5 rounded-full bg-prayer px-5 py-3.5 text-lg font-bold text-parchment shadow-[0_0_18px_-4px_var(--color-prayer)] transition hover:opacity-90"
                   >
                     {t("View")}
                   </a>
