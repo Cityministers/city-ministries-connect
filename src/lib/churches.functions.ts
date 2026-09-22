@@ -40,7 +40,7 @@ function galleryPaths(raw: unknown): GalleryItem[] {
 
 export type ChurchPostDTO = {
   linkId: string;
-  kind: "ministry" | "need";
+  kind: "ministry" | "need" | "prayer";
   postId: string;
   title: string;
   description: string;
