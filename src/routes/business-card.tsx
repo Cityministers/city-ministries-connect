@@ -23,6 +23,12 @@ export const Route = createFileRoute("/business-card")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
+    links: [
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:opsz,wght@9..144,600&family=Karla:wght@400;600;700;800&display=swap",
+      },
+    ],
   }),
   component: BusinessCardPage,
 });
