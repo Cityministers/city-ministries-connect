@@ -65,7 +65,7 @@ function NeedsPage() {
   const [query, setQuery] = useState("");
   const [activeId, setActiveId] = useState<string | null>(null);
   const [highlightId, setHighlightId] = useState<string | null>(
-    freshId ? (freshId.startsWith("church-") ? freshId : `need-${freshId}`) : null,
+    freshId ? `need-${freshId}` : null,
   );
   const isMap = view !== "list";
 
@@ -101,40 +101,7 @@ function NeedsPage() {
   );
   const active = all.find((m) => m.id === activeId);
 
-  // Churches share the map with needs; tapping one opens that church's page.
-  const fetchChurches = useServerFn(listChurches);
-  const { data: churches } = useQuery({
-    queryKey: ["churches"],
-    queryFn: () => fetchChurches(),
-  });
-  const allPoints = useMemo(
-    () => [
-      ...points,
-      ...(churches ?? [])
-        .filter((c) => c.lat != null && c.lng != null)
-        .map((c) => ({
-          id: `church-${c.id}`,
-          lat: c.lat as number,
-          lng: c.lng as number,
-          title: c.name,
-          color: CHURCH_PIN_COLOR,
-          glyph: iconMarkup(churchIcon(c.iconId)),
-          kind: "place" as const,
-          highlight: highlightId === `church-${c.id}`,
-        })),
-    ],
-    [points, churches, highlightId],
-  );
-
-  // A freshly created need or church sits in the middle of the screen while it glows.
-  const spotlight = highlightId ? allPoints.find((p) => p.id === highlightId) : undefined;
-  const mapCenter = spotlight ? { lat: spotlight.lat, lng: spotlight.lng } : center;
-
   function selectPoint(id: string) {
-    if (id.startsWith("church-")) {
-      void navigate({ to: "/church/$id", params: { id: id.slice("church-".length) } });
-      return;
-    }
     setActiveId(id);
     if (id !== highlightId) setHighlightId(null);
   }
