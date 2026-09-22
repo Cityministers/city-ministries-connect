@@ -64,6 +64,7 @@ export function MinistryPost({
   const [meetTime, setMeetTime] = useState("18:00");
   const [meetLocation, setMeetLocation] = useState("");
   const [meetPin, setMeetPin] = useState<{ lat: number; lng: number } | null>(null);
+  const [meetPhoto, setMeetPhoto] = useState<File | null>(null);
   const createMeetup = useServerFn(createMeetupRequest);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -207,12 +208,19 @@ export function MinistryPost({
         data: { ...postRef, body: messageText.trim() },
       });
       if (meetAtIso) {
+        let photoPath: string | undefined;
+        if (meetPhoto) {
+          const { uploadMedia } = await import("@/lib/media-upload");
+          const [up] = await uploadMedia([{ file: meetPhoto, url: "", kind: "image" }], "meetup");
+          photoPath = up?.path;
+        }
         await createMeetup({
           data: {
             conversationId,
             meetAt: meetAtIso,
             location: meetLocation.trim(),
             ...(meetPin ?? {}),
+            ...(photoPath ? { photoPath } : {}),
           },
         });
       }
@@ -507,6 +515,8 @@ export function MinistryPost({
                   onLocation={setMeetLocation}
                   pin={meetPin}
                   onPin={setMeetPin}
+                  photo={meetPhoto}
+                  onPhoto={setMeetPhoto}
                 />
               )}
               <button

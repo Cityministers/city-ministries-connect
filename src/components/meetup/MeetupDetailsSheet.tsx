@@ -9,6 +9,7 @@ export type MeetupDetails = {
   location: string;
   lat: number | null;
   lng: number | null;
+  photoUrl?: string | null;
   status: "pending" | "accepted" | "declined";
   otherName: string;
   conversationId?: string;
@@ -85,6 +86,9 @@ export function MeetupDetailsSheet({ meetup, onClose }: { meetup: MeetupDetails;
             <X className="size-5" />
           </button>
         </div>
+        {meetup.photoUrl && (
+          <img src={meetup.photoUrl} alt="" className="max-h-56 w-full rounded-xl object-cover ring-1 ring-mist/20" />
+        )}
         <p className="flex items-center gap-3 text-lg font-semibold text-sand">
           <CalendarClock className="size-6 text-lemon" />
           {when.toLocaleDateString(i18n.language, { weekday: "long", month: "long", day: "numeric" })} ·{" "}
