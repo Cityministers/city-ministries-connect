@@ -136,7 +136,7 @@ function PostPrayerPage() {
                 aria-pressed={place === "map"}
                 className={`rounded-xl px-4 py-3 text-base font-semibold ring-1 transition ${
                   place === "map"
-                    ? "bg-prayer text-ink ring-prayer"
+                    ? "bg-prayer text-parchment ring-prayer"
                     : "bg-ink text-sand ring-mist/25 hover:ring-prayer/50"
                 }`}
               >

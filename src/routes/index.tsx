@@ -111,7 +111,7 @@ function HomePage() {
           </Link>
           <Link
             to="/post-prayer"
-            className="inline-flex flex-1 items-center justify-center rounded-full bg-prayer px-8 py-3.5 text-2xl font-bold text-ink transition-transform hover:-translate-y-0.5 sm:flex-initial"
+            className="inline-flex flex-1 items-center justify-center rounded-full bg-prayer px-8 py-3.5 text-2xl font-bold text-parchment transition-transform hover:-translate-y-0.5 sm:flex-initial"
           >
             {t("Post a Prayer")}
           </Link>

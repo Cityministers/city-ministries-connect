@@ -186,7 +186,7 @@ export function ChurchCodeCards() {
               <HandHelping className="size-5" aria-hidden="true" />
               {t("Prayer Requests")}
               {(counts?.[c.id] ?? 0) > 0 && (
-                <span className="rounded-full bg-prayer px-2 py-0.5 text-xs font-bold text-ink">
+                <span className="rounded-full bg-prayer px-2 py-0.5 text-xs font-bold text-parchment">
                   {counts?.[c.id]}
                 </span>
               )}
