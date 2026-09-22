@@ -260,7 +260,7 @@ function MapPage() {
           <div className="grid w-full grid-cols-3 gap-2" aria-label={t("Map post controls")}>
             <Button
               asChild
-              className="h-10 rounded-full bg-tone-emerald/15 px-2 text-sm font-semibold text-tone-emerald shadow-none ring-1 ring-tone-emerald/45 hover:bg-tone-emerald/25 sm:px-5"
+              className="h-10 rounded-full bg-tone-emerald/15 px-2 text-sm font-semibold text-sand shadow-none ring-1 ring-tone-emerald/45 hover:bg-tone-emerald/25 sm:px-5"
             >
               <Link to="/start" aria-label={t("Create a ministry post")}>
                 {t("Create Post")}
@@ -268,7 +268,7 @@ function MapPage() {
             </Button>
             <Button
               asChild
-              className="h-10 rounded-full bg-tone-cyan/25 px-2 text-sm font-semibold text-tone-cyan shadow-none ring-1 ring-tone-cyan/55 hover:bg-tone-cyan/35 sm:px-5"
+              className="h-10 rounded-full bg-tone-cyan/25 px-2 text-sm font-semibold text-sand shadow-none ring-1 ring-tone-cyan/55 hover:bg-tone-cyan/35 sm:px-5"
             >
               <Link to="/map" search={{ place: location }} aria-current="page">
                 {t("Ministries")}
@@ -276,7 +276,7 @@ function MapPage() {
             </Button>
             <Button
               asChild
-              className="h-10 rounded-full bg-tone-indigo/15 px-2 text-sm font-semibold text-tone-indigo shadow-none ring-1 ring-tone-indigo/45 hover:bg-tone-indigo/25 sm:px-5"
+              className="h-10 rounded-full bg-tone-indigo/15 px-2 text-sm font-semibold text-sand shadow-none ring-1 ring-tone-indigo/45 hover:bg-tone-indigo/25 sm:px-5"
             >
               <Link to="/needs" search={{ place: location }}>
                 {t("Needs")}

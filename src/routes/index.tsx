@@ -117,19 +117,19 @@ function HomePage() {
           </Link>
           <Link
             to="/start"
-            className="inline-flex flex-1 items-center justify-center rounded-full bg-tone-cyan/25 px-6 py-3.5 text-xl font-semibold text-tone-cyan shadow-none ring-1 ring-tone-cyan/55 transition hover:bg-tone-cyan/35 sm:flex-initial"
+            className="inline-flex flex-1 items-center justify-center rounded-full bg-tone-cyan/25 px-6 py-3.5 text-xl font-semibold text-sand shadow-none ring-1 ring-tone-cyan/55 transition hover:bg-tone-cyan/35 sm:flex-initial"
           >
             {t("Start Your Ministry")}
           </Link>
           <Link
             to="/post-need"
-            className="inline-flex flex-1 items-center justify-center rounded-full bg-tone-indigo/15 px-6 py-3.5 text-xl font-semibold text-tone-indigo shadow-none ring-1 ring-tone-indigo/45 transition hover:bg-tone-indigo/25 sm:flex-initial"
+            className="inline-flex flex-1 items-center justify-center rounded-full bg-tone-indigo/15 px-6 py-3.5 text-xl font-semibold text-sand shadow-none ring-1 ring-tone-indigo/45 transition hover:bg-tone-indigo/25 sm:flex-initial"
           >
             {t("Post a Need")}
           </Link>
           <Link
             to="/needs"
-            className="inline-flex flex-1 items-center justify-center rounded-full bg-tone-emerald/15 px-6 py-3.5 text-xl font-semibold text-tone-emerald shadow-none ring-1 ring-tone-emerald/45 transition hover:bg-tone-emerald/25 sm:flex-initial"
+            className="inline-flex flex-1 items-center justify-center rounded-full bg-tone-emerald/15 px-6 py-3.5 text-xl font-semibold text-sand shadow-none ring-1 ring-tone-emerald/45 transition hover:bg-tone-emerald/25 sm:flex-initial"
           >
             {t("View Needs")}
           </Link>
