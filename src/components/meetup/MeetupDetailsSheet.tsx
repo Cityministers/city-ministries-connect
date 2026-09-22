@@ -113,14 +113,39 @@ export function MeetupDetailsSheet({ meetup, onClose }: { meetup: MeetupDetails;
           </span>
         </a>
         {meetup.conversationId && (
-          <Link
-            to="/messages/$conversationId"
-            params={{ conversationId: meetup.conversationId }}
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-ink px-5 py-3 text-base font-semibold text-sand ring-1 ring-mist/30"
-          >
-            <MessageCircle className="size-5" />
-            {t("Open conversation")}
-          </Link>
+          <div className="flex flex-col gap-2">
+            <button
+              type="button"
+              onClick={() =>
+                void navigate({
+                  to: "/messages/$conversationId",
+                  params: { conversationId: meetup.conversationId! },
+                })
+              }
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-ink px-5 py-3 text-base font-semibold text-sand ring-1 ring-mist/30"
+            >
+              <MessageCircle className="size-5" />
+              {t("Open conversation")}
+            </button>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => draftMessage(cancelMessage)}
+                className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-ink px-3 py-3 text-base font-semibold text-sand ring-1 ring-rose/50"
+              >
+                <CalendarX className="size-5 text-rose" />
+                {t("Cancel")}
+              </button>
+              <button
+                type="button"
+                onClick={() => draftMessage(rescheduleMessage)}
+                className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-ink px-3 py-3 text-base font-semibold text-sand ring-1 ring-lemon/50"
+              >
+                <CalendarClock className="size-5 text-lemon" />
+                {t("Let's reschedule")}
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </div>
