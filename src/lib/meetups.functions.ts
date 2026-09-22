@@ -94,6 +94,7 @@ export const respondToMeetup = createServerFn({ method: "POST" })
       .object({
         id: z.string().uuid(),
         accept: z.boolean(),
+        later: z.boolean().optional(),
         note: z.string().trim().max(500).optional(),
       })
       .parse(data),
@@ -106,6 +107,19 @@ export const respondToMeetup = createServerFn({ method: "POST" })
       .maybeSingle();
     if (!row || row.recipient_id !== context.userId) throw new Error("Meetup not found.");
     if (row.status !== "pending") throw new Error("This meetup was already answered.");
+
+    if (data.later) {
+      const { notifyUser, displayNameOf } = await import("./social.server");
+      await notifyUser({
+        userId: row.requester_id,
+        actorId: context.userId,
+        kind: "message",
+        title: `${await displayNameOf(context.userId)} will get back to you about your meetup`,
+        body: row.location.slice(0, 140),
+        link: `/messages/${row.conversation_id}`,
+      });
+      return { ok: true };
+    }
 
     const { error } = await context.supabase
       .from("meetup_requests")
