@@ -369,7 +369,7 @@ function NeedsPage() {
         <div className="flex justify-center py-8">
           <Link
             to="/post-need"
-            className="inline-flex items-center justify-center rounded-full bg-lemon px-6 py-3 text-base font-semibold text-ink transition hover:opacity-90"
+            className="inline-flex items-center justify-center rounded-full bg-tone-indigo/15 px-6 py-3 text-base font-semibold text-sand ring-1 ring-tone-indigo/45 transition hover:bg-tone-indigo/25"
           >
             {t("Post a Need")}
           </Link>

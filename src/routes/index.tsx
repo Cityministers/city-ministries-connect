@@ -316,7 +316,7 @@ function HomePage() {
           </p>
           <Link
             to="/start"
-            className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-lemon px-8 py-3.5 text-2xl font-bold text-ink transition-transform hover:-translate-y-0.5 sm:w-auto"
+            className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-tone-cyan/25 px-8 py-3.5 text-2xl font-bold text-sand ring-1 ring-tone-cyan/55 transition hover:bg-tone-cyan/35 sm:w-auto"
           >
             {t("Start Your Ministry")}
           </Link>
