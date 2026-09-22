@@ -535,15 +535,6 @@ function ChurchPage() {
                     >
                       X
                     </a>
-                    {canNativeShare && (
-                      <button
-                        type="button"
-                        onClick={() => void nativeShare()}
-                        className="rounded-full bg-ink px-4 py-2 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
-                      >
-                        {t("More…")}
-                      </button>
-                    )}
                   </div>
                 )}
               </div>
