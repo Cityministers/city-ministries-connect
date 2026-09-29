@@ -395,6 +395,7 @@ export const createChurch = createServerFn({ method: "POST" })
       await context.supabase
         .from("churches")
         .update({
+          status: "active",
           description: data.description,
           icon_id: data.iconId,
           avatar_url: data.avatarPath || null,
