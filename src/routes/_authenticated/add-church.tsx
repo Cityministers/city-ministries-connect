@@ -380,7 +380,7 @@ function AddChurchPage() {
                   className="h-24 w-auto"
                 />
                 <p className="text-sm text-mist/70">
-                  {t("This sits on your exact street address.")}
+                  {t("This is where your church appears on the map.")}
                 </p>
               </div>
             </div>
