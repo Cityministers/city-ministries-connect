@@ -357,9 +357,9 @@ const churchInput = z.object({
     .optional()
     .default("chapel"),
   avatarPath: z.string().trim().max(300).optional().default(""),
-  address: z.string().trim().min(5).max(160),
-  city: z.string().trim().min(2).max(80),
-  zip: z.string().trim().max(10).optional().default(""),
+  address: z.string().trim().max(160).optional().default(""),
+  city: z.string().trim().max(80).optional().default(""),
+  zip: z.string().trim().min(3).max(10),
   serviceTimes: z.string().trim().max(200).optional().default(""),
   phone: z.string().trim().max(40).optional().default(""),
   website: z.string().trim().max(200).optional().default(""),
@@ -390,11 +390,12 @@ export const createChurch = createServerFn({ method: "POST" })
       .limit(1)
       .maybeSingle();
     if (mine) {
-      const { geocodeAddress: locate } = await import("./geocode.server");
+      const { geocodeChurch: locate } = await import("./geocode.server");
       const spot = await locate(data.address, data.city, data.zip);
       await context.supabase
         .from("churches")
         .update({
+          status: "active",
           description: data.description,
           icon_id: data.iconId,
           avatar_url: data.avatarPath || null,
@@ -427,15 +428,15 @@ export const createChurch = createServerFn({ method: "POST" })
         service_times: data.serviceTimes,
         phone: data.phone,
         website: data.website,
-        status: "inactive",
-        plan_status: "none",
+        status: "active",
+        plan_status: "free",
       })
       .select("id")
       .single();
     if (error) throw new Error(error.message);
 
     // Churches are real buildings, so we place them on their exact address.
-    const { geocodeAddress } = await import("./geocode.server");
+    const { geocodeChurch: geocodeAddress } = await import("./geocode.server");
     const point = await geocodeAddress(data.address, data.city, data.zip);
     if (point) {
       await context.supabase
@@ -454,7 +455,7 @@ export const updateChurch = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }): Promise<{ ok: true; located: boolean }> => {
     // An edited address is looked up again so the pin follows the building.
-    const { geocodeAddress } = await import("./geocode.server");
+    const { geocodeChurch: geocodeAddress } = await import("./geocode.server");
     const point = await geocodeAddress(data.address, data.city, data.zip);
 
     const { error } = await context.supabase
@@ -492,7 +493,7 @@ export const relocateChurch = createServerFn({ method: "POST" })
       .maybeSingle();
     if (!church || church.owner_id !== context.userId) return { located: false };
 
-    const { geocodeAddress } = await import("./geocode.server");
+    const { geocodeChurch: geocodeAddress } = await import("./geocode.server");
     const point = await geocodeAddress(church.address ?? "", church.city ?? "", church.zip ?? "");
     if (!point) return { located: false };
 

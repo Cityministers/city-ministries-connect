@@ -147,9 +147,7 @@ function AddChurchPage() {
     e.preventDefault();
     setError(null);
     if (name.trim().length < 2) return setError(t("Add your church's name."));
-    if (city.trim().length < 2) return setError(t("Add the city your church is in."));
-    if (address.trim().length < 5)
-      return setError(t("Add your street address — your icon sits on that exact spot."));
+    if (zip.trim().length < 3) return setError(t("Add your church's ZIP code."));
 
     setBusy(true);
     try {
@@ -206,13 +204,11 @@ function AddChurchPage() {
       setChurchId(result.id);
       if (!result.located) {
         setFound(null);
-        setError(
-          t("We couldn't find that street address. Check the street, city and ZIP — your icon needs an exact address to sit on the map."),
-        );
+        setError(t("We couldn't find that ZIP code. Please check it and try again."));
         return;
       }
       setFound([address.trim(), city.trim(), zip.trim()].filter(Boolean).join(", "));
-      setStep("checkout");
+      setLive(true);
       window.scrollTo({ top: 0 });
     } catch (err) {
       setError(err instanceof Error ? err.message : t("Something went wrong."));
@@ -384,7 +380,7 @@ function AddChurchPage() {
                   className="h-24 w-auto"
                 />
                 <p className="text-sm text-mist/70">
-                  {t("This sits on your exact street address.")}
+                  {t("This is where your church appears on the map.")}
                 </p>
               </div>
             </div>
@@ -408,10 +404,9 @@ function AddChurchPage() {
                 onChange={(e) => setAddress(e.target.value)}
                 maxLength={160}
                 placeholder="1420 SW Oak St"
-                required
               />
               <span className="text-sm text-mist/60">
-                {t("Your icon is placed on this exact spot, so write it the way mail arrives.")}
+                {t("Optional. If we can't find the exact spot, we'll place your church by ZIP code.")}
               </span>
             </label>
 
@@ -424,7 +419,6 @@ function AddChurchPage() {
                   onChange={(e) => setCity(e.target.value)}
                   maxLength={80}
                   placeholder="Beaverton"
-                  required
                 />
               </label>
               <label className="flex w-24 shrink-0 flex-col gap-2 text-base text-mist/80 sm:w-32 sm:text-lg">
@@ -436,6 +430,7 @@ function AddChurchPage() {
                   maxLength={10}
                   inputMode="numeric"
                   placeholder="97006"
+                  required
                 />
               </label>
             </div>
@@ -487,10 +482,10 @@ function AddChurchPage() {
               className="mt-1 inline-flex items-center justify-center gap-2 rounded-full bg-lemon px-6 py-4 text-xl font-semibold text-ink transition hover:opacity-90 disabled:opacity-60 sm:text-2xl"
             >
               {busy && <Loader2 className="size-5 animate-spin" aria-hidden="true" />}
-              {churchId ? t("Try this address") : t("Continue to checkout")}
+              {churchId ? t("Try again") : t("Add my church")}
             </button>
             <p className="text-center text-base text-mist/60">
-              {t("$49 per month keeps your church on the map.")}
+              {t("Adding your church is free.")}
             </p>
           </form>
         ) : (

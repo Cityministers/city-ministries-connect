@@ -197,3 +197,18 @@ export async function geocodeQuery(query: string): Promise<LatLng | null> {
   const found = await geocodePlaces([{ city, zip }]);
   return found.get(placeKey(city, zip)) ?? null;
 }
+
+/**
+ * Church placement: try the exact street address first; if it can't be found,
+ * fall back to the ZIP/city so the church still lands in the right area.
+ */
+export async function geocodeChurch(
+  address: string,
+  city: string,
+  zip: string,
+): Promise<LatLng | null> {
+  const exact = await geocodeAddress(address, city, zip);
+  if (exact) return exact;
+  const found = await geocodePlaces([{ city: zip ? "" : city, zip }]);
+  return found.get(placeKey(zip ? "" : city, zip)) ?? null;
+}
