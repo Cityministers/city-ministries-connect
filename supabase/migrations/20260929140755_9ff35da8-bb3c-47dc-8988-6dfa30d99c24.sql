@@ -1,0 +1,2 @@
+DROP POLICY IF EXISTS "Signed in users can start a conversation" ON public.conversations;
+DROP POLICY IF EXISTS "Members can add participants to their conversations" ON public.conversation_participants;
