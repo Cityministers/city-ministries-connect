@@ -165,10 +165,10 @@ function StartPage() {
                         <m.icon className="size-6 sm:size-7" aria-hidden="true" />
                       </span>
                       <span className="flex min-w-0 flex-1 flex-col gap-1 py-0.5">
-                        <span className="font-display text-base font-semibold text-sand sm:text-lg">
+                        <span className="font-display text-lg font-semibold text-sand sm:text-xl">
                           {t(m.label)}
                         </span>
-                        <span className="line-clamp-2 text-sm leading-relaxed text-mist/70 sm:text-base">
+                        <span className="line-clamp-2 text-base leading-relaxed text-mist/90 sm:text-lg">
                           {t(m.description)}
                         </span>
                       </span>
@@ -181,7 +181,7 @@ function StartPage() {
 
           <div className="sticky bottom-0 border-t border-ink-soft bg-ink/95 backdrop-blur">
             <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-2 px-4 py-4 sm:flex-row sm:justify-between sm:px-6">
-              <p className="text-xs text-mist/70">
+              <p className="text-sm text-mist/90">
                 {chosen ? (
                   <>
                     {t("Selected:")} <span className="text-sand">{t(chosen.label)}</span>
