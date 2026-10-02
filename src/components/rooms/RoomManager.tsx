@@ -37,12 +37,12 @@ export function RoomManager({
 
   async function create() {
     const t = title.trim();
-    if (t.length < 3) return toast.error("Give your room a title.");
+    if (t.length < 3) { toast.error("Give your room a title."); return; }
     setBusy(true);
     const slug = `${t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 50)}-${Math.random().toString(36).slice(2, 6)}`;
     const { error } = await supabase.from("rooms").insert({ slug, title: t.slice(0, 80), description: desc.trim().slice(0, 300), icon, created_by: userId, status: "pending", sort: 100 });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     setTitle(""); setDesc(""); setCongrats(true); onChanged();
   }
 
