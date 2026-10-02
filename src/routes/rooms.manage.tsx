@@ -36,6 +36,7 @@ const ICONS = [
 
 function ManageRoomsPage() {
   const session = useSession();
+  const queryClient = useQueryClient();
   const userId = session?.user?.id;
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
