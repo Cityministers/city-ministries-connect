@@ -14,3 +14,6 @@
 - [x] Church pages: enlarge and lighten small text
 - [x] Keep post-follow on ministry and need posts; move person-follow to each member's profile page
 - [x] Let need owners confirm a met need, send optional personal thank-yous to people in its conversations, and reopen it later
+
+## Open
+- Admin stats page: track new real posts and site activity (profiles created, churches added, etc.) — from Oct 2 message, not started.

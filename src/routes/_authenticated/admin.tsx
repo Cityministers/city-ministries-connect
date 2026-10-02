@@ -3,7 +3,18 @@ import { listPendingRoomPosts, moderateRoomPost } from "@/lib/room-posts.functio
 import { PendingRoomsAdmin } from "@/components/rooms/PendingRoomsAdmin";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, Check, EyeOff, ShieldCheck, Trash2 } from "lucide-react";
+import {
+  ArrowLeft,
+  Check,
+  Church,
+  EyeOff,
+  HandHeart,
+  HandHelping,
+  MessageCircle,
+  ShieldCheck,
+  Sparkles,
+  Trash2,
+} from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -28,6 +39,8 @@ import {
   replyToFeedback,
   type FeedbackReplyDTO,
 } from "@/lib/feedback-reply.functions";
+import { getSiteStats, type RecentItem } from "@/lib/admin-stats.functions";
+import { timeAgo } from "@/lib/time-ago";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -75,7 +88,7 @@ function Pill({ value }: { value: string }) {
 
 function AdminPage() {
   const { t } = useTranslation();
-  const [tab, setTab] = useState<"needs" | "rooms" | "churches" | "reports" | "feedback">("needs");
+  const [tab, setTab] = useState<"stats" | "needs" | "rooms" | "churches" | "reports" | "feedback">("stats");
   const qc = useQueryClient();
   const fetchRoomPosts = useServerFn(listPendingRoomPosts);
   const moderateRoom = useServerFn(moderateRoomPost);
@@ -94,6 +107,9 @@ function AdminPage() {
   const needs = useQuery({ queryKey: ["admin", "needs"], queryFn: () => fetchNeeds() });
   const reports = useQuery({ queryKey: ["admin", "reports"], queryFn: () => fetchReports() });
   const feedback = useQuery({ queryKey: ["admin", "feedback"], queryFn: () => fetchFeedback() });
+
+  const fetchStats = useServerFn(getSiteStats);
+  const siteStats = useQuery({ queryKey: ["admin", "stats"], queryFn: () => fetchStats() });
 
   const fetchReplies = useServerFn(listFeedbackReplies);
   const sendReply = useServerFn(replyToFeedback);
@@ -169,7 +185,7 @@ function AdminPage() {
         ) : (
           <>
             <div className="mb-6 flex flex-wrap gap-2">
-              {(["needs", "rooms", "churches", "reports", "feedback"] as const).map((tabItem) => (
+              {(["stats", "needs", "rooms", "churches", "reports", "feedback"] as const).map((tabItem) => (
                 <button
                   key={tabItem}
                   type="button"
@@ -180,15 +196,17 @@ function AdminPage() {
                       : "bg-ink-soft/50 text-mist ring-1 ring-mist/20 hover:bg-ink-soft"
                   }`}
                 >
-                  {tabItem === "needs"
-                    ? t("Posted needs")
-                    : tabItem === "rooms"
-                      ? t("Rooms")
-                      : tabItem === "churches"
-                        ? t("Churches")
-                        : tabItem === "reports"
-                          ? t("Abuse reports")
-                          : t("Feedback")}
+                  {tabItem === "stats"
+                    ? t("Site activity")
+                    : tabItem === "needs"
+                      ? t("Posted needs")
+                      : tabItem === "rooms"
+                        ? t("Rooms")
+                        : tabItem === "churches"
+                          ? t("Churches")
+                          : tabItem === "reports"
+                            ? t("Abuse reports")
+                            : t("Feedback")}
                   {tabItem === "reports" && (reports.data?.filter((r) => r.status === "new").length ?? 0) > 0
                     ? ` (${reports.data?.filter((r) => r.status === "new").length})`
                     : ""}
@@ -197,7 +215,13 @@ function AdminPage() {
               ))}
             </div>
 
-            {tab === "needs" ? (
+            {tab === "stats" ? (
+              <StatsTab
+                data={siteStats.data}
+                loading={siteStats.isLoading}
+                error={siteStats.isError}
+              />
+            ) : tab === "needs" ? (
               <section className="space-y-3">
                 {needs.isLoading ? (
                   <p className="text-mist/70">{t("Loading…")}</p>

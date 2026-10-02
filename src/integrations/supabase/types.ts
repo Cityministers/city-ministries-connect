@@ -1220,6 +1220,7 @@ export type Database = {
         Returns: undefined
       }
       follower_count: { Args: { _id: string; _type: string }; Returns: number }
+      get_site_activity_stats: { Args: never; Returns: Json }
       is_church_moderator: {
         Args: { _church_id: string; _user_id: string }
         Returns: boolean
