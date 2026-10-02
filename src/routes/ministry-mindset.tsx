@@ -332,7 +332,7 @@ function MinistryMindsetPage() {
             </Link>
             <Link
               to="/post-need"
-              className="inline-flex items-center justify-center rounded-full bg-tone-emerald/15 px-8 py-3.5 text-lg font-semibold text-tone-emerald ring-1 ring-tone-emerald/45 transition hover:bg-tone-emerald/25"
+              className="inline-flex items-center justify-center rounded-full bg-tone-indigo/15 px-8 py-3.5 text-lg font-semibold text-sand ring-1 ring-tone-indigo/45 transition hover:bg-tone-indigo/25"
             >
               Post a Need
             </Link>

@@ -473,7 +473,7 @@ function MapPage() {
         {mode === "prayer" && (
           <Link
             to="/post-prayer"
-            className="mt-4 inline-flex items-center justify-center gap-2 self-start rounded-full bg-prayer/20 px-6 py-3 text-base font-semibold text-parchment ring-1 ring-prayer/55 transition hover:bg-prayer/30"
+            className="mt-4 inline-flex items-center justify-center gap-2 self-start rounded-full bg-prayer-deep px-6 py-3 text-base font-semibold text-parchment ring-1 ring-prayer/40 transition hover:opacity-90"
           >
             <HandHelping className="size-5" aria-hidden="true" />
             {t("Post a Prayer")}

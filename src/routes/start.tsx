@@ -106,7 +106,7 @@ function StartPage() {
               </Link>
               <Link
                 to="/post-prayer"
-                className="rounded-2xl bg-prayer/20 px-3 py-4 text-center text-lg font-semibold text-parchment ring-1 ring-prayer/55 transition hover:bg-prayer/30"
+                className="rounded-2xl bg-prayer-deep px-3 py-4 text-center text-lg font-semibold text-parchment ring-1 ring-prayer/40 transition hover:opacity-90"
               >
                 {t("Post a Prayer")}
               </Link>

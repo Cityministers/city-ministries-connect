@@ -3,7 +3,18 @@ import { listPendingRoomPosts, moderateRoomPost } from "@/lib/room-posts.functio
 import { PendingRoomsAdmin } from "@/components/rooms/PendingRoomsAdmin";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, Check, EyeOff, ShieldCheck, Trash2 } from "lucide-react";
+import {
+  ArrowLeft,
+  Check,
+  Church,
+  EyeOff,
+  HandHeart,
+  HandHelping,
+  MessageCircle,
+  ShieldCheck,
+  Sparkles,
+  Trash2,
+} from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -28,6 +39,8 @@ import {
   replyToFeedback,
   type FeedbackReplyDTO,
 } from "@/lib/feedback-reply.functions";
+import { getSiteStats, type RecentItem } from "@/lib/admin-stats.functions";
+import { timeAgo } from "@/lib/time-ago";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -75,7 +88,7 @@ function Pill({ value }: { value: string }) {
 
 function AdminPage() {
   const { t } = useTranslation();
-  const [tab, setTab] = useState<"needs" | "rooms" | "churches" | "reports" | "feedback">("needs");
+  const [tab, setTab] = useState<"stats" | "needs" | "rooms" | "churches" | "reports" | "feedback">("stats");
   const qc = useQueryClient();
   const fetchRoomPosts = useServerFn(listPendingRoomPosts);
   const moderateRoom = useServerFn(moderateRoomPost);
@@ -94,6 +107,9 @@ function AdminPage() {
   const needs = useQuery({ queryKey: ["admin", "needs"], queryFn: () => fetchNeeds() });
   const reports = useQuery({ queryKey: ["admin", "reports"], queryFn: () => fetchReports() });
   const feedback = useQuery({ queryKey: ["admin", "feedback"], queryFn: () => fetchFeedback() });
+
+  const fetchStats = useServerFn(getSiteStats);
+  const siteStats = useQuery({ queryKey: ["admin", "stats"], queryFn: () => fetchStats() });
 
   const fetchReplies = useServerFn(listFeedbackReplies);
   const sendReply = useServerFn(replyToFeedback);
@@ -169,7 +185,7 @@ function AdminPage() {
         ) : (
           <>
             <div className="mb-6 flex flex-wrap gap-2">
-              {(["needs", "rooms", "churches", "reports", "feedback"] as const).map((tabItem) => (
+              {(["stats", "needs", "rooms", "churches", "reports", "feedback"] as const).map((tabItem) => (
                 <button
                   key={tabItem}
                   type="button"
@@ -180,15 +196,17 @@ function AdminPage() {
                       : "bg-ink-soft/50 text-mist ring-1 ring-mist/20 hover:bg-ink-soft"
                   }`}
                 >
-                  {tabItem === "needs"
-                    ? t("Posted needs")
-                    : tabItem === "rooms"
-                      ? t("Rooms")
-                      : tabItem === "churches"
-                        ? t("Churches")
-                        : tabItem === "reports"
-                          ? t("Abuse reports")
-                          : t("Feedback")}
+                  {tabItem === "stats"
+                    ? t("Site activity")
+                    : tabItem === "needs"
+                      ? t("Posted needs")
+                      : tabItem === "rooms"
+                        ? t("Rooms")
+                        : tabItem === "churches"
+                          ? t("Churches")
+                          : tabItem === "reports"
+                            ? t("Abuse reports")
+                            : t("Feedback")}
                   {tabItem === "reports" && (reports.data?.filter((r) => r.status === "new").length ?? 0) > 0
                     ? ` (${reports.data?.filter((r) => r.status === "new").length})`
                     : ""}
@@ -197,7 +215,13 @@ function AdminPage() {
               ))}
             </div>
 
-            {tab === "needs" ? (
+            {tab === "stats" ? (
+              <StatsTab
+                data={siteStats.data}
+                loading={siteStats.isLoading}
+                error={siteStats.isError}
+              />
+            ) : tab === "needs" ? (
               <section className="space-y-3">
                 {needs.isLoading ? (
                   <p className="text-mist/70">{t("Loading…")}</p>
@@ -698,6 +722,100 @@ function FeedbackReply({
         </button>
       )}
       {result ? <p className="mt-2 text-sm text-mist/70">{result}</p> : null}
+    </div>
+  );
+}
+
+const recentIcons: Record<RecentItem["type"], typeof Church> = {
+  ministry: HandHelping,
+  need: HandHeart,
+  prayer: Sparkles,
+  room: MessageCircle,
+  church: Church,
+};
+
+function StatsTab({
+  data,
+  loading,
+  error,
+}: {
+  data:
+    | {
+        stats: { key: string; label: string; today: number; week: number; month: number; total: number }[];
+        recent: RecentItem[];
+      }
+    | undefined;
+  loading: boolean;
+  error: boolean;
+}) {
+  const { t } = useTranslation();
+
+  if (error) {
+    return (
+      <div className="rounded-2xl bg-ink-soft/40 p-6 text-center ring-1 ring-mist/15">
+        <ShieldCheck className="mx-auto mb-3 size-8 text-lemon" aria-hidden="true" />
+        <p className="text-base text-mist/80">{t("This page is only for site admins.")}</p>
+      </div>
+    );
+  }
+
+  if (loading || !data) {
+    return <p className="text-mist/70">{t("Loading…")}</p>;
+  }
+
+  return (
+    <div className="space-y-6">
+      <section className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {data.stats.map((s) => (
+          <article key={s.key} className="rounded-2xl bg-ink-soft/40 p-4 ring-1 ring-mist/15">
+            <h2 className="font-display text-base font-semibold leading-tight">{t(s.label)}</h2>
+            <p className="mt-2 font-display text-3xl font-semibold text-lemon">{s.total}</p>
+            <dl className="mt-3 space-y-1 text-xs text-mist/80">
+              <div className="flex justify-between gap-2">
+                <dt>{t("Today")}</dt>
+                <dd className="font-semibold text-sand">{s.today}</dd>
+              </div>
+              <div className="flex justify-between gap-2">
+                <dt>{t("Last 7 days")}</dt>
+                <dd className="font-semibold text-sand">{s.week}</dd>
+              </div>
+              <div className="flex justify-between gap-2">
+                <dt>{t("Last 30 days")}</dt>
+                <dd className="font-semibold text-sand">{s.month}</dd>
+              </div>
+            </dl>
+          </article>
+        ))}
+      </section>
+
+      <section>
+        <h2 className="mb-3 font-display text-lg font-semibold">{t("Latest activity")}</h2>
+        {data.recent.length === 0 ? (
+          <p className="text-mist/70">{t("Nothing has been posted yet.")}</p>
+        ) : (
+          <ul className="space-y-2">
+            {data.recent.map((item, i) => {
+              const Icon = recentIcons[item.type] ?? MessageCircle;
+              return (
+                <li
+                  key={`${item.type}-${item.at}-${i}`}
+                  className="flex items-start gap-3 rounded-2xl bg-ink-soft/40 p-4 ring-1 ring-mist/15"
+                >
+                  <span className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20">
+                    <Icon className="size-4" aria-hidden="true" />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold text-sand">{item.title}</p>
+                    <p className="mt-0.5 text-xs text-mist/70">
+                      {item.author} · {timeAgo(item.at)}
+                    </p>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
     </div>
   );
 }
