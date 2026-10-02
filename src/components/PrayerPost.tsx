@@ -372,7 +372,7 @@ export function PrayerPost({
                 setMessageOpen(true);
                 setMessageText((prev) => prev || t("I'm praying for you."));
               }}
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-prayer px-5 py-3 text-base font-semibold text-parchment ring-1 ring-prayer/60 transition-transform hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-prayer-deep px-5 py-3 text-base font-semibold text-parchment ring-1 ring-prayer/40 transition-transform hover:-translate-y-0.5"
             >
               <MessageCircle className="size-5" aria-hidden="true" />
               {t("Message {{name}}", { name: posterName })}
