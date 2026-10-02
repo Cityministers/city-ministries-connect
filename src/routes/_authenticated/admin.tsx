@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { listPendingRoomPosts, moderateRoomPost } from "@/lib/room-posts.functions";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, Check, EyeOff, ShieldCheck, Trash2 } from "lucide-react";
@@ -73,7 +74,14 @@ function Pill({ value }: { value: string }) {
 
 function AdminPage() {
   const { t } = useTranslation();
-  const [tab, setTab] = useState<"needs" | "churches" | "reports" | "feedback">("needs");
+  const [tab, setTab] = useState<"needs" | "rooms" | "churches" | "reports" | "feedback">("needs");
+  const fetchRoomPosts = useServerFn(listPendingRoomPosts);
+  const moderateRoom = useServerFn(moderateRoomPost);
+  const roomPosts = useQuery({ queryKey: ["admin", "room-posts"], queryFn: () => fetchRoomPosts() });
+  const roomMutation = useMutation({
+    mutationFn: (input: { id: string; action: "approve" | "decline" }) => moderateRoom({ data: input }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "room-posts"] }),
+  });
   const qc = useQueryClient();
 
   const fetchNeeds = useServerFn(adminListNeeds);
@@ -160,7 +168,7 @@ function AdminPage() {
         ) : (
           <>
             <div className="mb-6 flex flex-wrap gap-2">
-              {(["needs", "churches", "reports", "feedback"] as const).map((tabItem) => (
+              {(["needs", "rooms", "churches", "reports", "feedback"] as const).map((tabItem) => (
                 <button
                   key={tabItem}
                   type="button"
@@ -173,14 +181,17 @@ function AdminPage() {
                 >
                   {tabItem === "needs"
                     ? t("Posted needs")
-                    : tabItem === "churches"
-                      ? t("Churches")
-                      : tabItem === "reports"
-                        ? t("Abuse reports")
-                        : t("Feedback")}
+                    : tabItem === "rooms"
+                      ? t("Rooms")
+                      : tabItem === "churches"
+                        ? t("Churches")
+                        : tabItem === "reports"
+                          ? t("Abuse reports")
+                          : t("Feedback")}
                   {tabItem === "reports" && (reports.data?.filter((r) => r.status === "new").length ?? 0) > 0
                     ? ` (${reports.data?.filter((r) => r.status === "new").length})`
                     : ""}
+                  {tabItem === "rooms" && (roomPosts.data?.length ?? 0) > 0 ? ` (${roomPosts.data?.length})` : ""}
                 </button>
               ))}
             </div>

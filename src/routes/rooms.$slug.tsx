@@ -201,7 +201,9 @@ function RoomPage() {
     }
   };
 
-  const topLevel = data?.posts.filter((p) => !p.parent_id) ?? [];
+  const topLevel = (data?.posts.filter((p) => !p.parent_id) ?? [])
+    .slice()
+    .sort((a, b) => Number(b.status === "pending") - Number(a.status === "pending"));
   const repliesOf = (id: string) =>
     (data?.posts.filter((p) => p.parent_id === id) ?? []).slice().reverse();
 
