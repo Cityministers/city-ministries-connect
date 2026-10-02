@@ -51,6 +51,10 @@ type Post = {
   status: string;
   media_path: string | null;
   media_type: string | null;
+  title?: string | null;
+  source_url?: string | null;
+  source_name?: string | null;
+  image_url?: string | null;
 };
 
 function RoomPage() {
@@ -89,7 +93,7 @@ function RoomPage() {
       if (!room) return null;
       const { data: posts } = await supabase
         .from("room_posts")
-        .select("id, author_id, parent_id, body, created_at, status, media_path, media_type")
+        .select("id, author_id, parent_id, body, created_at, status, media_path, media_type, title, source_url, source_name, image_url")
         .eq("room_id", room.id)
         .order("created_at", { ascending: false })
         .limit(200);
@@ -225,7 +229,28 @@ function RoomPage() {
             {p.status === "pending" ? t("Waiting for approval") : t("Hidden")}
           </span>
         )}
+        {p.image_url && (
+          <img
+            src={p.image_url}
+            alt=""
+            loading="lazy"
+            referrerPolicy="no-referrer"
+            onError={(e) => ((e.currentTarget as HTMLImageElement).style.display = "none")}
+            className="mt-3 aspect-[1.9/1] w-full rounded-xl bg-ink object-cover"
+          />
+        )}
+        {p.title && <h3 className="mt-3 font-display text-xl font-bold leading-snug">{p.title}</h3>}
         <p className="mt-2 whitespace-pre-wrap text-base">{p.body}</p>
+        {p.source_url && (
+          <a
+            href={p.source_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2 inline-block text-sm font-semibold text-lemon underline underline-offset-2"
+          >
+            {t("Read the full story at")} {p.source_name ?? new URL(p.source_url).hostname}
+          </a>
+        )}
         {p.media_path && data!.urls[p.media_path] && (
           p.media_type === "video" ? (
             <video src={data!.urls[p.media_path]} controls playsInline preload="metadata" className="mt-3 max-h-96 w-full rounded-xl bg-ink object-contain" />
