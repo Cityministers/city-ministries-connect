@@ -42,9 +42,21 @@ function ErrorComponent({ error, reset }: { error: unknown; reset: () => void })
   const { t } = useTranslation();
   console.error(error);
   const router = useRouter();
+  const isModuleLoadError = /importing a module script failed|failed to fetch dynamically imported module|error loading dynamically imported module/i.test(
+    error instanceof Error ? error.message : String(error),
+  );
   useEffect(() => {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
+  useEffect(() => {
+    if (!isModuleLoadError) return;
+    const retryKey = `module-retry:${window.location.pathname}`;
+    if (sessionStorage.getItem(retryKey)) return;
+    sessionStorage.setItem(retryKey, "1");
+    // A rejected dynamic import stays cached by the browser; router.invalidate()
+    // cannot retry it. A fresh document fetches the current page bundle.
+    window.location.reload();
+  }, [isModuleLoadError]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -58,6 +70,10 @@ function ErrorComponent({ error, reset }: { error: unknown; reset: () => void })
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => {
+              if (isModuleLoadError) {
+                window.location.reload();
+                return;
+              }
               router.invalidate();
               reset();
             }}
@@ -143,6 +159,10 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  useEffect(() => {
+    sessionStorage.removeItem(`module-retry:${window.location.pathname}`);
+  }, []);
 
   // Apply the visitor's saved language after hydration so SSR and the first
   // client render always match (English), then switch once the bundle loads.
