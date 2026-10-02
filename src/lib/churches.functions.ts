@@ -648,6 +648,7 @@ export const listChurchRequests = createServerFn({ method: "POST" })
             .from("user_needs")
             .select("id, short_title, description, city, zip")
             .in("id", needIds)
+            .eq("status", "active")
         : Promise.resolve({ data: [] as never[] }),
       context.supabase
         .from("profiles")

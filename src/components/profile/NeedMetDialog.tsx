@@ -54,6 +54,10 @@ export function NeedMetDialog({ needId, title, onClose, onCompleted }: {
         <p className="mb-4 text-base text-mist">Who helped meet this need? Choose a member below, or leave it unselected if help came from elsewhere.</p>
         {isLoading && <p className="text-mist">Loading conversations…</p>}
         {loadError && <p className="text-rose">Could not load people who reached out. Please try again.</p>}
+        {helpers.length > 0 && <label className="mb-3 flex min-h-11 items-center gap-3 text-base text-sand"><input type="radio" name="helper" checked={selected === null} onChange={() => {
+          setSelected(null);
+          if (selected) setDrafts((v) => ({ ...v, [selected]: offerDraft(helpers.find((p) => p.memberId === selected)?.name ?? "friend") }));
+        }} className="accent-lemon" />Someone outside these conversations helped</label>}
         {helpers.length > 0 && (
           <div className="max-h-[55dvh] space-y-3 overflow-y-auto pr-1">
             {helpers.map((h) => {
