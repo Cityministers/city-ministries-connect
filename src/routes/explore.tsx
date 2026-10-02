@@ -82,6 +82,33 @@ function ExplorePage() {
         </div>
       </header>
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-6 sm:px-6">
+        {session && homeChurches.length > 0 && (
+          <section className="mb-6">
+            <h2 className="text-sm font-bold uppercase tracking-wide text-mist">{t("Your home")}</h2>
+            <div className="mt-2 grid gap-2">
+              {homeChurches.map((c) => (
+                <Link
+                  key={c.id}
+                  to="/church/$id"
+                  params={{ id: c.id }}
+                  className="flex items-center gap-3 rounded-xl border border-mist/35 bg-ink-soft px-4 py-3 active:scale-[0.98]"
+                >
+                  {c.photoUrl ? (
+                    <img src={c.photoUrl} alt="" className="size-10 shrink-0 rounded-lg object-cover" />
+                  ) : (
+                    <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-ink">
+                      <Church className="size-5 text-lemon" aria-hidden="true" />
+                    </span>
+                  )}
+                  <span className="min-w-0">
+                    <span className="block truncate font-semibold text-sand">{c.name}</span>
+                    <span className="block text-sm text-mist">{[c.city, c.zip].filter(Boolean).join(" ")}</span>
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
         <h1 className="font-display text-xl font-semibold leading-tight">{t("Explore churches & rooms")}</h1>
         <label className="mt-4 flex items-center gap-2 rounded-xl border border-mist/35 bg-ink-soft px-3 py-2">
           <Search className="size-4 text-mist" aria-hidden="true" />
