@@ -968,33 +968,39 @@ export type Database = {
       }
       rooms: {
         Row: {
+          category: string
           created_at: string
           created_by: string | null
           description: string
           icon: string
           id: string
+          in_default_feed: boolean
           slug: string
           sort: number
           status: string
           title: string
         }
         Insert: {
+          category?: string
           created_at?: string
           created_by?: string | null
           description?: string
           icon?: string
           id?: string
+          in_default_feed?: boolean
           slug: string
           sort?: number
           status?: string
           title: string
         }
         Update: {
+          category?: string
           created_at?: string
           created_by?: string | null
           description?: string
           icon?: string
           id?: string
+          in_default_feed?: boolean
           slug?: string
           sort?: number
           status?: string
