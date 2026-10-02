@@ -100,13 +100,13 @@ function StartPage() {
             <div className="mb-3 grid grid-cols-2 gap-3">
               <Link
                 to="/post-need"
-                className="rounded-2xl bg-tone-indigo/15 px-3 py-4 text-center text-base font-semibold text-sand ring-1 ring-tone-indigo/45 transition hover:bg-tone-indigo/25"
+                className="rounded-2xl bg-tone-indigo/15 px-3 py-4 text-center text-lg font-semibold text-sand ring-1 ring-tone-indigo/45 transition hover:bg-tone-indigo/25"
               >
                 {t("Post a Need")}
               </Link>
               <Link
                 to="/post-prayer"
-                className="rounded-2xl bg-prayer/20 px-3 py-4 text-center text-base font-semibold text-parchment ring-1 ring-prayer/55 transition hover:bg-prayer/30"
+                className="rounded-2xl bg-prayer/20 px-3 py-4 text-center text-lg font-semibold text-parchment ring-1 ring-prayer/55 transition hover:bg-prayer/30"
               >
                 {t("Post a Prayer")}
               </Link>
@@ -114,14 +114,14 @@ function StartPage() {
             <div className="grid gap-3 sm:grid-cols-2">
               <Link
                 to="/create-ministry"
-                className="rounded-2xl bg-tone-cyan/25 px-5 py-4 text-center text-base font-semibold text-sand ring-1 ring-tone-cyan/55 transition hover:bg-tone-cyan/35"
+                className="rounded-2xl bg-tone-cyan/25 px-5 py-4 text-center text-lg font-semibold text-sand ring-1 ring-tone-cyan/55 transition hover:bg-tone-cyan/35"
               >
                 {t("Create a unique ministry")}
               </Link>
               {shapeAccess === "full" ? (
                 <Link
                   to="/shape"
-                  className="rounded-2xl bg-ink-soft px-5 py-4 text-center text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft/70"
+                  className="rounded-2xl bg-ink-soft px-5 py-4 text-center text-lg font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft/70"
                 >
                   {t("Help me create a Ministry")}
                 </Link>
@@ -130,7 +130,7 @@ function StartPage() {
                   aria-disabled="true"
                   className="flex flex-col items-center gap-1 rounded-2xl bg-ink-soft/40 px-5 py-4 text-center ring-1 ring-mist/15"
                 >
-                  <span className="text-base font-semibold text-mist/60">
+                  <span className="text-lg font-semibold text-mist/60">
                     {t("Help me create a Ministry")}
                   </span>
                   <span className="text-xs font-semibold uppercase tracking-wider text-mist/50">
@@ -197,7 +197,7 @@ function StartPage() {
                   desc: chosen?.description,
                   icon: chosen?.id,
                 }}
-                className={`inline-flex w-full items-center justify-center rounded-full px-8 py-3 text-base font-semibold transition sm:w-auto ${
+                className={`inline-flex w-full items-center justify-center rounded-full px-8 py-3 text-lg font-semibold transition sm:w-auto ${
                   chosen
                     ? "bg-lemon text-ink hover:-translate-y-0.5"
                     : "pointer-events-none bg-ink-soft text-mist/40"
