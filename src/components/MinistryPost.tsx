@@ -329,19 +329,15 @@ export function MinistryPost({
                 {translated.title} · {ministry.neighborhood}
               </p>
               <h2 className="font-display text-3xl font-semibold text-sand sm:text-4xl">
-                {ministry.poster.name}
+                {ministry.ownerId ? (
+                  <Link to="/people/$id" params={{ id: ministry.ownerId }} className="hover:text-lemon hover:underline">
+                    {ministry.poster.name}
+                  </Link>
+                ) : ministry.poster.name}
               </h2>
-              {(ministry.postId || ministry.ownerId) && (
-                <div className="mt-2 flex flex-wrap items-center gap-2">
-                  {ministry.postId && ministry.postType && (
-                    <FollowButton size="sm" targetType={ministry.postType} targetId={ministry.postId} />
-                  )}
-                  {ministry.ownerId && (
-                    <span className="inline-flex items-center gap-1 text-xs text-mist">
-                      <FollowButton size="sm" targetType="user" targetId={ministry.ownerId} />
-                      <span>{t("this person")}</span>
-                    </span>
-                  )}
+              {ministry.postId && ministry.postType && (
+                <div className="mt-2">
+                  <FollowButton size="sm" targetType={ministry.postType} targetId={ministry.postId} />
                 </div>
               )}
             </div>

@@ -17,7 +17,7 @@ function linkFor(i: FollowItem): string {
   if (i.targetType === "church") return `/church/${i.targetId}`;
   if (i.targetType === "need") return `/needs?new=${i.targetId}`;
   if (i.targetType === "ministry") return `/map?new=${i.targetId}`;
-  return "";
+  return `/people/${i.targetId}`;
 }
 
 export function MyConnections() {

@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep post-follow actions on post details and person-follow actions on authenticated member profile pages; this distinguishes content updates from author updates without duplicating follow controls.
