@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { FollowButton } from "@/components/FollowButton";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -82,7 +83,7 @@ function PostRow({ post }: { post: ChurchPostDTO }) {
     >
       <span className="flex items-center gap-2">
         <span
-          className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-sm font-semibold ring-1 ${
+          className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-base font-semibold ring-1 ${
             post.kind === "ministry"
               ? "bg-tone-emerald/15 text-tone-emerald ring-tone-emerald/40"
               : post.kind === "need"
@@ -97,10 +98,10 @@ function PostRow({ post }: { post: ChurchPostDTO }) {
           <AutoText text={post.title} />
         </span>
       </span>
-      <span className="line-clamp-2 text-base text-mist/70">
+      <span className="line-clamp-2 text-base text-mist/90">
         <AutoText text={post.description} />
       </span>
-      <span className="text-sm text-mist/50">
+      <span className="text-base text-mist/90">
         {post.posterName} · {post.city}
         {post.zip ? ` ${post.zip}` : ""}
       </span>
@@ -365,11 +366,11 @@ function ChurchPage() {
 
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
         {isLoading ? (
-          <p className="py-16 text-center text-base text-mist/60">{t("Loading…")}</p>
+          <p className="py-16 text-center text-base text-mist/90">{t("Loading…")}</p>
         ) : !church ? (
           <div className="rounded-2xl bg-ink-soft p-6 text-center">
             <h1 className="font-display text-2xl font-semibold">{t("We couldn't find that church")}</h1>
-            <p className="mt-2 text-base text-mist/70">
+            <p className="mt-2 text-base text-mist/90">
               {t("It may have been taken down.")}{" "}
               <Link to="/map" className="text-lemon underline underline-offset-2">
                 {t("Back to the map")}
@@ -431,7 +432,7 @@ function ChurchPage() {
                 {church.description && (
                   <p className="text-base leading-relaxed text-mist/80">{church.description}</p>
                 )}
-                <ul className="flex flex-col gap-1.5 text-base text-mist/70">
+                <ul className="flex flex-col gap-1.5 text-base text-mist/90">
                   <li className="flex items-center gap-2">
                     <MapPin className="size-4 shrink-0 text-lemon" aria-hidden="true" />
                     {[church.address, church.city, church.zip].filter(Boolean).join(", ")}
@@ -527,7 +528,7 @@ function ChurchPage() {
                     </button>
                     <a
                       href={`mailto:?subject=${encodedText}&body=${encodedUrl}`}
-                      className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+                      className="rounded-full bg-ink px-4 py-2 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
                     >
                       {t("Email")}
                     </a>
@@ -549,7 +550,7 @@ function ChurchPage() {
                       href={`https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedText}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+                      className="rounded-full bg-ink px-4 py-2 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
                     >
                       X
                     </a>
@@ -563,7 +564,7 @@ function ChurchPage() {
             {!isOwner && (
               <section className="flex flex-col gap-3 rounded-2xl bg-ink-soft p-5 ring-1 ring-mist/15">
                 <h2 className="font-display text-xl font-semibold">{t("Serving at this church")}</h2>
-                <p className="text-base text-mist/75">
+                <p className="text-base text-mist/90">
                   {t("Share what you can offer, or what you need. {{name}} reviews each post before it shows up here.", { name: church.name })}
                 </p>
                 <div className="mt-1 border-t border-mist/15 pt-3">
@@ -576,7 +577,7 @@ function ChurchPage() {
                       {t("Show my scan code")}
                     </Link>
                   ) : attendStatus === "pending" ? (
-                    <p className="text-base text-mist/70">
+                    <p className="text-base text-mist/90">
                       {t("Waiting for {{name}} to say yes to you attending.", { name: church.name })}
                     </p>
                   ) : session?.user?.id ? (
@@ -601,7 +602,10 @@ function ChurchPage() {
                       {t("Sign in to say you attend here")}
                     </Link>
                   )}
-                  <p className="mt-2 text-base text-mist/60">
+                  <div className="mt-3">
+                    <FollowButton targetType="church" targetId={church.id} />
+                  </div>
+                  <p className="mt-2 text-base text-mist/90">
                     {t("Once they say yes, this church's scan code sits on your profile so you can show it to anyone.")}
                   </p>
                 </div>
@@ -629,11 +633,11 @@ function ChurchPage() {
                       <QrCode className="size-5 text-lemon" aria-hidden="true" />
                       {t("Scan to open this page")}
                     </h3>
-                    <p className="text-base text-mist/75">
+                    <p className="text-base text-mist/90">
                       {t("Put this on your overhead, screen or bulletin. Anyone who scans it lands right here, on your page.")}
                     </p>
                     {pageUrl && (
-                      <p className="truncate rounded-lg bg-ink-soft px-3 py-2 text-base text-mist/70 ring-1 ring-mist/15">
+                      <p className="truncate rounded-lg bg-ink-soft px-3 py-2 text-base text-mist/90 ring-1 ring-mist/15">
                         {pageUrl}
                       </p>
                     )}
@@ -708,7 +712,7 @@ function ChurchPage() {
                           {busy && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}
                           {t("Pay $49 and go back on the map")}
                         </button>
-                        <p className="text-center text-xs text-mist/50">
+                        <p className="text-center text-sm text-mist/90">
                           {t("Test checkout — no card is charged.")}
                         </p>
                       </form>
@@ -727,7 +731,7 @@ function ChurchPage() {
 
                 <div className="flex flex-col gap-3 rounded-xl bg-ink p-4 ring-1 ring-mist/15">
                   <p className="font-semibold text-sand">{t("Your church board")}</p>
-                  <p className="text-base text-mist/60">
+                  <p className="text-base text-mist/90">
                     {(requests ?? []).length === 0
                       ? t("No one is waiting right now.")
                       : t("{{count}} posts are waiting for your approval", { count: (requests ?? []).length })}
@@ -767,7 +771,7 @@ function ChurchPage() {
                           type="button"
                           onClick={() => setForm({ ...form, iconId: choice.id })}
                           aria-pressed={form.iconId === choice.id}
-                          className={`flex min-h-16 flex-col items-center justify-center gap-1 rounded-xl text-xs font-semibold transition ${
+                          className={`flex min-h-16 flex-col items-center justify-center gap-1 rounded-xl text-sm font-semibold transition ${
                             form.iconId === choice.id
                               ? "bg-ink-soft text-lemon ring-1 ring-lemon"
                               : "bg-ink-soft/70 text-sand ring-1 ring-mist/35"
@@ -868,7 +872,7 @@ function ChurchPage() {
                           <span className="block truncate font-heading text-base text-sand">
                             {p.shortTitle}
                           </span>
-                          <span className="block truncate text-sm text-mist/70">{p.posterName}</span>
+                          <span className="block truncate text-base text-mist/90">{p.posterName}</span>
                         </span>
                         <span className="flex shrink-0 gap-2">
                           <button
@@ -892,7 +896,7 @@ function ChurchPage() {
                 </div>
               )}
               {(prayers ?? []).length === 0 ? (
-                <p className="rounded-2xl bg-ink-soft p-4 text-base text-mist/70">
+                <p className="rounded-2xl bg-ink-soft p-4 text-base text-mist/90">
                   {t("No prayers on this wall yet.")}
                 </p>
               ) : (
@@ -911,7 +915,7 @@ function ChurchPage() {
                           <span className="block truncate font-heading text-lg text-sand">
                             {p.shortTitle}
                           </span>
-                          <span className="block truncate text-sm text-mist/70">{p.posterName}</span>
+                          <span className="block truncate text-base text-mist/90">{p.posterName}</span>
                         </span>
                       </button>
                       {canModerate && (
@@ -919,7 +923,7 @@ function ChurchPage() {
                           <button
                             type="button"
                             onClick={() => void moderateWallPrayer(p.id, "hide")}
-                            className="inline-flex items-center gap-1.5 rounded-full bg-ink px-3 py-1.5 text-sm font-semibold text-mist/80 ring-1 ring-mist/25 transition hover:text-sand"
+                            className="inline-flex items-center gap-1.5 rounded-full bg-ink px-3 py-1.5 text-base font-semibold text-mist/80 ring-1 ring-mist/25 transition hover:text-sand"
                           >
                             <EyeOff className="size-3.5" aria-hidden="true" />
                             {t("Hide")}
@@ -927,7 +931,7 @@ function ChurchPage() {
                           <button
                             type="button"
                             onClick={() => void moderateWallPrayer(p.id, "delete")}
-                            className="inline-flex items-center gap-1.5 rounded-full bg-ink px-3 py-1.5 text-sm font-semibold text-rose ring-1 ring-rose/35 transition hover:bg-rose/10"
+                            className="inline-flex items-center gap-1.5 rounded-full bg-ink px-3 py-1.5 text-base font-semibold text-rose ring-1 ring-rose/35 transition hover:bg-rose/10"
                           >
                             <Trash2 className="size-3.5" aria-hidden="true" />
                             {t("Delete")}
@@ -951,7 +955,7 @@ function ChurchPage() {
             <section className="flex flex-col gap-3">
               <h2 className="font-display text-xl font-semibold">{t("Posts at this church")}</h2>
               {(data?.posts ?? []).length === 0 ? (
-                <p className="rounded-2xl bg-ink-soft p-4 text-base text-mist/70">
+                <p className="rounded-2xl bg-ink-soft p-4 text-base text-mist/90">
                   {t("No posts here yet. When neighbors post a ministry or a need they can ask to list it at this church.")}
                 </p>
               ) : (
@@ -981,7 +985,7 @@ function ChurchPage() {
             <section className="flex flex-col gap-3">
               <h2 className="font-display text-xl font-semibold">{t("Public posts nearby")}</h2>
               {(data?.nearby ?? []).length === 0 ? (
-                <p className="rounded-2xl bg-ink-soft p-4 text-base text-mist/70">
+                <p className="rounded-2xl bg-ink-soft p-4 text-base text-mist/90">
                   {t("Nothing posted nearby yet.")}
                 </p>
               ) : (

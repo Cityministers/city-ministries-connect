@@ -27,6 +27,7 @@ import {
 } from "@/lib/favorites.functions";
 import { startConversation } from "@/lib/messages.functions";
 import { createMeetupRequest } from "@/lib/meetups.functions";
+import { FollowButton } from "@/components/FollowButton";
 import { MeetupScheduler } from "@/components/meetup/MeetupScheduler";
 
 export function MinistryPost({
@@ -330,6 +331,19 @@ export function MinistryPost({
               <h2 className="font-display text-3xl font-semibold text-sand sm:text-4xl">
                 {ministry.poster.name}
               </h2>
+              {(ministry.postId || ministry.ownerId) && (
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  {ministry.postId && ministry.postType && (
+                    <FollowButton size="sm" targetType={ministry.postType} targetId={ministry.postId} />
+                  )}
+                  {ministry.ownerId && (
+                    <span className="inline-flex items-center gap-1 text-xs text-mist">
+                      <FollowButton size="sm" targetType="user" targetId={ministry.ownerId} />
+                      <span>{t("this person")}</span>
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
             <div className="relative">
               <button
