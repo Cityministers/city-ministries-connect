@@ -115,8 +115,8 @@ export function ChurchMenu() {
             onClick={close}
             className="mt-1 flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-ink"
           >
-            {home.avatarUrl ? (
-              <img src={home.avatarUrl} alt="" className="size-9 rounded-md object-cover" />
+            {home.photoUrl ? (
+              <img src={home.photoUrl} alt="" className="size-9 rounded-md object-cover" />
             ) : (
               <span className="grid size-9 place-items-center rounded-md bg-ink">
                 <Church className="size-4 text-lemon" aria-hidden="true" />

@@ -86,7 +86,7 @@ function RoomPage() {
       parent_id: parentId,
       body: body.trim().slice(0, 2000),
     });
-    if (error) return toast.error(t("Something went wrong. Please try again."));
+    if (error) { toast.error(t("Something went wrong. Please try again.")); return; }
     if (parentId) {
       setReplyText("");
       setReplyTo(null);
@@ -95,7 +95,7 @@ function RoomPage() {
   };
 
   const toggleLike = async (postId: string, liked: boolean) => {
-    if (!userId) return toast(t("Sign in to like posts."));
+    if (!userId) { toast(t("Sign in to like posts.")); return; }
     if (liked) await supabase.from("room_post_likes").delete().eq("post_id", postId).eq("user_id", userId);
     else await supabase.from("room_post_likes").insert({ post_id: postId, user_id: userId });
     refresh();
