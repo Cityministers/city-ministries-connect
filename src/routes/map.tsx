@@ -5,6 +5,7 @@ import { ArrowLeft, HandHelping, List, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AccountMenu } from "@/components/AccountMenu";
+import { ChurchMenu } from "@/components/ChurchMenu";
 import { BrandLogo } from "@/components/BrandLogo";
 import { SiteNav } from "@/components/SiteNav";
 import { MinistryPost } from "@/components/MinistryPost";
@@ -218,8 +219,9 @@ function MapPage() {
             <div className="flex items-center justify-center">
               <BrandLogo />
             </div>
-            <div className="flex justify-end">
-              <AccountMenu />
+            <div className="flex items-center justify-end gap-2">
+              <ChurchMenu />
+<AccountMenu />
             </div>
           </div>
 
