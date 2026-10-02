@@ -31,6 +31,26 @@ function ExplorePage() {
   const { t } = useTranslation();
   const [q, setQ] = useState("");
   const term = q.trim().toLowerCase();
+  const session = useSession();
+
+  const fetchAttended = useServerFn(listChurchesIAttend);
+  const fetchOwned = useServerFn(listMyChurches);
+  const { data: homeChurches = [] } = useQuery({
+    queryKey: ["explore-home-churches"],
+    enabled: Boolean(session),
+    retry: false,
+    queryFn: async (): Promise<ChurchDTO[]> => {
+      try {
+        const [attended, owned] = await Promise.all([fetchAttended(), fetchOwned()]);
+        const byId = new Map<string, ChurchDTO>();
+        for (const c of [...attended, ...owned]) byId.set(c.id, c);
+        return [...byId.values()];
+      } catch {
+        return [];
+      }
+    },
+  });
+
 
   const { data: churches = [] } = useQuery({
     queryKey: ["explore-churches"],
