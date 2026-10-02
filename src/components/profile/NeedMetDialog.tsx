@@ -63,6 +63,7 @@ export function NeedMetDialog({ needId, title, onClose, onCompleted }: {
                 <label className="flex min-h-12 items-center gap-3 text-base font-semibold">
                   <input type="radio" name="helper" checked={isHelper} onChange={() => {
                     setSelected(h.memberId);
+                    setEnabled((v) => ({ ...v, [h.memberId]: true }));
                     setDrafts((v) => ({ ...v, [h.memberId]: helperDraft(h.name), ...(selected && selected !== h.memberId ? { [selected]: offerDraft(helpers.find((p) => p.memberId === selected)?.name ?? "friend") } : {}) }));
                   }} className="accent-lemon" />
                   {h.avatarUrl ? <img src={h.avatarUrl} alt="" className="size-9 rounded-full object-cover" /> : <span className="grid size-9 place-items-center rounded-full bg-ink text-lemon">{h.name.charAt(0)}</span>}
