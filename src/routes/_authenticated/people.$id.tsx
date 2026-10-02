@@ -4,7 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, UserRound } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { FollowButton } from "@/components/FollowButton";
-import { getMemberProfile } from "@/lib/profile.functions";
+import { getMemberPosts, getMemberProfile, type MemberPostItem } from "@/lib/profile.functions";
+import { timeAgo } from "@/lib/time-ago";
 
 export const Route = createFileRoute("/_authenticated/people/$id")({
   head: () => ({
@@ -27,6 +28,12 @@ function MemberProfilePage() {
   const { data: profile, isPending, isError } = useQuery({
     queryKey: ["member-profile", id],
     queryFn: () => fetchProfile({ data: { id } }),
+    retry: false,
+  });
+  const fetchPosts = useServerFn(getMemberPosts);
+  const { data: posts } = useQuery({
+    queryKey: ["member-posts", id],
+    queryFn: () => fetchPosts({ data: { id } }),
     retry: false,
   });
 
@@ -58,9 +65,44 @@ function MemberProfilePage() {
             </div>
             <FollowButton targetType="user" targetId={id} />
             {profile.bio && <p className="text-lg leading-relaxed text-sand/85">{profile.bio}</p>}
+            {posts && <PostSection title="Ministries" items={posts.ministries} tone="text-tone-cyan" />}
+            {posts && <PostSection title="Needs" items={posts.needs} tone="text-tone-indigo" />}
+            {posts && <PostSection title="Prayers" items={posts.prayers} tone="text-prayer" />}
           </div>
         )}
       </main>
     </div>
   );
+}
+function PostSection({ title, items, tone }: { title: string; items: MemberPostItem[]; tone: string }) {
+  if (items.length === 0) return null;
+  return (
+    <section className="w-full">
+      <h3 className={`font-display text-xl font-semibold ${tone}`}>{title}</h3>
+      <ul className="mt-2 flex flex-col gap-2">
+        {items.map((it) => (
+          <li key={it.id}>
+            <PostLink item={it} />
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+function PostLink({ item }: { item: MemberPostItem }) {
+  const cls = "flex items-center justify-between gap-3 rounded-xl bg-ink-soft/60 px-4 py-3 text-base text-sand ring-1 ring-mist/20 hover:ring-lemon/40";
+  const body = (
+    <>
+      <span className="min-w-0 truncate font-semibold">{item.title}</span>
+      <span className="flex shrink-0 items-center gap-2 text-sm text-mist">
+        {item.met && <span className="font-semibold text-lemon">Need met</span>}
+        {timeAgo(item.createdAt)}
+      </span>
+    </>
+  );
+  if (item.kind === "need") return <Link to="/needs" search={{ new: item.id }} className={cls}>{body}</Link>;
+  if (item.kind === "prayer" && item.churchId) return <Link to="/church/$id" params={{ id: item.churchId }} className={cls}>{body}</Link>;
+  if (item.kind === "prayer") return <Link to="/map" search={{ mode: "prayer", new: item.id }} className={cls}>{body}</Link>;
+  return <Link to="/map" search={{ new: item.id }} className={cls}>{body}</Link>;
 }
