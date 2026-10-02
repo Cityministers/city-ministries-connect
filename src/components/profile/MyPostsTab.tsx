@@ -1,8 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { HandHeart, HeartHandshake, Loader2, Pencil, RefreshCw, Trash2 } from "lucide-react";
+import { Check, HandHeart, HeartHandshake, Loader2, Pencil, RefreshCw, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Button } from "@/components/ui/button";
+import { NeedMetDialog } from "@/components/profile/NeedMetDialog";
+import { reopenNeed } from "@/lib/need-completion.functions";
 import {
   deleteMyPost,
   listMyPosts,
@@ -17,6 +20,7 @@ export function MyPostsTab() {
   const save = useServerFn(updateMyPost);
   const repost = useServerFn(repostMyPost);
   const remove = useServerFn(deleteMyPost);
+  const reopen = useServerFn(reopenNeed);
 
   const { data: posts, refetch, isLoading } = useQuery({
     queryKey: ["my-posts"],
@@ -25,6 +29,7 @@ export function MyPostsTab() {
 
   const [editing, setEditing] = useState<MyPostDTO | null>(null);
   const [confirmId, setConfirmId] = useState<string | null>(null);
+  const [completing, setCompleting] = useState<MyPostDTO | null>(null);
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -81,6 +86,18 @@ export function MyPostsTab() {
     }
   }
 
+  async function handleReopen(post: MyPostDTO) {
+    setBusy(true);
+    setError(null);
+    try {
+      await reopen({ data: { needId: post.id } });
+      setNote("This need is open again.");
+      await refetch();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not reopen this need.");
+    } finally { setBusy(false); }
+  }
+
   if (isLoading) return <p className="py-10 text-center text-base text-mist/60">{t("Loading…")}</p>;
 
   if (!posts || posts.length === 0) {
@@ -93,6 +110,11 @@ export function MyPostsTab() {
 
   return (
     <div className="flex flex-col gap-3">
+      {completing && <NeedMetDialog needId={completing.id} title={completing.shortTitle} onClose={() => setCompleting(null)} onCompleted={() => {
+        setCompleting(null);
+        setNote("Need met. Your selected thank-you messages were sent.");
+        void refetch();
+      }} />}
       {note && (
         <p className="rounded-lg bg-lemon/10 px-3 py-2 text-base text-lemon ring-1 ring-lemon/30">
           {note}
@@ -135,6 +157,7 @@ export function MyPostsTab() {
                   {post.postType === "need" ? t("Need") : t("Ministry")} ·{" "}
                   {new Date(post.updatedAt).toLocaleDateString()}
                 </p>
+                {post.postType === "need" && post.status === "met" && <p className="text-sm font-semibold text-lemon">Need met{post.metAt ? ` · ${new Date(post.metAt).toLocaleDateString()}` : ""}</p>}
                 <p className="truncate text-xl font-semibold text-sand sm:text-2xl">{post.shortTitle}</p>
                 <p className="truncate text-base text-mist/60">
                   {[post.city, post.zip].filter(Boolean).join(" ")}
@@ -212,6 +235,11 @@ export function MyPostsTab() {
               </form>
             ) : (
               <div className="flex flex-wrap gap-2">
+                {post.postType === "need" && (post.status === "met" ? (
+                  <Button type="button" variant="outline" disabled={busy} onClick={() => void handleReopen(post)} className="h-11 border-lemon/40 bg-ink text-lemon">Reopen need</Button>
+                ) : post.status === "active" ? (
+                  <Button type="button" disabled={busy} onClick={() => setCompleting(post)} className="h-11 bg-tone-indigo/25 text-sand ring-1 ring-tone-indigo/55 hover:bg-tone-indigo/35"><Check /> Need met</Button>
+                ) : null)}
                 <button
                   type="button"
                   onClick={() => setEditing(post)}
@@ -222,7 +250,7 @@ export function MyPostsTab() {
                 </button>
                 <button
                   type="button"
-                  disabled={busy}
+                  disabled={busy || (post.postType === "need" && post.status !== "active")}
                   onClick={() => void handleRepost(post)}
                   className="inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-2.5 text-base font-medium text-lemon ring-1 ring-lemon/30 transition hover:bg-lemon/10 disabled:opacity-60"
                 >
