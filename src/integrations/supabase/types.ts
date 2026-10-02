@@ -819,6 +819,9 @@ export type Database = {
           id: string
           is_demo: boolean
           onboarded_at: string | null
+          show_ministries: boolean
+          show_needs: boolean
+          show_prayers: boolean
           zip: string
         }
         Insert: {
@@ -830,6 +833,9 @@ export type Database = {
           id: string
           is_demo?: boolean
           onboarded_at?: string | null
+          show_ministries?: boolean
+          show_needs?: boolean
+          show_prayers?: boolean
           zip?: string
         }
         Update: {
@@ -841,6 +847,9 @@ export type Database = {
           id?: string
           is_demo?: boolean
           onboarded_at?: string | null
+          show_ministries?: boolean
+          show_needs?: boolean
+          show_prayers?: boolean
           zip?: string
         }
         Relationships: []

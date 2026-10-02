@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS show_ministries boolean NOT NULL DEFAULT true, ADD COLUMN IF NOT EXISTS show_needs boolean NOT NULL DEFAULT true, ADD COLUMN IF NOT EXISTS show_prayers boolean NOT NULL DEFAULT true;
