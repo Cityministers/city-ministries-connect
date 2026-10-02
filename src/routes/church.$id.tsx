@@ -499,15 +499,18 @@ function ChurchPage() {
                     {t("View")}
                   </a>
                 </div>
-                <button
-                  type="button"
-                  aria-expanded={shareOpen}
-                  onClick={() => setShareOpen((v) => !v)}
-                  className="mt-1 inline-flex w-fit items-center gap-2 rounded-full bg-ink-soft px-6 py-3 text-base font-bold text-sand shadow-[0_2px_10px_-2px_rgba(0,0,0,0.6)] ring-1 ring-lemon/50 transition hover:bg-ink active:scale-[0.98]"
-                >
-                  <Share2 className="size-5 text-lemon" aria-hidden="true" />
-                  {t("Share")}
-                </button>
+                <div className="mt-1 flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    aria-expanded={shareOpen}
+                    onClick={() => setShareOpen((v) => !v)}
+                    className="inline-flex items-center gap-2 rounded-full bg-ink-soft px-6 py-3 text-base font-bold text-sand shadow-[0_2px_10px_-2px_rgba(0,0,0,0.6)] ring-1 ring-lemon/50 transition hover:bg-ink active:scale-[0.98]"
+                  >
+                    <Share2 className="size-5 text-lemon" aria-hidden="true" />
+                    {t("Share")}
+                  </button>
+                  <FollowButton targetType="church" targetId={church.id} />
+                </div>
                 {shareOpen && (
                   <div className="flex flex-wrap gap-2">
                     {canNativeShare && (
@@ -602,9 +605,6 @@ function ChurchPage() {
                       {t("Sign in to say you attend here")}
                     </Link>
                   )}
-                  <div className="mt-3">
-                    <FollowButton targetType="church" targetId={church.id} />
-                  </div>
                   <p className="mt-2 text-base text-mist/90">
                     {t("Once they say yes, this church's scan code sits on your profile so you can show it to anyone.")}
                   </p>
