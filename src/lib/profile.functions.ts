@@ -11,6 +11,34 @@ export type MyProfileDTO = {
   avatarUrl: string | null;
 };
 
+/** Member identity for an authenticated visitor; never includes private contact details. */
+export const getMemberProfile = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({ id: z.string().uuid() }).parse(data))
+  .handler(async ({ data, context }) => {
+    const { data: profile, error } = await context.supabase
+      .from("profiles")
+      .select("display_name, avatar_url, bio, city")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!profile) return null;
+
+    let avatarUrl: string | null = null;
+    if (profile.avatar_url) {
+      const { data: signed } = await context.supabase.storage
+        .from("ministry-avatars")
+        .createSignedUrl(profile.avatar_url, 60 * 60 * 24 * 7);
+      avatarUrl = signed?.signedUrl ?? null;
+    }
+    return {
+      displayName: profile.display_name || "A neighbor",
+      avatarUrl,
+      bio: profile.bio,
+      city: profile.city,
+    };
+  });
+
 export const getMyProfile = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<MyProfileDTO> => {

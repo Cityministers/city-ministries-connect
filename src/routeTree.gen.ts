@@ -47,6 +47,7 @@ import { Route as AuthenticatedGiftsIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedGiftsInviteRouteImport } from './routes/_authenticated/gifts.invite'
 import { Route as AuthenticatedGiftsListRouteImport } from './routes/_authenticated/gifts.list'
 import { Route as AuthenticatedMessagesConversationIdRouteImport } from './routes/_authenticated/messages.$conversationId'
+import { Route as AuthenticatedPeopleIdRouteImport } from './routes/_authenticated/people.$id'
 import { Route as ApiPublicMeetupRemindersRouteImport } from './routes/api/public/meetup-reminders'
 
 const IndexRoute = IndexRouteImport.update({
@@ -242,6 +243,11 @@ const AuthenticatedMessagesConversationIdRoute =
     path: '/messages/$conversationId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedPeopleIdRoute = AuthenticatedPeopleIdRouteImport.update({
+  id: '/people/$id',
+  path: '/people/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const ApiPublicMeetupRemindersRoute =
   ApiPublicMeetupRemindersRouteImport.update({
     id: '/api/public/meetup-reminders',
@@ -286,6 +292,7 @@ export interface FileRoutesByFullPath {
   '/gifts/invite': typeof AuthenticatedGiftsInviteRoute
   '/gifts/list': typeof AuthenticatedGiftsListRoute
   '/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
+  '/people/$id': typeof AuthenticatedPeopleIdRoute
   '/api/public/meetup-reminders': typeof ApiPublicMeetupRemindersRoute
   '/gifts/': typeof AuthenticatedGiftsIndexRoute
 }
@@ -326,6 +333,7 @@ export interface FileRoutesByTo {
   '/gifts/invite': typeof AuthenticatedGiftsInviteRoute
   '/gifts/list': typeof AuthenticatedGiftsListRoute
   '/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
+  '/people/$id': typeof AuthenticatedPeopleIdRoute
   '/api/public/meetup-reminders': typeof ApiPublicMeetupRemindersRoute
   '/gifts': typeof AuthenticatedGiftsIndexRoute
 }
@@ -368,6 +376,7 @@ export interface FileRoutesById {
   '/_authenticated/gifts/invite': typeof AuthenticatedGiftsInviteRoute
   '/_authenticated/gifts/list': typeof AuthenticatedGiftsListRoute
   '/_authenticated/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
+  '/_authenticated/people/$id': typeof AuthenticatedPeopleIdRoute
   '/api/public/meetup-reminders': typeof ApiPublicMeetupRemindersRoute
   '/_authenticated/gifts/': typeof AuthenticatedGiftsIndexRoute
 }
@@ -410,6 +419,7 @@ export interface FileRouteTypes {
     | '/gifts/invite'
     | '/gifts/list'
     | '/messages/$conversationId'
+    | '/people/$id'
     | '/api/public/meetup-reminders'
     | '/gifts/'
   fileRoutesByTo: FileRoutesByTo
@@ -450,6 +460,7 @@ export interface FileRouteTypes {
     | '/gifts/invite'
     | '/gifts/list'
     | '/messages/$conversationId'
+    | '/people/$id'
     | '/api/public/meetup-reminders'
     | '/gifts'
   id:
@@ -491,6 +502,7 @@ export interface FileRouteTypes {
     | '/_authenticated/gifts/invite'
     | '/_authenticated/gifts/list'
     | '/_authenticated/messages/$conversationId'
+    | '/_authenticated/people/$id'
     | '/api/public/meetup-reminders'
     | '/_authenticated/gifts/'
   fileRoutesById: FileRoutesById
@@ -792,6 +804,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMessagesConversationIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/people/$id': {
+      id: '/_authenticated/people/$id'
+      path: '/people/$id'
+      fullPath: '/people/$id'
+      preLoaderRoute: typeof AuthenticatedPeopleIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/public/meetup-reminders': {
       id: '/api/public/meetup-reminders'
       path: '/api/public/meetup-reminders'
@@ -815,6 +834,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedGiftsInviteRoute: typeof AuthenticatedGiftsInviteRoute
   AuthenticatedGiftsListRoute: typeof AuthenticatedGiftsListRoute
   AuthenticatedMessagesConversationIdRoute: typeof AuthenticatedMessagesConversationIdRoute
+  AuthenticatedPeopleIdRoute: typeof AuthenticatedPeopleIdRoute
   AuthenticatedGiftsIndexRoute: typeof AuthenticatedGiftsIndexRoute
 }
 
@@ -832,6 +852,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedGiftsListRoute: AuthenticatedGiftsListRoute,
   AuthenticatedMessagesConversationIdRoute:
     AuthenticatedMessagesConversationIdRoute,
+  AuthenticatedPeopleIdRoute: AuthenticatedPeopleIdRoute,
   AuthenticatedGiftsIndexRoute: AuthenticatedGiftsIndexRoute,
 }
 

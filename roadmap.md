@@ -12,3 +12,4 @@
 - [x] Add Create Post, Ministries, and Needs controls above both maps
 - [x] Standardize ministry, need, and prayer action buttons across the site using the map color scheme, especially church pages
 - [x] Church pages: enlarge and lighten small text
+- [x] Keep post-follow on ministry and need posts; move person-follow to each member's profile page
