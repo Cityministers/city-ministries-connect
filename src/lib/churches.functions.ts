@@ -197,6 +197,7 @@ export const getChurch = createServerFn({ method: "GET" })
               .from("user_needs")
               .select("id, owner_id, short_title, title, description, city, zip")
               .in("id", needIds)
+              .eq("status", "active")
           : Promise.resolve({ data: [] as never[] }),
       ]);
 
@@ -214,6 +215,7 @@ export const getChurch = createServerFn({ method: "GET" })
               .from("user_ministries")
               .select("id, owner_id, short_title, title, description, city, zip")
               .eq(column, place)
+              .eq("status", "active")
               .limit(40)
           : Promise.resolve({ data: [] as never[] }),
         place

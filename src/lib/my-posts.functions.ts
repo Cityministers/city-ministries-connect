@@ -12,6 +12,8 @@ export type MyPostDTO = {
   zip: string;
   photoUrl: string | null;
   updatedAt: string;
+  status: string;
+  metAt: string | null;
 };
 
 const ref = z.object({
@@ -41,7 +43,7 @@ export const listMyPosts = createServerFn({ method: "GET" })
     for (const postType of ["ministry", "need"] as const) {
       const { data } = await context.supabase
         .from(tableFor(postType))
-        .select("id, short_title, title, description, city, zip, avatar_url, updated_at")
+        .select(postType === "need" ? "id, short_title, title, description, city, zip, avatar_url, updated_at, status, met_at" : "id, short_title, title, description, city, zip, avatar_url, updated_at, status")
         .eq("owner_id", context.userId)
         .order("updated_at", { ascending: false });
       for (const r of data ?? []) {
@@ -56,6 +58,8 @@ export const listMyPosts = createServerFn({ method: "GET" })
           zip: r.zip ?? "",
           photoUrl: r.avatar_url,
           updatedAt: r.updated_at,
+          status: r.status,
+          metAt: "met_at" in r ? (r.met_at as string | null) : null,
         });
       }
     }
@@ -102,6 +106,10 @@ export const repostMyPost = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => ref.parse(data))
   .handler(async ({ data, context }) => {
+    if (data.postType === "need") {
+      const { data: need } = await context.supabase.from("user_needs").select("status").eq("id", data.id).eq("owner_id", context.userId).maybeSingle();
+      if (need?.status !== "active") throw new Error("Reopen this need before reposting it.");
+    }
     const { error } = await context.supabase
       .from(tableFor(data.postType))
       .update({ updated_at: new Date().toISOString() })

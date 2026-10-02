@@ -49,6 +49,7 @@ export const listUserNeeds = createServerFn({ method: "GET" }).handler(
       .select(
         "id, owner_id, short_title, title, description, city, zip, lat, lng, avatar_url, gallery, category",
       )
+      .eq("status", "active")
       .order("updated_at", { ascending: false })
       .limit(200);
     if (error || !data) return [];

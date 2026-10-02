@@ -210,6 +210,10 @@ export const startConversation = createServerFn({ method: "POST" })
     const { getPostOwner, notifyUser, displayNameOf } = await import("./social.server");
     const owner = await getPostOwner(data.postType, data.postId);
     if (!owner) throw new Error("That post is no longer available.");
+    if (data.postType === "need") {
+      const { data: need } = await context.supabase.from("user_needs").select("status").eq("id", data.postId).maybeSingle();
+      if (need?.status !== "active") throw new Error("This need has already been met.");
+    }
     if (owner.ownerId === context.userId) throw new Error("This is your own post.");
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
