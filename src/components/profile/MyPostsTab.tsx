@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Check, HandHeart, HeartHandshake, Loader2, Pencil, RefreshCw, Trash2 } from "lucide-react";
 import { useState } from "react";
@@ -16,6 +16,7 @@ import {
 
 export function MyPostsTab() {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
   const fetchPosts = useServerFn(listMyPosts);
   const save = useServerFn(updateMyPost);
   const repost = useServerFn(repostMyPost);
@@ -93,6 +94,7 @@ export function MyPostsTab() {
       await reopen({ data: { needId: post.id } });
       setNote("This need is open again.");
       await refetch();
+      await queryClient.invalidateQueries({ queryKey: ["user-needs"] });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not reopen this need.");
     } finally { setBusy(false); }
@@ -114,6 +116,7 @@ export function MyPostsTab() {
         setCompleting(null);
         setNote("Need met. Your selected thank-you messages were sent.");
         void refetch();
+        void queryClient.invalidateQueries({ queryKey: ["user-needs"] });
       }} />}
       {note && (
         <p className="rounded-lg bg-lemon/10 px-3 py-2 text-base text-lemon ring-1 ring-lemon/30">
