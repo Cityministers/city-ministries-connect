@@ -41,7 +41,8 @@ function publicClient() {
   });
 }
 
-export const listUserNeeds = createServerFn({ method: "GET" }).handler(
+// POST avoids serving an outdated public need list after a need is closed or reopened.
+export const listUserNeeds = createServerFn({ method: "POST" }).handler(
   async (): Promise<UserNeedDTO[]> => {
     const supabase = publicClient();
     const { data, error } = await supabase
