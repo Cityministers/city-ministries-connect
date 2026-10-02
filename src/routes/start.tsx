@@ -181,7 +181,7 @@ function StartPage() {
 
           <div className="sticky bottom-0 border-t border-ink-soft bg-ink/95 backdrop-blur">
             <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-2 px-4 py-4 sm:flex-row sm:justify-between sm:px-6">
-              <p className="text-xs text-mist/70">
+              <p className="text-sm text-mist/90">
                 {chosen ? (
                   <>
                     {t("Selected:")} <span className="text-sand">{t(chosen.label)}</span>
