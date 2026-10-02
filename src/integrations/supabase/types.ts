@@ -821,6 +821,107 @@ export type Database = {
         }
         Relationships: []
       }
+      room_post_likes: {
+        Row: {
+          created_at: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "room_post_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "room_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      room_posts: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          parent_id: string | null
+          room_id: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          parent_id?: string | null
+          room_id: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          parent_id?: string | null
+          room_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "room_posts_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "room_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "room_posts_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rooms: {
+        Row: {
+          created_at: string
+          description: string
+          icon: string
+          id: string
+          slug: string
+          sort: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          slug: string
+          sort?: number
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          slug?: string
+          sort?: number
+          title?: string
+        }
+        Relationships: []
+      }
       shape_profiles: {
         Row: {
           answers: Json
