@@ -725,3 +725,97 @@ function FeedbackReply({
     </div>
   );
 }
+
+const recentIcons: Record<RecentItem["type"], typeof Church> = {
+  ministry: HandHelping,
+  need: HandHeart,
+  prayer: Sparkles,
+  room: MessageCircle,
+  church: Church,
+};
+
+function StatsTab({
+  data,
+  loading,
+  error,
+}: {
+  data:
+    | {
+        stats: { key: string; label: string; today: number; week: number; month: number; total: number }[];
+        recent: RecentItem[];
+      }
+    | undefined;
+  loading: boolean;
+  error: boolean;
+}) {
+  const { t } = useTranslation();
+
+  if (error) {
+    return (
+      <div className="rounded-2xl bg-ink-soft/40 p-6 text-center ring-1 ring-mist/15">
+        <ShieldCheck className="mx-auto mb-3 size-8 text-lemon" aria-hidden="true" />
+        <p className="text-base text-mist/80">{t("This page is only for site admins.")}</p>
+      </div>
+    );
+  }
+
+  if (loading || !data) {
+    return <p className="text-mist/70">{t("Loading…")}</p>;
+  }
+
+  return (
+    <div className="space-y-6">
+      <section className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {data.stats.map((s) => (
+          <article key={s.key} className="rounded-2xl bg-ink-soft/40 p-4 ring-1 ring-mist/15">
+            <h2 className="font-display text-base font-semibold leading-tight">{t(s.label)}</h2>
+            <p className="mt-2 font-display text-3xl font-semibold text-lemon">{s.total}</p>
+            <dl className="mt-3 space-y-1 text-xs text-mist/80">
+              <div className="flex justify-between gap-2">
+                <dt>{t("Today")}</dt>
+                <dd className="font-semibold text-sand">{s.today}</dd>
+              </div>
+              <div className="flex justify-between gap-2">
+                <dt>{t("Last 7 days")}</dt>
+                <dd className="font-semibold text-sand">{s.week}</dd>
+              </div>
+              <div className="flex justify-between gap-2">
+                <dt>{t("Last 30 days")}</dt>
+                <dd className="font-semibold text-sand">{s.month}</dd>
+              </div>
+            </dl>
+          </article>
+        ))}
+      </section>
+
+      <section>
+        <h2 className="mb-3 font-display text-lg font-semibold">{t("Latest activity")}</h2>
+        {data.recent.length === 0 ? (
+          <p className="text-mist/70">{t("Nothing has been posted yet.")}</p>
+        ) : (
+          <ul className="space-y-2">
+            {data.recent.map((item, i) => {
+              const Icon = recentIcons[item.type] ?? MessageCircle;
+              return (
+                <li
+                  key={`${item.type}-${item.at}-${i}`}
+                  className="flex items-start gap-3 rounded-2xl bg-ink-soft/40 p-4 ring-1 ring-mist/15"
+                >
+                  <span className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/20">
+                    <Icon className="size-4" aria-hidden="true" />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold text-sand">{item.title}</p>
+                    <p className="mt-0.5 text-xs text-mist/70">
+                      {item.author} · {timeAgo(item.at)}
+                    </p>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
+    </div>
+  );
+}
