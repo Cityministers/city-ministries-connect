@@ -75,6 +75,7 @@ function Pill({ value }: { value: string }) {
 function AdminPage() {
   const { t } = useTranslation();
   const [tab, setTab] = useState<"needs" | "rooms" | "churches" | "reports" | "feedback">("needs");
+  const qc = useQueryClient();
   const fetchRoomPosts = useServerFn(listPendingRoomPosts);
   const moderateRoom = useServerFn(moderateRoomPost);
   const roomPosts = useQuery({ queryKey: ["admin", "room-posts"], queryFn: () => fetchRoomPosts() });
@@ -82,7 +83,6 @@ function AdminPage() {
     mutationFn: (input: { id: string; action: "approve" | "decline" }) => moderateRoom({ data: input }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "room-posts"] }),
   });
-  const qc = useQueryClient();
 
   const fetchNeeds = useServerFn(adminListNeeds);
   const fetchReports = useServerFn(adminListReports);
@@ -250,6 +250,37 @@ function AdminPage() {
                         >
                           <Trash2 className="size-4" aria-hidden="true" /> {t("Remove")}
                         </button>
+                      </div>
+                    </article>
+                  ))
+                )}
+              </section>
+            ) : tab === "rooms" ? (
+              <section className="space-y-3">
+                {roomPosts.isLoading ? (
+                  <p className="text-mist/70">{t("Loading…")}</p>
+                ) : (roomPosts.data?.length ?? 0) === 0 ? (
+                  <p className="text-mist/70">{t("No room posts are waiting for approval.")}</p>
+                ) : (
+                  roomPosts.data!.map((p) => (
+                    <article key={p.id} className="rounded-2xl border border-mist/35 bg-ink-soft p-4">
+                      <div className="text-sm text-mist">
+                        <span className="font-semibold text-sand">{p.authorName}</span> · {t(p.roomTitle)} · {new Date(p.createdAt).toLocaleString()}
+                      </div>
+                      <p className="mt-2 whitespace-pre-wrap text-base">{p.body}</p>
+                      {p.mediaUrl && (p.mediaType === "video" ? (
+                        <video src={p.mediaUrl} controls playsInline className="mt-3 max-h-80 w-full rounded-xl bg-ink object-contain" />
+                      ) : (
+                        <img src={p.mediaUrl} alt="" className="mt-3 max-h-80 w-full rounded-xl bg-ink object-contain" />
+                      ))}
+                      <div className="mt-3 flex gap-2">
+                        <button type="button" disabled={roomMutation.isPending} onClick={() => roomMutation.mutate({ id: p.id, action: "approve" })} className="inline-flex items-center gap-1 rounded-full bg-tone-cyan/25 px-4 py-1.5 text-sm font-bold ring-1 ring-tone-cyan/55">
+                          <Check className="size-4" aria-hidden="true" />{t("Approve")}
+                        </button>
+                        <button type="button" disabled={roomMutation.isPending} onClick={() => { if (window.confirm(t("Remove this post?"))) roomMutation.mutate({ id: p.id, action: "decline" }); }} className="inline-flex items-center gap-1 rounded-full px-4 py-1.5 text-sm font-bold ring-1 ring-mist/40">
+                          <Trash2 className="size-4" aria-hidden="true" />{t("Decline")}
+                        </button>
+                        <Link to="/rooms/$slug" params={{ slug: p.roomSlug }} className="ml-auto self-center text-sm font-semibold text-lemon">{t("Open room")}</Link>
                       </div>
                     </article>
                   ))
