@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   CalendarClock,
   
@@ -29,6 +30,8 @@ import { startConversation } from "@/lib/messages.functions";
 import { createMeetupRequest } from "@/lib/meetups.functions";
 import { FollowButton } from "@/components/FollowButton";
 import { MeetupScheduler } from "@/components/meetup/MeetupScheduler";
+import { NeedMetDialog } from "@/components/profile/NeedMetDialog";
+import { Button } from "@/components/ui/button";
 
 export function MinistryPost({
   ministry,
@@ -40,6 +43,7 @@ export function MinistryPost({
   const { t } = useTranslation();
   const translated = useTranslatedPost(ministry.label, ministry.description);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const fetchState = useServerFn(getMyPostState);
   const like = useServerFn(toggleLike);
   const save = useServerFn(toggleFavorite);
@@ -54,6 +58,8 @@ export function MinistryPost({
   const [favorited, setFavorited] = useState(false);
   const [imageLightboxOpen, setImageLightboxOpen] = useState(false);
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
+  const [viewerId, setViewerId] = useState<string | null>(null);
+  const [closingNeed, setClosingNeed] = useState(false);
   const [needsAuth, setNeedsAuth] = useState(false);
   const [comments, setComments] = useState<CommentDTO[] | null>(null);
   const [commentOpen, setCommentOpen] = useState(false);
@@ -95,6 +101,7 @@ export function MinistryPost({
     setFavorited(false);
     setImageLightboxOpen(false);
     setNeedsAuth(false);
+    setClosingNeed(false);
     setComments(null);
     setCommentOpen(false);
     setCommentText("");
@@ -110,6 +117,7 @@ export function MinistryPost({
       const { data } = await supabase.auth.getUser();
       if (!active) return;
       setSignedIn(Boolean(data.user));
+      setViewerId(data.user?.id ?? null);
       if (!postRef) return;
       const list = await fetchComments({ data: postRef });
       if (active) setComments(list);
@@ -472,6 +480,12 @@ export function MinistryPost({
             </p>
           )}
 
+          {ministry.postType === "need" && ministry.postId && viewerId === ministry.ownerId && (
+            <Button type="button" onClick={() => setClosingNeed(true)} className="w-full bg-tone-indigo/25 text-sand ring-1 ring-tone-indigo/55 hover:bg-tone-indigo/35">
+              Need met
+            </Button>
+          )}
+
           {commentOpen && live && (
             <div className="flex flex-col gap-2">
               {(comments ?? []).map((c) => (
@@ -615,6 +629,18 @@ export function MinistryPost({
             </div>
           )}
         </div>
+      )}
+      {closingNeed && ministry.postType === "need" && ministry.postId && (
+        <NeedMetDialog
+          needId={ministry.postId}
+          title={ministry.label}
+          onClose={() => setClosingNeed(false)}
+          onCompleted={() => {
+            setClosingNeed(false);
+            void queryClient.invalidateQueries({ queryKey: ["user-needs"] });
+            onClose();
+          }}
+        />
       )}
     </div>
   );

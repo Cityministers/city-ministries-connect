@@ -41,7 +41,8 @@ function publicClient() {
   });
 }
 
-export const listUserNeeds = createServerFn({ method: "GET" }).handler(
+// POST avoids serving an outdated public need list after a need is closed or reopened.
+export const listUserNeeds = createServerFn({ method: "POST" }).handler(
   async (): Promise<UserNeedDTO[]> => {
     const supabase = publicClient();
     const { data, error } = await supabase
@@ -49,6 +50,7 @@ export const listUserNeeds = createServerFn({ method: "GET" }).handler(
       .select(
         "id, owner_id, short_title, title, description, city, zip, lat, lng, avatar_url, gallery, category",
       )
+      .eq("status", "active")
       .order("updated_at", { ascending: false })
       .limit(200);
     if (error || !data) return [];

@@ -1,0 +1,2 @@
+ALTER TABLE public.user_needs DROP CONSTRAINT user_needs_status_check;
+ALTER TABLE public.user_needs ADD CONSTRAINT user_needs_status_check CHECK (status = ANY (ARRAY['active'::text, 'hidden'::text, 'removed'::text, 'met'::text]));

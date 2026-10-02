@@ -1136,6 +1136,8 @@ export type Database = {
           id: string
           lat: number | null
           lng: number | null
+          met_at: string | null
+          met_by: string | null
           owner_id: string
           short_title: string
           status: string
@@ -1153,6 +1155,8 @@ export type Database = {
           id?: string
           lat?: number | null
           lng?: number | null
+          met_at?: string | null
+          met_by?: string | null
           owner_id: string
           short_title: string
           status?: string
@@ -1170,6 +1174,8 @@ export type Database = {
           id?: string
           lat?: number | null
           lng?: number | null
+          met_at?: string | null
+          met_by?: string | null
           owner_id?: string
           short_title?: string
           status?: string
@@ -1205,6 +1211,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      complete_user_need: {
+        Args: {
+          _helper_conversation_id: string
+          _need_id: string
+          _replies: Json
+        }
+        Returns: undefined
+      }
       follower_count: { Args: { _id: string; _type: string }; Returns: number }
       is_church_moderator: {
         Args: { _church_id: string; _user_id: string }
@@ -1221,6 +1235,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      reopen_user_need: { Args: { _need_id: string }; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
