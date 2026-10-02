@@ -1,0 +1,1 @@
+ALTER TABLE public.room_posts ADD COLUMN IF NOT EXISTS title text, ADD COLUMN IF NOT EXISTS source_url text, ADD COLUMN IF NOT EXISTS source_name text, ADD COLUMN IF NOT EXISTS image_url text;

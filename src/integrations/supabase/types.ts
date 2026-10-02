@@ -877,11 +877,15 @@ export type Database = {
           body: string
           created_at: string
           id: string
+          image_url: string | null
           media_path: string | null
           media_type: string | null
           parent_id: string | null
           room_id: string
+          source_name: string | null
+          source_url: string | null
           status: string
+          title: string | null
           updated_at: string
         }
         Insert: {
@@ -889,11 +893,15 @@ export type Database = {
           body: string
           created_at?: string
           id?: string
+          image_url?: string | null
           media_path?: string | null
           media_type?: string | null
           parent_id?: string | null
           room_id: string
+          source_name?: string | null
+          source_url?: string | null
           status?: string
+          title?: string | null
           updated_at?: string
         }
         Update: {
@@ -901,11 +909,15 @@ export type Database = {
           body?: string
           created_at?: string
           id?: string
+          image_url?: string | null
           media_path?: string | null
           media_type?: string | null
           parent_id?: string | null
           room_id?: string
+          source_name?: string | null
+          source_url?: string | null
           status?: string
+          title?: string | null
           updated_at?: string
         }
         Relationships: [
