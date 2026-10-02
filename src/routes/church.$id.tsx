@@ -605,9 +605,6 @@ function ChurchPage() {
                       {t("Sign in to say you attend here")}
                     </Link>
                   )}
-                  <div className="mt-3">
-                    <FollowButton targetType="church" targetId={church.id} />
-                  </div>
                   <p className="mt-2 text-base text-mist/90">
                     {t("Once they say yes, this church's scan code sits on your profile so you can show it to anyone.")}
                   </p>
