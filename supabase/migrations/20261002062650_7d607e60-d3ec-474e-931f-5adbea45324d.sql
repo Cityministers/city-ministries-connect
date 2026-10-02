@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.room_posts_moderation() FROM PUBLIC, anon, authenticated;

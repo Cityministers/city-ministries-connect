@@ -853,8 +853,11 @@ export type Database = {
           body: string
           created_at: string
           id: string
+          media_path: string | null
+          media_type: string | null
           parent_id: string | null
           room_id: string
+          status: string
           updated_at: string
         }
         Insert: {
@@ -862,8 +865,11 @@ export type Database = {
           body: string
           created_at?: string
           id?: string
+          media_path?: string | null
+          media_type?: string | null
           parent_id?: string | null
           room_id: string
+          status?: string
           updated_at?: string
         }
         Update: {
@@ -871,8 +877,11 @@ export type Database = {
           body?: string
           created_at?: string
           id?: string
+          media_path?: string | null
+          media_type?: string | null
           parent_id?: string | null
           room_id?: string
+          status?: string
           updated_at?: string
         }
         Relationships: [
