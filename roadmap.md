@@ -13,3 +13,4 @@
 - [x] Standardize ministry, need, and prayer action buttons across the site using the map color scheme, especially church pages
 - [x] Church pages: enlarge and lighten small text
 - [x] Keep post-follow on ministry and need posts; move person-follow to each member's profile page
+- [x] Let need owners confirm a met need, send optional personal thank-yous to people in its conversations, and reopen it later
