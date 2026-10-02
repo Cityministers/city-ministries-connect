@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { listPendingRoomPosts, moderateRoomPost } from "@/lib/room-posts.functions";
+import { PendingRoomsAdmin } from "@/components/rooms/PendingRoomsAdmin";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, Check, EyeOff, ShieldCheck, Trash2 } from "lucide-react";
@@ -257,6 +258,7 @@ function AdminPage() {
               </section>
             ) : tab === "rooms" ? (
               <section className="space-y-3">
+                <PendingRoomsAdmin />
                 {roomPosts.isLoading ? (
                   <p className="text-mist/70">{t("Loading…")}</p>
                 ) : (roomPosts.data?.length ?? 0) === 0 ? (

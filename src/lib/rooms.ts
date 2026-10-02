@@ -11,3 +11,8 @@ export const ROOMS: { slug: string; title: string; icon: LucideIcon }[] = [
 export function roomIcon(slug: string): LucideIcon {
   return ROOMS.find((r) => r.slug === slug)?.icon ?? Globe2;
 }
+
+const ICON_BY_ID: Record<string, LucideIcon> = { newspaper: Newspaper, book: BookOpen, globe: Globe2, hourglass: Hourglass, heart: Heart };
+export function roomIconById(id: string): LucideIcon {
+  return ICON_BY_ID[id] ?? Globe2;
+}
