@@ -246,8 +246,8 @@ export function PrayerPost({
             </div>
           </div>
 
-          <h3 className="font-heading text-xl text-sand">{prayer.shortTitle}</h3>
-          <p className="whitespace-pre-line text-base leading-relaxed text-mist/90">{prayer.body}</p>
+          <h3 className="font-heading text-2xl font-semibold text-sand">{prayer.shortTitle}</h3>
+          <p className="whitespace-pre-line text-lg leading-relaxed text-sand">{prayer.body}</p>
 
           {prayer.churchId && (
             <Link

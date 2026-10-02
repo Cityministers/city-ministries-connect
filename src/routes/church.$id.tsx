@@ -912,10 +912,10 @@ function ChurchPage() {
                           <HandHelping className="size-5" aria-hidden="true" />
                         </span>
                         <span className="min-w-0 flex-1">
-                          <span className="block truncate font-heading text-lg text-sand">
+                          <span className="block truncate font-heading text-xl text-sand">
                             {p.shortTitle}
                           </span>
-                          <span className="block truncate text-base text-mist/90">{p.posterName}</span>
+                          <span className="block truncate text-lg text-sand">{p.posterName}</span>
                         </span>
                       </button>
                       {canModerate && (
