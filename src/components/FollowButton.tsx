@@ -81,9 +81,46 @@ export function FollowButton({ targetType, targetId, size = "md", className = ""
         {following ? t("Following") : t("Follow")}
       </button>
       {askSignIn && (
-        <Link to="/auth" className="text-xs font-semibold text-lemon underline">
-          {t("Sign in to follow")}
-        </Link>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-ink/80 px-4 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setAskSignIn(false)}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl bg-ink-soft/95 p-6 text-center ring-1 ring-mist/15 sm:p-8"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="font-display text-2xl font-semibold sm:text-3xl">
+              {t("One quick step first")}
+            </h2>
+            <p className="mt-3 text-base leading-relaxed text-mist/80 sm:text-lg">
+              {t("Create a free account to follow churches, ministries, and people — and get their updates in your notifications.")}
+            </p>
+            <div className="mt-6 flex flex-col gap-3">
+              <Link
+                to="/auth"
+                search={{ mode: "signup" }}
+                className="rounded-full bg-lemon px-6 py-4 text-lg font-bold text-ink transition-transform hover:-translate-y-0.5"
+              >
+                {t("Create Account")}
+              </Link>
+              <Link
+                to="/auth"
+                className="rounded-full bg-ink px-6 py-4 text-lg font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
+              >
+                {t("Sign in")}
+              </Link>
+              <button
+                type="button"
+                onClick={() => setAskSignIn(false)}
+                className="text-sm font-semibold text-mist/70 underline underline-offset-2 hover:text-mist"
+              >
+                {t("Not now")}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </span>
   );
