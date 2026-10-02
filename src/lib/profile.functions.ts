@@ -175,3 +175,67 @@ export const deleteMyAccount = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+export type MemberPostItem = {
+  id: string;
+  kind: "ministry" | "need" | "prayer";
+  title: string;
+  createdAt: string;
+  met?: boolean;
+  churchId?: string | null;
+};
+
+/** Public post history for a member, respecting their privacy switches and anonymity. */
+export const getMemberPosts = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({ id: z.string().uuid() }).parse(data))
+  .handler(async ({ data, context }) => {
+    const sb = context.supabase;
+    const { data: p } = await sb
+      .from("profiles")
+      .select("show_ministries, show_needs, show_prayers")
+      .eq("id", data.id)
+      .maybeSingle();
+    const empty = { ministries: [] as MemberPostItem[], needs: [] as MemberPostItem[], prayers: [] as MemberPostItem[] };
+    if (!p) return empty;
+    if (p.show_ministries) {
+      const { data: rows } = await sb.from("user_ministries").select("id, short_title, created_at")
+        .eq("owner_id", data.id).eq("status", "active").order("created_at", { ascending: false }).limit(30);
+      empty.ministries = (rows ?? []).map((r) => ({ id: r.id, kind: "ministry", title: r.short_title, createdAt: r.created_at }));
+    }
+    if (p.show_needs) {
+      const { data: rows } = await sb.from("user_needs").select("id, short_title, created_at, status")
+        .eq("owner_id", data.id).in("status", ["active", "met"]).order("created_at", { ascending: false }).limit(30);
+      empty.needs = (rows ?? []).map((r) => ({ id: r.id, kind: "need", title: r.short_title, createdAt: r.created_at, met: r.status === "met" }));
+    }
+    if (p.show_prayers) {
+      const { data: rows } = await sb.from("prayers").select("id, short_title, created_at, church_id")
+        .eq("owner_id", data.id).eq("anonymous", false).in("status", ["active", "approved"])
+        .order("created_at", { ascending: false }).limit(30);
+      empty.prayers = (rows ?? []).map((r) => ({ id: r.id, kind: "prayer", title: r.short_title, createdAt: r.created_at, churchId: r.church_id }));
+    }
+    return empty;
+  });
+
+export const getMyPrivacy = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data } = await context.supabase.from("profiles")
+      .select("show_ministries, show_needs, show_prayers").eq("id", context.userId).maybeSingle();
+    return {
+      showMinistries: data?.show_ministries ?? true,
+      showNeeds: data?.show_needs ?? true,
+      showPrayers: data?.show_prayers ?? true,
+    };
+  });
+
+export const updateMyPrivacy = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) =>
+    z.object({ field: z.enum(["show_ministries", "show_needs", "show_prayers"]), value: z.boolean() }).parse(data))
+  .handler(async ({ data, context }) => {
+    const patch: ProfileUpdate = { [data.field]: data.value };
+    const { error } = await context.supabase.from("profiles").update(patch).eq("id", context.userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
