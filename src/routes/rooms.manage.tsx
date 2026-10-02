@@ -81,8 +81,13 @@ function ManageRoomsPage() {
   const pending = rooms.filter((r) => r.status === "pending" && r.created_by === userId);
 
   async function setHidden(roomId: string, hidden: boolean) {
-    const { error } = await supabase.from("room_memberships").upsert({ user_id: userId!, room_id: roomId, hidden });
-    if (error) toast.error(error.message); else refresh();
+    // Update the list right away so the tap feels instant on phones.
+    queryClient.setQueryData(["room-memberships", userId], (old: Record<string, boolean> | undefined) => ({ ...(old ?? {}), [roomId]: hidden }));
+    const { error } = await supabase
+      .from("room_memberships")
+      .upsert({ user_id: userId!, room_id: roomId, hidden }, { onConflict: "user_id,room_id" });
+    if (error) toast.error(error.message);
+    refresh();
   }
 
   async function create() {
