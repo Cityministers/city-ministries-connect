@@ -23,6 +23,7 @@ import { MailboxTab } from "@/components/profile/MailboxTab";
 import { GiftRepliesTab } from "@/components/profile/GiftRepliesTab";
 import { MyPostsTab } from "@/components/profile/MyPostsTab";
 import { NotificationsTab } from "@/components/profile/NotificationsTab";
+import { PrivacyCard } from "@/components/profile/PrivacyCard";
 import { amIAdmin } from "@/lib/moderation.functions";
 import {
   getUnreadCount,
@@ -194,6 +195,7 @@ function ProfilePage() {
           <p className="py-16 text-center text-base text-mist/60">{t("Loading…")}</p>
         ) : (
           <>
+            <PrivacyCard />
             {/* Identity card */}
             <section className="rounded-2xl bg-ink-soft/60 p-4 ring-1 ring-mist/15">
               <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
