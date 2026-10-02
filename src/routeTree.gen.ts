@@ -17,6 +17,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BusinessCardRouteImport } from './routes/business-card'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DonateRouteImport } from './routes/donate'
+import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as MinistriesRouteImport } from './routes/ministries'
@@ -39,6 +40,7 @@ import { Route as AuthenticatedWelcomeRouteImport } from './routes/_authenticate
 import { Route as ChurchIdRouteImport } from './routes/church.$id'
 import { Route as GiftReferenceCodeRouteImport } from './routes/gift-reference.$code'
 import { Route as HowItWorksStepRouteImport } from './routes/how-it-works.$step'
+import { Route as RoomsSlugRouteImport } from './routes/rooms.$slug'
 import { Route as AuthenticatedChurchBoardIdRouteImport } from './routes/_authenticated/church-board.$id'
 import { Route as AuthenticatedGiftsIndexRouteImport } from './routes/_authenticated/gifts.index'
 import { Route as AuthenticatedGiftsInviteRouteImport } from './routes/_authenticated/gifts.invite'
@@ -83,6 +85,11 @@ const ContactRoute = ContactRouteImport.update({
 const DonateRoute = DonateRouteImport.update({
   id: '/donate',
   path: '/donate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExploreRoute = ExploreRouteImport.update({
+  id: '/explore',
+  path: '/explore',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FeedbackRoute = FeedbackRouteImport.update({
@@ -196,6 +203,11 @@ const HowItWorksStepRoute = HowItWorksStepRouteImport.update({
   path: '/how-it-works/$step',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RoomsSlugRoute = RoomsSlugRouteImport.update({
+  id: '/rooms/$slug',
+  path: '/rooms/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedChurchBoardIdRoute =
   AuthenticatedChurchBoardIdRouteImport.update({
     id: '/church-board/$id',
@@ -239,6 +251,7 @@ export interface FileRoutesByFullPath {
   '/business-card': typeof BusinessCardRoute
   '/contact': typeof ContactRoute
   '/donate': typeof DonateRoute
+  '/explore': typeof ExploreRoute
   '/feedback': typeof FeedbackRoute
   '/map': typeof MapRoute
   '/ministries': typeof MinistriesRoute
@@ -261,6 +274,7 @@ export interface FileRoutesByFullPath {
   '/church/$id': typeof ChurchIdRoute
   '/gift-reference/$code': typeof GiftReferenceCodeRoute
   '/how-it-works/$step': typeof HowItWorksStepRoute
+  '/rooms/$slug': typeof RoomsSlugRoute
   '/church-board/$id': typeof AuthenticatedChurchBoardIdRoute
   '/gifts/invite': typeof AuthenticatedGiftsInviteRoute
   '/gifts/list': typeof AuthenticatedGiftsListRoute
@@ -276,6 +290,7 @@ export interface FileRoutesByTo {
   '/business-card': typeof BusinessCardRoute
   '/contact': typeof ContactRoute
   '/donate': typeof DonateRoute
+  '/explore': typeof ExploreRoute
   '/feedback': typeof FeedbackRoute
   '/map': typeof MapRoute
   '/ministries': typeof MinistriesRoute
@@ -298,6 +313,7 @@ export interface FileRoutesByTo {
   '/church/$id': typeof ChurchIdRoute
   '/gift-reference/$code': typeof GiftReferenceCodeRoute
   '/how-it-works/$step': typeof HowItWorksStepRoute
+  '/rooms/$slug': typeof RoomsSlugRoute
   '/church-board/$id': typeof AuthenticatedChurchBoardIdRoute
   '/gifts/invite': typeof AuthenticatedGiftsInviteRoute
   '/gifts/list': typeof AuthenticatedGiftsListRoute
@@ -315,6 +331,7 @@ export interface FileRoutesById {
   '/business-card': typeof BusinessCardRoute
   '/contact': typeof ContactRoute
   '/donate': typeof DonateRoute
+  '/explore': typeof ExploreRoute
   '/feedback': typeof FeedbackRoute
   '/map': typeof MapRoute
   '/ministries': typeof MinistriesRoute
@@ -337,6 +354,7 @@ export interface FileRoutesById {
   '/church/$id': typeof ChurchIdRoute
   '/gift-reference/$code': typeof GiftReferenceCodeRoute
   '/how-it-works/$step': typeof HowItWorksStepRoute
+  '/rooms/$slug': typeof RoomsSlugRoute
   '/_authenticated/church-board/$id': typeof AuthenticatedChurchBoardIdRoute
   '/_authenticated/gifts/invite': typeof AuthenticatedGiftsInviteRoute
   '/_authenticated/gifts/list': typeof AuthenticatedGiftsListRoute
@@ -354,6 +372,7 @@ export interface FileRouteTypes {
     | '/business-card'
     | '/contact'
     | '/donate'
+    | '/explore'
     | '/feedback'
     | '/map'
     | '/ministries'
@@ -376,6 +395,7 @@ export interface FileRouteTypes {
     | '/church/$id'
     | '/gift-reference/$code'
     | '/how-it-works/$step'
+    | '/rooms/$slug'
     | '/church-board/$id'
     | '/gifts/invite'
     | '/gifts/list'
@@ -391,6 +411,7 @@ export interface FileRouteTypes {
     | '/business-card'
     | '/contact'
     | '/donate'
+    | '/explore'
     | '/feedback'
     | '/map'
     | '/ministries'
@@ -413,6 +434,7 @@ export interface FileRouteTypes {
     | '/church/$id'
     | '/gift-reference/$code'
     | '/how-it-works/$step'
+    | '/rooms/$slug'
     | '/church-board/$id'
     | '/gifts/invite'
     | '/gifts/list'
@@ -429,6 +451,7 @@ export interface FileRouteTypes {
     | '/business-card'
     | '/contact'
     | '/donate'
+    | '/explore'
     | '/feedback'
     | '/map'
     | '/ministries'
@@ -451,6 +474,7 @@ export interface FileRouteTypes {
     | '/church/$id'
     | '/gift-reference/$code'
     | '/how-it-works/$step'
+    | '/rooms/$slug'
     | '/_authenticated/church-board/$id'
     | '/_authenticated/gifts/invite'
     | '/_authenticated/gifts/list'
@@ -468,6 +492,7 @@ export interface RootRouteChildren {
   BusinessCardRoute: typeof BusinessCardRoute
   ContactRoute: typeof ContactRoute
   DonateRoute: typeof DonateRoute
+  ExploreRoute: typeof ExploreRoute
   FeedbackRoute: typeof FeedbackRoute
   MapRoute: typeof MapRoute
   MinistriesRoute: typeof MinistriesRoute
@@ -482,6 +507,7 @@ export interface RootRouteChildren {
   ChurchIdRoute: typeof ChurchIdRoute
   GiftReferenceCodeRoute: typeof GiftReferenceCodeRoute
   HowItWorksStepRoute: typeof HowItWorksStepRoute
+  RoomsSlugRoute: typeof RoomsSlugRoute
   ApiPublicMeetupRemindersRoute: typeof ApiPublicMeetupRemindersRoute
 }
 
@@ -541,6 +567,13 @@ declare module '@tanstack/react-router' {
       path: '/donate'
       fullPath: '/donate'
       preLoaderRoute: typeof DonateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/explore': {
+      id: '/explore'
+      path: '/explore'
+      fullPath: '/explore'
+      preLoaderRoute: typeof ExploreRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/feedback': {
@@ -697,6 +730,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HowItWorksStepRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/rooms/$slug': {
+      id: '/rooms/$slug'
+      path: '/rooms/$slug'
+      fullPath: '/rooms/$slug'
+      preLoaderRoute: typeof RoomsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/church-board/$id': {
       id: '/_authenticated/church-board/$id'
       path: '/church-board/$id'
@@ -787,6 +827,7 @@ const rootRouteChildren: RootRouteChildren = {
   BusinessCardRoute: BusinessCardRoute,
   ContactRoute: ContactRoute,
   DonateRoute: DonateRoute,
+  ExploreRoute: ExploreRoute,
   FeedbackRoute: FeedbackRoute,
   MapRoute: MapRoute,
   MinistriesRoute: MinistriesRoute,
@@ -801,6 +842,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChurchIdRoute: ChurchIdRoute,
   GiftReferenceCodeRoute: GiftReferenceCodeRoute,
   HowItWorksStepRoute: HowItWorksStepRoute,
+  RoomsSlugRoute: RoomsSlugRoute,
   ApiPublicMeetupRemindersRoute: ApiPublicMeetupRemindersRoute,
 }
 export const routeTree = rootRouteImport
