@@ -51,8 +51,9 @@ function ErrorComponent({ error, reset }: { error: unknown; reset: () => void })
   useEffect(() => {
     if (!isModuleLoadError) return;
     const retryKey = `module-retry:${window.location.pathname}`;
-    if (sessionStorage.getItem(retryKey)) return;
-    sessionStorage.setItem(retryKey, "1");
+    const lastRetry = Number(sessionStorage.getItem(retryKey) || 0);
+    if (Date.now() - lastRetry < 30_000) return;
+    sessionStorage.setItem(retryKey, String(Date.now()));
     // A rejected dynamic import stays cached by the browser; router.invalidate()
     // cannot retry it. A fresh document fetches the current page bundle.
     window.location.reload();
@@ -159,10 +160,6 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-
-  useEffect(() => {
-    sessionStorage.removeItem(`module-retry:${window.location.pathname}`);
-  }, []);
 
   // Apply the visitor's saved language after hydration so SSR and the first
   // client render always match (English), then switch once the bundle loads.
