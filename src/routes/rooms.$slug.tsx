@@ -1,16 +1,28 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Heart, MessageCircle, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { ArrowLeft, Check, EyeOff, Heart, ImagePlus, Loader2, MessageCircle, MoreVertical, PartyPopper, Trash2, X } from "lucide-react";
+import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 import { AccountMenu } from "@/components/AccountMenu";
 import { BrandLogo } from "@/components/BrandLogo";
 import { ChurchMenu } from "@/components/ChurchMenu";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 import { ROOMS, roomIcon } from "@/lib/rooms";
+import { amIAdmin, getPrivateRoomMediaUrls, getRoomMediaUrls, moderateRoomPost } from "@/lib/room-posts.functions";
+
+const MAX_IMAGE = 10 * 1024 * 1024;
+const MAX_VIDEO = 50 * 1024 * 1024;
 
 export const Route = createFileRoute("/rooms/$slug")({
   head: ({ params }) => {
@@ -36,6 +48,9 @@ type Post = {
   parent_id: string | null;
   body: string;
   created_at: string;
+  status: string;
+  media_path: string | null;
+  media_type: string | null;
 };
 
 function RoomPage() {
@@ -48,50 +63,115 @@ function RoomPage() {
   const [draft, setDraft] = useState("");
   const [replyTo, setReplyTo] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [posting, setPosting] = useState(false);
+  const [congrats, setCongrats] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const fetchPublicUrls = useServerFn(getRoomMediaUrls);
+  const fetchPrivateUrls = useServerFn(getPrivateRoomMediaUrls);
+  const checkAdmin = useServerFn(amIAdmin);
+  const moderate = useServerFn(moderateRoomPost);
+
+  const adminQ = useQuery({
+    queryKey: ["am-admin", userId],
+    enabled: !!userId,
+    retry: false,
+    queryFn: () => checkAdmin().catch(() => ({ admin: false })),
+  });
+  const isAdmin = !!adminQ.data?.admin;
 
   const { data, isLoading } = useQuery({
-    queryKey: ["room", slug],
+    queryKey: ["room", slug, userId ?? "anon"],
     queryFn: async () => {
       const { data: room } = await supabase.from("rooms").select("*").eq("slug", slug).maybeSingle();
       if (!room) return null;
       const { data: posts } = await supabase
         .from("room_posts")
-        .select("id, author_id, parent_id, body, created_at")
+        .select("id, author_id, parent_id, body, created_at, status, media_path, media_type")
         .eq("room_id", room.id)
         .order("created_at", { ascending: false })
         .limit(200);
       const list = (posts ?? []) as Post[];
       const ids = list.map((p) => p.id);
       const authorIds = [...new Set(list.map((p) => p.author_id))];
-      const [{ data: likes }, { data: profiles }] = await Promise.all([
+      const approvedPaths = list.filter((p) => p.media_path && p.status === "approved").map((p) => p.media_path!);
+      const privatePaths = list.filter((p) => p.media_path && p.status !== "approved").map((p) => p.media_path!);
+      const [{ data: likes }, { data: profiles }, pub, priv] = await Promise.all([
         ids.length
           ? supabase.from("room_post_likes").select("post_id, user_id").in("post_id", ids)
           : Promise.resolve({ data: [] as { post_id: string; user_id: string }[] }),
         authorIds.length
           ? supabase.from("profiles").select("id, display_name").in("id", authorIds)
           : Promise.resolve({ data: [] as { id: string; display_name: string | null }[] }),
+        approvedPaths.length ? fetchPublicUrls({ data: { paths: approvedPaths } }).catch(() => ({})) : Promise.resolve({}),
+        privatePaths.length && userId
+          ? fetchPrivateUrls({ data: { paths: privatePaths } }).catch(() => ({}))
+          : Promise.resolve({}),
       ]);
       const names = new Map((profiles ?? []).map((p) => [p.id, p.display_name ?? ""]));
-      return { room, posts: list, likes: likes ?? [], names };
+      const urls: Record<string, string> = { ...(pub as Record<string, string>), ...(priv as Record<string, string>) };
+      return { room, posts: list, likes: likes ?? [], names, urls };
     },
   });
 
   const refresh = () => qc.invalidateQueries({ queryKey: ["room", slug] });
 
+  const pickFile = (f: File | undefined) => {
+    if (!f) return;
+    const isVideo = f.type.startsWith("video/");
+    const isImage = f.type.startsWith("image/");
+    if (!isVideo && !isImage) { toast.error(t("Please choose a photo or video.")); return; }
+    if (isImage && f.size > MAX_IMAGE) { toast.error(t("Photos must be under 10 MB.")); return; }
+    if (isVideo && f.size > MAX_VIDEO) { toast.error(t("Videos must be under 50 MB.")); return; }
+    if (preview) URL.revokeObjectURL(preview);
+    setFile(f);
+    setPreview(URL.createObjectURL(f));
+  };
+
+  const clearFile = () => {
+    if (preview) URL.revokeObjectURL(preview);
+    setFile(null);
+    setPreview(null);
+    if (fileRef.current) fileRef.current.value = "";
+  };
+
   const submit = async (body: string, parentId: string | null) => {
     if (!userId || !data?.room || !body.trim()) return;
-    const { error } = await supabase.from("room_posts").insert({
-      room_id: data.room.id,
-      author_id: userId,
-      parent_id: parentId,
-      body: body.trim().slice(0, 2000),
-    });
-    if (error) { toast.error(t("Something went wrong. Please try again.")); return; }
-    if (parentId) {
-      setReplyText("");
-      setReplyTo(null);
-    } else setDraft("");
-    refresh();
+    setPosting(true);
+    try {
+      let media_path: string | null = null;
+      let media_type: string | null = null;
+      if (!parentId && file) {
+        const ext = (file.name.split(".").pop() || "bin").toLowerCase().replace(/[^a-z0-9]/g, "");
+        const path = `${userId}/${crypto.randomUUID()}.${ext}`;
+        const { error: upErr } = await supabase.storage.from("room-media").upload(path, file, { contentType: file.type });
+        if (upErr) { toast.error(t("Upload failed. Please try again.")); return; }
+        media_path = path;
+        media_type = file.type.startsWith("video/") ? "video" : "image";
+      }
+      const { error } = await supabase.from("room_posts").insert({
+        room_id: data.room.id,
+        author_id: userId,
+        parent_id: parentId,
+        body: body.trim().slice(0, 2000),
+        media_path,
+        media_type,
+      });
+      if (error) { toast.error(t("Something went wrong. Please try again.")); return; }
+      if (parentId) {
+        setReplyText("");
+        setReplyTo(null);
+      } else {
+        setDraft("");
+        clearFile();
+        if (!isAdmin) setCongrats(true);
+      }
+      refresh();
+    } finally {
+      setPosting(false);
+    }
   };
 
   const toggleLike = async (postId: string, liked: boolean) => {
@@ -105,6 +185,20 @@ function RoomPage() {
     if (!window.confirm(t("Delete this post?"))) return;
     await supabase.from("room_posts").delete().eq("id", postId);
     refresh();
+  };
+
+  const act = async (id: string, action: "approve" | "hide" | "decline" | "delete") => {
+    if ((action === "delete" || action === "decline") && !window.confirm(t("Remove this post?"))) return;
+    try {
+      await moderate({ data: { id, action } });
+      toast.success(
+        action === "approve" ? t("Post approved") : action === "hide" ? t("Post hidden") : t("Post removed"),
+      );
+      refresh();
+      qc.invalidateQueries({ queryKey: ["admin", "room-posts"] });
+    } catch {
+      toast.error(t("Something went wrong. Please try again."));
+    }
   };
 
   const topLevel = data?.posts.filter((p) => !p.parent_id) ?? [];
