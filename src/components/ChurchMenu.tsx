@@ -1,27 +1,22 @@
 "use client";
 
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { Church, LogOut, Search } from "lucide-react";
+import { Church, Search } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useSession } from "@/hooks/useSession";
-import { leaveChurch, listChurchesIAttend } from "@/lib/churches.functions";
+import { listChurchesIAttend } from "@/lib/churches.functions";
 import { ROOMS } from "@/lib/rooms";
 
 export function ChurchMenu() {
   const { t } = useTranslation();
   const session = useSession();
-  const navigate = useNavigate();
-  const qc = useQueryClient();
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
   const fetchChurches = useServerFn(listChurchesIAttend);
-  const leave = useServerFn(leaveChurch);
 
   const { data: churches = [] } = useQuery({
     queryKey: ["my-churches-menu", session?.user?.id ?? "none"],
