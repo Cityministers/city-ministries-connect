@@ -59,7 +59,7 @@ function ExplorePage() {
         </div>
       </header>
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-6 sm:px-6">
-        <h1 className="font-display text-3xl font-semibold">{t("Explore churches & rooms")}</h1>
+        <h1 className="font-display text-xl font-semibold leading-tight">{t("Explore churches & rooms")}</h1>
         <label className="mt-4 flex items-center gap-2 rounded-xl border border-mist/35 bg-ink-soft px-3 py-2">
           <Search className="size-4 text-mist" aria-hidden="true" />
           <input
