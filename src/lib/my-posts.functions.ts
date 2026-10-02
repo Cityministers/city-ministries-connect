@@ -43,7 +43,7 @@ export const listMyPosts = createServerFn({ method: "GET" })
     for (const postType of ["ministry", "need"] as const) {
       const { data } = await context.supabase
         .from(tableFor(postType))
-        .select(postType === "need" ? "id, short_title, title, description, city, zip, avatar_url, updated_at, status, met_at" : "id, short_title, title, description, city, zip, avatar_url, updated_at, status")
+        .select("id, short_title, title, description, city, zip, avatar_url, updated_at, status")
         .eq("owner_id", context.userId)
         .order("updated_at", { ascending: false });
       for (const r of data ?? []) {
@@ -59,9 +59,16 @@ export const listMyPosts = createServerFn({ method: "GET" })
           photoUrl: r.avatar_url,
           updatedAt: r.updated_at,
           status: r.status,
-          metAt: "met_at" in r ? (r.met_at as string | null) : null,
+          metAt: null,
         });
       }
+    }
+
+    const metIds = out.filter((p) => p.postType === "need" && p.status === "met").map((p) => p.id);
+    if (metIds.length) {
+      const { data: metRows } = await context.supabase.from("user_needs").select("id, met_at").in("id", metIds);
+      const dates = new Map((metRows ?? []).map((r) => [r.id, r.met_at]));
+      for (const item of out) if (item.postType === "need") item.metAt = dates.get(item.id) ?? null;
     }
 
     if (paths.length > 0) {

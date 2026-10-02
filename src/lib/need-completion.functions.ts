@@ -52,7 +52,8 @@ export const completeNeed = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase.rpc("complete_user_need", {
       _need_id: data.needId,
-      _helper_conversation_id: data.helperConversationId,
+      // The generated RPC typing treats this nullable SQL argument as required string.
+      _helper_conversation_id: data.helperConversationId as string,
       _replies: data.replies,
     });
     if (error) throw new Error(error.message);
