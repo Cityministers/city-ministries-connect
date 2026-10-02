@@ -23,6 +23,7 @@ import {
 } from "@/lib/favorites.functions";
 import { startConversation } from "@/lib/messages.functions";
 import { deletePrayer, type PrayerDTO } from "@/lib/prayers.functions";
+import { timeAgo } from "@/lib/time-ago";
 
 /**
  * A prayer opens in the same card shape as a ministry or a need: the poster's
@@ -307,7 +308,10 @@ export function PrayerPost({
             <div className="flex flex-col gap-2">
               {(comments ?? []).map((c) => (
                 <div key={c.id} className="rounded-xl bg-ink px-3 py-2 ring-1 ring-mist/15">
-                  <p className="text-sm font-medium text-sand">{c.authorName}</p>
+                  <p className="text-sm font-medium text-sand">
+                    {c.authorName}
+                    <span className="ml-2 font-normal text-mist/50">{timeAgo(c.createdAt)}</span>
+                  </p>
                   <p className="text-base text-mist/80">{c.body}</p>
                 </div>
               ))}

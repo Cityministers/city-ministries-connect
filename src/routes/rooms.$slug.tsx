@@ -19,6 +19,7 @@ import {
 import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 import { ROOMS, roomIcon } from "@/lib/rooms";
+import { timeAgo } from "@/lib/time-ago";
 import { amIAdmin, getPrivateRoomMediaUrls, getRoomMediaUrls, moderateRoomPost } from "@/lib/room-posts.functions";
 
 const MAX_IMAGE = 10 * 1024 * 1024;
@@ -222,7 +223,7 @@ function RoomPage() {
             {name[0]?.toUpperCase()}
           </span>
           <span className="font-semibold">{name}</span>
-          <span className="text-mist">{new Date(p.created_at).toLocaleDateString()}</span>
+          <span className="text-mist">{timeAgo(p.created_at)}</span>
         </div>
         {p.status !== "approved" && (
           <span className="mt-2 inline-block rounded-full bg-lemon/15 px-2.5 py-0.5 text-xs font-bold text-lemon">

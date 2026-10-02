@@ -28,6 +28,7 @@ import {
 } from "@/lib/favorites.functions";
 import { startConversation } from "@/lib/messages.functions";
 import { createMeetupRequest } from "@/lib/meetups.functions";
+import { timeAgo } from "@/lib/time-ago";
 import { FollowButton } from "@/components/FollowButton";
 import { MeetupScheduler } from "@/components/meetup/MeetupScheduler";
 import { NeedMetDialog } from "@/components/profile/NeedMetDialog";
@@ -490,7 +491,10 @@ export function MinistryPost({
             <div className="flex flex-col gap-2">
               {(comments ?? []).map((c) => (
                 <div key={c.id} className="rounded-xl bg-ink px-3 py-2 ring-1 ring-mist/15">
-                  <p className="text-sm font-medium text-sand">{c.authorName}</p>
+                  <p className="text-sm font-medium text-sand">
+                    {c.authorName}
+                    <span className="ml-2 font-normal text-mist/50">{timeAgo(c.createdAt)}</span>
+                  </p>
                   <p className="text-base text-mist/80">{c.body}</p>
                 </div>
               ))}

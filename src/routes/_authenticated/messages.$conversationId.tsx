@@ -8,6 +8,7 @@ import { z } from "zod";
 import { getConversation, sendMessage } from "@/lib/messages.functions";
 import { MeetupCard } from "@/components/MeetupCard";
 import { listMeetupsForConversation } from "@/lib/meetups.functions";
+import { timeAgo } from "@/lib/time-ago";
 
 export const Route = createFileRoute("/_authenticated/messages/$conversationId")({
   validateSearch: z.object({ draft: z.string().optional() }),
@@ -133,6 +134,7 @@ function ThreadPage() {
               }`}
             >
               {item.m.body}
+              <span className="mt-1 block text-right text-xs text-mist/45">{timeAgo(item.m.createdAt)}</span>
             </div>
             ),
           )
