@@ -32,7 +32,7 @@ export function ChurchMenu() {
         onClick={() => {
           const saved = sessionStorage.getItem(RETURN_KEY);
           sessionStorage.removeItem(RETURN_KEY);
-          navigate({ href: saved && !isRoomsPath(saved.split("?")[0]) ? saved : "/map" });
+          navigate({ href: saved && !isRoomsPath(saved.split("?")[0] ?? "") ? saved : "/map" });
         }}
       >
         <Church className="size-5" aria-hidden="true" />
