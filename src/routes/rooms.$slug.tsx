@@ -10,6 +10,7 @@ import { AccountMenu } from "@/components/AccountMenu";
 import { BrandLogo } from "@/components/BrandLogo";
 import { ChurchMenu } from "@/components/ChurchMenu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { YouVersionPlansButton } from "@/components/rooms/YouVersionPlansButton";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -331,6 +332,7 @@ function RoomPage() {
               <h1 className="font-display text-3xl font-semibold">{t(data.room.title)}</h1>
             </div>
             <p className="mt-3 text-base text-mist">{t(data.room.description)}</p>
+            <YouVersionPlansButton slug={slug} roomTitle={t(data.room.title)} />
 
             <div className="mt-6 rounded-2xl border border-mist/35 bg-ink-soft p-4">
               {userId ? (
