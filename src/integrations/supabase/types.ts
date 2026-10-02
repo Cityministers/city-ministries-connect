@@ -452,6 +452,30 @@ export type Database = {
           },
         ]
       }
+      follows: {
+        Row: {
+          created_at: string
+          id: string
+          target_id: string
+          target_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          target_id: string
+          target_type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          target_id?: string
+          target_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       geo_cache: {
         Row: {
           city: string
@@ -1128,9 +1152,21 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      follower_count: { Args: { _id: string; _type: string }; Returns: number }
       is_church_moderator: {
         Args: { _church_id: string; _user_id: string }
         Returns: boolean
+      }
+      notify_followers: {
+        Args: {
+          _actor: string
+          _body: string
+          _id: string
+          _link: string
+          _title: string
+          _type: string
+        }
+        Returns: undefined
       }
     }
     Enums: {
