@@ -1,116 +1,24 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
-import { Church, Search } from "lucide-react";
-import { useState } from "react";
+import { Church } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useSession } from "@/hooks/useSession";
-import { listChurchesIAttend } from "@/lib/churches.functions";
-import { ROOMS } from "@/lib/rooms";
 
 export function ChurchMenu() {
   const { t } = useTranslation();
   const session = useSession();
-  const [open, setOpen] = useState(false);
-  const fetchChurches = useServerFn(listChurchesIAttend);
-
-  const { data: churches = [] } = useQuery({
-    queryKey: ["my-churches-menu", session?.user?.id ?? "none"],
-    queryFn: async () => {
-      try {
-        return await fetchChurches();
-      } catch {
-        return [];
-      }
-    },
-    enabled: Boolean(session?.user?.id),
-    retry: false,
-  });
 
   if (!session) return null;
 
-  const home = churches[0];
-  const close = () => setOpen(false);
-
-  const actions = (
-    <div className="flex flex-col gap-1">
-      <Link
-        to="/explore"
-        onClick={close}
-        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-sand hover:bg-ink"
-      >
-        <Search className="size-4" aria-hidden="true" />
-        {t("Search other churches & rooms")}
-      </Link>
-    </div>
-  );
-
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <button
-          type="button"
-          className="grid size-10 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/25 transition hover:bg-ink-soft"
-          aria-label={t("Church and rooms")}
-        >
-          <Church className="size-5" aria-hidden="true" />
-        </button>
-      </PopoverTrigger>
-      <PopoverContent align="end" className="w-72 border-mist/30 bg-ink-soft p-2 text-sand">
-
-        <p className="px-3 pt-1 text-xs font-bold uppercase tracking-wide text-mist">
-          {t("Your home")}
-        </p>
-        {home ? (
-          <Link
-            to="/church/$id"
-            params={{ id: home.id }}
-            onClick={close}
-            className="mt-1 flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-ink"
-          >
-            {home.photoUrl ? (
-              <img src={home.photoUrl} alt="" className="size-9 rounded-md object-cover" />
-            ) : (
-              <span className="grid size-9 place-items-center rounded-md bg-ink">
-                <Church className="size-4 text-lemon" aria-hidden="true" />
-              </span>
-            )}
-            <span className="truncate font-semibold">{home.name}</span>
-          </Link>
-        ) : (
-          <Link
-            to="/explore"
-            onClick={close}
-            className="mt-1 block rounded-lg px-3 py-2 text-sm font-semibold hover:bg-ink"
-          >
-            {t("Find a church")}
-          </Link>
-        )}
-
-        <p className="mt-2 px-3 pt-1 text-xs font-bold uppercase tracking-wide text-mist">
-          {t("Explore rooms")}
-        </p>
-        <div className="mt-1 flex flex-col">
-          {ROOMS.map((r) => (
-            <Link
-              key={r.slug}
-              to="/rooms/$slug"
-              params={{ slug: r.slug }}
-              onClick={close}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm hover:bg-ink"
-            >
-              <r.icon className="size-4 text-lemon" aria-hidden="true" />
-              {t(r.title)}
-            </Link>
-          ))}
-        </div>
-
-        <div className="mt-2 border-t border-mist/20 pt-2">{actions}</div>
-      </PopoverContent>
-    </Popover>
+    <Link
+      to="/explore"
+      className="grid size-10 place-items-center rounded-full bg-ink text-lemon ring-1 ring-mist/25 transition hover:bg-ink-soft"
+      aria-label={t("Church and rooms")}
+    >
+      <Church className="size-5" aria-hidden="true" />
+    </Link>
   );
 }
