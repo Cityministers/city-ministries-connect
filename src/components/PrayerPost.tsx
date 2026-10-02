@@ -23,6 +23,7 @@ import {
 } from "@/lib/favorites.functions";
 import { startConversation } from "@/lib/messages.functions";
 import { deletePrayer, type PrayerDTO } from "@/lib/prayers.functions";
+import { timeAgo } from "@/lib/time-ago";
 
 /**
  * A prayer opens in the same card shape as a ministry or a need: the poster's

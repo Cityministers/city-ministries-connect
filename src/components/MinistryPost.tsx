@@ -28,6 +28,7 @@ import {
 } from "@/lib/favorites.functions";
 import { startConversation } from "@/lib/messages.functions";
 import { createMeetupRequest } from "@/lib/meetups.functions";
+import { timeAgo } from "@/lib/time-ago";
 import { FollowButton } from "@/components/FollowButton";
 import { MeetupScheduler } from "@/components/meetup/MeetupScheduler";
 import { NeedMetDialog } from "@/components/profile/NeedMetDialog";

@@ -19,6 +19,7 @@ import {
 import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 import { ROOMS, roomIcon } from "@/lib/rooms";
+import { timeAgo } from "@/lib/time-ago";
 import { amIAdmin, getPrivateRoomMediaUrls, getRoomMediaUrls, moderateRoomPost } from "@/lib/room-posts.functions";
 
 const MAX_IMAGE = 10 * 1024 * 1024;
