@@ -76,7 +76,7 @@ const P = {
 };
 
 export const ROOM_YOUVERSION: Record<string, YVPlan[]> = {
-  "christian-world-news": [P.globalPlaceholder ?? P.charityJustice, P.endTimesEvents, P.roleInMission, P.justiceStudy].filter(Boolean) as YVPlan[],
+  "christian-world-news": [P.endTimesEvents, P.charityJustice, P.aroundTheWorld, P.justiceStudy, P.incarcerated],
   "bible-theology": [P.trinity, P.oneMinuteApologist, P.heavyTheology, P.nicaea, P.cityCatechism],
   "world-missions": [P.missionOfMissions, P.consideringMissions, P.greatCommission, P.aroundTheWorld, P.roleInMission],
   "end-times": [P.revelationDecoded, P.endOfWorld, P.signOfTimes, P.prophecy101, P.discerningProphecy],
