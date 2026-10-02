@@ -20,6 +20,7 @@ import {
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AccountMenu } from "@/components/AccountMenu";
+import { ChurchMenu } from "@/components/ChurchMenu";
 import { AutoText } from "@/components/AutoText";
 import { BrandLogo } from "@/components/BrandLogo";
 import { PrayerPost } from "@/components/PrayerPost";
@@ -355,8 +356,9 @@ function ChurchPage() {
           <div className="flex justify-center">
             <BrandLogo />
           </div>
-          <div className="flex justify-end">
-            <AccountMenu />
+          <div className="flex items-center justify-end gap-2">
+            <ChurchMenu />
+<AccountMenu />
           </div>
         </div>
       </header>

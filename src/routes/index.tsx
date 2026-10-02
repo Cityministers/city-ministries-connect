@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { HandHeart, HeartHandshake, MapPin, MessageCircle, Sparkles } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { AccountMenu } from "@/components/AccountMenu";
+import { ChurchMenu } from "@/components/ChurchMenu";
 import { LanguagePicker } from "@/components/LanguagePicker";
 import { BrandLogo } from "@/components/BrandLogo";
 import { SiteNav } from "@/components/SiteNav";
@@ -88,6 +89,7 @@ function HomePage() {
           <div />
           <div className="flex items-center justify-end gap-2">
             <LanguagePicker />
+            <ChurchMenu />
             <AccountMenu />
           </div>
         </div>
