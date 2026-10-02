@@ -41,6 +41,7 @@ import { Route as ChurchIdRouteImport } from './routes/church.$id'
 import { Route as GiftReferenceCodeRouteImport } from './routes/gift-reference.$code'
 import { Route as HowItWorksStepRouteImport } from './routes/how-it-works.$step'
 import { Route as RoomsSlugRouteImport } from './routes/rooms.$slug'
+import { Route as RoomsManageRouteImport } from './routes/rooms.manage'
 import { Route as AuthenticatedChurchBoardIdRouteImport } from './routes/_authenticated/church-board.$id'
 import { Route as AuthenticatedGiftsIndexRouteImport } from './routes/_authenticated/gifts.index'
 import { Route as AuthenticatedGiftsInviteRouteImport } from './routes/_authenticated/gifts.invite'
@@ -208,6 +209,11 @@ const RoomsSlugRoute = RoomsSlugRouteImport.update({
   path: '/rooms/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RoomsManageRoute = RoomsManageRouteImport.update({
+  id: '/rooms/manage',
+  path: '/rooms/manage',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedChurchBoardIdRoute =
   AuthenticatedChurchBoardIdRouteImport.update({
     id: '/church-board/$id',
@@ -275,6 +281,7 @@ export interface FileRoutesByFullPath {
   '/gift-reference/$code': typeof GiftReferenceCodeRoute
   '/how-it-works/$step': typeof HowItWorksStepRoute
   '/rooms/$slug': typeof RoomsSlugRoute
+  '/rooms/manage': typeof RoomsManageRoute
   '/church-board/$id': typeof AuthenticatedChurchBoardIdRoute
   '/gifts/invite': typeof AuthenticatedGiftsInviteRoute
   '/gifts/list': typeof AuthenticatedGiftsListRoute
@@ -314,6 +321,7 @@ export interface FileRoutesByTo {
   '/gift-reference/$code': typeof GiftReferenceCodeRoute
   '/how-it-works/$step': typeof HowItWorksStepRoute
   '/rooms/$slug': typeof RoomsSlugRoute
+  '/rooms/manage': typeof RoomsManageRoute
   '/church-board/$id': typeof AuthenticatedChurchBoardIdRoute
   '/gifts/invite': typeof AuthenticatedGiftsInviteRoute
   '/gifts/list': typeof AuthenticatedGiftsListRoute
@@ -355,6 +363,7 @@ export interface FileRoutesById {
   '/gift-reference/$code': typeof GiftReferenceCodeRoute
   '/how-it-works/$step': typeof HowItWorksStepRoute
   '/rooms/$slug': typeof RoomsSlugRoute
+  '/rooms/manage': typeof RoomsManageRoute
   '/_authenticated/church-board/$id': typeof AuthenticatedChurchBoardIdRoute
   '/_authenticated/gifts/invite': typeof AuthenticatedGiftsInviteRoute
   '/_authenticated/gifts/list': typeof AuthenticatedGiftsListRoute
@@ -396,6 +405,7 @@ export interface FileRouteTypes {
     | '/gift-reference/$code'
     | '/how-it-works/$step'
     | '/rooms/$slug'
+    | '/rooms/manage'
     | '/church-board/$id'
     | '/gifts/invite'
     | '/gifts/list'
@@ -435,6 +445,7 @@ export interface FileRouteTypes {
     | '/gift-reference/$code'
     | '/how-it-works/$step'
     | '/rooms/$slug'
+    | '/rooms/manage'
     | '/church-board/$id'
     | '/gifts/invite'
     | '/gifts/list'
@@ -475,6 +486,7 @@ export interface FileRouteTypes {
     | '/gift-reference/$code'
     | '/how-it-works/$step'
     | '/rooms/$slug'
+    | '/rooms/manage'
     | '/_authenticated/church-board/$id'
     | '/_authenticated/gifts/invite'
     | '/_authenticated/gifts/list'
@@ -508,6 +520,7 @@ export interface RootRouteChildren {
   GiftReferenceCodeRoute: typeof GiftReferenceCodeRoute
   HowItWorksStepRoute: typeof HowItWorksStepRoute
   RoomsSlugRoute: typeof RoomsSlugRoute
+  RoomsManageRoute: typeof RoomsManageRoute
   ApiPublicMeetupRemindersRoute: typeof ApiPublicMeetupRemindersRoute
 }
 
@@ -737,6 +750,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RoomsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/rooms/manage': {
+      id: '/rooms/manage'
+      path: '/rooms/manage'
+      fullPath: '/rooms/manage'
+      preLoaderRoute: typeof RoomsManageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/church-board/$id': {
       id: '/_authenticated/church-board/$id'
       path: '/church-board/$id'
@@ -843,6 +863,7 @@ const rootRouteChildren: RootRouteChildren = {
   GiftReferenceCodeRoute: GiftReferenceCodeRoute,
   HowItWorksStepRoute: HowItWorksStepRoute,
   RoomsSlugRoute: RoomsSlugRoute,
+  RoomsManageRoute: RoomsManageRoute,
   ApiPublicMeetupRemindersRoute: ApiPublicMeetupRemindersRoute,
 }
 export const routeTree = rootRouteImport

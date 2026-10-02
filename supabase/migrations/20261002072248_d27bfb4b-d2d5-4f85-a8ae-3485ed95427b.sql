@@ -1,0 +1,2 @@
+ALTER TABLE public.rooms ADD COLUMN category text NOT NULL DEFAULT 'topic', ADD COLUMN in_default_feed boolean NOT NULL DEFAULT false;
+UPDATE public.rooms SET in_default_feed = true WHERE created_by IS NULL;

@@ -11,7 +11,7 @@ import { ChurchMenu } from "@/components/ChurchMenu";
 import { supabase } from "@/integrations/supabase/client";
 import { listChurchesIAttend, listMyChurches, type ChurchDTO } from "@/lib/churches.functions";
 import { roomIconById } from "@/lib/rooms";
-import { RoomManager, type RoomRow } from "@/components/rooms/RoomManager";
+import { isInFeed, type RoomRow } from "@/lib/room-feed";
 import { Plus } from "lucide-react";
 import { useSession } from "@/hooks/useSession";
 
@@ -67,26 +67,24 @@ function ExplorePage() {
     },
   });
 
-  const [manageOpen, setManageOpen] = useState(false);
   const userId = (session as { user?: { id: string } } | null)?.user?.id;
-  const { data: allRooms = [], refetch: refetchRooms } = useQuery({
+  const { data: allRooms = [] } = useQuery({
     queryKey: ["explore-rooms", userId ?? "anon"],
     queryFn: async (): Promise<RoomRow[]> => {
-      const { data } = await supabase.from("rooms").select("id, slug, title, icon, status, created_by").order("sort");
+      const { data } = await supabase.from("rooms").select("id, slug, title, icon, status, created_by, category, in_default_feed").order("sort");
       return (data ?? []) as RoomRow[];
     },
   });
-  const { data: hiddenIds = [], refetch: refetchHidden } = useQuery({
+  const { data: memberships = {} } = useQuery({
     queryKey: ["room-memberships", userId],
     enabled: Boolean(userId),
     queryFn: async () => {
-      const { data } = await supabase.from("room_memberships").select("room_id").eq("hidden", true);
-      return (data ?? []).map((d) => d.room_id);
+      const { data } = await supabase.from("room_memberships").select("room_id, hidden");
+      return Object.fromEntries((data ?? []).map((d) => [d.room_id, d.hidden])) as Record<string, boolean>;
     },
   });
-  const hiddenSet = new Set(hiddenIds);
   const rooms = allRooms
-    .filter((r) => r.status === "approved" && !hiddenSet.has(r.id))
+    .filter((r) => r.status === "approved" && (userId ? isInFeed(r, memberships) : r.in_default_feed || r.category === "general"))
     .filter((r) => !term || t(r.title).toLowerCase().includes(term));
   const matches = churches.filter(
     (c) => !term || `${c.name} ${c.city} ${c.zip}`.toLowerCase().includes(term),
@@ -145,9 +143,9 @@ function ExplorePage() {
         <div className="mt-6 flex items-center gap-2">
           <h2 className="text-sm font-bold uppercase tracking-wide text-mist">{t("Rooms")}</h2>
           {session && (
-            <button type="button" onClick={() => setManageOpen(true)} aria-label={t("Manage rooms")} className="grid size-7 place-items-center rounded-full bg-lemon/15 text-lemon ring-1 ring-lemon/60 active:scale-95">
+            <Link to="/rooms/manage" aria-label={t("Manage rooms")} className="grid size-7 place-items-center rounded-full bg-lemon/15 text-lemon ring-1 ring-lemon/60 active:scale-95">
               <Plus className="size-4" aria-hidden="true" />
-            </button>
+            </Link>
           )}
         </div>
         <div className="mt-2 grid gap-2">
@@ -161,9 +159,6 @@ function ExplorePage() {
             );
           })}
         </div>
-        {session && userId && (
-          <RoomManager open={manageOpen} onOpenChange={setManageOpen} rooms={allRooms} hidden={hiddenSet} userId={userId} onChanged={() => { refetchRooms(); refetchHidden(); }} />
-        )}
 
         <h2 className="mt-6 text-sm font-bold uppercase tracking-wide text-mist">{t("Churches")}</h2>
         <div className="mt-2 grid gap-2">
