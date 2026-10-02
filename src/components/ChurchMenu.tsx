@@ -39,34 +39,7 @@ export function ChurchMenu() {
   if (!session) return null;
 
   const home = churches[0];
-  const churchMatch = pathname.match(/^\/church\/([^/]+)/);
-  const onChurchId = churchMatch?.[1];
-  const onMyChurch = onChurchId ? churches.find((c) => c.id === onChurchId) : undefined;
-  const onRoom = pathname.startsWith("/rooms/");
-
   const close = () => setOpen(false);
-
-  const onLeave = async () => {
-    if (onRoom) {
-      close();
-      if (home) navigate({ to: "/church/$id", params: { id: home.id } });
-      else navigate({ to: "/" });
-      return;
-    }
-    if (!onMyChurch) return;
-    if (!window.confirm(t("Leave this church? It will be removed from your profile."))) return;
-    try {
-      await leave({ data: { churchId: onMyChurch.id } });
-      await qc.invalidateQueries();
-      toast.success(t("You left this church."));
-      close();
-      navigate({ to: "/explore" });
-    } catch {
-      toast.error(t("Something went wrong. Please try again."));
-    }
-  };
-
-  const showContext = Boolean(onMyChurch) || onRoom;
 
   const actions = (
     <div className="flex flex-col gap-1">
@@ -78,16 +51,6 @@ export function ChurchMenu() {
         <Search className="size-4" aria-hidden="true" />
         {t("Search other churches & rooms")}
       </Link>
-      {showContext && (
-        <button
-          type="button"
-          onClick={onLeave}
-          className="flex items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-rose hover:bg-ink"
-        >
-          <LogOut className="size-4" aria-hidden="true" />
-          {onRoom ? t("Leave this room") : t("Leave this church")}
-        </button>
-      )}
     </div>
   );
 
@@ -103,7 +66,6 @@ export function ChurchMenu() {
         </button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-72 border-mist/30 bg-ink-soft p-2 text-sand">
-        {showContext && <div className="mb-2 border-b border-mist/20 pb-2">{actions}</div>}
 
         <p className="px-3 pt-1 text-xs font-bold uppercase tracking-wide text-mist">
           {t("Your home")}
@@ -152,7 +114,7 @@ export function ChurchMenu() {
           ))}
         </div>
 
-        {!showContext && <div className="mt-2 border-t border-mist/20 pt-2">{actions}</div>}
+        <div className="mt-2 border-t border-mist/20 pt-2">{actions}</div>
       </PopoverContent>
     </Popover>
   );
