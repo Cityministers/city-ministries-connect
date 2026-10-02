@@ -11,3 +11,4 @@
 - [x] Church moderator role: church creator assigns moderators from the members list; approved prayers appear on the wall and map; moderators and pastors can hide or delete posted prayers
 - [x] Add Create Post, Ministries, and Needs controls above both maps
 - [x] Standardize ministry, need, and prayer action buttons across the site using the map color scheme, especially church pages
+- [ ] Church pages: enlarge and lighten small text
