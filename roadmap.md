@@ -16,4 +16,4 @@
 - [x] Let need owners confirm a met need, send optional personal thank-yous to people in its conversations, and reopen it later
 
 ## Open
-- Admin stats page: track new real posts and site activity (profiles created, churches added, etc.) — from Oct 2 message, not started.
+- Admin stats page: DONE — "Site activity" tab in Review Center with counts and latest-activity feed.
