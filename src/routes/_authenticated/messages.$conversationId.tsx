@@ -133,6 +133,7 @@ function ThreadPage() {
               }`}
             >
               {item.m.body}
+              <span className="mt-1 block text-right text-xs text-mist/45">{timeAgo(item.m.createdAt)}</span>
             </div>
             ),
           )

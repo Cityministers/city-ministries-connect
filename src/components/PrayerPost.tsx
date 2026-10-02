@@ -307,7 +307,10 @@ export function PrayerPost({
             <div className="flex flex-col gap-2">
               {(comments ?? []).map((c) => (
                 <div key={c.id} className="rounded-xl bg-ink px-3 py-2 ring-1 ring-mist/15">
-                  <p className="text-sm font-medium text-sand">{c.authorName}</p>
+                  <p className="text-sm font-medium text-sand">
+                    {c.authorName}
+                    <span className="ml-2 font-normal text-mist/50">{timeAgo(c.createdAt)}</span>
+                  </p>
                   <p className="text-base text-mist/80">{c.body}</p>
                 </div>
               ))}
