@@ -845,6 +845,35 @@ export type Database = {
         }
         Relationships: []
       }
+      room_memberships: {
+        Row: {
+          created_at: string
+          hidden: boolean
+          room_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          hidden?: boolean
+          room_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          hidden?: boolean
+          room_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "room_memberships_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       room_post_likes: {
         Row: {
           created_at: string
@@ -940,29 +969,35 @@ export type Database = {
       rooms: {
         Row: {
           created_at: string
+          created_by: string | null
           description: string
           icon: string
           id: string
           slug: string
           sort: number
+          status: string
           title: string
         }
         Insert: {
           created_at?: string
+          created_by?: string | null
           description?: string
           icon?: string
           id?: string
           slug: string
           sort?: number
+          status?: string
           title: string
         }
         Update: {
           created_at?: string
+          created_by?: string | null
           description?: string
           icon?: string
           id?: string
           slug?: string
           sort?: number
+          status?: string
           title?: string
         }
         Relationships: []
