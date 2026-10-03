@@ -98,6 +98,8 @@ function MapPage() {
   const [mode, setMode] = useState<"view" | "near" | "church" | "prayer" | "video">(
     freshMode === "prayer" || freshMode === "video" ? freshMode : "view",
   );
+  const [videoTab, setVideoTab] = useState<"all" | "near" | "downtown" | "zip">("all");
+  const [videoZip, setVideoZip] = useState("");
   const [bounds, setBounds] = useState<MapBounds | null>(null);
   const [pending, setPending] = useState<MapBounds | null>(null);
   const moved = mode === "view" && pending !== null && pending !== bounds;
@@ -164,11 +166,21 @@ function MapPage() {
   const { data: videos, refetch: refetchVideos } = useQuery({ queryKey: ["neighborhood-videos"], queryFn: () => fetchVideos() });
   const { data: myVideos, refetch: refetchMyVideos } = useQuery({ queryKey: ["my-neighborhood-videos", session?.user?.id], queryFn: () => fetchMyVideos(), enabled: !!session?.user?.id, retry: false });
   const pendingVideos = (myVideos ?? []).filter((v) => v.status !== "approved");
-  const visibleVideos = [...pendingVideos, ...(videos ?? [])];
-  const videoPoints = useMemo(() => (videos ?? []).map((v) => ({
+  const DOWNTOWN = { minLat: 45.505, maxLat: 45.54, minLng: -122.695, maxLng: -122.65 };
+  const videoMatchesTab = (v: { lat: number; lng: number; zip: string }) => {
+    if (videoTab === "all") return true;
+    if (videoTab === "downtown")
+      return v.lat >= DOWNTOWN.minLat && v.lat <= DOWNTOWN.maxLat && v.lng >= DOWNTOWN.minLng && v.lng <= DOWNTOWN.maxLng;
+    if (videoTab === "zip") return videoZip.trim().length > 0 && v.zip.startsWith(videoZip.trim());
+    // "near" — within ~15 miles of the visitor's home point
+    return milesBetween(origin, { lat: v.lat, lng: v.lng }) <= 15;
+  };
+  const visibleVideos = [...pendingVideos, ...(videos ?? [])].filter(videoMatchesTab);
+  const videoPoints = useMemo(() => (videos ?? []).filter(videoMatchesTab).map((v) => ({
     id: `video-${v.id}`, lat: v.lat, lng: v.lng, title: v.title,
     color: VIDEO_PIN_COLOR, glyph: iconMarkup(Video), highlight: highlightId === `video-${v.id}`,
-  })), [videos, highlightId]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  })), [videos, highlightId, videoTab, videoZip, origin]);
   const activeVideo = visibleVideos.find((v) => v.id === activeVideoId) ?? null;
 
   const allPoints = useMemo(
@@ -351,8 +363,12 @@ function MapPage() {
                     : "text-mist hover:text-sand"
                 }`}
               >
-                {m === "video" ? <Video className="size-5" aria-hidden="true" /> : m === "view"
-                  ? t("In this view")
+                {m === "video" ? (
+                  <span className={`grid size-6 place-items-center rounded-md ring-1 ${mode === "video" ? "ring-sand/70" : "ring-mist/40"}`}>
+                    <Video className="size-4" aria-hidden="true" strokeWidth={2.25} />
+                  </span>
+                ) : m === "view"
+                  ? t("All")
                   : m === "near"
                     ? t("Nearest")
                     : m === "church"
@@ -379,6 +395,35 @@ function MapPage() {
           </p>
         )}
 
+        {mode === "video" && (
+          <div className="mt-3 space-y-2">
+            <div className="flex flex-wrap rounded-full bg-ink-soft p-1 ring-1 ring-mist/15">
+              {(["all", "near", "downtown", "zip"] as const).map((vt) => (
+                <Button variant="ghost"
+                  key={vt}
+                  type="button"
+                  onClick={() => setVideoTab(vt)}
+                  className={`h-8 rounded-full px-3 py-1 text-xs font-semibold transition ${
+                    videoTab === vt
+                      ? "bg-ink text-sand ring-1 ring-mist/20"
+                      : "text-mist hover:text-sand"
+                  }`}
+                >
+                  {vt === "all" ? t("All") : vt === "near" ? t("Near me") : vt === "downtown" ? t("Downtown") : t("By ZIP")}
+                </Button>
+              ))}
+            </div>
+            {videoTab === "zip" && (
+              <input
+                value={videoZip}
+                onChange={(e) => setVideoZip(e.target.value.replace(/[^0-9]/g, "").slice(0, 5))}
+                placeholder={t("Enter a ZIP code")}
+                inputMode="numeric"
+                className="w-full rounded-xl bg-ink-soft px-3 py-2 text-sm text-sand ring-1 ring-mist/15 placeholder:text-mist/50 focus:outline-none focus:ring-mist/40"
+              />
+            )}
+          </div>
+        )}
         {mode === "video" && <NeighborhoodVideoForm userId={session?.user?.id ?? null} defaultPlace={location} onPosted={() => void refetchMyVideos()} />}
         {mode === "video" && <NeighborhoodVideoFeed videos={videos ?? []} pending={pendingVideos} onSelect={(id) => {
           setActiveVideoId(id);
