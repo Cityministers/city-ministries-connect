@@ -374,7 +374,7 @@ function MapPage() {
                     : m === "church"
                       ? t("Churches")
                       : t("Prayers")}
-              </Button>
+              </button>
             ))}
           </div>
           <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-mist/40">
@@ -410,7 +410,7 @@ function MapPage() {
                   }`}
                 >
                   {vt === "all" ? t("All") : vt === "near" ? t("Near me") : vt === "downtown" ? t("Downtown") : t("By ZIP")}
-                </Button>
+                </button>
               ))}
             </div>
             {videoTab === "zip" && (
