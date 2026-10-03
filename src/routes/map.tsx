@@ -98,6 +98,8 @@ function MapPage() {
   const [mode, setMode] = useState<"view" | "near" | "church" | "prayer" | "video">(
     freshMode === "prayer" || freshMode === "video" ? freshMode : "view",
   );
+  const [videoTab, setVideoTab] = useState<"all" | "near" | "downtown" | "zip">("all");
+  const [videoZip, setVideoZip] = useState("");
   const [bounds, setBounds] = useState<MapBounds | null>(null);
   const [pending, setPending] = useState<MapBounds | null>(null);
   const moved = mode === "view" && pending !== null && pending !== bounds;
