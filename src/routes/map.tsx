@@ -20,7 +20,7 @@ import { formatMiles, milesBetween } from "@/lib/distance";
 
 import { listChurches } from "@/lib/churches.functions";
 import { iconMarkup } from "@/lib/map-icon";
-import { PRAYER_PIN_COLOR } from "@/lib/map-tones";
+import { PRAYER_PIN_COLOR, VIDEO_PIN_COLOR } from "@/lib/map-tones";
 import { listUserMinistries } from "@/lib/ministries.functions";
 import { listPublicPrayers } from "@/lib/prayers.functions";
 import { listNeighborhoodVideos, listMyNeighborhoodVideos } from "@/lib/neighborhood-videos.functions";
