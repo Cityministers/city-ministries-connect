@@ -363,8 +363,12 @@ function MapPage() {
                     : "text-mist hover:text-sand"
                 }`}
               >
-                {m === "video" ? <Video className="size-5" aria-hidden="true" /> : m === "view"
-                  ? t("In this view")
+                {m === "video" ? (
+                  <span className={`grid size-6 place-items-center rounded-md ring-1 ${mode === "video" ? "ring-sand/70" : "ring-mist/40"}`}>
+                    <Video className="size-4" aria-hidden="true" strokeWidth={2.25} />
+                  </span>
+                ) : m === "view"
+                  ? t("All")
                   : m === "near"
                     ? t("Nearest")
                     : m === "church"
