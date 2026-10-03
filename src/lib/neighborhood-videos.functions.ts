@@ -32,7 +32,7 @@ async function decorate(rows: VideoRow[]): Promise<NeighborhoodVideo[]> {
   const ids = [...new Set(rows.map((r) => r.owner_id))];
   const { data: profiles } = await supabaseAdmin.from("profiles").select("id,display_name").in("id", ids);
   const names = new Map((profiles ?? []).map((p) => [p.id, p.display_name || "Member"]));
-  const paths = [...new Set(rows.flatMap((r) => [r.video_path, r.thumbnail_path].filter((p): p is string => !!p))];
+  const paths = [...new Set(rows.flatMap((r) => [r.video_path, r.thumbnail_path].filter((p): p is string => !!p)))];
   const { data: signed, error } = await supabaseAdmin.storage.from(bucket).createSignedUrls(paths, 3600);
   if (error) throw error;
   const urls = new Map((signed ?? []).filter((s) => s.signedUrl).map((s) => [s.path, s.signedUrl]));
