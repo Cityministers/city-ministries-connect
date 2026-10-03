@@ -15,6 +15,7 @@ const videoTypes = ["video/mp4", "video/quicktime", "video/webm", "video/x-m4v"]
 
 function VideoArtwork({ video }: { video: NeighborhoodVideo }) {
   return video.thumbnailUrl ? <img src={video.thumbnailUrl} alt="" loading="lazy" className="h-full w-full object-cover" /> : (
+    video.videoUrl ? <video src={video.videoUrl} muted playsInline preload="metadata" className="h-full w-full object-cover" /> :
     <span className="grid h-full w-full place-items-center bg-ink-soft"><Film className="size-12 text-lemon/70" aria-hidden="true" /></span>
   );
 }
