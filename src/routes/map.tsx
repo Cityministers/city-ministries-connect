@@ -351,7 +351,7 @@ function MapPage() {
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap rounded-full bg-ink-soft p-1 ring-1 ring-mist/15">
             {(["view", "near", "church", "prayer", "video"] as const).map((m) => (
-              <Button variant="ghost"
+              <button
                 key={m}
                 type="button"
                 onClick={() => setMode(m)}
@@ -360,7 +360,7 @@ function MapPage() {
                 className={`h-9 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
                   mode === m
                     ? "bg-ink text-sand ring-1 ring-mist/20"
-                    : "text-mist hover:text-sand"
+                    : "text-mist ring-1 ring-transparent hover:bg-mist/10 hover:text-sand"
                 }`}
               >
                 {m === "video" ? (
@@ -374,7 +374,7 @@ function MapPage() {
                     : m === "church"
                       ? t("Churches")
                       : t("Prayers")}
-              </Button>
+              </button>
             ))}
           </div>
           <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-mist/40">
@@ -399,18 +399,18 @@ function MapPage() {
           <div className="mt-3 space-y-2">
             <div className="flex flex-wrap rounded-full bg-ink-soft p-1 ring-1 ring-mist/15">
               {(["all", "near", "downtown", "zip"] as const).map((vt) => (
-                <Button variant="ghost"
+                <button
                   key={vt}
                   type="button"
                   onClick={() => setVideoTab(vt)}
                   className={`h-8 rounded-full px-3 py-1 text-xs font-semibold transition ${
                     videoTab === vt
                       ? "bg-ink text-sand ring-1 ring-mist/20"
-                      : "text-mist hover:text-sand"
+                      : "text-mist ring-1 ring-transparent hover:bg-mist/10 hover:text-sand"
                   }`}
                 >
                   {vt === "all" ? t("All") : vt === "near" ? t("Near me") : vt === "downtown" ? t("Downtown") : t("By ZIP")}
-                </Button>
+                </button>
               ))}
             </div>
             {videoTab === "zip" && (
