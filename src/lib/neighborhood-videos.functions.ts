@@ -11,7 +11,7 @@ export type NeighborhoodVideo = {
   city: string; zip: string; lat: number; lng: number; duration: number; status: string;
   createdAt: string; author: string; videoUrl: string | null; thumbnailUrl: string | null;
 };
-type VideoRow = Database["public"]["Tables"]["neighborhood_videos"]["Row"];
+type VideoRow = Omit<Database["public"]["Tables"]["neighborhood_videos"]["Row"], "updated_at">;
 
 function publicClient() {
   const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
