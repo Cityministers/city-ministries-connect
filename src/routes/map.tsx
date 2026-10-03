@@ -395,6 +395,35 @@ function MapPage() {
           </p>
         )}
 
+        {mode === "video" && (
+          <div className="mt-3 space-y-2">
+            <div className="flex flex-wrap rounded-full bg-ink-soft p-1 ring-1 ring-mist/15">
+              {(["all", "near", "downtown", "zip"] as const).map((vt) => (
+                <Button variant="ghost"
+                  key={vt}
+                  type="button"
+                  onClick={() => setVideoTab(vt)}
+                  className={`h-8 rounded-full px-3 py-1 text-xs font-semibold transition ${
+                    videoTab === vt
+                      ? "bg-ink text-sand ring-1 ring-mist/20"
+                      : "text-mist hover:text-sand"
+                  }`}
+                >
+                  {vt === "all" ? t("All") : vt === "near" ? t("Near me") : vt === "downtown" ? t("Downtown") : t("By ZIP")}
+                </Button>
+              ))}
+            </div>
+            {videoTab === "zip" && (
+              <input
+                value={videoZip}
+                onChange={(e) => setVideoZip(e.target.value.replace(/[^0-9]/g, "").slice(0, 5))}
+                placeholder={t("Enter a ZIP code")}
+                inputMode="numeric"
+                className="w-full rounded-xl bg-ink-soft px-3 py-2 text-sm text-sand ring-1 ring-mist/15 placeholder:text-mist/50 focus:outline-none focus:ring-mist/40"
+              />
+            )}
+          </div>
+        )}
         {mode === "video" && <NeighborhoodVideoForm userId={session?.user?.id ?? null} defaultPlace={location} onPosted={() => void refetchMyVideos()} />}
         {mode === "video" && <NeighborhoodVideoFeed videos={videos ?? []} pending={pendingVideos} onSelect={(id) => {
           setActiveVideoId(id);
