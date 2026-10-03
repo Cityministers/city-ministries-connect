@@ -11,3 +11,4 @@
 
 - Keep post-follow actions on post details and person-follow actions on authenticated member profile pages; this distinguishes content updates from author updates without duplicating follow controls.
 - Complete and reopen needs through authenticated owner-checked database functions; this keeps closure and selected conversation thank-you messages atomic and prevents unauthorized recipients.
+- Keep neighborhood video files private and expose approved videos through short-lived signed URLs; this prevents pending uploads from becoming public before review.

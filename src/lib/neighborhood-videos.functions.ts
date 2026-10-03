@@ -66,7 +66,7 @@ const submitSchema = z.object({
   videoPath: z.string().max(300), thumbnailPath: z.string().max(300).nullable(),
 });
 export const submitNeighborhoodVideo = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth]).inputValidator((input) => submitSchema.parse(input))
+  .middleware([requireSupabaseAuth]).validator((input) => submitSchema.parse(input))
   .handler(async ({ data, context }) => {
     const prefix = `${context.userId}/`;
     if (!data.videoPath.startsWith(prefix) || (data.thumbnailPath && !data.thumbnailPath.startsWith(prefix))) throw new Error("Invalid upload path.");
@@ -86,7 +86,7 @@ export const submitNeighborhoodVideo = createServerFn({ method: "POST" })
   });
 
 export const removeMyNeighborhoodVideo = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth]).inputValidator((input) => z.object({ id: z.string().uuid() }).parse(input))
+  .middleware([requireSupabaseAuth]).validator((input) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const { data: row } = await context.supabase.from("neighborhood_videos").select("video_path,thumbnail_path").eq("id", data.id).eq("owner_id", context.userId).maybeSingle();
     if (!row) throw new Error("Video not found.");
@@ -103,12 +103,12 @@ async function assertAdmin(context: { supabase: any; userId: string }) {
 export const listPendingNeighborhoodVideos = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth]).handler(async ({ context }) => {
     await assertAdmin(context);
-    const { data, error } = await context.supabase.from("neighborhood_videos").select(select).eq("status", "pending").order("created_at", { ascending: true }).limit(100);
+    const { data, error } = await context.supabase.from("neighborhood_videos").select(select).order("created_at", { ascending: false }).limit(100);
     if (error) throw error;
     return decorate(data ?? []);
   });
 export const moderateNeighborhoodVideo = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth]).inputValidator((input) => z.object({ id: z.string().uuid(), action: z.enum(["approve", "decline", "hide", "delete"]) }).parse(input))
+  .middleware([requireSupabaseAuth]).validator((input) => z.object({ id: z.string().uuid(), action: z.enum(["approve", "decline", "hide", "delete"]) }).parse(input))
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
     const { data: row } = await context.supabase.from("neighborhood_videos").select("owner_id,title,video_path,thumbnail_path,status").eq("id", data.id).maybeSingle();

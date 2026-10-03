@@ -167,7 +167,7 @@ function MapPage() {
   const visibleVideos = [...pendingVideos, ...(videos ?? [])];
   const videoPoints = useMemo(() => (videos ?? []).map((v) => ({
     id: `video-${v.id}`, lat: v.lat, lng: v.lng, title: v.title,
-    color: "#d6b65d", glyph: iconMarkup(Video), highlight: highlightId === `video-${v.id}`,
+    color: VIDEO_PIN_COLOR, glyph: iconMarkup(Video), highlight: highlightId === `video-${v.id}`,
   })), [videos, highlightId]);
   const activeVideo = visibleVideos.find((v) => v.id === activeVideoId) ?? null;
 
