@@ -148,6 +148,13 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
+        <script
+          // Recover from stale/failed module loads that happen before React's
+          // error boundary can mount (one reload per path per 30s).
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var re=/importing a module script failed|failed to fetch dynamically imported module|error loading dynamically imported module/i;function retry(){try{var k='module-retry:'+location.pathname;var l=Number(sessionStorage.getItem(k)||0);if(Date.now()-l<30000)return;sessionStorage.setItem(k,String(Date.now()));location.reload();}catch(e){}}window.addEventListener('vite:preloadError',function(e){e.preventDefault();retry();});window.addEventListener('unhandledrejection',function(e){var m=e&&e.reason&&(e.reason.message||String(e.reason));if(m&&re.test(m))retry();});window.addEventListener('error',function(e){if(e&&e.message&&re.test(e.message))retry();});})();`,
+          }}
+        />
         <HeadContent />
       </head>
       <body>
