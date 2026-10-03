@@ -166,11 +166,21 @@ function MapPage() {
   const { data: videos, refetch: refetchVideos } = useQuery({ queryKey: ["neighborhood-videos"], queryFn: () => fetchVideos() });
   const { data: myVideos, refetch: refetchMyVideos } = useQuery({ queryKey: ["my-neighborhood-videos", session?.user?.id], queryFn: () => fetchMyVideos(), enabled: !!session?.user?.id, retry: false });
   const pendingVideos = (myVideos ?? []).filter((v) => v.status !== "approved");
-  const visibleVideos = [...pendingVideos, ...(videos ?? [])];
-  const videoPoints = useMemo(() => (videos ?? []).map((v) => ({
+  const DOWNTOWN = { minLat: 45.505, maxLat: 45.54, minLng: -122.695, maxLng: -122.65 };
+  const videoMatchesTab = (v: { lat: number; lng: number; zip: string }) => {
+    if (videoTab === "all") return true;
+    if (videoTab === "downtown")
+      return v.lat >= DOWNTOWN.minLat && v.lat <= DOWNTOWN.maxLat && v.lng >= DOWNTOWN.minLng && v.lng <= DOWNTOWN.maxLng;
+    if (videoTab === "zip") return videoZip.trim().length > 0 && v.zip.startsWith(videoZip.trim());
+    // "near" — within ~15 miles of the visitor's home point
+    return milesBetween(origin, { lat: v.lat, lng: v.lng }) <= 15;
+  };
+  const visibleVideos = [...pendingVideos, ...(videos ?? [])].filter(videoMatchesTab);
+  const videoPoints = useMemo(() => (videos ?? []).filter(videoMatchesTab).map((v) => ({
     id: `video-${v.id}`, lat: v.lat, lng: v.lng, title: v.title,
     color: VIDEO_PIN_COLOR, glyph: iconMarkup(Video), highlight: highlightId === `video-${v.id}`,
-  })), [videos, highlightId]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  })), [videos, highlightId, videoTab, videoZip, origin]);
   const activeVideo = visibleVideos.find((v) => v.id === activeVideoId) ?? null;
 
   const allPoints = useMemo(
