@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { listPendingRoomPosts, moderateRoomPost } from "@/lib/room-posts.functions";
 import { PendingRoomsAdmin } from "@/components/rooms/PendingRoomsAdmin";
+import { NeighborhoodVideoReview } from "@/components/NeighborhoodVideoReview";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -88,7 +89,7 @@ function Pill({ value }: { value: string }) {
 
 function AdminPage() {
   const { t } = useTranslation();
-  const [tab, setTab] = useState<"stats" | "needs" | "rooms" | "churches" | "reports" | "feedback">("stats");
+  const [tab, setTab] = useState<"stats" | "needs" | "rooms" | "videos" | "churches" | "reports" | "feedback">("stats");
   const qc = useQueryClient();
   const fetchRoomPosts = useServerFn(listPendingRoomPosts);
   const moderateRoom = useServerFn(moderateRoomPost);
@@ -185,7 +186,7 @@ function AdminPage() {
         ) : (
           <>
             <div className="mb-6 flex flex-wrap gap-2">
-              {(["stats", "needs", "rooms", "churches", "reports", "feedback"] as const).map((tabItem) => (
+              {(["stats", "needs", "rooms", "videos", "churches", "reports", "feedback"] as const).map((tabItem) => (
                 <button
                   key={tabItem}
                   type="button"
@@ -202,6 +203,8 @@ function AdminPage() {
                       ? t("Posted needs")
                       : tabItem === "rooms"
                         ? t("Rooms")
+                        : tabItem === "videos"
+                          ? t("Videos")
                         : tabItem === "churches"
                           ? t("Churches")
                           : tabItem === "reports"
@@ -312,6 +315,8 @@ function AdminPage() {
                   ))
                 )}
               </section>
+            ) : tab === "videos" ? (
+              <NeighborhoodVideoReview />
             ) : tab === "churches" ? (
               <section className="space-y-3">
                 {churches.isLoading ? (

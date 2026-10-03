@@ -636,6 +636,60 @@ export type Database = {
           },
         ]
       }
+      neighborhood_videos: {
+        Row: {
+          city: string
+          created_at: string
+          description: string
+          duration_seconds: number
+          id: string
+          kind: string
+          lat: number
+          lng: number
+          owner_id: string
+          status: string
+          thumbnail_path: string | null
+          title: string
+          updated_at: string
+          video_path: string
+          zip: string
+        }
+        Insert: {
+          city?: string
+          created_at?: string
+          description?: string
+          duration_seconds: number
+          id?: string
+          kind: string
+          lat: number
+          lng: number
+          owner_id: string
+          status?: string
+          thumbnail_path?: string | null
+          title: string
+          updated_at?: string
+          video_path: string
+          zip?: string
+        }
+        Update: {
+          city?: string
+          created_at?: string
+          description?: string
+          duration_seconds?: number
+          id?: string
+          kind?: string
+          lat?: number
+          lng?: number
+          owner_id?: string
+          status?: string
+          thumbnail_path?: string | null
+          title?: string
+          updated_at?: string
+          video_path?: string
+          zip?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           body: string

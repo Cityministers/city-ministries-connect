@@ -14,6 +14,7 @@
 - [x] Church pages: enlarge and lighten small text
 - [x] Keep post-follow on ministry and need posts; move person-follow to each member's profile page
 - [x] Let need owners confirm a met need, send optional personal thank-yous to people in its conversations, and reopen it later
+- [x] Add neighborhood video pins and a short-video feed with member uploads and admin approval
 
 ## Open
 - Admin stats page: DONE — "Site activity" tab in Review Center with counts and latest-activity feed.
