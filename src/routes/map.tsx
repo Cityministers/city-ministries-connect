@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, HandHelping, List, Search } from "lucide-react";
+import { ArrowLeft, HandHelping, List, Search, Video } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AccountMenu } from "@/components/AccountMenu";
@@ -10,6 +10,7 @@ import { BrandLogo } from "@/components/BrandLogo";
 import { SiteNav } from "@/components/SiteNav";
 import { MinistryPost } from "@/components/MinistryPost";
 import { PrayerPost } from "@/components/PrayerPost";
+import { NeighborhoodVideoFeed, NeighborhoodVideoForm, NeighborhoodVideoViewer } from "@/components/NeighborhoodVideos";
 import { Button } from "@/components/ui/button";
 import { toneStyles } from "@/data/ministries";
 import { LiveMap, type MapBounds } from "@/components/LiveMap";
@@ -22,13 +23,14 @@ import { iconMarkup } from "@/lib/map-icon";
 import { PRAYER_PIN_COLOR } from "@/lib/map-tones";
 import { listUserMinistries } from "@/lib/ministries.functions";
 import { listPublicPrayers } from "@/lib/prayers.functions";
+import { listNeighborhoodVideos, listMyNeighborhoodVideos } from "@/lib/neighborhood-videos.functions";
 import { toMinistry } from "@/lib/user-ministries";
 import { useHomePoint, useMapPosts, usePlaceCenter } from "@/lib/use-map-view";
 
 export const Route = createFileRoute("/map")({
   validateSearch: (
     search: Record<string, unknown>,
-  ): { place?: string; new?: string; mode?: "prayer" } => {
+  ): { place?: string; new?: string; mode?: "prayer" | "video" } => {
     const raw = search["place"];
     const place = (
       typeof raw === "string" || typeof raw === "number" ? String(raw) : ""
@@ -37,7 +39,7 @@ export const Route = createFileRoute("/map")({
     return {
       ...(place.length > 0 ? { place } : {}),
       ...(fresh.length > 0 ? { new: fresh } : {}),
-      ...(search["mode"] === "prayer" ? { mode: "prayer" as const } : {}),
+      ...((search["mode"] === "prayer" || search["mode"] === "video") ? { mode: search["mode"] as "prayer" | "video" } : {}),
     };
   },
   head: () => ({
@@ -68,6 +70,7 @@ function MapPage() {
   const [location, setLocation] = useState(place ?? "Portland, OR 97209");
   const [activeId, setActiveId] = useState<string | null>(null);
   const [activePrayerId, setActivePrayerId] = useState<string | null>(null);
+  const [activeVideoId, setActiveVideoId] = useState<string | null>(null);
   const [highlightId, setHighlightId] = useState<string | null>(
     freshId
       ? freshId.startsWith("church-")
@@ -92,8 +95,8 @@ function MapPage() {
   const center = usePlaceCenter(location);
   const { origin, hasHome } = useHomePoint(Boolean(session), center);
 
-  const [mode, setMode] = useState<"view" | "near" | "church" | "prayer">(
-    freshMode === "prayer" ? "prayer" : "view",
+  const [mode, setMode] = useState<"view" | "near" | "church" | "prayer" | "video">(
+    freshMode === "prayer" || freshMode === "video" ? freshMode : "view",
   );
   const [bounds, setBounds] = useState<MapBounds | null>(null);
   const [pending, setPending] = useState<MapBounds | null>(null);
@@ -156,14 +159,28 @@ function MapPage() {
   );
   const activePrayer = (prayers ?? []).find((p) => p.id === activePrayerId);
 
+  const fetchVideos = useServerFn(listNeighborhoodVideos);
+  const fetchMyVideos = useServerFn(listMyNeighborhoodVideos);
+  const { data: videos, refetch: refetchVideos } = useQuery({ queryKey: ["neighborhood-videos"], queryFn: () => fetchVideos() });
+  const { data: myVideos, refetch: refetchMyVideos } = useQuery({ queryKey: ["my-neighborhood-videos", session?.user?.id], queryFn: () => fetchMyVideos(), enabled: !!session?.user?.id, retry: false });
+  const pendingVideos = (myVideos ?? []).filter((v) => v.status !== "approved");
+  const visibleVideos = [...pendingVideos, ...(videos ?? [])];
+  const videoPoints = useMemo(() => (videos ?? []).map((v) => ({
+    id: `video-${v.id}`, lat: v.lat, lng: v.lng, title: v.title,
+    color: "#d6b65d", glyph: iconMarkup(Video), highlight: highlightId === `video-${v.id}`,
+  })), [videos, highlightId]);
+  const activeVideo = visibleVideos.find((v) => v.id === activeVideoId) ?? null;
+
   const allPoints = useMemo(
     () =>
       mode === "church"
         ? churchPoints
+        : mode === "video"
+          ? videoPoints
         : mode === "prayer"
           ? prayerPoints
           : [...points, ...churchPoints],
-    [points, churchPoints, prayerPoints, mode],
+    [points, churchPoints, prayerPoints, videoPoints, mode],
   );
 
   /** Churches with a distance from home, nearest first. */
@@ -191,6 +208,11 @@ function MapPage() {
     }
     if (id.startsWith("prayer-")) {
       setActivePrayerId(id.slice("prayer-".length));
+      if (id !== highlightId) setHighlightId(null);
+      return;
+    }
+    if (id.startsWith("video-")) {
+      setActiveVideoId(id.slice("video-".length));
       if (id !== highlightId) setHighlightId(null);
       return;
     }
@@ -316,25 +338,27 @@ function MapPage() {
 
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap rounded-full bg-ink-soft p-1 ring-1 ring-mist/15">
-            {(["view", "near", "church", "prayer"] as const).map((m) => (
-              <button
+            {(["view", "near", "church", "prayer", "video"] as const).map((m) => (
+              <Button variant="ghost"
                 key={m}
                 type="button"
                 onClick={() => setMode(m)}
-                className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                aria-label={m === "video" ? "Videos" : undefined}
+                title={m === "video" ? "Videos" : undefined}
+                className={`h-9 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
                   mode === m
                     ? "bg-ink text-sand ring-1 ring-mist/20"
                     : "text-mist hover:text-sand"
                 }`}
               >
-                {m === "view"
+                {m === "video" ? <Video className="size-5" aria-hidden="true" /> : m === "view"
                   ? t("In this view")
                   : m === "near"
                     ? t("Nearest")
                     : m === "church"
                       ? t("Churches")
                       : t("Prayers")}
-              </button>
+              </Button>
             ))}
           </div>
           <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-mist/40">
@@ -342,6 +366,8 @@ function MapPage() {
               ? t("{{count}} churches", { count: churchList.length })
               : mode === "prayer"
                 ? t("{{count}} prayers", { count: prayerPoints.length })
+                : mode === "video"
+                  ? `${videos?.length ?? 0} videos`
                 : t("{{count}} nearby", { count: list.length + (mode === "near" ? churchList.length : 0) })}
           </p>
         </div>
@@ -353,6 +379,11 @@ function MapPage() {
           </p>
         )}
 
+        {mode === "video" && <NeighborhoodVideoForm userId={session?.user?.id ?? null} defaultPlace={location} onPosted={() => void refetchMyVideos()} />}
+        {mode === "video" && <NeighborhoodVideoFeed videos={videos ?? []} pending={pendingVideos} onSelect={(id) => {
+          setActiveVideoId(id);
+          if (`video-${id}` !== highlightId) setHighlightId(null);
+        }} onRemoved={() => { void refetchMyVideos(); void refetchVideos(); }} />}
         <ul className="mt-3 space-y-2">
           {mode === "prayer" &&
             (prayers ?? []).map((p) => (
@@ -381,7 +412,7 @@ function MapPage() {
                 </button>
               </li>
             ))}
-          {mode !== "church" && mode !== "prayer" &&
+          {mode !== "church" && mode !== "prayer" && mode !== "video" &&
             list.map(({ post: m, distance }) => (
             <li key={m.id}>
               <button
@@ -455,7 +486,7 @@ function MapPage() {
                 </li>
               );
             })}
-          {(mode === "church"
+          {(mode === "video" ? false : mode === "church"
             ? churchList.length === 0
             : mode === "prayer"
               ? (prayers ?? []).length === 0
@@ -492,6 +523,7 @@ function MapPage() {
             onRemoved={() => void refetchPrayers()}
           />
         )}
+        <NeighborhoodVideoViewer video={activeVideo} onClose={() => setActiveVideoId(null)} />
       </main>
 
       {/* CTA */}
