@@ -50,7 +50,7 @@ function ManageRoomsPage() {
       const { data } = await supabase
         .from("rooms")
         .select("id, slug, title, icon, status, created_by, category, in_default_feed")
-        .order("sort");
+        .order("pinned", { ascending: false }).order("sort");
       return (data ?? []) as RoomRow[];
     },
   });
