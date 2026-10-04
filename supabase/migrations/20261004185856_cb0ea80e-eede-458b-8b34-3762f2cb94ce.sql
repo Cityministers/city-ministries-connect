@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.alert_admin_activity() FROM PUBLIC, anon, authenticated;
