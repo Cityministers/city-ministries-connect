@@ -43,7 +43,7 @@ import {
 import { getSiteStats, type RecentItem } from "@/lib/admin-stats.functions";
 import { timeAgo } from "@/lib/time-ago";
 
-export const Route = createFileRoute("/_authenticated/admin")({
+export const Route = createFileRoute("/_authenticated/cms")({
   head: () => ({
     meta: [
       { title: "Review Center — City Ministers" },

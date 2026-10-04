@@ -31,6 +31,7 @@ import { Route as StartRouteImport } from './routes/start'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedAddChurchRouteImport } from './routes/_authenticated/add-church'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedCmsRouteImport } from './routes/_authenticated/cms'
 import { Route as AuthenticatedCreateMinistryRouteImport } from './routes/_authenticated/create-ministry'
 import { Route as AuthenticatedMeetupsRouteImport } from './routes/_authenticated/meetups'
 import { Route as AuthenticatedPostNeedRouteImport } from './routes/_authenticated/post-need'
@@ -160,6 +161,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedCmsRoute = AuthenticatedCmsRouteImport.update({
+  id: '/cms',
+  path: '/cms',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedCreateMinistryRoute =
   AuthenticatedCreateMinistryRouteImport.update({
     id: '/create-ministry',
@@ -283,6 +289,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/add-church': typeof AuthenticatedAddChurchRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/cms': typeof AuthenticatedCmsRoute
   '/create-ministry': typeof AuthenticatedCreateMinistryRoute
   '/meetups': typeof AuthenticatedMeetupsRoute
   '/post-need': typeof AuthenticatedPostNeedRoute
@@ -325,6 +332,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/add-church': typeof AuthenticatedAddChurchRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/cms': typeof AuthenticatedCmsRoute
   '/create-ministry': typeof AuthenticatedCreateMinistryRoute
   '/meetups': typeof AuthenticatedMeetupsRoute
   '/post-need': typeof AuthenticatedPostNeedRoute
@@ -369,6 +377,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/_authenticated/add-church': typeof AuthenticatedAddChurchRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/cms': typeof AuthenticatedCmsRoute
   '/_authenticated/create-ministry': typeof AuthenticatedCreateMinistryRoute
   '/_authenticated/meetups': typeof AuthenticatedMeetupsRoute
   '/_authenticated/post-need': typeof AuthenticatedPostNeedRoute
@@ -413,6 +422,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/add-church'
     | '/admin'
+    | '/cms'
     | '/create-ministry'
     | '/meetups'
     | '/post-need'
@@ -455,6 +465,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/add-church'
     | '/admin'
+    | '/cms'
     | '/create-ministry'
     | '/meetups'
     | '/post-need'
@@ -498,6 +509,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/_authenticated/add-church'
     | '/_authenticated/admin'
+    | '/_authenticated/cms'
     | '/_authenticated/create-ministry'
     | '/_authenticated/meetups'
     | '/_authenticated/post-need'
@@ -705,6 +717,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/cms': {
+      id: '/_authenticated/cms'
+      path: '/cms'
+      fullPath: '/cms'
+      preLoaderRoute: typeof AuthenticatedCmsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/create-ministry': {
       id: '/_authenticated/create-ministry'
       path: '/create-ministry'
@@ -844,6 +863,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAddChurchRoute: typeof AuthenticatedAddChurchRoute
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedCmsRoute: typeof AuthenticatedCmsRoute
   AuthenticatedCreateMinistryRoute: typeof AuthenticatedCreateMinistryRoute
   AuthenticatedMeetupsRoute: typeof AuthenticatedMeetupsRoute
   AuthenticatedPostNeedRoute: typeof AuthenticatedPostNeedRoute
@@ -861,6 +881,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAddChurchRoute: AuthenticatedAddChurchRoute,
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedCmsRoute: AuthenticatedCmsRoute,
   AuthenticatedCreateMinistryRoute: AuthenticatedCreateMinistryRoute,
   AuthenticatedMeetupsRoute: AuthenticatedMeetupsRoute,
   AuthenticatedPostNeedRoute: AuthenticatedPostNeedRoute,
