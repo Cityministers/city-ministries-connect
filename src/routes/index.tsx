@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { HandHeart, HeartHandshake, MapPin, MessageCircle, Sparkles } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useSiteText } from "@/lib/site-text";
 import { AccountMenu } from "@/components/AccountMenu";
 import { ChurchMenu } from "@/components/ChurchMenu";
 import { LanguagePicker } from "@/components/LanguagePicker";
@@ -83,6 +84,7 @@ const sections = [
 
 function HomePage() {
   const { t } = useTranslation();
+  const st = useSiteText();
   return (
     <div className="flex min-h-dvh flex-col bg-ink font-body text-sand antialiased">
       <header className="border-b border-ink-soft bg-ink">
@@ -106,7 +108,7 @@ function HomePage() {
           {t("Ministry happens on your street.")}
         </h1>
         <p className="mt-4 text-xl leading-relaxed text-mist/85 sm:text-2xl">
-          {t("City Ministers is a neighborhood map of everyday ministry opportunities. People post their spiritual or practical gifts to share, or the needs they carry, then message each other directly to share the love of Christ — no committee, no building, just neighbors.")}
+          {st("home.tagline")}
         </p>
 
         <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
