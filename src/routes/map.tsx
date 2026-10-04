@@ -546,7 +546,7 @@ function MapPage() {
             ? churchList.length === 0
             : mode === "prayer"
               ? (prayers ?? []).length === 0
-              : list.length === 0 && churchList.length === 0)) && (
+              : list.length === 0 && churchList.length === 0) && (
             <li className="rounded-2xl bg-ink-soft p-4 text-center text-sm text-mist/70">
               {mode === "church"
                 ? t("No churches on the map yet.")
