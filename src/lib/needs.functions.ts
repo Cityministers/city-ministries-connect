@@ -176,7 +176,7 @@ export const createUserNeed = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => createInput.parse(data))
   .handler(async ({ data, context }) => {
     if (!validLocation(data.city, data.zip)) {
-      throw new Error("Enter the city or ZIP where you need help.");
+      throw new Error("Enter the city or postal code where you need help.");
     }
 
     const { data: userData } = await context.supabase.auth.getUser();
