@@ -71,6 +71,8 @@ export const toneStyles: Record<Tone, string> = {
 export type Ministry = {
   id: string;
   label: string;
+  /** One-sentence teaser shown under the ministry name on the homepage. */
+  tagline?: string;
   icon: LucideIcon;
   tone: Tone;
   description: string;
@@ -111,6 +113,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "coffee-chat",
     label: "Coffee Chat",
+    tagline: "A cup of coffee and someone willing to listen.",
     icon: Coffee,
     tone: "amber",
     description:
@@ -138,6 +141,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "volunteer-at-church",
     label: "Volunteer at Church",
+    tagline: "Lend your hands to the house of God.",
     icon: Church,
     tone: "emerald",
     description:
@@ -155,6 +159,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "lend-a-book",
     label: "Lend a Book",
+    tagline: "Pass on the book that changed you.",
     icon: BookOpen,
     tone: "blue",
     description:
@@ -171,6 +176,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "dine-out-in-public",
     label: "Dine-out in Public",
+    tagline: "Share a meal where life is visible.",
     icon: UtensilsCrossed,
     tone: "cyan",
     description:
@@ -188,6 +194,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "help-move-or-labor",
     label: "Help Move or Labor",
+    tagline: "Show up with strong hands and no invoice.",
     icon: Truck,
     tone: "orange",
     description:
@@ -204,6 +211,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "free-clothes",
     label: "Free Clothes",
+    tagline: "Good clothes, no price tag, no questions.",
     icon: Shirt,
     tone: "rose",
     description:
@@ -224,6 +232,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "dine-in-dinner-host",
     label: "Dine-In Dinner Host",
+    tagline: "Set one more place at your table.",
     icon: Home,
     tone: "cyan",
     description:
@@ -241,6 +250,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "clean-or-organize",
     label: "Clean or Organize",
+    tagline: "Give a tired home room to breathe.",
     icon: Sparkles,
     tone: "purple",
     description:
@@ -257,6 +267,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "a-local-ride",
     label: "A Local Ride",
+    tagline: "Be the way someone gets where they need to go.",
     icon: Car,
     tone: "cyan",
     description:
@@ -277,6 +288,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "blind-date",
     label: "Blind Date",
+    tagline: "Introduce two people who would click.",
     icon: Heart,
     tone: "rose",
     description:
@@ -293,6 +305,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "babysit",
     label: "Babysit",
+    tagline: "Give exhausted parents a night to themselves.",
     icon: Baby,
     tone: "amber",
     description:
@@ -309,6 +322,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "host-prayer-praise-event",
     label: "Host Prayer & Praise Event",
+    tagline: "Open a room for neighbors to seek God together.",
     icon: Music,
     tone: "orange",
     description:
@@ -326,6 +340,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "game-nite-or-play-date",
     label: "Game Nite or Play Date",
+    tagline: "Fun that makes room for faith.",
     icon: Gamepad2,
     tone: "amber",
     description:
@@ -342,6 +357,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "community-service",
     label: "Community Service",
+    tagline: "Love the block you live on.",
     icon: HandHeart,
     tone: "emerald",
     description:
