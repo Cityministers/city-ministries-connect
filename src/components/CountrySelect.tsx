@@ -7,8 +7,8 @@ export function CountrySelect({ value, onChange, className, compact = false }: {
   if (compact) {
     return (
       <label className={`relative inline-grid h-10 shrink-0 place-items-center rounded-full bg-ink text-sand ring-1 ring-mist/20 ${className ?? ""}`} title={t("Country")} style={{ width: "3.25rem" }}>
-        <span aria-hidden="true" className="pointer-events-none flex items-center gap-0.5 text-lg leading-none">
-          {countryFlag(value)}
+        <span aria-hidden="true" className="pointer-events-none flex items-center gap-0.5">
+          <span className="text-xs font-bold tracking-wide">{value}</span>
           <ChevronDown className="size-3 text-mist/60" />
         </span>
         <select required aria-label={t("Country")} value={value} onChange={(event) => onChange(event.target.value)} className="absolute inset-0 h-full w-full cursor-pointer appearance-none opacity-0">
