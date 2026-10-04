@@ -122,7 +122,7 @@ function ExplorePage() {
                   )}
                   <span className="min-w-0">
                     <span className="block truncate font-semibold text-sand">{c.name}</span>
-                    <span className="block text-sm text-mist">{[c.city, c.zip].filter(Boolean).join(" ")}</span>
+                    <span className="block truncate text-sm text-mist">{[c.city, c.zip].filter(Boolean).join(" ")}</span>
                   </span>
                 </Link>
               ))}
@@ -153,8 +153,8 @@ function ExplorePage() {
             const Icon = roomIconById(r.icon);
             return (
               <Link key={r.slug} to="/rooms/$slug" params={{ slug: r.slug }} className="flex items-center gap-3 rounded-xl border border-mist/35 bg-ink-soft px-4 py-3 font-semibold active:scale-[0.98]">
-                <Icon className="size-5 text-lemon" aria-hidden="true" />
-                {t(r.title)}
+                <Icon className="size-5 shrink-0 text-lemon" aria-hidden="true" />
+                <span className="min-w-0 truncate">{t(r.title)}</span>
               </Link>
             );
           })}
@@ -164,10 +164,10 @@ function ExplorePage() {
         <div className="mt-2 grid gap-2">
           {matches.map((c) => (
             <Link key={c.id} to="/church/$id" params={{ id: c.id }} className="flex items-center gap-3 rounded-xl border border-mist/35 bg-ink-soft px-4 py-3 active:scale-[0.98]">
-              <Church className="size-5 text-lemon" aria-hidden="true" />
+              <Church className="size-5 shrink-0 text-lemon" aria-hidden="true" />
               <span className="min-w-0">
                 <span className="block truncate font-semibold">{c.name}</span>
-                <span className="block text-sm text-mist">{[c.city, c.zip].filter(Boolean).join(" ")}</span>
+                <span className="block truncate text-sm text-mist">{[c.city, c.zip].filter(Boolean).join(" ")}</span>
               </span>
             </Link>
           ))}
