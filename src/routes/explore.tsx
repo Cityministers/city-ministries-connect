@@ -71,7 +71,7 @@ function ExplorePage() {
   const { data: allRooms = [] } = useQuery({
     queryKey: ["explore-rooms", userId ?? "anon"],
     queryFn: async (): Promise<RoomRow[]> => {
-      const { data } = await supabase.from("rooms").select("id, slug, title, icon, status, created_by, category, in_default_feed").order("sort");
+      const { data } = await supabase.from("rooms").select("id, slug, title, icon, status, created_by, category, in_default_feed").order("pinned", { ascending: false }).order("sort");
       return (data ?? []) as RoomRow[];
     },
   });
