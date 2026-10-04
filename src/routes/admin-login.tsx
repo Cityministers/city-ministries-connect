@@ -53,7 +53,7 @@ function AdminLoginPage() {
         setError("This account does not have admin access.");
         return;
       }
-      void navigate({ to: "/admin" });
+      void navigate({ to: "/cms" });
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {

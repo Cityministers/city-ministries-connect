@@ -42,17 +42,18 @@ import {
 } from "@/lib/feedback-reply.functions";
 import { getSiteStats, type RecentItem } from "@/lib/admin-stats.functions";
 import { timeAgo } from "@/lib/time-ago";
+import { CmsChurchEdit, CmsPostsPanel, CmsRoomsPanel, CmsSiteTextPanel, CmsUsersPanel } from "@/components/cms/CmsPanels";
 
 export const Route = createFileRoute("/_authenticated/cms")({
   head: () => ({
     meta: [
-      { title: "Review Center — City Ministers" },
+      { title: "CMS — City Ministers" },
       {
         name: "description",
         content:
           "Admin review center for City Ministers: approve or remove posted needs and work through abuse reports.",
       },
-      { property: "og:title", content: "Review Center — City Ministers" },
+      { property: "og:title", content: "CMS — City Ministers" },
       {
         property: "og:description",
         content: "Approve or remove posted needs and handle abuse reports.",
@@ -87,9 +88,24 @@ function Pill({ value }: { value: string }) {
   );
 }
 
+type CmsTab = "stats" | "users" | "posts" | "needs" | "rooms" | "videos" | "churches" | "content" | "reports" | "feedback";
+const CMS_TABS: CmsTab[] = ["stats", "users", "posts", "needs", "rooms", "videos", "churches", "content", "reports", "feedback"];
+const TAB_LABELS: Record<CmsTab, string> = {
+  stats: "Dashboard",
+  users: "Users & roles",
+  posts: "All posts",
+  needs: "Posted needs",
+  rooms: "Rooms",
+  videos: "Videos",
+  churches: "Churches",
+  content: "Site text",
+  reports: "Abuse reports",
+  feedback: "Feedback",
+};
+
 function AdminPage() {
   const { t } = useTranslation();
-  const [tab, setTab] = useState<"stats" | "needs" | "rooms" | "videos" | "churches" | "reports" | "feedback">("stats");
+  const [tab, setTab] = useState<CmsTab>("stats");
   const qc = useQueryClient();
   const fetchRoomPosts = useServerFn(listPendingRoomPosts);
   const moderateRoom = useServerFn(moderateRoomPost);
@@ -173,7 +189,7 @@ function AdminPage() {
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
           </Link>
-          <h1 className="font-display text-lg font-semibold sm:text-xl">{t("Review Center")}</h1>
+          <h1 className="font-display text-lg font-semibold sm:text-xl">{t("CMS")}</h1>
         </div>
       </header>
 
@@ -186,7 +202,7 @@ function AdminPage() {
         ) : (
           <>
             <div className="mb-6 flex flex-wrap gap-2">
-              {(["stats", "needs", "rooms", "videos", "churches", "reports", "feedback"] as const).map((tabItem) => (
+              {CMS_TABS.map((tabItem) => (
                 <button
                   key={tabItem}
                   type="button"
@@ -197,19 +213,7 @@ function AdminPage() {
                       : "bg-ink-soft/50 text-mist ring-1 ring-mist/20 hover:bg-ink-soft"
                   }`}
                 >
-                  {tabItem === "stats"
-                    ? t("Activity")
-                    : tabItem === "needs"
-                      ? t("Posted needs")
-                      : tabItem === "rooms"
-                        ? t("Rooms")
-                        : tabItem === "videos"
-                          ? t("Videos")
-                        : tabItem === "churches"
-                          ? t("Churches")
-                          : tabItem === "reports"
-                            ? t("Abuse reports")
-                            : t("Feedback")}
+                  {t(TAB_LABELS[tabItem])}
                   {tabItem === "reports" && (reports.data?.filter((r) => r.status === "new").length ?? 0) > 0
                     ? ` (${reports.data?.filter((r) => r.status === "new").length})`
                     : ""}
@@ -218,7 +222,13 @@ function AdminPage() {
               ))}
             </div>
 
-            {tab === "stats" ? (
+            {tab === "users" ? (
+              <CmsUsersPanel />
+            ) : tab === "posts" ? (
+              <CmsPostsPanel />
+            ) : tab === "content" ? (
+              <CmsSiteTextPanel />
+            ) : tab === "stats" ? (
               <StatsTab
                 data={siteStats.data}
                 loading={siteStats.isLoading}
@@ -286,6 +296,8 @@ function AdminPage() {
             ) : tab === "rooms" ? (
               <section className="space-y-3">
                 <PendingRoomsAdmin />
+                <CmsRoomsPanel />
+                <h3 className="pt-4 text-sm font-bold uppercase tracking-wide text-mist">{t("Room posts waiting")}</h3>
                 {roomPosts.isLoading ? (
                   <p className="text-mist/70">{t("Loading…")}</p>
                 ) : (roomPosts.data?.length ?? 0) === 0 ? (
@@ -325,8 +337,8 @@ function AdminPage() {
                   <p className="text-mist/70">{t("No churches have signed up yet.")}</p>
                 ) : (
                   churches.data!.map((c) => (
+                    <div key={c.id} className="space-y-2">
                     <ChurchCard
-                      key={c.id}
                       church={c}
                       pending={
                         payMutation.isPending ||
@@ -337,6 +349,8 @@ function AdminPage() {
                       onStatus={(status) => churchStatusMutation.mutate({ churchId: c.id, status })}
                       onDelete={() => churchDeleteMutation.mutate({ churchId: c.id })}
                     />
+                    <CmsChurchEdit church={c} />
+                    </div>
                   ))
                 )}
               </section>
