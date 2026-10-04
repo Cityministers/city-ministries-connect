@@ -32,8 +32,9 @@ export const cmsListUsers = createServerFn({ method: "GET" })
   .inputValidator((d: { q?: string }) => z.object({ q: z.string().max(100).optional() }).parse(d ?? {}))
   .handler(async ({ data, context }): Promise<CmsUser[]> => {
     const admin = await assertAdmin(context);
-    const { data: list, error } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
+    const { data: authRows, error } = await admin.rpc("cms_user_emails");
     if (error) throw new Error(error.message);
+    const list = { users: (authRows ?? []) as { id: string; email: string; created_at: string }[] };
     const ids = list.users.map((u: any) => u.id);
     const [{ data: profiles }, { data: roles }] = await Promise.all([
       admin.from("profiles").select("id, display_name, suspended_at, is_demo").in("id", ids),
