@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Heart } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useSiteText } from "@/lib/site-text";
 
 export const Route = createFileRoute("/donate")({
   head: () => ({
@@ -26,6 +27,7 @@ export const Route = createFileRoute("/donate")({
 
 function DonatePage() {
   const { t } = useTranslation();
+  const st = useSiteText();
   return (
     <div className="flex min-h-dvh flex-col bg-ink font-body text-sand antialiased">
       <header className="border-b border-ink-soft bg-ink-soft/70">
@@ -47,10 +49,10 @@ function DonatePage() {
             <Heart className="size-8" aria-hidden="true" />
           </div>
           <h2 className="font-display text-2xl font-semibold sm:text-3xl">
-            {t("Help us keep serving")}
+            {st("donate.heading")}
           </h2>
           <p className="mt-3 text-base text-mist/80 sm:text-lg">
-            {t("City Ministers is built to connect neighbors for free. Your donation keeps the lights on and the map growing.")}
+            {st("donate.intro")}
           </p>
         </div>
 
