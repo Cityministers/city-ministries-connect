@@ -286,7 +286,7 @@ function MapPage() {
                 placeholder={t("City or postal code")}
                 aria-label={t("Search by city or postal code")}
               />
-              <span className="shrink-0 text-[10px] font-medium uppercase tracking-[0.15em] text-mist/40">
+              <span className="hidden shrink-0 text-[10px] font-medium uppercase tracking-[0.15em] text-mist/40 sm:inline">
                 {t("postal or city")}
               </span>
             </form>

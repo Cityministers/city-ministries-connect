@@ -171,7 +171,7 @@ function NeedsPage() {
                 placeholder={t("City or postal code")}
                 aria-label={t("Search by city or postal code")}
               />
-              <span className="shrink-0 text-[10px] font-bold uppercase tracking-widest text-mist/60">
+              <span className="hidden shrink-0 text-[10px] font-bold uppercase tracking-widest text-mist/60 sm:inline">
                 {t("Postal or city")}
               </span>
             </div>
