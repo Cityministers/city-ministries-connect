@@ -7,4 +7,6 @@ export const countrySchema = z.string().trim().toUpperCase().refine((code) => co
 export const postalSchema = z.string().trim().max(20).refine((value) => !value || /^[\p{L}\p{N}][\p{L}\p{N} -]*$/u.test(value), "Enter a valid postal code.");
 export const validLocation = (city: string, zip: string) => city.trim().length >= 2 || zip.trim().length >= 3;
 export const countryName = (code: string) => countryOptions.find((item) => item.code === code)?.name ?? "United States";
+const flagsByCode = new Map(countries.map((country) => [country.cca2, country.flag]));
+export const countryFlag = (code: string) => flagsByCode.get(code) ?? "🌐";
 export const placeLabel = (city: string, zip: string, country: string) => [city, zip, countryName(country)].filter(Boolean).join(", ");
