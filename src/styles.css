@@ -26,6 +26,9 @@
   --color-parchment: oklch(0.92 0.03 85); /* soft warm cream #F2E6DF */
   --color-prayer: oklch(0.82 0.06 265); /* prayer requests, light periwinkle for text/icons */
   --color-prayer-deep: oklch(0.34 0.045 265); /* midnight slate fill for prayer buttons */
+  --color-video: oklch(0.645 0.246 16.4); /* ruby glow for the map video tab */
+  --color-video-light: oklch(0.712 0.194 13.4); /* ruby icon outline */
+  --color-video-deep: oklch(0.27 0.105 12); /* dark ruby pill fill */
 
   /* Ministry icon tones (match uploaded icon set) */
   --color-tone-rose: oklch(0.68 0.17 15);
@@ -246,6 +249,10 @@
 
 @utility map-fade {
   animation: map-fade 1.1s ease-out both;
+}
+
+@utility video-glow {
+  box-shadow: 0 0 20px -5px color-mix(in oklab, var(--color-video) 45%, transparent);
 }
 
 @utility scrollbar-hide {
