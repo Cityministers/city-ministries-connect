@@ -3,12 +3,14 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import {
   ArrowLeft,
+  HandHelping,
   List,
   Map as MapIcon,
   MapPin,
   MessageCircle,
   Search,
   ThumbsUp,
+  Video,
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -251,6 +253,36 @@ function NeedsPage() {
                   {t("Search this area")}
                 </button>
               )}
+            </div>
+            <div className="mt-3 grid w-full grid-cols-3 gap-2" aria-label={t("Map layers")}>
+              <Button
+                asChild
+                className="h-10 rounded-full bg-lemon/15 px-2 text-sm font-semibold text-sand shadow-none ring-1 ring-lemon/45 transition hover:bg-lemon/25 sm:px-5"
+              >
+                <Link to="/map" search={{ ...(placeQuery ? { place: placeQuery } : {}), mode: "church" }}>
+                  {t("Churches")}
+                </Link>
+              </Button>
+              <Button
+                asChild
+                className="h-10 rounded-full bg-prayer/15 px-2 text-sm font-semibold text-sand shadow-none ring-1 ring-prayer/45 transition hover:bg-prayer/25 sm:px-5"
+              >
+                <Link to="/map" search={{ ...(placeQuery ? { place: placeQuery } : {}), mode: "prayer" }}>
+                  {t("Prayers")}
+                </Link>
+              </Button>
+              <Button
+                asChild
+                aria-label={t("Videos")}
+                title={t("Videos")}
+                className="grid h-10 place-items-center rounded-full bg-video-deep/50 px-2 text-sm font-semibold text-sand shadow-none ring-1 ring-video/40 transition hover:bg-video-deep/75 sm:px-5"
+              >
+                <Link to="/map" search={{ ...(placeQuery ? { place: placeQuery } : {}), mode: "video" }}>
+                  <span className="grid size-6 place-items-center rounded-md ring-1 ring-video-light/45">
+                    <Video className="size-4" aria-hidden="true" strokeWidth={2.25} />
+                  </span>
+                </Link>
+              </Button>
             </div>
             <p className="mt-3 text-center text-[10px] font-medium uppercase tracking-[0.2em] text-mist/40">
               {t("{{count}} needs in this view", { count: inViewList.length })}
