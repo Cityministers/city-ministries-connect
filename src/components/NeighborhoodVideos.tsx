@@ -101,7 +101,7 @@ async function inspectVideo(file: File): Promise<{ duration: number; thumbnail: 
   } finally { URL.revokeObjectURL(url); }
 }
 
-export function NeighborhoodVideoForm({ userId, defaultPlace, onPosted }: { userId: string | null; defaultPlace: string; onPosted: () => void }) {
+export function NeighborhoodVideoForm({ userId, defaultPlace, defaultCountry = "US", onPosted }: { userId: string | null; defaultPlace: string; defaultCountry?: string; onPosted: () => void }) {
   const submit = useServerFn(submitNeighborhoodVideo);
   const qc = useQueryClient();
   const fileInput = useRef<HTMLInputElement>(null);
@@ -112,7 +112,7 @@ export function NeighborhoodVideoForm({ userId, defaultPlace, onPosted }: { user
   const [description, setDescription] = useState("");
   const [city, setCity] = useState(defaultPlace.replace(/\b\d{4,6}\b/g, "").replace(/,?\s*(?:United States|US)$/i, "").replace(/,?\s*$/, "").trim());
   const [zip, setZip] = useState(defaultPlace.match(/\b\d{4,6}\b/)?.[0] ?? "");
-  const [country, setCountry] = useState("US");
+  const [country, setCountry] = useState(defaultCountry);
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [duration, setDuration] = useState(0);

@@ -440,7 +440,7 @@ function MapPage() {
             )}
           </div>
         )}
-        {mode === "video" && <NeighborhoodVideoForm userId={session?.user?.id ?? null} defaultPlace={location} onPosted={() => void refetchMyVideos()} />}
+        {mode === "video" && <NeighborhoodVideoForm userId={session?.user?.id ?? null} defaultPlace={location} defaultCountry={country} onPosted={() => void refetchMyVideos()} />}
         {mode === "video" && <NeighborhoodVideoFeed videos={visibleVideos.filter((v) => v.status === "approved")} pending={visibleVideos.filter((v) => v.status !== "approved")} onSelect={(id) => {
           setActiveVideoId(id);
           if (`video-${id}` !== highlightId) setHighlightId(null);
