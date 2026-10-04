@@ -191,7 +191,7 @@ function HomePage() {
                         {(ministryReflections[ministry.id] ?? []).map((p) => (
                           <p
                             key={p.slice(0, 32)}
-                            className="text-base leading-relaxed text-mist/80 sm:text-lg"
+                            className="text-base leading-relaxed text-mist/90 sm:text-lg"
                           >
                             {t(p)}
                           </p>
