@@ -359,9 +359,8 @@ function NeedsPage() {
               </li>
             ))}
           </ul>
-        )}
 
-        {!isMap && results.length === 0 && (
+        {(isMap ? inViewList : results).length === 0 && (
           <p className="py-16 text-center text-sm text-mist/75">
             {t("No needs posted in {{place}} yet.", { place: placeQuery || t("your area") })}
           </p>
