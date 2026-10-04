@@ -231,7 +231,7 @@ function NeedsPage() {
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 py-5 sm:px-6">
         {isMap ? (
           <>
-            <div className="relative -mx-4 sm:mx-0">
+            <div className="relative">
               <LiveMap
                 points={points}
                 center={mapCenter}
@@ -242,7 +242,7 @@ function NeedsPage() {
                   setBounds((prev) => prev ?? b);
                 }}
                 label={t("Needs map. Drag to explore other neighborhoods.")}
-                className="map-fade h-[70dvh] min-h-[360px] w-full rounded-none sm:rounded-2xl"
+                className="map-fade h-[60dvh] min-h-[320px] w-full"
               />
               {moved && (
                 <button
