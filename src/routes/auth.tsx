@@ -11,7 +11,9 @@ export const Route = createFileRoute("/auth")({
     const mode = search["mode"] === "signup" ? "signup" : undefined;
     const rawNext = search["next"];
     const next =
-      typeof rawNext === "string" && rawNext.startsWith("/") ? rawNext : undefined;
+      typeof rawNext === "string" && rawNext.startsWith("/") && !rawNext.startsWith("//")
+        ? rawNext.replace(/[?&]__lovable_[a-z_]+=[^&]*/g, "").replace(/^([^?]*)&/, "$1?")
+        : undefined;
     return { ...(mode ? { mode } : {}), ...(next ? { next } : {}) };
   },
   head: () => ({
@@ -39,7 +41,17 @@ function AuthPage() {
   const { mode, next } = Route.useSearch();
   const navigate = useNavigate();
   const [isSignUp, setIsSignUp] = useState(mode === "signup");
-  const [email, setEmail] = useState("");
+  const [email, setEmailState] = useState("");
+  const setEmail = (v: string) => {
+    setEmailState(v);
+    try { sessionStorage.setItem("cm-auth-email", v); } catch { /* ignore */ }
+  };
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem("cm-auth-email");
+      if (saved) setEmailState(saved);
+    } catch { /* ignore */ }
+  }, []);
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -204,7 +216,8 @@ function AuthPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               maxLength={255}
-              autoComplete="off"
+              autoComplete="email"
+              name="email"
             />
           </label>
           <label className="flex flex-col gap-2 text-lg text-sand sm:text-xl">
@@ -216,7 +229,8 @@ function AuthPage() {
               minLength={6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              autoComplete="off"
+              autoComplete={isSignUp ? "new-password" : "current-password"}
+              name="password"
             />
           </label>
 
