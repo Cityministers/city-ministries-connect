@@ -152,23 +152,30 @@ function HomePage() {
             {t("Ways to minister")}
           </h2>
 
-          <ul className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
+          <ul className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3">
             {ministries.map((ministry) => (
               <li key={ministry.id}>
                 <Dialog>
                   <DialogTrigger asChild>
                     <button
                       type="button"
-                      className="flex min-h-24 w-full cursor-pointer flex-col items-center justify-center gap-1 rounded-lg bg-ink-soft/55 px-1.5 py-1.5 text-center ring-1 ring-mist/15 transition hover:-translate-y-0.5 hover:bg-ink-soft hover:ring-mist/30"
+                      className="flex w-full items-center gap-3 rounded-xl bg-ink-soft/55 px-3 py-3 text-left ring-1 ring-mist/15 transition hover:-translate-y-0.5 hover:bg-ink-soft hover:ring-mist/30"
                       aria-label={t("Learn about {{label}}", { label: ministry.label })}
                     >
                       <span
-                        className={`grid size-15 place-items-center rounded-lg ring-1 ${toneStyles[ministry.tone]}`}
+                        className={`grid size-15 shrink-0 place-items-center rounded-lg ring-1 ${toneStyles[ministry.tone]}`}
                       >
                         <ministry.icon className="size-[30px]" aria-hidden="true" />
                       </span>
-                      <span className="text-base font-semibold leading-tight text-sand">
-                        {t(ministry.label)}
+                      <span className="flex min-w-0 flex-col gap-1">
+                        <span className="text-lg font-semibold leading-tight text-sand">
+                          {t(ministry.label)}
+                        </span>
+                        {ministry.tagline && (
+                          <span className="text-sm leading-snug text-mist/75">
+                            {t(ministry.tagline)}
+                          </span>
+                        )}
                       </span>
                     </button>
                   </DialogTrigger>

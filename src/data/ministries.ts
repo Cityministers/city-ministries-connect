@@ -71,6 +71,8 @@ export const toneStyles: Record<Tone, string> = {
 export type Ministry = {
   id: string;
   label: string;
+  /** One-sentence teaser shown under the ministry name on the homepage. */
+  tagline?: string;
   icon: LucideIcon;
   tone: Tone;
   description: string;
@@ -111,6 +113,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "coffee-chat",
     label: "Coffee Chat",
+    tagline: "A cup of coffee and someone willing to listen.",
     icon: Coffee,
     tone: "amber",
     description:
@@ -138,6 +141,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "volunteer-at-church",
     label: "Volunteer at Church",
+    tagline: "Lend your hands to the house of God.",
     icon: Church,
     tone: "emerald",
     description:
@@ -155,6 +159,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "lend-a-book",
     label: "Lend a Book",
+    tagline: "Pass on the book that changed you.",
     icon: BookOpen,
     tone: "blue",
     description:
@@ -171,6 +176,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "dine-out-in-public",
     label: "Dine-out in Public",
+    tagline: "Share a meal where life is visible.",
     icon: UtensilsCrossed,
     tone: "cyan",
     description:
@@ -188,6 +194,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "help-move-or-labor",
     label: "Help Move or Labor",
+    tagline: "Show up with strong hands and no invoice.",
     icon: Truck,
     tone: "orange",
     description:
@@ -204,6 +211,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "free-clothes",
     label: "Free Clothes",
+    tagline: "Good clothes, no price tag, no questions.",
     icon: Shirt,
     tone: "rose",
     description:
@@ -224,6 +232,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "dine-in-dinner-host",
     label: "Dine-In Dinner Host",
+    tagline: "Set one more place at your table.",
     icon: Home,
     tone: "cyan",
     description:
@@ -241,6 +250,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "clean-or-organize",
     label: "Clean or Organize",
+    tagline: "Give a tired home room to breathe.",
     icon: Sparkles,
     tone: "purple",
     description:
@@ -257,6 +267,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "a-local-ride",
     label: "A Local Ride",
+    tagline: "Be the way someone gets where they need to go.",
     icon: Car,
     tone: "cyan",
     description:
@@ -277,6 +288,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "blind-date",
     label: "Blind Date",
+    tagline: "Introduce two people who would click.",
     icon: Heart,
     tone: "rose",
     description:
@@ -293,6 +305,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "babysit",
     label: "Babysit",
+    tagline: "Give exhausted parents a night to themselves.",
     icon: Baby,
     tone: "amber",
     description:
@@ -309,6 +322,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "host-prayer-praise-event",
     label: "Host Prayer & Praise Event",
+    tagline: "Open a room for neighbors to seek God together.",
     icon: Music,
     tone: "orange",
     description:
@@ -326,6 +340,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "game-nite-or-play-date",
     label: "Game Nite or Play Date",
+    tagline: "Fun that makes room for faith.",
     icon: Gamepad2,
     tone: "amber",
     description:
@@ -342,6 +357,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "community-service",
     label: "Community Service",
+    tagline: "Love the block you live on.",
     icon: HandHeart,
     tone: "emerald",
     description:
@@ -358,6 +374,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "host-small-group-meeting",
     label: "Host Small Group Meeting",
+    tagline: "Open your door to a handful of neighbors.",
     icon: Users,
     tone: "indigo",
     description:
@@ -375,6 +392,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "fishing-or-camping",
     label: "Fishing or Camping",
+    tagline: "Talk with God on the water or by a fire.",
     icon: Fish,
     tone: "cyan",
     description:
@@ -391,6 +409,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "reach-out-to-hurting",
     label: "Reach Out to Lost, Lonely, or Hurt People",
+    tagline: "Notice the neighbor nobody notices.",
     icon: MessageCircle,
     tone: "blue",
     description:
@@ -407,6 +426,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "buy-or-give-food",
     label: "Buy or Give Food (not money)",
+    tagline: "Feed someone with your own hands.",
     icon: ShoppingBag,
     tone: "orange",
     description:
@@ -423,6 +443,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "romantic-double-date",
     label: "Romantic Double Date",
+    tagline: "Pair two people you actually trust.",
     icon: CalendarHeart,
     tone: "pink",
     description:
@@ -439,6 +460,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "pray-with-or-for-someone",
     label: "Pray With or For Someone",
+    tagline: "Say their name out loud before God.",
     icon: HandHelping,
     tone: "emerald",
     description:
@@ -456,6 +478,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "host-homeless-or-rehab-person",
     label: "Host a Homeless or Rehab Person",
+    tagline: "A bed, a meal, and no catch.",
     icon: Building2,
     tone: "indigo",
     description:
@@ -472,6 +495,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "intellectual-talks",
     label: "Intellectual Talks Over Wine or Beer",
+    tagline: "Ask the hard questions over a glass.",
     icon: Wine,
     tone: "purple",
     description:
@@ -488,6 +512,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "artistic-abilities",
     label: "Artistic Abilities",
+    tagline: "Make something that lifts someone else.",
     icon: Palette,
     tone: "pink",
     description:
@@ -504,6 +529,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "help-injured-or-handicap",
     label: "Help Injured or Handicap",
+    tagline: "Meet a body's limits with practical help.",
     icon: Accessibility,
     tone: "blue",
     description:
@@ -520,6 +546,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "write-an-inmate",
     label: "Write an Inmate",
+    tagline: "Letters to the people the world forgot.",
     icon: Mail,
     tone: "blue",
     description:
@@ -536,6 +563,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "help-with-handyman-services",
     label: "Help With Handyman Services",
+    tagline: "Fix what's broken for someone who can't.",
     icon: Wrench,
     tone: "emerald",
     description:
@@ -552,6 +580,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "open-to-requests",
     label: "Open to Requests",
+    tagline: "Tell me what you need and I'll come.",
     icon: HelpCircle,
     tone: "purple",
     description:
@@ -568,6 +597,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "free-haircuts",
     label: "Free Haircuts",
+    tagline: "A free haircut and a listening ear.",
     icon: Scissors,
     tone: "rose",
     description:
@@ -584,6 +614,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "walk-your-dog",
     label: "Walk Your Dog",
+    tagline: "Walk a dog, meet the neighbor on the porch.",
     icon: Dog,
     tone: "amber",
     description:
@@ -600,6 +631,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
   {
     id: "feed-chickens",
     label: "Feed Chickens",
+    tagline: "Watch a backyard flock while its owner is away.",
     icon: Bird,
     tone: "emerald",
     description:
