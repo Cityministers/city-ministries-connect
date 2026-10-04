@@ -30,7 +30,7 @@ import { useHomePoint, useMapPosts, usePlaceCenter } from "@/lib/use-map-view";
 export const Route = createFileRoute("/map")({
   validateSearch: (
     search: Record<string, unknown>,
-  ): { place?: string; new?: string; mode?: "prayer" | "video" } => {
+  ): { place?: string; new?: string; mode?: "church" | "prayer" | "video" } => {
     const raw = search["place"];
     const place = (
       typeof raw === "string" || typeof raw === "number" ? String(raw) : ""
@@ -39,7 +39,7 @@ export const Route = createFileRoute("/map")({
     return {
       ...(place.length > 0 ? { place } : {}),
       ...(fresh.length > 0 ? { new: fresh } : {}),
-      ...((search["mode"] === "prayer" || search["mode"] === "video") ? { mode: search["mode"] as "prayer" | "video" } : {}),
+      ...((search["mode"] === "church" || search["mode"] === "prayer" || search["mode"] === "video") ? { mode: search["mode"] as "church" | "prayer" | "video" } : {}),
     };
   },
   head: () => ({
@@ -96,13 +96,13 @@ function MapPage() {
   const { origin, hasHome } = useHomePoint(Boolean(session), center);
 
   const [mode, setMode] = useState<"view" | "church" | "prayer" | "video">(
-    freshMode === "prayer" || freshMode === "video" ? freshMode : "view",
+    freshMode === "church" || freshMode === "prayer" || freshMode === "video" ? freshMode : "view",
   );
   // Follow links like /map?mode=video even when the map is already open.
   const [seenMode, setSeenMode] = useState(freshMode);
   if (seenMode !== freshMode) {
     setSeenMode(freshMode);
-    if (freshMode === "prayer" || freshMode === "video") setMode(freshMode);
+    if (freshMode === "church" || freshMode === "prayer" || freshMode === "video") setMode(freshMode);
   }
   const [videoTab, setVideoTab] = useState<"all" | "near" | "downtown" | "zip">("all");
   const [videoZip, setVideoZip] = useState("");
