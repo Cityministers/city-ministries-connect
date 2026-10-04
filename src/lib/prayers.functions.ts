@@ -48,6 +48,7 @@ type Row = {
   body: string;
   city: string;
   zip: string | null;
+  country_code: string;
   lat: number | null;
   lng: number | null;
   anonymous: boolean;

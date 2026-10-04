@@ -3,6 +3,7 @@ export type ChildEntry = { name: string; age: string };
 export type ShapeAnswers = {
   city: string;
   zip: string;
+  country: string;
   firstName: string;
   ageRange: string;
   marital: string;
@@ -41,6 +42,7 @@ export type ShapeAnswers = {
 export const emptyAnswers: ShapeAnswers = {
   city: "",
   zip: "",
+  country: "US",
   firstName: "",
   ageRange: "",
   marital: "",

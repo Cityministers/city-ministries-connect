@@ -4,6 +4,7 @@ import { Check, HandHeart, HeartHandshake, Loader2, Pencil, RefreshCw, Trash2 } 
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
+import { countryOptions } from "@/lib/country";
 import { NeedMetDialog } from "@/components/profile/NeedMetDialog";
 import { reopenNeed } from "@/lib/need-completion.functions";
 import {
@@ -51,6 +52,7 @@ export function MyPostsTab() {
           description: String(form.get("description") ?? ""),
           city: String(form.get("city") ?? ""),
           zip: String(form.get("zip") ?? ""),
+          country: String(form.get("country") ?? "US"),
         },
       });
       setEditing(null);
@@ -200,6 +202,7 @@ export function MyPostsTab() {
                   className="rounded-xl bg-ink px-4 py-3 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
                   aria-label={t("Description")}
                 />
+                <label className="flex flex-col gap-1 text-sm text-mist">{t("Country")}<select name="country" defaultValue={post.country} className="rounded-xl bg-ink px-4 py-3 text-base text-sand ring-1 ring-mist/20">{countryOptions.map((item) => <option key={item.code} value={item.code}>{item.name}</option>)}</select></label>
                 <div className="flex gap-2">
                   <input
                     name="city"
@@ -212,9 +215,9 @@ export function MyPostsTab() {
                   <input
                     name="zip"
                     defaultValue={post.zip}
-                    maxLength={10}
+                    maxLength={20}
                     className="w-28 rounded-xl bg-ink px-4 py-3 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
-                    aria-label={t("ZIP")}
+                    aria-label={t("Postal code / ZIP")}
                     placeholder={t("ZIP")}
                   />
                 </div>

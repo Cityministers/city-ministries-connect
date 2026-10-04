@@ -20,6 +20,8 @@ import {
 import { Fragment, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { savedLanguage } from "@/lib/i18n";
+import { CountrySelect } from "@/components/CountrySelect";
+import { validLocation } from "@/lib/country";
 
 // The language the visitor is currently reading the app in; used so generated
 // ministry ideas and recommendation reasons come back in that language.
@@ -419,10 +421,10 @@ function ShapePage() {
 
       switch (current.id) {
         case "place": {
-          const zip = /\b\d{5}\b/.exec(text)?.[0] ?? prev.zip;
+          const zip = /\b\d{4,6}\b/.exec(text)?.[0] ?? prev.zip;
           const city = normalizeCity(
             text
-              .replace(/\b\d{5}\b/g, "")
+              .replace(/\b\d{4,6}\b/g, "")
               .replace(/[^A-Za-z\s.'-]/g, " ")
               .replace(/\b(i|we|live|in|serve|serving|the|city|of|my|zip|code|is|am)\b/gi, " ")
               .replace(/\s+/g, " ")
@@ -530,7 +532,7 @@ function ShapePage() {
   async function next() {
     setError(null);
     const latest = answersRef.current;
-    if (current.id === "place" && latest.city.trim().length < 2 && latest.zip.trim().length < 4) {
+    if (current.id === "place" && !validLocation(latest.city, latest.zip)) {
       setError(t("Record where you'll serve — say your city or ZIP code."));
       return;
     }
@@ -574,6 +576,7 @@ function ShapePage() {
           description: idea.description,
           city: answers.city,
           zip: answers.zip,
+          country: answers.country,
         },
       });
       setPosted((prev) => ({ ...prev, [index]: true }));
@@ -956,6 +959,7 @@ function ShapePage() {
         />
       ) : current.id === "place" ? (
         <div className="flex flex-col gap-4">
+          <CountrySelect value={answers.country} onChange={(value) => set("country", value)} className={inputClass} />
           <label className="flex flex-col gap-2 text-base text-mist/80">
             {t("City")}
             <input
@@ -966,13 +970,13 @@ function ShapePage() {
             />
           </label>
           <label className="flex flex-col gap-2 text-base text-mist/80">
-            {t("ZIP code")}
+            {t("Postal code / ZIP")}
             <input
               className={inputClass}
               value={answers.zip}
               onChange={(e) => set("zip", e.target.value)}
               placeholder={t("97006")}
-              inputMode="numeric"
+              inputMode="text"
             />
           </label>
         </div>
@@ -1253,7 +1257,7 @@ function FieldView({
               className={`${inputClass} w-24`}
               value={child.age}
               placeholder={t("Age")}
-              inputMode="numeric"
+              inputMode="text"
               onChange={(e) =>
                 set(
                   "children",

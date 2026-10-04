@@ -1,14 +1,15 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
+import { countrySchema, postalSchema, validLocation } from "./country";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
 
 const bucket = "neighborhood-videos";
-const select = "id,owner_id,kind,title,description,city,zip,lat,lng,video_path,thumbnail_path,duration_seconds,status,created_at" as const;
+const select = "id,owner_id,kind,title,description,city,zip,country_code,lat,lng,video_path,thumbnail_path,duration_seconds,status,created_at" as const;
 export type NeighborhoodVideo = {
   id: string; ownerId: string; kind: "tour" | "concern"; title: string; description: string;
-  city: string; zip: string; lat: number; lng: number; duration: number; status: string;
+  city: string; zip: string; country: string; lat: number; lng: number; duration: number; status: string;
   createdAt: string; author: string; videoUrl: string | null; thumbnailUrl: string | null;
 };
 type VideoRow = Omit<Database["public"]["Tables"]["neighborhood_videos"]["Row"], "updated_at">;
@@ -38,7 +39,7 @@ async function decorate(rows: VideoRow[]): Promise<NeighborhoodVideo[]> {
   const urls = new Map((signed ?? []).filter((s) => s.signedUrl).map((s) => [s.path, s.signedUrl]));
   return rows.map((r) => ({
     id: r.id, ownerId: r.owner_id, kind: r.kind as "tour" | "concern", title: r.title,
-    description: r.description, city: r.city, zip: r.zip, lat: r.lat, lng: r.lng,
+    description: r.description, city: r.city, zip: r.zip, country: r.country_code, lat: r.lat, lng: r.lng,
     duration: r.duration_seconds, status: r.status, createdAt: r.created_at,
     author: names.get(r.owner_id) ?? "Member", videoUrl: urls.get(r.video_path) ?? null,
     thumbnailUrl: r.thumbnail_path ? urls.get(r.thumbnail_path) ?? null : null,
@@ -61,7 +62,7 @@ export const listMyNeighborhoodVideos = createServerFn({ method: "GET" })
 const submitSchema = z.object({
   kind: z.enum(["tour", "concern"]), title: z.string().trim().min(3).max(120),
   description: z.string().trim().max(1200), city: z.string().trim().max(120),
-  zip: z.string().trim().max(20), location: z.string().trim().min(2).max(120),
+  zip: postalSchema, country: countrySchema.default("US"),
   duration: z.number().int().min(60).max(180),
   videoPath: z.string().max(300), thumbnailPath: z.string().max(300).nullable(),
 });
@@ -72,13 +73,14 @@ export const submitNeighborhoodVideo = createServerFn({ method: "POST" })
     if (!data.videoPath.startsWith(prefix) || (data.thumbnailPath && !data.thumbnailPath.startsWith(prefix))) throw new Error("Invalid upload path.");
     if (!/\.(mp4|mov|webm|m4v)$/i.test(data.videoPath) || (data.thumbnailPath && !/\.(jpg|jpeg|png|webp)$/i.test(data.thumbnailPath))) throw new Error("Invalid file type.");
     const { geocodeQuery } = await import("@/lib/geocode.server");
-    const place = await geocodeQuery(data.location);
+    if (!validLocation(data.city, data.zip)) throw new Error("Enter a city or postal code.");
+    const place = await geocodeQuery([data.city, data.zip].filter(Boolean).join(", "), data.country);
     if (!place) throw new Error("Please enter a city or ZIP we can find on the map.");
     const { data: files, error: fileError } = await context.supabase.storage.from(bucket).list(context.userId, { limit: 100, search: data.videoPath.slice(prefix.length) });
     if (fileError || !files?.some((f) => `${prefix}${f.name}` === data.videoPath && Number(f.metadata?.size ?? 0) <= 50 * 1024 * 1024)) throw new Error("Video upload wasn't found or is too large.");
     const { error } = await context.supabase.from("neighborhood_videos").insert({
       owner_id: context.userId, kind: data.kind, title: data.title, description: data.description,
-      city: data.city, zip: data.zip, lat: place.lat, lng: place.lng, duration_seconds: data.duration,
+      city: data.city, zip: data.zip, country_code: data.country, lat: place.lat, lng: place.lng, duration_seconds: data.duration,
       video_path: data.videoPath, thumbnail_path: data.thumbnailPath,
     });
     if (error) throw error;

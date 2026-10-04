@@ -1,4 +1,6 @@
 import { Link } from "@tanstack/react-router";
+import { CountrySelect } from "@/components/CountrySelect";
+import { validLocation } from "@/lib/country";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Film, Play, Trash2, Upload, Video, X } from "lucide-react";
@@ -108,7 +110,9 @@ export function NeighborhoodVideoForm({ userId, defaultPlace, onPosted }: { user
   const [kind, setKind] = useState<"tour" | "concern">("tour");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [location, setLocation] = useState(defaultPlace);
+  const [city, setCity] = useState(defaultPlace.replace(/\b\d{5}\b/g, "").trim());
+  const [zip, setZip] = useState(defaultPlace.match(/\b\d{5}\b/)?.[0] ?? "");
+  const [country, setCountry] = useState("US");
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [duration, setDuration] = useState(0);
@@ -130,8 +134,7 @@ export function NeighborhoodVideoForm({ userId, defaultPlace, onPosted }: { user
     setBusy(true);
     const uploaded: string[] = [];
     try {
-      const where = location.trim();
-      if (!where) throw new Error("Enter a city or ZIP code.");
+      if (!validLocation(city, zip)) throw new Error("Enter a city or postal code.");
       const ext = file.type === "video/quicktime" ? "mov" : file.type === "video/webm" ? "webm" : file.type === "video/x-m4v" ? "m4v" : "mp4";
       const base = `${userId}/${crypto.randomUUID()}`;
       const videoPath = `${base}.${ext}`;
@@ -144,7 +147,7 @@ export function NeighborhoodVideoForm({ userId, defaultPlace, onPosted }: { user
         const image = await supabase.storage.from("neighborhood-videos").upload(path, poster, { contentType: "image/jpeg" });
         if (!image.error) { thumbnailPath = path; uploaded.push(path); }
       }
-      await submit({ data: { kind, title, description, location: where, city: where, zip: /^\d{5}$/.test(where) ? where : "", duration, videoPath, thumbnailPath } });
+      await submit({ data: { kind, title, description, city: city.trim(), zip: zip.trim(), country, duration, videoPath, thumbnailPath } });
       clear(); setTitle(""); setDescription(""); setOpen(false); setThanks(true);
       onPosted(); void qc.invalidateQueries({ queryKey: ["neighborhood-videos"] });
     } catch (e) {
@@ -163,10 +166,12 @@ export function NeighborhoodVideoForm({ userId, defaultPlace, onPosted }: { user
           </div>
           <label className="block text-sm font-semibold text-sand">Title<input required minLength={3} maxLength={120} value={title} onChange={(e) => setTitle(e.target.value)} className="mt-1 w-full rounded-md border border-mist/30 bg-ink-soft p-3 text-base text-sand outline-none focus:border-lemon" /></label>
           <label className="block text-sm font-semibold text-sand">Description<textarea maxLength={1200} rows={3} value={description} onChange={(e) => setDescription(e.target.value)} className="mt-1 w-full resize-none rounded-md border border-mist/30 bg-ink-soft p-3 text-base text-sand outline-none focus:border-lemon" /></label>
-          <label className="block text-sm font-semibold text-sand">City or ZIP<input required maxLength={120} value={location} onChange={(e) => setLocation(e.target.value)} className="mt-1 w-full rounded-md border border-mist/30 bg-ink-soft p-3 text-base text-sand outline-none focus:border-lemon" /></label>
+          <CountrySelect value={country} onChange={setCountry} className="w-full rounded-md border border-mist/30 bg-ink-soft p-3 text-base text-sand" />
+          <label className="block text-sm font-semibold text-sand">City<input maxLength={120} value={city} onChange={(e) => setCity(e.target.value)} className="mt-1 w-full rounded-md border border-mist/30 bg-ink-soft p-3 text-base text-sand" /></label>
+          <label className="block text-sm font-semibold text-sand">Postal code / ZIP<input maxLength={20} value={zip} onChange={(e) => setZip(e.target.value)} className="mt-1 w-full rounded-md border border-mist/30 bg-ink-soft p-3 text-base text-sand" /></label>
           <input ref={fileInput} type="file" accept="video/mp4,video/quicktime,video/webm,video/x-m4v" className="hidden" onChange={(e) => void choose(e.target.files?.[0])} />
           {preview ? <div className="relative"><video src={preview} controls playsInline preload="metadata" className="max-h-64 w-full rounded-md bg-ink-soft object-contain" /><Button type="button" size="icon" variant="secondary" title="Remove video" aria-label="Remove video" onClick={clear} className="absolute right-2 top-2 bg-ink text-sand"><X /></Button><p className="mt-1 text-sm text-mist">{Math.floor(duration / 60)}:{String(duration % 60).padStart(2, "0")} · {file?.name}</p></div> : <Button type="button" variant="outline" onClick={() => fileInput.current?.click()} className="w-full border-mist/30 bg-ink-soft text-sand hover:bg-ink"><Upload />Choose a 1–3 minute video</Button>}
-          <Button type="submit" disabled={!file || !title.trim() || !location.trim() || busy} className="h-11 w-full bg-lemon text-ink hover:bg-lemon/90">{busy ? "Uploading…" : "Send for approval"}</Button>
+          <Button type="submit" disabled={!file || !title.trim() || !validLocation(city, zip) || busy} className="h-11 w-full bg-lemon text-ink hover:bg-lemon/90">{busy ? "Uploading…" : "Send for approval"}</Button>
         </form>
       </DialogContent>
     </Dialog>
