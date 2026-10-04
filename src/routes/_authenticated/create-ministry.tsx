@@ -391,6 +391,7 @@ function CreateMinistryPage() {
               postId={posted.id}
               city={city.trim()}
               zip={zip.trim()}
+              country={country}
               preferChurchId={prefill.church}
             />
           )}
@@ -399,7 +400,7 @@ function CreateMinistryPage() {
               type="button"
               onClick={() => {
                 if (!posted) return;
-                void navigate({ to: "/map", search: { place: posted.place, new: posted.id } });
+                void navigate({ to: "/map", search: { place: posted.place, country, new: posted.id } });
               }}
               className="inline-flex items-center justify-center gap-2 rounded-full bg-lemon px-6 py-3.5 text-lg font-semibold text-ink transition-transform hover:-translate-y-0.5"
             >

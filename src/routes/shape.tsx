@@ -732,7 +732,7 @@ function ShapePage() {
                   </p>
                   <Link
                     to={post.kind === "need" ? "/needs" : "/ministries"}
-                    search={{ place: post.city || answers.city }}
+                    search={{ place: post.city || answers.city, country: answers.country }}
                     className="mt-3 inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-sand ring-1 ring-mist/25"
                   >
                     {t("Open this post")}

@@ -131,7 +131,7 @@ function describe(a: ShapeAnswers) {
   const lean = Object.values(a.giftLean).filter(Boolean).join("; ");
   const personality = Object.values(a.personality).filter(Boolean).join("; ");
   return [
-    `Location: ${[a.city, a.zip].filter(Boolean).join(" ") || "unspecified"}`,
+    `Location: ${[a.city, a.zip, a.country ?? "US"].filter(Boolean).join(" ") || "unspecified"}`,
     `Name: ${a.firstName || "unspecified"}`,
     `Age range: ${a.ageRange}. Marital status: ${a.marital}. Time per month: ${a.timePerMonth}.`,
     `Household: ${a.household || "not given"}. Children: ${kids || "none listed"}.`,
