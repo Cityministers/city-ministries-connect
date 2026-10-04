@@ -19,6 +19,7 @@ export function matchesPlace(ministry: Ministry, query: string, country = "US"):
 
   const zip = zipOf(q);
   if (zip && ministry.zip.toLowerCase() === zip.toLowerCase()) return true;
+  if (zip && /^\d+$/.test(q)) return false;
 
   const words = q
     .replace(/,/g, " ")

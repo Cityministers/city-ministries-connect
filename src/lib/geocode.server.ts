@@ -21,6 +21,10 @@ async function nominatim(query: string, country: string): Promise<LatLng | null>
 }
 async function callFallback(city: string, zip: string, country: string): Promise<LatLng | null> {
   const clean = zip.trim();
+  if (city.trim() && country !== "US") {
+    const byCity = await nominatim(addressOf(city, "", country), country);
+    if (byCity) return byCity;
+  }
   if (clean && /^[\p{L}\p{N} -]{3,20}$/u.test(clean)) {
     try {
       const res = await fetch(`https://api.zippopotam.us/${encodeURIComponent(country.toLowerCase())}/${encodeURIComponent(clean)}`);
@@ -96,9 +100,10 @@ export async function geocodeQuery(query: string, country = "US"): Promise<LatLn
   const names = [countryName(country), country].map((s) => s.toLowerCase());
   const q = raw.split(",").filter((part) => !names.includes(part.trim().toLowerCase())).join(",").trim() || raw;
   const parts = q.split(",").map((part) => part.trim()).filter(Boolean);
-  if (parts.length >= 2 && /^[\p{L}\p{N} -]{3,20}$/u.test(parts.at(-1)!) && /\d/.test(parts.at(-1)!)) {
-    const city = parts.slice(0, -1).join(", ");
-    const zip = parts.at(-1)!;
+  const trailing = q.match(/^(.*?)[,\s]+(\d{4,6}|[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d)$/);
+  if (trailing && trailing[1]?.trim()) {
+    const city = trailing[1].trim();
+    const zip = trailing[2]!;
     const found = await geocodePlaces([{ city, zip, country }]);
     return found.get(placeKey(city, zip, country)) ?? null;
   }
