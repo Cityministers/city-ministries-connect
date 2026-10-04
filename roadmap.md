@@ -18,3 +18,4 @@
 
 ## Open
 - Admin stats page: DONE — "Site activity" tab in Review Center with counts and latest-activity feed.
+- [ ] Restore the Needs map to the full width and height of the main map; keep its controls and list intact.
