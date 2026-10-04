@@ -12,7 +12,7 @@ export function CountrySelect({ value, onChange, className, compact = false }: {
           <ChevronDown className="size-3 text-mist/60" />
         </span>
         <select required aria-label={t("Country")} value={value} onChange={(event) => onChange(event.target.value)} className="absolute inset-0 h-full w-full cursor-pointer appearance-none opacity-0">
-          {countryOptions.map((country) => <option key={country.code} value={country.code}>{country.flag} {country.name}</option>)}
+          {countryOptions.map((country) => <option key={country.code} value={country.code}>{countryFlag(country.code)} {country.name}</option>)}
         </select>
       </label>
     );
