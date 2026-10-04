@@ -152,14 +152,14 @@ function HomePage() {
             {t("Ways to minister")}
           </h2>
 
-          <ul className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-4 sm:gap-3">
+          <ul className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
             {ministries.map((ministry) => (
               <li key={ministry.id}>
                 <Dialog>
                   <DialogTrigger asChild>
                     <button
                       type="button"
-                      className="flex min-h-28 w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg bg-ink-soft/55 p-3 text-center ring-1 ring-mist/15 transition hover:-translate-y-0.5 hover:bg-ink-soft hover:ring-mist/30"
+                      className="flex min-h-24 w-full cursor-pointer flex-col items-center justify-center gap-1.5 rounded-lg bg-ink-soft/55 px-1.5 py-2 text-center ring-1 ring-mist/15 transition hover:-translate-y-0.5 hover:bg-ink-soft hover:ring-mist/30"
                       aria-label={t("Learn about {{label}}", { label: ministry.label })}
                     >
                       <span
