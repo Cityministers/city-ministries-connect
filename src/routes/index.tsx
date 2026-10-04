@@ -159,7 +159,7 @@ function HomePage() {
                   <DialogTrigger asChild>
                     <button
                       type="button"
-                      className="flex min-h-24 w-full cursor-pointer flex-col items-center justify-center gap-1.5 rounded-lg bg-ink-soft/55 px-1.5 py-2 text-center ring-1 ring-mist/15 transition hover:-translate-y-0.5 hover:bg-ink-soft hover:ring-mist/30"
+                      className="flex min-h-24 w-full cursor-pointer flex-col items-center justify-center gap-1 rounded-lg bg-ink-soft/55 px-1.5 py-1.5 text-center ring-1 ring-mist/15 transition hover:-translate-y-0.5 hover:bg-ink-soft hover:ring-mist/30"
                       aria-label={t("Learn about {{label}}", { label: ministry.label })}
                     >
                       <span
