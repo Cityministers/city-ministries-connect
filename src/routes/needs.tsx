@@ -294,7 +294,7 @@ function NeedsPage() {
         ) : null}
 
         <ul className={`flex flex-col gap-3 ${isMap ? "mt-4" : ""}`}>
-            {(isMap ? inViewList : results).map((m) => (
+            {(isMap ? inViewList.map((x) => x.post) : results).map((m) => (
               <li key={m.id}>
                 <button
                   type="button"
