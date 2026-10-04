@@ -91,8 +91,6 @@ function NeedsPage() {
   const session = useSession();
   const { origin } = useHomePoint(Boolean(session), center);
   const [bounds, setBounds] = useState<MapBounds | null>(null);
-  const [pending, setPending] = useState<MapBounds | null>(null);
-  const moved = pending !== null && pending !== bounds;
   const { points, list: inViewList } = useMapPosts(
     onMap,
     origin,
@@ -237,22 +235,10 @@ function NeedsPage() {
                 center={mapCenter}
                 zoom={spotlight ? 16 : 12}
                 onSelect={selectPoint}
-                onBoundsChange={(b) => {
-                  setPending(b);
-                  setBounds((prev) => prev ?? b);
-                }}
+                onBoundsChange={setBounds}
                 label={t("Needs map. Drag to explore other neighborhoods.")}
                 className="map-fade h-[60dvh] min-h-[320px] w-full"
               />
-              {moved && (
-                <button
-                  type="button"
-                  onClick={() => setBounds(pending)}
-                  className="absolute left-1/2 top-3 z-10 -translate-x-1/2 rounded-full bg-ink-soft px-4 py-2 text-sm font-semibold text-sand shadow-lg ring-1 ring-mist/25 transition hover:bg-ink-soft/80 hover:ring-mist/40"
-                >
-                  {t("Search this area")}
-                </button>
-              )}
             </div>
             <div className="mt-3 grid w-full grid-cols-3 gap-2" aria-label={t("Map layers")}>
               <Button

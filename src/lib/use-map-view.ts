@@ -62,6 +62,15 @@ export function useHomePoint(signedIn: boolean, fallback: LatLng) {
 
 export type ListedPost = { post: Ministry; miles: number | null; distance: string };
 
+/** Keep map layers and their lists in the area the visitor is actually viewing. */
+export function inMapBounds(at: LatLng, bounds: MapBounds | null): boolean {
+  if (!bounds) return true;
+  const longitudeInside = bounds.west <= bounds.east
+    ? at.lng >= bounds.west && at.lng <= bounds.east
+    : at.lng >= bounds.west || at.lng <= bounds.east;
+  return at.lat >= bounds.south && at.lat <= bounds.north && longitudeInside;
+}
+
 /** Pins plus the list that follows them, shared by the ministry and needs maps. */
 export function useMapPosts(
   posts: Ministry[],
@@ -76,7 +85,7 @@ export function useMapPosts(
       .filter((p) => typeof p.lat === "number" && typeof p.lng === "number")
       .map((p) => ({ post: p, at: spread(p.id, { lat: p.lat!, lng: p.lng! }) }));
 
-    const points: MapPoint[] = located.map(({ post, at }) => ({
+    const points: MapPoint[] = located.filter(({ post, at }) => post.id === highlightId || inMapBounds(at, bounds)).map(({ post, at }) => ({
       id: post.id,
       lat: at.lat,
       lng: at.lng,
@@ -97,12 +106,7 @@ export function useMapPosts(
         ? withDistance
         : withDistance.filter(({ post }) => {
             const at = spread(post.id, { lat: post.lat!, lng: post.lng! });
-            return (
-              at.lat <= bounds.north &&
-              at.lat >= bounds.south &&
-              at.lng <= bounds.east &&
-              at.lng >= bounds.west
-            );
+            return post.id === highlightId || inMapBounds(at, bounds);
           });
 
     const list =

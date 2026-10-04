@@ -25,7 +25,7 @@ import { listUserMinistries } from "@/lib/ministries.functions";
 import { listPublicPrayers } from "@/lib/prayers.functions";
 import { listNeighborhoodVideos, listMyNeighborhoodVideos } from "@/lib/neighborhood-videos.functions";
 import { toMinistry } from "@/lib/user-ministries";
-import { useHomePoint, useMapPosts, usePlaceCenter } from "@/lib/use-map-view";
+import { inMapBounds, useHomePoint, useMapPosts, usePlaceCenter } from "@/lib/use-map-view";
 
 export const Route = createFileRoute("/map")({
   validateSearch: (
@@ -107,13 +107,11 @@ function MapPage() {
   const [videoTab, setVideoTab] = useState<"all" | "near" | "downtown" | "zip">("all");
   const [videoZip, setVideoZip] = useState("");
   const [bounds, setBounds] = useState<MapBounds | null>(null);
-  const [pending, setPending] = useState<MapBounds | null>(null);
-  const moved = mode === "view" && pending !== null && pending !== bounds;
 
   const { points, list } = useMapPosts(
     all,
     origin,
-    mode === "view" ? bounds : null,
+    bounds,
     "view",
     session?.user?.id ?? null,
     highlightId,
@@ -130,7 +128,7 @@ function MapPage() {
   const churchPoints = useMemo(
     () =>
       (churches ?? [])
-        .filter((c) => c.lat != null && c.lng != null)
+        .filter((c) => c.lat != null && c.lng != null && (highlightId === `church-${c.id}` || inMapBounds({ lat: c.lat, lng: c.lng }, bounds)))
         .map((c) => ({
           id: `church-${c.id}`,
           lat: c.lat as number,
@@ -141,7 +139,7 @@ function MapPage() {
           kind: "place" as const,
           highlight: highlightId === `church-${c.id}`,
         })),
-    [churches, highlightId],
+    [churches, highlightId, bounds],
   );
 
   // Prayers posted to the whole map — their own pin colour and their own filter.
@@ -153,7 +151,7 @@ function MapPage() {
   const prayerPoints = useMemo(
     () =>
       (prayers ?? [])
-        .filter((p) => p.lat != null && p.lng != null)
+        .filter((p) => p.lat != null && p.lng != null && (highlightId === `prayer-${p.id}` || inMapBounds({ lat: p.lat, lng: p.lng }, bounds)))
         .map((p) => ({
           id: `prayer-${p.id}`,
           lat: p.lat as number,
@@ -163,7 +161,7 @@ function MapPage() {
           glyph: iconMarkup(HandHelping),
           highlight: highlightId === `prayer-${p.id}`,
         })),
-    [prayers, highlightId],
+    [prayers, highlightId, bounds],
   );
   const activePrayer = (prayers ?? []).find((p) => p.id === activePrayerId);
 
@@ -181,12 +179,12 @@ function MapPage() {
     // "near" — within ~15 miles of the visitor's home point
     return milesBetween(origin, { lat: v.lat, lng: v.lng }) <= 15;
   };
-  const visibleVideos = [...pendingVideos, ...(videos ?? [])].filter(videoMatchesTab);
-  const videoPoints = useMemo(() => (videos ?? []).filter(videoMatchesTab).map((v) => ({
+  const visibleVideos = [...pendingVideos, ...(videos ?? [])].filter((v) => videoMatchesTab(v) && inMapBounds(v, bounds));
+  const videoPoints = useMemo(() => (videos ?? []).filter((v) => videoMatchesTab(v) && (highlightId === `video-${v.id}` || inMapBounds(v, bounds))).map((v) => ({
     id: `video-${v.id}`, lat: v.lat, lng: v.lng, title: v.title,
     color: VIDEO_PIN_COLOR, glyph: iconMarkup(Video), highlight: highlightId === `video-${v.id}`,
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  })), [videos, highlightId, videoTab, videoZip, origin]);
+  })), [videos, highlightId, videoTab, videoZip, origin, bounds]);
   const activeVideo = visibleVideos.find((v) => v.id === activeVideoId) ?? null;
 
   const allPoints = useMemo(
@@ -205,13 +203,13 @@ function MapPage() {
   const churchList = useMemo(
     () =>
       (churches ?? [])
-        .filter((c) => c.lat != null && c.lng != null)
+        .filter((c) => c.lat != null && c.lng != null && inMapBounds({ lat: c.lat, lng: c.lng }, bounds))
         .map((c) => {
           const miles = milesBetween(origin, { lat: c.lat as number, lng: c.lng as number });
           return { church: c, miles, distance: formatMiles(miles) };
         })
         .sort((a, b) => a.miles - b.miles),
-    [churches, origin],
+    [churches, origin, bounds],
   );
 
 
@@ -344,22 +342,10 @@ function MapPage() {
             center={mapCenter}
             zoom={spotlight ? 16 : 12}
             onSelect={selectPoint}
-            onBoundsChange={(b) => {
-              setPending(b);
-              setBounds((prev) => prev ?? b);
-            }}
+            onBoundsChange={setBounds}
             label={t("Ministry map. Drag to explore other neighborhoods.")}
             className="map-fade h-[60dvh] min-h-[320px] w-full"
           />
-          {moved && (
-            <button
-              type="button"
-              onClick={() => setBounds(pending)}
-              className="absolute left-1/2 top-3 z-10 -translate-x-1/2 rounded-full bg-ink-soft px-4 py-2 text-sm font-semibold text-sand shadow-lg ring-1 ring-mist/25 transition hover:bg-ink-soft/80 hover:ring-mist/40"
-            >
-              {t("Search this area")}
-            </button>
-          )}
         </div>
 
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
@@ -408,7 +394,7 @@ function MapPage() {
               : mode === "prayer"
                 ? t("{{count}} prayers", { count: prayerPoints.length })
                 : mode === "video"
-                  ? `${videos?.length ?? 0} videos`
+                  ? `${videoPoints.length} videos`
                 : t("{{count}} nearby", { count: list.length + churchList.length })}
           </p>
         </div>
@@ -450,13 +436,13 @@ function MapPage() {
           </div>
         )}
         {mode === "video" && <NeighborhoodVideoForm userId={session?.user?.id ?? null} defaultPlace={location} onPosted={() => void refetchMyVideos()} />}
-        {mode === "video" && <NeighborhoodVideoFeed videos={videos ?? []} pending={pendingVideos} onSelect={(id) => {
+        {mode === "video" && <NeighborhoodVideoFeed videos={visibleVideos.filter((v) => v.status === "approved")} pending={visibleVideos.filter((v) => v.status !== "approved")} onSelect={(id) => {
           setActiveVideoId(id);
           if (`video-${id}` !== highlightId) setHighlightId(null);
         }} onRemoved={() => { void refetchMyVideos(); void refetchVideos(); }} />}
         <ul className="mt-3 space-y-2">
           {mode === "prayer" &&
-            (prayers ?? []).map((p) => (
+            (prayers ?? []).filter((p) => p.lat != null && p.lng != null && inMapBounds({ lat: p.lat, lng: p.lng }, bounds)).map((p) => (
               <li key={p.id}>
                 <button
                   type="button"
@@ -559,7 +545,7 @@ function MapPage() {
           {(mode === "video" ? false : mode === "church"
             ? churchList.length === 0
             : mode === "prayer"
-              ? (prayers ?? []).length === 0
+              ? prayerPoints.length === 0
               : list.length === 0 && churchList.length === 0) && (
             <li className="rounded-2xl bg-ink-soft p-4 text-center text-sm text-mist/70">
               {mode === "church"
