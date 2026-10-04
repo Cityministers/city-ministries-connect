@@ -21,9 +21,13 @@ async function nominatim(query: string, country: string): Promise<LatLng | null>
 }
 async function callFallback(city: string, zip: string, country: string): Promise<LatLng | null> {
   const clean = zip.trim();
-  if (city.trim() && country !== "US") {
-    const byCity = await nominatim(addressOf(city, "", country), country);
-    if (byCity) return byCity;
+  if (country !== "US" && (city.trim() || clean)) {
+    const precise = await nominatim(addressOf(city, zip, country), country);
+    if (precise) return precise;
+    if (city.trim()) {
+      const byCity = await nominatim(addressOf(city, "", country), country);
+      if (byCity) return byCity;
+    }
   }
   if (clean && /^[\p{L}\p{N} -]{3,20}$/u.test(clean)) {
     try {
