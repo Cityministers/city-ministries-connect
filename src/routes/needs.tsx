@@ -291,9 +291,10 @@ function NeedsPage() {
               <p className="mt-3 text-center text-sm text-mist/80">{t("No needs posted yet.")}</p>
             )}
           </>
-        ) : (
-          <ul className="flex flex-col gap-3">
-            {results.map((m) => (
+        )}
+
+        <ul className={`flex flex-col gap-3 ${isMap ? "mt-4" : ""}`}>
+            {(isMap ? inViewList : results).map((m) => (
               <li key={m.id}>
                 <button
                   type="button"
