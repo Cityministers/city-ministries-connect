@@ -1328,6 +1328,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cms_user_emails: {
+        Args: never
+        Returns: {
+          created_at: string
+          email: string
+          id: string
+        }[]
+      }
       complete_user_need: {
         Args: {
           _helper_conversation_id: string
