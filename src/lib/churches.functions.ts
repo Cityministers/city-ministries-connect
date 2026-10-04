@@ -16,7 +16,7 @@ export type ChurchDTO = {
   address: string;
   city: string;
   zip: string;
-  country_code: string;
+  country: string;
   lat: number | null;
   lng: number | null;
   serviceTimes: string;
@@ -48,7 +48,6 @@ export type ChurchPostDTO = {
   description: string;
   city: string;
   zip: string;
-  country: string;
   status: string;
   posterName: string;
 };

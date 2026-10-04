@@ -1,3 +1,5 @@
+import { CountrySelect } from "@/components/CountrySelect";
+import { countryCodes } from "@/lib/country";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
@@ -11,12 +13,12 @@ import { matchesPlace, matchesText } from "@/lib/place";
 import { toMinistry } from "@/lib/user-ministries";
 
 export const Route = createFileRoute("/ministries")({
-  validateSearch: (search: Record<string, unknown>): { place?: string } => {
+  validateSearch: (search: Record<string, unknown>): { place?: string; country?: string } => {
     const raw = search["place"];
     const place = (
       typeof raw === "string" || typeof raw === "number" ? String(raw) : ""
     ).replace(/^"|"$/g, "");
-    return place.length > 0 ? { place } : {};
+    return { ...(place.length > 0 ? { place } : {}), ...(typeof search["country"] === "string" && countryCodes.has(search["country"] as string) ? { country: search["country"] as string } : {}) };
   },
   head: () => ({
     meta: [
@@ -41,9 +43,10 @@ export const Route = createFileRoute("/ministries")({
 
 function MinistriesPage() {
   const { t } = useTranslation();
-  const { place } = Route.useSearch();
+  const { place, country: searchCountry } = Route.useSearch();
   const navigate = Route.useNavigate();
   const [placeQuery, setPlaceQuery] = useState(place ?? "Portland, OR 97209");
+  const [country, setCountry] = useState(searchCountry ?? "US");
   const [query, setQuery] = useState("");
   const [activeId, setActiveId] = useState<string | null>(null);
 
@@ -56,8 +59,8 @@ function MinistriesPage() {
   const all = useMemo(() => (userPosts ?? []).map(toMinistry), [userPosts]);
 
   const results = useMemo(
-    () => all.filter((m) => matchesPlace(m, placeQuery) && matchesText(m, query)),
-    [all, placeQuery, query],
+    () => all.filter((m) => matchesPlace(m, placeQuery, country) && matchesText(m, query)),
+    [all, placeQuery, query, country],
   );
 
   const active = all.find((m) => m.id === activeId);
@@ -69,7 +72,7 @@ function MinistriesPage() {
           <div className="flex items-center gap-3">
             <Link
               to="/map"
-              search={{ place: placeQuery }}
+              search={{ place: placeQuery, country }}
               className="grid size-9 shrink-0 place-items-center rounded-full bg-ink text-sand ring-1 ring-mist/20 transition hover:bg-ink-soft"
               aria-label={t("Back to map")}
             >
@@ -78,13 +81,14 @@ function MinistriesPage() {
             <h1 className="font-display text-lg font-semibold sm:text-xl">{t("All ministries")}</h1>
             <Link
               to="/map"
-              search={{ place: placeQuery }}
+              search={{ place: placeQuery, country }}
               className="ml-auto grid size-9 shrink-0 place-items-center rounded-full bg-tone-cyan/15 text-tone-cyan ring-1 ring-tone-cyan/45 transition hover:bg-tone-cyan/25"
               aria-label={t("Map view")}
             >
               <Map className="size-5" aria-hidden="true" />
             </Link>
           </div>
+          <CountrySelect compact value={country} onChange={(value) => { setCountry(value); void navigate({ search: { place: placeQuery, country: value }, replace: true }); }} className="rounded-full bg-ink px-4 py-2.5 text-base text-sand ring-1 ring-mist/20" />
           <div className="flex items-center gap-2 rounded-full bg-ink px-4 py-2.5 ring-1 ring-mist/20 focus-within:ring-lemon/50">
             <MapPin className="size-4 shrink-0 text-lemon" aria-hidden="true" />
             <input
@@ -93,13 +97,13 @@ function MinistriesPage() {
               value={placeQuery}
               onChange={(e) => {
                 setPlaceQuery(e.target.value);
-                void navigate({ search: { place: e.target.value }, replace: true });
+                void navigate({ search: { place: e.target.value, country }, replace: true });
               }}
-              placeholder={t("City or ZIP code")}
-              aria-label={t("Search by city or ZIP code")}
+              placeholder={t("City or postal code")}
+              aria-label={t("Search by city or postal code")}
             />
             <span className="shrink-0 text-[10px] font-bold uppercase tracking-widest text-mist/40">
-              {t("Zip or city")}
+              {t("Postal or city")}
             </span>
           </div>
           <div className="flex items-center gap-2 rounded-full bg-ink px-4 py-2.5 ring-1 ring-mist/20 focus-within:ring-lemon/50">
