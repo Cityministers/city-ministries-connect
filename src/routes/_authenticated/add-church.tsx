@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { CountrySelect } from "@/components/CountrySelect";
+import { validLocation, placeLabel } from "@/lib/country";
 import {
   Dialog,
   DialogContent,
@@ -77,6 +79,7 @@ function AddChurchPage() {
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [zip, setZip] = useState("");
+  const [country, setCountry] = useState("US");
   const [serviceTimes, setServiceTimes] = useState("");
   const [phone, setPhone] = useState("");
   const [website, setWebsite] = useState("");
@@ -191,6 +194,7 @@ function AddChurchPage() {
         address: address.trim(),
         city: city.trim(),
         zip: zip.trim(),
+        country,
         serviceTimes: serviceTimes.trim(),
         phone: phone.trim(),
         website: website.trim(),
@@ -207,7 +211,7 @@ function AddChurchPage() {
         setError(t("We couldn't find that ZIP code. Please check it and try again."));
         return;
       }
-      setFound([address.trim(), city.trim(), zip.trim()].filter(Boolean).join(", "));
+      setFound([address.trim(), placeLabel(city.trim(), zip.trim(), country)].filter(Boolean).join(", "));
       setLive(true);
       window.scrollTo({ top: 0 });
     } catch (err) {
@@ -410,7 +414,8 @@ function AddChurchPage() {
               </span>
             </label>
 
-            <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-3">
+            <CountrySelect value={country} onChange={setCountry} className="w-full rounded-xl bg-ink-soft px-4 py-3.5 text-base text-sand ring-1 ring-mist/20" />
+          <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-3">
               <label className="flex min-w-0 flex-col gap-2 text-base text-mist/80 sm:text-lg">
                 {t("City")}
                 <input
@@ -422,13 +427,13 @@ function AddChurchPage() {
                 />
               </label>
               <label className="flex w-24 shrink-0 flex-col gap-2 text-base text-mist/80 sm:w-32 sm:text-lg">
-                {t("ZIP")}
+                {t("Postal code / ZIP")}
                 <input
                   className={inputClass}
                   value={zip}
                   onChange={(e) => setZip(e.target.value)}
-                  maxLength={10}
-                  inputMode="numeric"
+                  maxLength={20}
+                  inputMode="text"
                   placeholder="97006"
                   required
                 />
@@ -527,7 +532,7 @@ function AddChurchPage() {
                 value={cardNumber}
                 onChange={(e) => setCardNumber(e.target.value)}
                 maxLength={24}
-                inputMode="numeric"
+                inputMode="text"
                 placeholder="4242 4242 4242 4242"
                 required
               />
@@ -551,7 +556,7 @@ function AddChurchPage() {
                   value={cvc}
                   onChange={(e) => setCvc(e.target.value)}
                   maxLength={4}
-                  inputMode="numeric"
+                  inputMode="text"
                   placeholder="123"
                 />
               </label>

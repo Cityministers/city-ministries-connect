@@ -3,6 +3,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, Camera, ImagePlus, Loader2, MapPin, PartyPopper, UserCircle, X } from "lucide-react";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { CountrySelect } from "@/components/CountrySelect";
+import { validLocation, placeLabel } from "@/lib/country";
 import { ChurchPicker } from "@/components/ChurchPicker";
 import { createUserMinistry } from "@/lib/ministries.functions";
 import { ministries, toneStyles } from "@/data/ministries";
@@ -28,6 +30,7 @@ type CreateSearch = {
   desc?: string | undefined;
   city?: string | undefined;
   zip?: string | undefined;
+  country?: string | undefined;
   icon?: string | undefined;
   church?: string | undefined;
 };
@@ -39,6 +42,7 @@ export const Route = createFileRoute("/_authenticated/create-ministry")({
     desc: typeof search["desc"] === "string" ? search["desc"] : undefined,
     city: typeof search["city"] === "string" ? search["city"] : undefined,
     zip: typeof search["zip"] === "string" ? search["zip"] : undefined,
+    country: typeof search["country"] === "string" ? search["country"] : undefined,
     icon: typeof search["icon"] === "string" ? search["icon"] : undefined,
     church: typeof search["church"] === "string" ? search["church"] : undefined,
   }),
@@ -74,6 +78,7 @@ function CreateMinistryPage() {
   const [description, setDescription] = useState(prefill.desc ?? "");
   const [city, setCity] = useState(prefill.city ?? "");
   const [zip, setZip] = useState(prefill.zip ?? "");
+  const [country, setCountry] = useState(prefill.country ?? "US");
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [media, setMedia] = useState<MediaPreview[]>([]);
@@ -124,7 +129,7 @@ function CreateMinistryPage() {
     if (shortTitle.trim().length < 2) return setError(t("Add a short title."));
     if (description.trim().length < 10)
       return setError(t("Add a little more to your description."));
-    if (city.trim().length < 2 && zip.trim().length < 4)
+    if (!validLocation(city, zip))
       return setError(t("Enter the city or ZIP where you serve so your pin lands in the right place."));
 
     setBusy(true);
@@ -160,13 +165,14 @@ function CreateMinistryPage() {
           description: description.trim(),
           city: city.trim(),
           zip: zip.trim(),
+          country,
           avatarPath,
           iconId: preset?.id ?? "",
           gallery,
         },
       });
 
-      const place = [city.trim(), zip.trim()].filter(Boolean).join(" ");
+      const place = placeLabel(city.trim(), zip.trim(), country);
       setPosted({ id: result.id, shortTitle: shortTitle.trim(), place });
     } catch (err) {
       setError(err instanceof Error ? err.message : t("Couldn't post your ministry."));
@@ -321,6 +327,7 @@ function CreateMinistryPage() {
             />
           </label>
 
+          <CountrySelect value={country} onChange={setCountry} className="w-full rounded-xl bg-ink-soft px-4 py-3.5 text-base text-sand ring-1 ring-mist/20" />
           <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-3">
             <label className="flex min-w-0 flex-col gap-2 text-sm text-mist/80 sm:text-base">
               {t("City")}
@@ -333,13 +340,13 @@ function CreateMinistryPage() {
               />
             </label>
             <label className="flex w-24 shrink-0 flex-col gap-2 text-sm text-mist/80 sm:w-32 sm:text-base">
-              {t("ZIP")}
+              {t("Postal code / ZIP")}
               <input
                 className="w-full min-w-0 rounded-xl bg-ink-soft px-4 py-3.5 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
                 value={zip}
                 onChange={(e) => setZip(e.target.value)}
-                maxLength={10}
-                inputMode="numeric"
+                maxLength={20}
+                inputMode="text"
                 placeholder="97006"
               />
             </label>
