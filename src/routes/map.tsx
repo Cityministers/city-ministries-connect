@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, HandHelping, List, Search, Video } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AccountMenu } from "@/components/AccountMenu";
 import { ChurchMenu } from "@/components/ChurchMenu";
@@ -99,9 +99,11 @@ function MapPage() {
     freshMode === "prayer" || freshMode === "video" ? freshMode : "view",
   );
   // Follow links like /map?mode=video even when the map is already open.
-  useEffect(() => {
+  const [seenMode, setSeenMode] = useState(freshMode);
+  if (seenMode !== freshMode) {
+    setSeenMode(freshMode);
     if (freshMode === "prayer" || freshMode === "video") setMode(freshMode);
-  }, [freshMode]);
+  }
   const [videoTab, setVideoTab] = useState<"all" | "near" | "downtown" | "zip">("all");
   const [videoZip, setVideoZip] = useState("");
   const [bounds, setBounds] = useState<MapBounds | null>(null);
