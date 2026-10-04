@@ -1,8 +1,9 @@
 import type { Ministry } from "@/data/ministries";
+import { countryName } from "./country";
 
 /** Extracts a 5-digit ZIP from a free-text place query, if present. */
 function zipOf(query: string): string | null {
-  const match = query.match(/\b\d{5}\b/);
+  const match = query.match(/\b[\p{L}\p{N}][\p{L}\p{N} -]{2,18}[\p{L}\p{N}]\b/u);
   return match ? match[0] : null;
 }
 
@@ -11,12 +12,13 @@ function zipOf(query: string): string | null {
  * Matches a ZIP exactly, otherwise matches city or neighborhood text.
  * An empty query matches everything.
  */
-export function matchesPlace(ministry: Ministry, query: string): boolean {
+export function matchesPlace(ministry: Ministry, query: string, country = "US"): boolean {
+  if ((ministry.country ?? "US") !== country) return false;
   const q = String(query ?? "").trim().toLowerCase();
   if (!q) return true;
 
   const zip = zipOf(q);
-  if (zip && ministry.zip === zip) return true;
+  if (zip && ministry.zip.toLowerCase() === zip.toLowerCase()) return true;
 
   const words = q
     .replace(/,/g, " ")
@@ -24,7 +26,7 @@ export function matchesPlace(ministry: Ministry, query: string): boolean {
     .filter((w) => w.length > 1 && w !== "or" && !/^\d+$/.test(w));
   if (words.length === 0) return Boolean(zip) ? ministry.zip === zip : true;
 
-  const haystack = `${ministry.city} ${ministry.neighborhood} ${ministry.zip}`.toLowerCase();
+  const haystack = `${ministry.city} ${ministry.neighborhood} ${ministry.zip} ${countryName(ministry.country ?? "US")}`.toLowerCase();
   return words.some((w) => haystack.includes(w));
 }
 

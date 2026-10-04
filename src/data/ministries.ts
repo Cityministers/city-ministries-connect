@@ -77,6 +77,7 @@ export type Ministry = {
   neighborhood: string;
   city: string;
   zip: string;
+  country?: string;
   /** Illustrative distance from the searched place, in miles. */
   distanceMi: number;
   /** Real map coordinates, looked up from the post's city and ZIP. */

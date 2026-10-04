@@ -91,6 +91,7 @@ function PostPrayerPage() {
           body: body.trim(),
           city: place === "map" ? city.trim() : "",
           zip: place === "map" ? zip.trim() : "",
+          country,
           churchId: place === "church" ? churchId : null,
           anonymous,
           imagePath: uploaded[0]?.path ?? null,

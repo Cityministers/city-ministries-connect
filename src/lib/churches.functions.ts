@@ -395,6 +395,7 @@ export const createChurch = createServerFn({ method: "POST" })
       .eq("owner_id", context.userId)
       .ilike("name", data.name)
       .eq("zip", data.zip)
+      .eq("country_code", data.country)
       .limit(1)
       .maybeSingle();
     if (mine) {
