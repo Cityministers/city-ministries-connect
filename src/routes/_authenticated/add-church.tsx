@@ -150,7 +150,7 @@ function AddChurchPage() {
     e.preventDefault();
     setError(null);
     if (name.trim().length < 2) return setError(t("Add your church's name."));
-    if (zip.trim().length < 3) return setError(t("Add your church's ZIP code."));
+    if (zip.trim().length < 3) return setError(t("Add your church's postal code."));
 
     setBusy(true);
     try {
@@ -208,7 +208,7 @@ function AddChurchPage() {
       setChurchId(result.id);
       if (!result.located) {
         setFound(null);
-        setError(t("We couldn't find that ZIP code. Please check it and try again."));
+        setError(t("We couldn't find that postal code. Please check it and try again."));
         return;
       }
       setFound([address.trim(), placeLabel(city.trim(), zip.trim(), country)].filter(Boolean).join(", "));
@@ -410,7 +410,7 @@ function AddChurchPage() {
                 placeholder="1420 SW Oak St"
               />
               <span className="text-sm text-mist/60">
-                {t("Optional. If we can't find the exact spot, we'll place your church by ZIP code.")}
+                {t("Optional. If we can't find the exact spot, we'll place your church by postal code.")}
               </span>
             </label>
 
@@ -426,7 +426,7 @@ function AddChurchPage() {
                   placeholder="Beaverton"
                 />
               </label>
-              <label className="flex w-24 shrink-0 flex-col gap-2 text-base text-mist/80 sm:w-32 sm:text-lg">
+              <label className="flex w-36 shrink-0 flex-col gap-2 text-base text-mist/80 sm:w-44 sm:text-lg">
                 {t("Postal code / ZIP")}
                 <input
                   className={inputClass}

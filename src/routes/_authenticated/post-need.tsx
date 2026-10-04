@@ -156,7 +156,7 @@ function PostNeedPage() {
     if (description.trim().length < 10)
       return setError(t("Add a little more about what you need."));
     if (!validLocation(city, zip))
-      return setError(t("Enter the city or ZIP where you need help."));
+      return setError(t("Enter the city or postal code where you need help."));
     if (!agreed)
       return setError(t("Please read and accept the User & Privacy Agreement first."));
 

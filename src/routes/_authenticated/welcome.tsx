@@ -95,7 +95,7 @@ function WelcomePage() {
       return;
     }
     if (!validLocation(city, zip)) {
-      setError(t("Add the city or ZIP where you live so your posts land in the right place."));
+      setError(t("Add the city or postal code where you live so your posts land in the right place."));
       return;
     }
     setBusy(true);
@@ -187,7 +187,7 @@ function WelcomePage() {
                 placeholder={t("Portland, OR")}
               />
             </label>
-            <label className="flex w-32 flex-col gap-1.5 text-base text-mist/80">
+            <label className="flex w-36 flex-col gap-1.5 text-base text-mist/80">
               {t("Postal code / ZIP")}
               <input
                 className="rounded-xl bg-ink px-4 py-3 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"

@@ -533,7 +533,7 @@ function ShapePage() {
     setError(null);
     const latest = answersRef.current;
     if (current.id === "place" && !validLocation(latest.city, latest.zip)) {
-      setError(t("Record where you'll serve — say your city or ZIP code."));
+      setError(t("Record where you'll serve — say your city or postal code code."));
       return;
     }
     void save({ data: latest }).catch(() => {});

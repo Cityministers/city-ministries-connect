@@ -130,7 +130,7 @@ function CreateMinistryPage() {
     if (description.trim().length < 10)
       return setError(t("Add a little more to your description."));
     if (!validLocation(city, zip))
-      return setError(t("Enter the city or ZIP where you serve so your pin lands in the right place."));
+      return setError(t("Enter the city or postal code where you serve so your pin lands in the right place."));
 
     setBusy(true);
     try {

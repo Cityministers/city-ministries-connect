@@ -80,7 +80,7 @@ function PostPrayerPage() {
     if (body.trim().length < 5) return setError(t("Write your prayer."));
     if (place === "church" && !churchId) return setError(t("Choose the church for this prayer."));
     if (place === "map" && !validLocation(city, zip))
-      return setError(t("Enter the city or ZIP where this prayer belongs."));
+      return setError(t("Enter the city or postal code where this prayer belongs."));
 
     setBusy(true);
     try {
