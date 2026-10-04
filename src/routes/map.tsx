@@ -95,7 +95,7 @@ function MapPage() {
   const center = usePlaceCenter(location);
   const { origin, hasHome } = useHomePoint(Boolean(session), center);
 
-  const [mode, setMode] = useState<"view" | "near" | "church" | "prayer" | "video">(
+  const [mode, setMode] = useState<"view" | "church" | "prayer" | "video">(
     freshMode === "prayer" || freshMode === "video" ? freshMode : "view",
   );
   const [videoTab, setVideoTab] = useState<"all" | "near" | "downtown" | "zip">("all");
@@ -108,7 +108,7 @@ function MapPage() {
     all,
     origin,
     mode === "view" ? bounds : null,
-    mode === "view" ? "view" : "near",
+    "view",
     session?.user?.id ?? null,
     highlightId,
   );
@@ -349,33 +349,44 @@ function MapPage() {
         </div>
 
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap rounded-full bg-ink-soft p-1 ring-1 ring-mist/15">
-            {(["view", "near", "church", "prayer", "video"] as const).map((m) => (
-              <button
-                key={m}
-                type="button"
-                onClick={() => setMode(m)}
-                aria-label={m === "video" ? "Videos" : undefined}
-                title={m === "video" ? "Videos" : undefined}
-                className={`h-9 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
-                  mode === m
-                    ? "bg-ink text-sand ring-1 ring-mist/20"
-                    : "text-mist ring-1 ring-transparent hover:bg-mist/10 hover:text-sand"
-                }`}
-              >
-                {m === "video" ? (
-                  <span className={`grid size-6 place-items-center rounded-md ring-1 ${mode === "video" ? "ring-sand/70" : "ring-mist/40"}`}>
-                    <Video className="size-4" aria-hidden="true" strokeWidth={2.25} />
-                  </span>
-                ) : m === "view"
-                  ? t("All")
-                  : m === "near"
-                    ? t("Nearest")
-                    : m === "church"
-                      ? t("Churches")
-                      : t("Prayers")}
-              </button>
-            ))}
+          <div className="grid w-full grid-cols-3 gap-2" aria-label={t("Map layers")}>
+            <Button
+              type="button"
+              onClick={() => setMode(mode === "church" ? "view" : "church")}
+              className={`h-10 rounded-full px-2 text-sm font-semibold text-sand shadow-none ring-1 transition sm:px-5 ${
+                mode === "church"
+                  ? "bg-lemon/30 ring-lemon/70"
+                  : "bg-lemon/15 ring-lemon/45 hover:bg-lemon/25"
+              }`}
+            >
+              {t("Churches")}
+            </Button>
+            <Button
+              type="button"
+              onClick={() => setMode(mode === "prayer" ? "view" : "prayer")}
+              className={`h-10 rounded-full px-2 text-sm font-semibold text-sand shadow-none ring-1 transition sm:px-5 ${
+                mode === "prayer"
+                  ? "bg-prayer/30 ring-prayer/70"
+                  : "bg-prayer/15 ring-prayer/45 hover:bg-prayer/25"
+              }`}
+            >
+              {t("Prayers")}
+            </Button>
+            <Button
+              type="button"
+              onClick={() => setMode(mode === "video" ? "view" : "video")}
+              aria-label={t("Videos")}
+              title={t("Videos")}
+              className={`grid h-10 place-items-center rounded-full px-2 text-sm font-semibold text-sand shadow-none ring-1 transition sm:px-5 ${
+                mode === "video"
+                  ? "bg-tone-amber/30 ring-tone-amber/70"
+                  : "bg-tone-amber/15 ring-tone-amber/45 hover:bg-tone-amber/25"
+              }`}
+            >
+              <span className={`grid size-6 place-items-center rounded-md ring-1 ${mode === "video" ? "ring-sand/70" : "ring-mist/40"}`}>
+                <Video className="size-4" aria-hidden="true" strokeWidth={2.25} />
+              </span>
+            </Button>
           </div>
           <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-mist/40">
             {mode === "church"
@@ -384,7 +395,7 @@ function MapPage() {
                 ? t("{{count}} prayers", { count: prayerPoints.length })
                 : mode === "video"
                   ? `${videos?.length ?? 0} videos`
-                : t("{{count}} nearby", { count: list.length + (mode === "near" ? churchList.length : 0) })}
+                : t("{{count}} nearby", { count: list.length + churchList.length })}
           </p>
         </div>
 
@@ -494,7 +505,7 @@ function MapPage() {
               </button>
             </li>
           ))}
-          {(mode === "church" || mode === "near") &&
+          {(mode === "church" || mode === "view") &&
             churchList.map(({ church: c, distance }) => {
               const Icon = churchIcon(c.iconId);
               return (
@@ -535,7 +546,7 @@ function MapPage() {
             ? churchList.length === 0
             : mode === "prayer"
               ? (prayers ?? []).length === 0
-              : list.length === 0 && (mode !== "near" || churchList.length === 0)) && (
+              : list.length === 0 && churchList.length === 0) && (
             <li className="rounded-2xl bg-ink-soft p-4 text-center text-sm text-mist/70">
               {mode === "church"
                 ? t("No churches on the map yet.")
