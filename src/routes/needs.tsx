@@ -242,7 +242,7 @@ function NeedsPage() {
                   setBounds((prev) => prev ?? b);
                 }}
                 label={t("Needs map. Drag to explore other neighborhoods.")}
-                className="map-fade h-[60dvh] min-h-[320px] w-full rounded-none sm:rounded-2xl"
+                className="map-fade h-[70dvh] min-h-[360px] w-full rounded-none sm:rounded-2xl"
               />
               {moved && (
                 <button
