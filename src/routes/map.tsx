@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, HandHelping, List, Search, Video } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AccountMenu } from "@/components/AccountMenu";
 import { ChurchMenu } from "@/components/ChurchMenu";
@@ -98,6 +98,10 @@ function MapPage() {
   const [mode, setMode] = useState<"view" | "church" | "prayer" | "video">(
     freshMode === "prayer" || freshMode === "video" ? freshMode : "view",
   );
+  // Follow links like /map?mode=video even when the map is already open.
+  useEffect(() => {
+    if (freshMode === "prayer" || freshMode === "video") setMode(freshMode);
+  }, [freshMode]);
   const [videoTab, setVideoTab] = useState<"all" | "near" | "downtown" | "zip">("all");
   const [videoZip, setVideoZip] = useState("");
   const [bounds, setBounds] = useState<MapBounds | null>(null);
@@ -306,7 +310,15 @@ function MapPage() {
               asChild
               className="h-10 rounded-full bg-tone-cyan/25 px-2 text-sm font-semibold text-sand shadow-none ring-1 ring-tone-cyan/55 hover:bg-tone-cyan/35 sm:px-5"
             >
-              <Link to="/map" search={{ place: location }} aria-current="page">
+              <Link
+                to="/map"
+                search={{ place: location }}
+                aria-current="page"
+                onClick={() => {
+                  setMode("view");
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+              >
                 {t("Ministries")}
               </Link>
             </Button>
