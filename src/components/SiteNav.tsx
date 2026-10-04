@@ -35,7 +35,10 @@ export function SiteNav() {
           <Menu className="size-5" aria-hidden="true" />
         </button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-3/4 border-ink-soft bg-ink-soft/95 backdrop-blur sm:max-w-sm">
+      <SheetContent
+        side="left"
+        className="h-full w-full max-w-none border-ink-soft bg-ink-soft/95 backdrop-blur sm:max-w-none"
+      >
         <SheetHeader>
           <SheetTitle className="text-left font-display text-xl text-sand">
             {t("Menu")}
