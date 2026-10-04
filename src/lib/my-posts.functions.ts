@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { countrySchema, postalSchema, validLocation } from "./country";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export type MyPostDTO = {
@@ -10,6 +11,7 @@ export type MyPostDTO = {
   description: string;
   city: string;
   zip: string;
+  country: string;
   photoUrl: string | null;
   updatedAt: string;
   status: string;
@@ -26,7 +28,8 @@ const editInput = ref.extend({
   title: z.string().trim().max(100).optional().default(""),
   description: z.string().trim().min(10).max(400),
   city: z.string().trim().max(80).optional().default(""),
-  zip: z.string().trim().max(10).optional().default(""),
+  zip: postalSchema.optional().default(""),
+  country: countrySchema.default("US"),
   avatarPath: z.string().trim().max(300).optional(),
 });
 
@@ -43,7 +46,7 @@ export const listMyPosts = createServerFn({ method: "GET" })
     for (const postType of ["ministry", "need"] as const) {
       const { data } = await context.supabase
         .from(tableFor(postType))
-        .select("id, short_title, title, description, city, zip, avatar_url, updated_at, status")
+        .select("id, short_title, title, description, city, zip, country_code, avatar_url, updated_at, status")
         .eq("owner_id", context.userId)
         .order("updated_at", { ascending: false });
       for (const r of data ?? []) {
@@ -56,6 +59,7 @@ export const listMyPosts = createServerFn({ method: "GET" })
           description: r.description,
           city: r.city ?? "",
           zip: r.zip ?? "",
+          country: r.country_code ?? "US",
           photoUrl: r.avatar_url,
           updatedAt: r.updated_at,
           status: r.status,
@@ -88,7 +92,7 @@ export const updateMyPost = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => editInput.parse(data))
   .handler(async ({ data, context }) => {
-    if (data.city.trim().length < 2 && data.zip.trim().length < 4) {
+    if (!validLocation(data.city, data.zip)) {
       throw new Error("Enter the city or ZIP so your pin lands in the right place.");
     }
     const patch = {
@@ -97,6 +101,8 @@ export const updateMyPost = createServerFn({ method: "POST" })
       description: data.description,
       city: data.city,
       zip: data.zip,
+      country_code: data.country,
+      lat: null, lng: null,
       ...(data.avatarPath ? { avatar_url: data.avatarPath } : {}),
     };
     const { error } = await context.supabase

@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
+import { countrySchema, postalSchema, validLocation } from "./country";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -12,6 +13,7 @@ export type UserNeedDTO = {
   description: string;
   city: string;
   zip: string;
+  country: string;
   lat: number | null;
   lng: number | null;
   photoUrl: string | null;
@@ -48,7 +50,7 @@ export const listUserNeeds = createServerFn({ method: "POST" }).handler(
     const { data, error } = await supabase
       .from("user_needs")
       .select(
-        "id, owner_id, short_title, title, description, city, zip, lat, lng, avatar_url, gallery, category",
+        "id, owner_id, short_title, title, description, city, zip, country_code, lat, lng, avatar_url, gallery, category",
       )
       .eq("status", "active")
       .order("updated_at", { ascending: false })
@@ -61,11 +63,11 @@ export const listUserNeeds = createServerFn({ method: "POST" }).handler(
     if (unplaced.length > 0) {
       const { geocodePlaces, placeKey } = await import("./geocode.server");
       const found = await geocodePlaces(
-        unplaced.map((r) => ({ city: r.city ?? "", zip: r.zip ?? "" })),
+        unplaced.map((r) => ({ city: r.city ?? "", zip: r.zip ?? "", country: r.country_code })),
       );
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       for (const r of unplaced) {
-        const point = found.get(placeKey(r.city ?? "", r.zip ?? ""));
+        const point = found.get(placeKey(r.city ?? "", r.zip ?? "", r.country_code));
         if (!point) continue;
         placed.set(r.id, point);
         await supabaseAdmin.from("user_needs").update({ lat: point.lat, lng: point.lng }).eq("id", r.id);
@@ -128,6 +130,7 @@ export const listUserNeeds = createServerFn({ method: "POST" }).handler(
       description: r.description,
       city: r.city,
       zip: r.zip ?? "",
+      country: r.country_code ?? "US",
       lat: r.lat ?? placed.get(r.id)?.lat ?? null,
       lng: r.lng ?? placed.get(r.id)?.lng ?? null,
       photoUrl: r.avatar_url ? (urlByPath.get(r.avatar_url) ?? null) : null,
@@ -152,7 +155,8 @@ const createInput = z.object({
   title: z.string().trim().max(80).optional().default(""),
   description: z.string().trim().min(10).max(400),
   city: z.string().trim().max(80).optional().default(""),
-  zip: z.string().trim().max(10).optional().default(""),
+  zip: postalSchema.optional().default(""),
+  country: countrySchema.default("US"),
   avatarPath: z.string().trim().max(300).optional().default(""),
   gallery: z
     .array(
@@ -171,7 +175,7 @@ export const createUserNeed = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => createInput.parse(data))
   .handler(async ({ data, context }) => {
-    if (data.city.length < 2 && data.zip.length < 4) {
+    if (!validLocation(data.city, data.zip)) {
       throw new Error("Enter the city or ZIP where you need help.");
     }
 
@@ -189,6 +193,7 @@ export const createUserNeed = createServerFn({ method: "POST" })
         description: data.description,
         city: data.city,
         zip: data.zip,
+        country_code: data.country,
         avatar_url: data.avatarPath || null,
         gallery: data.gallery,
         category: data.category || null,

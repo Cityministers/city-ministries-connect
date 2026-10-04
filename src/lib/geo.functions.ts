@@ -1,15 +1,16 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { countrySchema } from "./country";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-const input = z.object({ query: z.string().trim().min(2).max(120) });
+const input = z.object({ query: z.string().trim().min(2).max(120), country: countrySchema.default("US") });
 
 /** Turns a typed city or ZIP into map coordinates so the map can move there. */
 export const lookupPlace = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => input.parse(data))
   .handler(async ({ data }): Promise<{ lat: number; lng: number } | null> => {
     const { geocodeQuery } = await import("./geocode.server");
-    return await geocodeQuery(data.query);
+    return await geocodeQuery(data.query, data.country);
   });
 
 /** Exact street-address lookup for pinning a meetup spot (signed-in only). */

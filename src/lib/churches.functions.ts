@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
+import { countrySchema, postalSchema } from "./country";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -15,6 +16,7 @@ export type ChurchDTO = {
   address: string;
   city: string;
   zip: string;
+  country: string;
   lat: number | null;
   lng: number | null;
   serviceTimes: string;
@@ -46,6 +48,7 @@ export type ChurchPostDTO = {
   description: string;
   city: string;
   zip: string;
+  country: string;
   status: string;
   posterName: string;
 };
@@ -77,6 +80,7 @@ type ChurchRow = {
   address: string;
   city: string;
   zip: string;
+  country: string;
   lat: number | null;
   lng: number | null;
   service_times: string;
@@ -89,7 +93,7 @@ type ChurchRow = {
 };
 
 const CHURCH_COLUMNS =
-  "id, owner_id, name, description, icon_id, avatar_url, address, city, zip, lat, lng, service_times, phone, website, status, plan_status, current_period_end, gallery";
+  "id, owner_id, name, description, icon_id, avatar_url, address, city, zip, country_code, lat, lng, service_times, phone, website, status, plan_status, current_period_end, gallery";
 
 async function signPaths(paths: string[]): Promise<Map<string, string>> {
   const urlByPath = new Map<string, string>();
@@ -119,6 +123,7 @@ function toChurch(row: ChurchRow, urlByPath: Map<string, string>): ChurchDTO {
     address: row.address,
     city: row.city,
     zip: row.zip,
+    country: row.country_code ?? "US",
     lat: row.lat,
     lng: row.lng,
     serviceTimes: row.service_times,
@@ -361,7 +366,8 @@ const churchInput = z.object({
   avatarPath: z.string().trim().max(300).optional().default(""),
   address: z.string().trim().max(160).optional().default(""),
   city: z.string().trim().max(80).optional().default(""),
-  zip: z.string().trim().min(3).max(10),
+  zip: postalSchema.refine((value) => value.length >= 3, "Enter a postal code.").default(""),
+  country: countrySchema.default("US"),
   serviceTimes: z.string().trim().max(200).optional().default(""),
   phone: z.string().trim().max(40).optional().default(""),
   website: z.string().trim().max(200).optional().default(""),
@@ -393,7 +399,7 @@ export const createChurch = createServerFn({ method: "POST" })
       .maybeSingle();
     if (mine) {
       const { geocodeChurch: locate } = await import("./geocode.server");
-      const spot = await locate(data.address, data.city, data.zip);
+      const spot = await locate(data.address, data.city, data.zip, data.country);
       await context.supabase
         .from("churches")
         .update({
@@ -405,6 +411,7 @@ export const createChurch = createServerFn({ method: "POST" })
           address: data.address,
           city: data.city,
           zip: data.zip,
+        country_code: data.country,
           service_times: data.serviceTimes,
           phone: data.phone,
           website: data.website,
@@ -427,6 +434,7 @@ export const createChurch = createServerFn({ method: "POST" })
         address: data.address,
         city: data.city,
         zip: data.zip,
+        country_code: data.country,
         service_times: data.serviceTimes,
         phone: data.phone,
         website: data.website,
@@ -439,7 +447,7 @@ export const createChurch = createServerFn({ method: "POST" })
 
     // Churches are real buildings, so we place them on their exact address.
     const { geocodeChurch: geocodeAddress } = await import("./geocode.server");
-    const point = await geocodeAddress(data.address, data.city, data.zip);
+    const point = await geocodeAddress(data.address, data.city, data.zip, data.country);
     if (point) {
       await context.supabase
         .from("churches")
@@ -458,7 +466,7 @@ export const updateChurch = createServerFn({ method: "POST" })
   .handler(async ({ data, context }): Promise<{ ok: true; located: boolean }> => {
     // An edited address is looked up again so the pin follows the building.
     const { geocodeChurch: geocodeAddress } = await import("./geocode.server");
-    const point = await geocodeAddress(data.address, data.city, data.zip);
+    const point = await geocodeAddress(data.address, data.city, data.zip, data.country);
 
     const { error } = await context.supabase
       .from("churches")
@@ -471,6 +479,7 @@ export const updateChurch = createServerFn({ method: "POST" })
         address: data.address,
         city: data.city,
         zip: data.zip,
+        country_code: data.country,
         service_times: data.serviceTimes,
         phone: data.phone,
         website: data.website,

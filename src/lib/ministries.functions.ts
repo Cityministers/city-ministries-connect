@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
+import { countrySchema, postalSchema, validLocation } from "./country";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -12,6 +13,7 @@ export type UserMinistryDTO = {
   description: string;
   city: string;
   zip: string;
+  country: string;
   lat: number | null;
   lng: number | null;
   photoUrl: string | null;
@@ -48,7 +50,7 @@ export const listUserMinistries = createServerFn({ method: "GET" }).handler(
     const { data, error } = await supabase
       .from("user_ministries")
       .select(
-        "id, owner_id, short_title, title, description, city, zip, lat, lng, avatar_url, icon_id, gallery",
+        "id, owner_id, short_title, title, description, city, zip, country_code, lat, lng, avatar_url, icon_id, gallery",
       )
       .order("updated_at", { ascending: false })
       .limit(200);
@@ -60,11 +62,11 @@ export const listUserMinistries = createServerFn({ method: "GET" }).handler(
     if (unplaced.length > 0) {
       const { geocodePlaces, placeKey } = await import("./geocode.server");
       const found = await geocodePlaces(
-        unplaced.map((r) => ({ city: r.city ?? "", zip: r.zip ?? "" })),
+        unplaced.map((r) => ({ city: r.city ?? "", zip: r.zip ?? "", country: r.country_code })),
       );
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       for (const r of unplaced) {
-        const point = found.get(placeKey(r.city ?? "", r.zip ?? ""));
+        const point = found.get(placeKey(r.city ?? "", r.zip ?? "", r.country_code));
         if (!point) continue;
         placed.set(r.id, point);
         await supabaseAdmin
@@ -131,6 +133,7 @@ export const listUserMinistries = createServerFn({ method: "GET" }).handler(
       description: r.description,
       city: r.city,
       zip: r.zip ?? "",
+      country: r.country_code ?? "US",
       lat: r.lat ?? placed.get(r.id)?.lat ?? null,
       lng: r.lng ?? placed.get(r.id)?.lng ?? null,
       photoUrl: r.avatar_url ? (urlByPath.get(r.avatar_url) ?? null) : null,
@@ -154,8 +157,9 @@ const createInput = z.object({
   shortTitle: z.string().trim().min(2).max(24),
   title: z.string().trim().max(100).optional().default(""),
   description: z.string().trim().min(10).max(400),
-  city: z.string().trim().min(2).max(80),
-  zip: z.string().trim().max(10).optional().default(""),
+  city: z.string().trim().max(80),
+  zip: postalSchema.optional().default(""),
+  country: countrySchema.default("US"),
   avatarPath: z.string().trim().max(300).optional().default(""),
   iconId: z.string().trim().max(80).optional().default(""),
   gallery: z
@@ -174,6 +178,7 @@ export const createUserMinistry = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => createInput.parse(data))
   .handler(async ({ data, context }) => {
+    if (!validLocation(data.city, data.zip)) throw new Error("Enter a city or postal code.");
     const { data: row, error } = await context.supabase
       .from("user_ministries")
       .insert({
@@ -183,6 +188,7 @@ export const createUserMinistry = createServerFn({ method: "POST" })
         description: data.description,
         city: data.city,
         zip: data.zip,
+        country_code: data.country,
         avatar_url: data.avatarPath || null,
         icon_id: data.iconId || null,
         gallery: data.gallery,
