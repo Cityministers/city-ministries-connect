@@ -125,7 +125,7 @@ function NeedsPage() {
   return (
     <div className="flex min-h-dvh flex-col bg-ink font-body text-sand antialiased">
       <header className="sticky top-0 z-30 border-b border-ink-soft bg-ink-soft/95 backdrop-blur">
-        <div className="mx-auto flex w-full max-w-3xl flex-col gap-3 px-4 py-4 sm:px-6">
+        <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 px-4 py-4 sm:px-6">
           <div className="flex items-center gap-3">
             <Link
               to="/map"
@@ -228,10 +228,10 @@ function NeedsPage() {
         </div>
       </header>
 
-      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 py-5 sm:px-6">
+      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 py-5 sm:px-6">
         {isMap ? (
           <>
-            <div className="relative">
+            <div className="relative -mx-4 sm:mx-0">
               <LiveMap
                 points={points}
                 center={mapCenter}
@@ -242,7 +242,7 @@ function NeedsPage() {
                   setBounds((prev) => prev ?? b);
                 }}
                 label={t("Needs map. Drag to explore other neighborhoods.")}
-                className="map-fade h-[60dvh] min-h-[320px] w-full"
+                className="map-fade h-[70dvh] min-h-[360px] w-full rounded-none sm:rounded-2xl"
               />
               {moved && (
                 <button
