@@ -688,6 +688,17 @@ export const mapMinistries = ministries.filter((m) => m.position);
 
 export type Scripture = { text: string; reference: string };
 
+/**
+ * Theological and historical reflection on why each ministry type matters,
+ * keyed by ministry id. Shown above that ministry's scriptures.
+ */
+export const ministryReflections: Record<string, string[]> = {
+  "coffee-chat": [
+    "Scripture hands revelation to friendship before it hands it to an office. Jesus stopped calling the twelve servants and called them friends (John 15:15), and the oldest name given to Abraham was \u201cfriend of God\u201d (James 2:23). God walked in a garden, ate at Abraham\u2019s table, and taught twelve men on a road; the earliest believers carried that pattern into ordinary homes, \u201cbreaking bread\u2026 with glad and generous hearts\u201d (Acts 2:46). The New Testament word for Christian hospitality is philoxenia \u2014 love of the stranger \u2014 and it is commanded of every household, not of a paid office. A coffee chat is that same invitation at its cheapest: one person willing to say \u201ccome\u201d and stay while someone else talks. Luke 14 sets the guest list \u2014 the poor, the crippled, the lame, the blind \u2014 anyone with nothing to trade back.",
+    "Peter tells believers to \u201calways be prepared to make a defense to anyone who asks you for a reason for the hope that is in you, yet with gentleness and respect\u201d (1 Peter 3:15). Defense is the legal word apologia: a reasoned reply to a real question, not a speech, and it assumes someone is near enough to ask. The same letter weaves that answer into ordinary good conduct \u201camong the Gentiles\u201d (1 Peter 2:12) and ties it to humility \u2014 \u201cclothe yourselves with humility toward one another\u201d (1 Peter 5:5) \u2014 so witness is never a claim to be above anyone. Even Peter\u2019s own restoration came over a charcoal-fire breakfast and a question asked three times (John 21:9\u201317). The light in Matthew 5 is not argued for; it is simply not hidden. Two people talking honestly over coffee is a small, unembarrassed light \u2014 and out of it the gospel is preached plainly: God is near, and he is worth meeting.",
+  ],
+};
+
 /** Bible passages (ESV) that highlight each ministry type, keyed by ministry id. */
 export const ministryScriptures: Record<string, Scripture[]> = {
   "coffee-chat": [

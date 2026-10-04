@@ -14,7 +14,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ministries, ministryScriptures, toneStyles } from "@/data/ministries";
+import {
+  ministries,
+  ministryReflections,
+  ministryScriptures,
+  toneStyles,
+} from "@/data/ministries";
 import { youVersionUrl } from "@/lib/bible";
 
 export const Route = createFileRoute("/")({
