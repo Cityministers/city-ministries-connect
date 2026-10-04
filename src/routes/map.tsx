@@ -377,13 +377,13 @@ function MapPage() {
               onClick={() => setMode(mode === "video" ? "view" : "video")}
               aria-label={t("Videos")}
               title={t("Videos")}
-              className={`grid h-10 place-items-center rounded-full px-2 text-sm font-semibold text-sand shadow-none ring-1 transition sm:px-5 ${
+              className={`grid h-10 place-items-center rounded-full px-2 text-sm font-semibold text-sand shadow-none transition sm:px-5 ${
                 mode === "video"
-                  ? "bg-tone-amber/30 ring-tone-amber/70"
-                  : "bg-tone-amber/15 ring-tone-amber/45 hover:bg-tone-amber/25"
+                  ? "video-glow bg-video-deep ring-1 ring-video/60"
+                  : "bg-video-deep/50 ring-1 ring-video/40 hover:bg-video-deep/75"
               }`}
             >
-              <span className={`grid size-6 place-items-center rounded-md ring-1 ${mode === "video" ? "ring-sand/70" : "ring-mist/40"}`}>
+              <span className={`grid size-6 place-items-center rounded-md ring-1 ${mode === "video" ? "ring-video-light/70" : "ring-video-light/45"}`}>
                 <Video className="size-4" aria-hidden="true" strokeWidth={2.25} />
               </span>
             </Button>
