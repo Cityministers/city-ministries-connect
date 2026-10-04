@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Mail, MessageSquare } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useSiteText } from "@/lib/site-text";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -26,6 +27,7 @@ export const Route = createFileRoute("/contact")({
 
 function ContactPage() {
   const { t } = useTranslation();
+  const st = useSiteText();
   const [sent, setSent] = useState(false);
 
   return (
@@ -48,9 +50,9 @@ function ContactPage() {
           <div className="mx-auto mb-4 grid size-16 place-items-center rounded-2xl bg-lemon/10 text-lemon ring-1 ring-lemon/30">
             <Mail className="size-8" aria-hidden="true" />
           </div>
-          <h2 className="font-display text-2xl font-semibold sm:text-3xl">{t("We'd love to hear from you")}</h2>
+          <h2 className="font-display text-2xl font-semibold sm:text-3xl">{st("contact.heading")}</h2>
           <p className="mt-3 text-lg text-mist/80 sm:text-xl">
-            {t("Questions, ideas, or prayer requests — send them our way.")}
+            {st("contact.intro")}
           </p>
         </div>
 

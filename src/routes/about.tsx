@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Compass, Heart, MapPin, Milestone, Target, Users } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useSiteText } from "@/lib/site-text";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -41,6 +42,7 @@ const history = [
 
 function AboutPage() {
   const { t } = useTranslation();
+  const st = useSiteText();
   return (
     <div className="flex min-h-dvh flex-col bg-ink font-body text-sand antialiased">
       <header className="border-b border-ink-soft bg-ink-soft/70">
@@ -61,9 +63,9 @@ function AboutPage() {
           <div className="mx-auto mb-4 grid size-16 place-items-center rounded-2xl bg-lemon/10 text-lemon ring-1 ring-lemon/30">
             <Heart className="size-8" aria-hidden="true" />
           </div>
-          <h2 className="font-display text-3xl font-semibold sm:text-4xl">{t("We are City Ministers")}</h2>
+          <h2 className="font-display text-3xl font-semibold sm:text-4xl">{st("about.heading")}</h2>
           <p className="mt-3 text-lg text-mist/80 sm:text-xl">
-            {t("A simple way for neighbors to share their gifts and meet each other's needs.")}
+            {st("about.intro")}
           </p>
         </div>
 
@@ -72,14 +74,14 @@ function AboutPage() {
             <Target className="mb-3 size-6 text-lemon" aria-hidden="true" />
             <h3 className="font-display text-2xl font-semibold">{t("Our mission")}</h3>
             <p className="mt-2 text-lg leading-relaxed text-mist/80">
-              {t("To put every believer's gift on the map, so that no need in our city goes unseen and no gift goes unused. We exist to turn quiet willingness into a knock on a real door.")}
+              {st("about.mission")}
             </p>
           </div>
           <div className="rounded-2xl bg-ink-soft/40 p-6 ring-1 ring-mist/15">
             <Compass className="mb-3 size-6 text-lemon" aria-hidden="true" />
             <h3 className="font-display text-2xl font-semibold">{t("Our vision")}</h3>
             <p className="mt-2 text-lg leading-relaxed text-mist/80">
-              {t("A city where help is never more than a few blocks away — where the church is known by the streets it serves, and where asking for help is as normal as offering it.")}
+              {st("about.vision")}
             </p>
           </div>
         </section>

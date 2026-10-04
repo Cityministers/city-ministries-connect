@@ -889,6 +889,7 @@ export type Database = {
           show_ministries: boolean
           show_needs: boolean
           show_prayers: boolean
+          suspended_at: string | null
           zip: string
         }
         Insert: {
@@ -904,6 +905,7 @@ export type Database = {
           show_ministries?: boolean
           show_needs?: boolean
           show_prayers?: boolean
+          suspended_at?: string | null
           zip?: string
         }
         Update: {
@@ -919,6 +921,7 @@ export type Database = {
           show_ministries?: boolean
           show_needs?: boolean
           show_prayers?: boolean
+          suspended_at?: string | null
           zip?: string
         }
         Relationships: []
@@ -1053,6 +1056,7 @@ export type Database = {
           icon: string
           id: string
           in_default_feed: boolean
+          pinned: boolean
           slug: string
           sort: number
           status: string
@@ -1066,6 +1070,7 @@ export type Database = {
           icon?: string
           id?: string
           in_default_feed?: boolean
+          pinned?: boolean
           slug: string
           sort?: number
           status?: string
@@ -1079,6 +1084,7 @@ export type Database = {
           icon?: string
           id?: string
           in_default_feed?: boolean
+          pinned?: boolean
           slug?: string
           sort?: number
           status?: string
@@ -1149,6 +1155,30 @@ export type Database = {
           ideas?: Json
           owner_id?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      site_content: {
+        Row: {
+          created_at: string
+          key: string
+          updated_at: string
+          updated_by: string | null
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          key: string
+          updated_at?: string
+          updated_by?: string | null
+          value?: string
+        }
+        Update: {
+          created_at?: string
+          key?: string
+          updated_at?: string
+          updated_by?: string | null
+          value?: string
         }
         Relationships: []
       }
@@ -1298,6 +1328,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cms_user_emails: {
+        Args: never
+        Returns: {
+          created_at: string
+          email: string
+          id: string
+        }[]
+      }
       complete_user_need: {
         Args: {
           _helper_conversation_id: string
@@ -1312,6 +1350,7 @@ export type Database = {
         Args: { _church_id: string; _user_id: string }
         Returns: boolean
       }
+      is_suspended: { Args: { _user_id: string }; Returns: boolean }
       notify_followers: {
         Args: {
           _actor: string

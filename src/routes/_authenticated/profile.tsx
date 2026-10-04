@@ -195,6 +195,15 @@ function ProfilePage() {
           <p className="py-16 text-center text-base text-mist/60">{t("Loading…")}</p>
         ) : (
           <>
+            {isAdmin.data ? (
+              <Link
+                to="/cms"
+                className="flex items-center justify-center gap-2 rounded-2xl bg-lemon px-5 py-4 text-xl font-bold text-ink transition hover:bg-lemon/90"
+              >
+                <ShieldCheck className="size-6" aria-hidden="true" />
+                {t("CMS")}
+              </Link>
+            ) : null}
             <PrivacyCard />
             {/* Identity card */}
             <section className="rounded-2xl bg-ink-soft/60 p-4 ring-1 ring-mist/15">
@@ -370,15 +379,6 @@ function ProfilePage() {
               <>
             {/* Donate + sign out */}
             <div className="flex flex-col gap-3">
-              {isAdmin.data ? (
-                <Link
-                  to="/admin"
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-lemon px-5 py-3 text-base font-semibold text-ink transition hover:bg-lemon/90"
-                >
-                  <ShieldCheck className="size-4" aria-hidden="true" />
-                  {t("Review Center")}
-                </Link>
-              ) : null}
 
               <Link
                 to="/donate"
