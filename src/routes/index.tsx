@@ -14,7 +14,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ministries, ministryScriptures, toneStyles } from "@/data/ministries";
+import {
+  ministries,
+  ministryReflections,
+  ministryScriptures,
+  toneStyles,
+} from "@/data/ministries";
 import { youVersionUrl } from "@/lib/bible";
 
 export const Route = createFileRoute("/")({
@@ -181,6 +186,18 @@ function HomePage() {
                     <p className="text-lg leading-relaxed text-mist/85 sm:text-xl">
                       {t(ministry.description)}
                     </p>
+                    {(ministryReflections[ministry.id] ?? []).length > 0 && (
+                      <div className="mt-1 flex flex-col gap-3">
+                        {(ministryReflections[ministry.id] ?? []).map((p) => (
+                          <p
+                            key={p.slice(0, 32)}
+                            className="text-base leading-relaxed text-mist/90 sm:text-lg"
+                          >
+                            {t(p)}
+                          </p>
+                        ))}
+                      </div>
+                    )}
                     <div className="flex flex-col gap-3 border-t border-mist/15 pt-4">
                       {(ministryScriptures[ministry.id] ?? []).map((s) => (
                         <p
