@@ -171,7 +171,7 @@ function NeedsPage() {
                 placeholder={t("City or postal code")}
                 aria-label={t("Search by city or postal code")}
               />
-              <CountrySelect value={country} onChange={(value) => { setCountry(value); void navigate({ search: { place: placeQuery, country: value, ...(isMap ? {} : { view: "list" as const }) }, replace: true }); }} className="max-w-28 rounded-full bg-ink px-2 py-2.5 text-sm text-sand ring-1 ring-mist/20" />
+              <CountrySelect compact value={country} onChange={(value) => { setCountry(value); void navigate({ search: { place: placeQuery, country: value, ...(isMap ? {} : { view: "list" as const }) }, replace: true }); }} className="max-w-28 rounded-full bg-ink px-2 py-2.5 text-sm text-sand ring-1 ring-mist/20" />
               <span className="shrink-0 text-[10px] font-bold uppercase tracking-widest text-mist/60">
                 {t("Postal or city")}
               </span>

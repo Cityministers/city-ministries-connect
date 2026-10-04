@@ -91,7 +91,9 @@ export async function geocodeQuery(query: string, country = "US"): Promise<LatLn
   if (raw.length < 2) return null;
   const names = [countryName(country), country].map((s) => s.toLowerCase());
   const q = raw.split(",").filter((part) => !names.includes(part.trim().toLowerCase())).join(",").trim() || raw;
-  const zip = /^[\p{L}\p{N}][\p{L}\p{N} -]{2,19}$/u.test(q) && (/\d/.test(q) || q.length <= 4) && !q.includes(",") ? q : "";
+  // Keep the whole query intact when it contains a city; geocoders understand
+  // “Quezon City, 1100” and the country restriction prevents cross-country hits.
+  const zip = /^[\p{L}\p{N} -]{3,20}$/u.test(q) && /\d/.test(q) && !/[a-z]{4,}/i.test(q) && !q.includes(",") ? q : "";
   const city = zip ? "" : q;
   const found = await geocodePlaces([{ city, zip, country }]);
   return found.get(placeKey(city, zip, country)) ?? null;

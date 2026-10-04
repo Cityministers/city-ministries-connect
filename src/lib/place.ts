@@ -3,7 +3,7 @@ import { countryName } from "./country";
 
 /** Extracts a 5-digit ZIP from a free-text place query, if present. */
 function zipOf(query: string): string | null {
-  const match = query.match(/\b[\p{L}\p{N}][\p{L}\p{N} -]{2,18}[\p{L}\p{N}]\b/u);
+  const match = query.match(/\b(?:\d{4,6}|[a-z]\d[a-z][ -]?\d[a-z]\d)\b/i);
   return match ? match[0] : null;
 }
 

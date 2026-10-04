@@ -290,7 +290,7 @@ function MapPage() {
                 {t("postal or city")}
               </span>
             </form>
-            <CountrySelect value={country} onChange={(value) => { setCountry(value); void navigate({ search: { place: location, country: value }, replace: true }); }} className="max-w-28 rounded-full bg-ink px-2 py-2.5 text-sm text-sand ring-1 ring-mist/20" />
+            <CountrySelect compact value={country} onChange={(value) => { setCountry(value); void navigate({ search: { place: location, country: value }, replace: true }); }} className="max-w-28 rounded-full bg-ink px-2 py-2.5 text-sm text-sand ring-1 ring-mist/20" />
             <Link
               to="/ministries"
               search={{ place: location, country }}
