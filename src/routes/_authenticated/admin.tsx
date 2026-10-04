@@ -198,7 +198,7 @@ function AdminPage() {
                   }`}
                 >
                   {tabItem === "stats"
-                    ? t("Site activity")
+                    ? t("Activity")
                     : tabItem === "needs"
                       ? t("Posted needs")
                       : tabItem === "rooms"

@@ -48,6 +48,7 @@ import { Route as AuthenticatedGiftsInviteRouteImport } from './routes/_authenti
 import { Route as AuthenticatedGiftsListRouteImport } from './routes/_authenticated/gifts.list'
 import { Route as AuthenticatedMessagesConversationIdRouteImport } from './routes/_authenticated/messages.$conversationId'
 import { Route as AuthenticatedPeopleIdRouteImport } from './routes/_authenticated/people.$id'
+import { Route as ApiPublicActivityAlertRouteImport } from './routes/api/public/activity-alert'
 import { Route as ApiPublicMeetupRemindersRouteImport } from './routes/api/public/meetup-reminders'
 
 const IndexRoute = IndexRouteImport.update({
@@ -248,6 +249,11 @@ const AuthenticatedPeopleIdRoute = AuthenticatedPeopleIdRouteImport.update({
   path: '/people/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicActivityAlertRoute = ApiPublicActivityAlertRouteImport.update({
+  id: '/api/public/activity-alert',
+  path: '/api/public/activity-alert',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicMeetupRemindersRoute =
   ApiPublicMeetupRemindersRouteImport.update({
     id: '/api/public/meetup-reminders',
@@ -293,6 +299,7 @@ export interface FileRoutesByFullPath {
   '/gifts/list': typeof AuthenticatedGiftsListRoute
   '/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
   '/people/$id': typeof AuthenticatedPeopleIdRoute
+  '/api/public/activity-alert': typeof ApiPublicActivityAlertRoute
   '/api/public/meetup-reminders': typeof ApiPublicMeetupRemindersRoute
   '/gifts/': typeof AuthenticatedGiftsIndexRoute
 }
@@ -334,6 +341,7 @@ export interface FileRoutesByTo {
   '/gifts/list': typeof AuthenticatedGiftsListRoute
   '/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
   '/people/$id': typeof AuthenticatedPeopleIdRoute
+  '/api/public/activity-alert': typeof ApiPublicActivityAlertRoute
   '/api/public/meetup-reminders': typeof ApiPublicMeetupRemindersRoute
   '/gifts': typeof AuthenticatedGiftsIndexRoute
 }
@@ -377,6 +385,7 @@ export interface FileRoutesById {
   '/_authenticated/gifts/list': typeof AuthenticatedGiftsListRoute
   '/_authenticated/messages/$conversationId': typeof AuthenticatedMessagesConversationIdRoute
   '/_authenticated/people/$id': typeof AuthenticatedPeopleIdRoute
+  '/api/public/activity-alert': typeof ApiPublicActivityAlertRoute
   '/api/public/meetup-reminders': typeof ApiPublicMeetupRemindersRoute
   '/_authenticated/gifts/': typeof AuthenticatedGiftsIndexRoute
 }
@@ -420,6 +429,7 @@ export interface FileRouteTypes {
     | '/gifts/list'
     | '/messages/$conversationId'
     | '/people/$id'
+    | '/api/public/activity-alert'
     | '/api/public/meetup-reminders'
     | '/gifts/'
   fileRoutesByTo: FileRoutesByTo
@@ -461,6 +471,7 @@ export interface FileRouteTypes {
     | '/gifts/list'
     | '/messages/$conversationId'
     | '/people/$id'
+    | '/api/public/activity-alert'
     | '/api/public/meetup-reminders'
     | '/gifts'
   id:
@@ -503,6 +514,7 @@ export interface FileRouteTypes {
     | '/_authenticated/gifts/list'
     | '/_authenticated/messages/$conversationId'
     | '/_authenticated/people/$id'
+    | '/api/public/activity-alert'
     | '/api/public/meetup-reminders'
     | '/_authenticated/gifts/'
   fileRoutesById: FileRoutesById
@@ -533,6 +545,7 @@ export interface RootRouteChildren {
   HowItWorksStepRoute: typeof HowItWorksStepRoute
   RoomsSlugRoute: typeof RoomsSlugRoute
   RoomsManageRoute: typeof RoomsManageRoute
+  ApiPublicActivityAlertRoute: typeof ApiPublicActivityAlertRoute
   ApiPublicMeetupRemindersRoute: typeof ApiPublicMeetupRemindersRoute
 }
 
@@ -811,6 +824,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPeopleIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/activity-alert': {
+      id: '/api/public/activity-alert'
+      path: '/api/public/activity-alert'
+      fullPath: '/api/public/activity-alert'
+      preLoaderRoute: typeof ApiPublicActivityAlertRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/meetup-reminders': {
       id: '/api/public/meetup-reminders'
       path: '/api/public/meetup-reminders'
@@ -885,6 +905,7 @@ const rootRouteChildren: RootRouteChildren = {
   HowItWorksStepRoute: HowItWorksStepRoute,
   RoomsSlugRoute: RoomsSlugRoute,
   RoomsManageRoute: RoomsManageRoute,
+  ApiPublicActivityAlertRoute: ApiPublicActivityAlertRoute,
   ApiPublicMeetupRemindersRoute: ApiPublicMeetupRemindersRoute,
 }
 export const routeTree = rootRouteImport
