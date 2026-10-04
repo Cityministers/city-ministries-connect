@@ -1,3 +1,5 @@
+import { CountrySelect } from "@/components/CountrySelect";
+import { countryCodes } from "@/lib/country";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
@@ -30,7 +32,7 @@ import { inMapBounds, useHomePoint, useMapPosts, usePlaceCenter } from "@/lib/us
 export const Route = createFileRoute("/map")({
   validateSearch: (
     search: Record<string, unknown>,
-  ): { place?: string; new?: string; mode?: "church" | "prayer" | "video" } => {
+  ): { place?: string; country?: string; new?: string; mode?: "church" | "prayer" | "video" } => {
     const raw = search["place"];
     const place = (
       typeof raw === "string" || typeof raw === "number" ? String(raw) : ""
@@ -38,6 +40,7 @@ export const Route = createFileRoute("/map")({
     const fresh = typeof search["new"] === "string" ? search["new"] : "";
     return {
       ...(place.length > 0 ? { place } : {}),
+      ...(typeof search["country"] === "string" && countryCodes.has(search["country"] as string) ? { country: search["country"] as string } : {}),
       ...(fresh.length > 0 ? { new: fresh } : {}),
       ...((search["mode"] === "church" || search["mode"] === "prayer" || search["mode"] === "video") ? { mode: search["mode"] as "church" | "prayer" | "video" } : {}),
     };
@@ -65,9 +68,10 @@ export const Route = createFileRoute("/map")({
 
 function MapPage() {
   const { t } = useTranslation();
-  const { place, new: freshId, mode: freshMode } = Route.useSearch();
+  const { place, country: searchCountry, new: freshId, mode: freshMode } = Route.useSearch();
   const navigate = Route.useNavigate();
   const [location, setLocation] = useState(place ?? "Portland, OR 97209");
+  const [country, setCountry] = useState(searchCountry ?? "US");
   const [activeId, setActiveId] = useState<string | null>(null);
   const [activePrayerId, setActivePrayerId] = useState<string | null>(null);
   const [activeVideoId, setActiveVideoId] = useState<string | null>(null);
@@ -92,7 +96,7 @@ function MapPage() {
   });
 
   const all = useMemo(() => (userPosts ?? []).map(toMinistry), [userPosts]);
-  const center = usePlaceCenter(location);
+  const center = usePlaceCenter(location, country);
   const { origin, hasHome } = useHomePoint(Boolean(session), center);
 
   const [mode, setMode] = useState<"view" | "church" | "prayer" | "video">(
@@ -277,18 +281,19 @@ function MapPage() {
                 value={location}
                 onChange={(e) => {
                   setLocation(e.target.value);
-                  void navigate({ search: { place: e.target.value }, replace: true });
+                  void navigate({ search: { place: e.target.value, country }, replace: true });
                 }}
-                placeholder={t("City or ZIP code")}
-                aria-label={t("Search by city or ZIP code")}
+                placeholder={t("City or postal code")}
+                aria-label={t("Search by city or postal code")}
               />
               <span className="shrink-0 text-[10px] font-medium uppercase tracking-[0.15em] text-mist/40">
-                {t("zip or city")}
+                {t("postal or city")}
               </span>
             </form>
+            <CountrySelect compact value={country} onChange={(value) => { setCountry(value); void navigate({ search: { place: location, country: value }, replace: true }); }} className="max-w-28 rounded-full bg-ink px-2 py-2.5 text-sm text-sand ring-1 ring-mist/20" />
             <Link
               to="/ministries"
-              search={{ place: location }}
+              search={{ place: location, country }}
               className="grid size-10 shrink-0 place-items-center rounded-full bg-tone-cyan/15 text-tone-cyan ring-1 ring-tone-cyan/45 transition hover:bg-tone-cyan/25"
               aria-label={t("List view")}
             >
@@ -312,7 +317,7 @@ function MapPage() {
             >
               <Link
                 to="/map"
-                search={{ place: location }}
+                search={{ place: location, country }}
                 aria-current="page"
                 onClick={() => {
                   setMode("view");
@@ -326,7 +331,7 @@ function MapPage() {
               asChild
               className="h-10 rounded-full bg-tone-indigo/15 px-2 text-sm font-semibold text-sand shadow-none ring-1 ring-tone-indigo/45 hover:bg-tone-indigo/25 sm:px-5"
             >
-              <Link to="/needs" search={{ place: location }}>
+              <Link to="/needs" search={{ place: location, country }}>
                 {t("Needs")}
               </Link>
             </Button>
@@ -435,7 +440,7 @@ function MapPage() {
             )}
           </div>
         )}
-        {mode === "video" && <NeighborhoodVideoForm userId={session?.user?.id ?? null} defaultPlace={location} onPosted={() => void refetchMyVideos()} />}
+        {mode === "video" && <NeighborhoodVideoForm userId={session?.user?.id ?? null} defaultPlace={location} defaultCountry={country} onPosted={() => void refetchMyVideos()} />}
         {mode === "video" && <NeighborhoodVideoFeed videos={visibleVideos.filter((v) => v.status === "approved")} pending={visibleVideos.filter((v) => v.status !== "approved")} onSelect={(id) => {
           setActiveVideoId(id);
           if (`video-${id}` !== highlightId) setHighlightId(null);

@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
+import { countrySchema, postalSchema, validLocation } from "./country";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -12,6 +13,7 @@ export type PrayerDTO = {
   body: string;
   city: string;
   zip: string;
+  country: string;
   lat: number | null;
   lng: number | null;
   anonymous: boolean;
@@ -46,6 +48,7 @@ type Row = {
   body: string;
   city: string;
   zip: string | null;
+  country_code: string;
   lat: number | null;
   lng: number | null;
   anonymous: boolean;
@@ -95,6 +98,7 @@ async function decorate(
       body: r.body,
       city: r.city,
       zip: r.zip ?? "",
+      country: r.country_code ?? "US",
       lat: r.lat,
       lng: r.lng,
       anonymous: r.anonymous,
@@ -107,7 +111,7 @@ async function decorate(
 }
 
 const COLUMNS =
-  "id, owner_id, church_id, short_title, body, city, zip, lat, lng, anonymous, image_url, created_at";
+  "id, owner_id, church_id, short_title, body, city, zip, country_code, lat, lng, anonymous, image_url, created_at";
 
 /** Prayers shown on the map — public prayers plus prayers a church approved. */
 export const listPublicPrayers = createServerFn({ method: "GET" }).handler(
@@ -126,11 +130,11 @@ export const listPublicPrayers = createServerFn({ method: "GET" }).handler(
     if (unplaced.length > 0) {
       const { geocodePlaces, placeKey } = await import("./geocode.server");
       const found = await geocodePlaces(
-        unplaced.map((r) => ({ city: r.city ?? "", zip: r.zip ?? "" })),
+        unplaced.map((r) => ({ city: r.city ?? "", zip: r.zip ?? "", country: r.country_code })),
       );
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       for (const r of unplaced) {
-        const point = found.get(placeKey(r.city ?? "", r.zip ?? ""));
+        const point = found.get(placeKey(r.city ?? "", r.zip ?? "", r.country_code));
         if (!point) continue;
         r.lat = point.lat;
         r.lng = point.lng;
@@ -165,7 +169,8 @@ const createInput = z.object({
   shortTitle: z.string().trim().min(2).max(60),
   body: z.string().trim().min(5).max(1000),
   city: z.string().trim().max(80).optional().default(""),
-  zip: z.string().trim().max(10).optional().default(""),
+  zip: postalSchema.optional().default(""),
+  country: countrySchema.default("US"),
   churchId: z.string().uuid().nullable().optional().default(null),
   anonymous: z.boolean().optional().default(false),
   imagePath: z.string().trim().max(300).nullable().optional().default(null),
@@ -175,7 +180,7 @@ export const createPrayer = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => createInput.parse(data))
   .handler(async ({ data, context }) => {
-    if (!data.churchId && data.city.trim().length < 2 && data.zip.trim().length < 4) {
+    if (!data.churchId && !validLocation(data.city, data.zip)) {
       throw new Error("Enter the city or ZIP where this prayer belongs.");
     }
 
@@ -188,6 +193,7 @@ export const createPrayer = createServerFn({ method: "POST" })
         body: data.body,
         city: data.city,
         zip: data.zip,
+        country_code: data.country,
         anonymous: data.anonymous,
         image_url: data.imagePath,
         // Prayers sent to a church wait for the pastor; map prayers go live.

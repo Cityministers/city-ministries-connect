@@ -10,12 +10,13 @@ type Props = {
   postId: string;
   city: string;
   zip: string;
+  country?: string;
   /** Church the poster came from — shown first in the list. */
   preferChurchId?: string | undefined;
 };
 
 /** Lets a poster ask a church to list their post on its page. */
-export function ChurchPicker({ kind, postId, city, zip, preferChurchId }: Props) {
+export function ChurchPicker({ kind, postId, city, zip, country = "US", preferChurchId }: Props) {
   const { t } = useTranslation();
   const fetchChurches = useServerFn(listChurchesNear);
   const ask = useServerFn(requestChurchPost);
@@ -24,8 +25,8 @@ export function ChurchPicker({ kind, postId, city, zip, preferChurchId }: Props)
   const [busy, setBusy] = useState(false);
 
   const { data: churches } = useQuery({
-    queryKey: ["churches-near", city, zip],
-    queryFn: () => fetchChurches({ data: { city, zip } }),
+    queryKey: ["churches-near", city, zip, country],
+    queryFn: () => fetchChurches({ data: { city, zip, country } }),
   });
 
   if (!churches || churches.length === 0) return null;

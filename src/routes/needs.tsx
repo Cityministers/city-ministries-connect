@@ -1,3 +1,5 @@
+import { CountrySelect } from "@/components/CountrySelect";
+import { countryCodes } from "@/lib/country";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
@@ -25,7 +27,7 @@ import { useSession } from "@/hooks/useSession";
 import { toNeed } from "@/lib/user-needs";
 
 export const Route = createFileRoute("/needs")({
-  validateSearch: (search: Record<string, unknown>): { place?: string; view?: string; new?: string } => {
+  validateSearch: (search: Record<string, unknown>): { place?: string; country?: string; view?: string; new?: string } => {
     const raw = search["place"];
     const place = (
       typeof raw === "string" || typeof raw === "number" ? String(raw) : ""
@@ -35,6 +37,7 @@ export const Route = createFileRoute("/needs")({
     const fresh = typeof search["new"] === "string" ? search["new"] : "";
     return {
       ...(place.length > 0 ? { place } : {}),
+      ...(typeof search["country"] === "string" && countryCodes.has(search["country"] as string) ? { country: search["country"] as string } : {}),
       ...(view === "list" ? { view } : {}),
       ...(fresh.length > 0 ? { new: fresh } : {}),
     };
@@ -61,9 +64,10 @@ export const Route = createFileRoute("/needs")({
 
 function NeedsPage() {
   const { t } = useTranslation();
-  const { place, view, new: freshId } = Route.useSearch();
+  const { place, country: searchCountry, view, new: freshId } = Route.useSearch();
   const navigate = Route.useNavigate();
   const [placeQuery, setPlaceQuery] = useState(place ?? "Portland, OR 97209");
+  const [country, setCountry] = useState(searchCountry ?? "US");
   const [query, setQuery] = useState("");
   const [activeId, setActiveId] = useState<string | null>(null);
   const [highlightId, setHighlightId] = useState<string | null>(
@@ -82,12 +86,12 @@ function NeedsPage() {
 
   const all = useMemo(() => (needs ?? []).map(toNeed), [needs]);
   const results = useMemo(
-    () => all.filter((m) => matchesPlace(m, placeQuery) && matchesText(m, query)),
-    [all, placeQuery, query],
+    () => all.filter((m) => matchesPlace(m, placeQuery, country) && matchesText(m, query)),
+    [all, placeQuery, query, country],
   );
   // The map keeps every need on it; the place search moves the map instead of filtering.
   const onMap = useMemo(() => all.filter((m) => matchesText(m, query)), [all, query]);
-  const center = usePlaceCenter(placeQuery);
+  const center = usePlaceCenter(placeQuery, country);
   const session = useSession();
   const { origin } = useHomePoint(Boolean(session), center);
   const [bounds, setBounds] = useState<MapBounds | null>(null);
@@ -114,6 +118,7 @@ function NeedsPage() {
     void navigate({
       search: {
         ...(placeQuery ? { place: placeQuery } : {}),
+        country,
         ...(isMap ? { view: "list" as const } : {}),
       },
       replace: true,
@@ -137,7 +142,8 @@ function NeedsPage() {
               {t("Needs near you")}
               <Link
                 to="/needs"
-                search={{ ...(placeQuery ? { place: placeQuery } : {}), view: "list" as const }}
+                search={{ ...(placeQuery ? { place: placeQuery } : {}),
+        country, view: "list" as const }}
                 className="ml-2 inline-flex items-center text-lemon hover:underline"
                 aria-label={t("View list of {{count}} needs", { count: results.length })}
               >
@@ -156,19 +162,20 @@ function NeedsPage() {
                   setPlaceQuery(e.target.value);
                   void navigate({
                     search: {
-                      ...(e.target.value ? { place: e.target.value } : {}),
+                      ...(e.target.value ? { place: e.target.value, country } : {}),
                       ...(isMap ? {} : { view: "list" as const }),
                     },
                     replace: true,
                   });
                 }}
-                placeholder={t("City or ZIP code")}
-                aria-label={t("Search by city or ZIP code")}
+                placeholder={t("City or postal code")}
+                aria-label={t("Search by city or postal code")}
               />
               <span className="shrink-0 text-[10px] font-bold uppercase tracking-widest text-mist/60">
-                {t("Zip or city")}
+                {t("Postal or city")}
               </span>
             </div>
+              <CountrySelect compact value={country} onChange={(value) => { setCountry(value); void navigate({ search: { place: placeQuery, country: value, ...(isMap ? {} : { view: "list" as const }) }, replace: true }); }} className="max-w-28 rounded-full bg-ink px-2 py-2.5 text-sm text-sand ring-1 ring-mist/20" />
             <button
               type="button"
               onClick={toggleView}
@@ -245,7 +252,8 @@ function NeedsPage() {
                 asChild
                 className="h-10 rounded-full bg-lemon/15 px-2 text-sm font-semibold text-sand shadow-none ring-1 ring-lemon/45 transition hover:bg-lemon/25 sm:px-5"
               >
-                <Link to="/map" search={{ ...(placeQuery ? { place: placeQuery } : {}), mode: "church" }}>
+                <Link to="/map" search={{ ...(placeQuery ? { place: placeQuery } : {}),
+        country, mode: "church" }}>
                   {t("Churches")}
                 </Link>
               </Button>
@@ -253,7 +261,8 @@ function NeedsPage() {
                 asChild
                 className="h-10 rounded-full bg-prayer/15 px-2 text-sm font-semibold text-sand shadow-none ring-1 ring-prayer/45 transition hover:bg-prayer/25 sm:px-5"
               >
-                <Link to="/map" search={{ ...(placeQuery ? { place: placeQuery } : {}), mode: "prayer" }}>
+                <Link to="/map" search={{ ...(placeQuery ? { place: placeQuery } : {}),
+        country, mode: "prayer" }}>
                   {t("Prayers")}
                 </Link>
               </Button>
@@ -263,7 +272,8 @@ function NeedsPage() {
                 title={t("Videos")}
                 className="grid h-10 place-items-center rounded-full bg-video-deep/50 px-2 text-sm font-semibold text-sand shadow-none ring-1 ring-video/40 transition hover:bg-video-deep/75 sm:px-5"
               >
-                <Link to="/map" search={{ ...(placeQuery ? { place: placeQuery } : {}), mode: "video" }}>
+                <Link to="/map" search={{ ...(placeQuery ? { place: placeQuery } : {}),
+        country, mode: "video" }}>
                   <span className="grid size-6 place-items-center rounded-md ring-1 ring-video-light/45">
                     <Video className="size-4" aria-hidden="true" strokeWidth={2.25} />
                   </span>

@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
+import { countrySchema, postalSchema, validLocation } from "./country";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
 import type { MinistryIdea, ShapeAnswers } from "@/data/shape";
@@ -35,7 +36,8 @@ const ChildSchema = z.object({ name: z.string().max(60), age: z.string().max(10)
 
 const AnswersSchema = z.object({
   city: z.string().max(80),
-  zip: z.string().max(12),
+  zip: postalSchema,
+  country: countrySchema.default("US"),
   firstName: z.string().max(60),
   ageRange: z.string().max(40),
   marital: z.string().max(40),
@@ -80,6 +82,7 @@ export const saveShapeProfile = createServerFn({ method: "POST" })
         owner_id: context.userId,
         city: data.city,
         zip: data.zip,
+        country_code: data.country,
         children: data.children,
         answers: data,
         free_talk: data.freeTalk,
@@ -128,7 +131,7 @@ function describe(a: ShapeAnswers) {
   const lean = Object.values(a.giftLean).filter(Boolean).join("; ");
   const personality = Object.values(a.personality).filter(Boolean).join("; ");
   return [
-    `Location: ${[a.city, a.zip].filter(Boolean).join(" ") || "unspecified"}`,
+    `Location: ${[a.city, a.zip, a.country ?? "US"].filter(Boolean).join(" ") || "unspecified"}`,
     `Name: ${a.firstName || "unspecified"}`,
     `Age range: ${a.ageRange}. Marital status: ${a.marital}. Time per month: ${a.timePerMonth}.`,
     `Household: ${a.household || "not given"}. Children: ${kids || "none listed"}.`,
@@ -305,7 +308,8 @@ const PostSchema = z.object({
   title: z.string().trim().max(90).optional().default(""),
   description: z.string().trim().min(10).max(400),
   city: z.string().trim().max(80).optional().default(""),
-  zip: z.string().trim().max(10).optional().default(""),
+  zip: postalSchema.optional().default(""),
+  country: countrySchema.default("US"),
 });
 
 /** Posts one generated (and possibly edited) idea to the map. */
@@ -313,7 +317,7 @@ export const postSuggestion = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => PostSchema.parse(input))
   .handler(async ({ data, context }) => {
-    if (data.city.length < 2 && data.zip.length < 4) {
+    if (!validLocation(data.city, data.zip)) {
       throw new Error("Add the city or ZIP so your pin lands in the right place.");
     }
 
@@ -333,6 +337,7 @@ export const postSuggestion = createServerFn({ method: "POST" })
         description: data.description,
         city: data.city,
         zip: data.zip,
+        country_code: data.country,
       })
       .select("id")
       .single();

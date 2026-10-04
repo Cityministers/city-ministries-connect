@@ -261,6 +261,7 @@ export type Database = {
           address: string
           avatar_url: string | null
           city: string
+          country_code: string
           created_at: string
           current_period_end: string | null
           description: string
@@ -283,6 +284,7 @@ export type Database = {
           address?: string
           avatar_url?: string | null
           city?: string
+          country_code?: string
           created_at?: string
           current_period_end?: string | null
           description?: string
@@ -305,6 +307,7 @@ export type Database = {
           address?: string
           avatar_url?: string | null
           city?: string
+          country_code?: string
           created_at?: string
           current_period_end?: string | null
           description?: string
@@ -479,6 +482,7 @@ export type Database = {
       geo_cache: {
         Row: {
           city: string
+          country_code: string
           created_at: string
           id: string
           lat: number | null
@@ -489,6 +493,7 @@ export type Database = {
         }
         Insert: {
           city?: string
+          country_code?: string
           created_at?: string
           id?: string
           lat?: number | null
@@ -499,6 +504,7 @@ export type Database = {
         }
         Update: {
           city?: string
+          country_code?: string
           created_at?: string
           id?: string
           lat?: number | null
@@ -639,6 +645,7 @@ export type Database = {
       neighborhood_videos: {
         Row: {
           city: string
+          country_code: string
           created_at: string
           description: string
           duration_seconds: number
@@ -656,6 +663,7 @@ export type Database = {
         }
         Insert: {
           city?: string
+          country_code?: string
           created_at?: string
           description?: string
           duration_seconds: number
@@ -673,6 +681,7 @@ export type Database = {
         }
         Update: {
           city?: string
+          country_code?: string
           created_at?: string
           description?: string
           duration_seconds?: number
@@ -810,6 +819,7 @@ export type Database = {
           body: string
           church_id: string | null
           city: string
+          country_code: string
           created_at: string
           id: string
           image_url: string | null
@@ -826,6 +836,7 @@ export type Database = {
           body?: string
           church_id?: string | null
           city?: string
+          country_code?: string
           created_at?: string
           id?: string
           image_url?: string | null
@@ -842,6 +853,7 @@ export type Database = {
           body?: string
           church_id?: string | null
           city?: string
+          country_code?: string
           created_at?: string
           id?: string
           image_url?: string | null
@@ -868,6 +880,7 @@ export type Database = {
           avatar_url: string | null
           bio: string
           city: string
+          country_code: string
           created_at: string
           display_name: string | null
           id: string
@@ -882,6 +895,7 @@ export type Database = {
           avatar_url?: string | null
           bio?: string
           city?: string
+          country_code?: string
           created_at?: string
           display_name?: string | null
           id: string
@@ -896,6 +910,7 @@ export type Database = {
           avatar_url?: string | null
           bio?: string
           city?: string
+          country_code?: string
           created_at?: string
           display_name?: string | null
           id?: string
@@ -1076,6 +1091,7 @@ export type Database = {
           answers: Json
           children: Json
           city: string
+          country_code: string
           created_at: string
           free_talk: string
           id: string
@@ -1088,6 +1104,7 @@ export type Database = {
           answers?: Json
           children?: Json
           city?: string
+          country_code?: string
           created_at?: string
           free_talk?: string
           id?: string
@@ -1100,6 +1117,7 @@ export type Database = {
           answers?: Json
           children?: Json
           city?: string
+          country_code?: string
           created_at?: string
           free_talk?: string
           id?: string
@@ -1138,6 +1156,7 @@ export type Database = {
         Row: {
           avatar_url: string | null
           city: string
+          country_code: string
           created_at: string
           description: string
           gallery: Json
@@ -1155,6 +1174,7 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           city: string
+          country_code?: string
           created_at?: string
           description: string
           gallery?: Json
@@ -1172,6 +1192,7 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           city?: string
+          country_code?: string
           created_at?: string
           description?: string
           gallery?: Json
@@ -1193,6 +1214,7 @@ export type Database = {
           avatar_url: string | null
           category: string | null
           city: string
+          country_code: string
           created_at: string
           description: string
           gallery: Json
@@ -1212,6 +1234,7 @@ export type Database = {
           avatar_url?: string | null
           category?: string | null
           city?: string
+          country_code?: string
           created_at?: string
           description: string
           gallery?: Json
@@ -1231,6 +1254,7 @@ export type Database = {
           avatar_url?: string | null
           category?: string | null
           city?: string
+          country_code?: string
           created_at?: string
           description?: string
           gallery?: Json

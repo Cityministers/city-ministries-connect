@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { CountrySelect } from "@/components/CountrySelect";
+import { validLocation, placeLabel } from "@/lib/country";
 import { ChurchPicker } from "@/components/ChurchPicker";
 import { createUserNeed } from "@/lib/needs.functions";
 import { supabase } from "@/integrations/supabase/client";
@@ -72,6 +74,7 @@ function PostNeedPage() {
   const [description, setDescription] = useState("");
   const [city, setCity] = useState("");
   const [zip, setZip] = useState("");
+  const [country, setCountry] = useState("US");
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [mode, setMode] = useState<"pick" | "custom">("custom");
@@ -152,8 +155,8 @@ function PostNeedPage() {
     if (shortTitle.trim().length < 2) return setError(t("Add a short title."));
     if (description.trim().length < 10)
       return setError(t("Add a little more about what you need."));
-    if (city.trim().length < 2 && zip.trim().length < 4)
-      return setError(t("Enter the city or ZIP where you need help."));
+    if (!validLocation(city, zip))
+      return setError(t("Enter the city or postal code where you need help."));
     if (!agreed)
       return setError(t("Please read and accept the User & Privacy Agreement first."));
 
@@ -190,13 +193,14 @@ function PostNeedPage() {
           description: description.trim(),
           city: city.trim(),
           zip: zip.trim(),
+          country,
           avatarPath,
           category: category ?? "",
           gallery,
         },
       });
 
-      const place = [city.trim(), zip.trim()].filter(Boolean).join(" ");
+      const place = placeLabel(city.trim(), zip.trim(), country);
       setPosted({ id: result.id, shortTitle: shortTitle.trim(), place });
     } catch (err) {
       setError(err instanceof Error ? err.message : t("Something went wrong."));
@@ -438,7 +442,8 @@ function PostNeedPage() {
               />
             </label>
 
-            <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-3">
+            <CountrySelect value={country} onChange={setCountry} className="w-full rounded-xl bg-ink-soft px-4 py-3.5 text-base text-sand ring-1 ring-mist/20" />
+          <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-3">
               <label className="flex min-w-0 flex-col gap-2 text-base text-mist/80 sm:text-lg">
                 {t("City")}
                 <input
@@ -450,13 +455,13 @@ function PostNeedPage() {
                 />
               </label>
               <label className="flex w-24 shrink-0 flex-col gap-2 text-base text-mist/80 sm:w-32 sm:text-lg">
-                {t("ZIP")}
+                {t("Postal code / ZIP")}
                 <input
                   className="w-full min-w-0 rounded-xl bg-ink-soft px-4 py-3.5 text-lg text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50 sm:text-xl"
                   value={zip}
                   onChange={(e) => setZip(e.target.value)}
-                  maxLength={10}
-                  inputMode="numeric"
+                  maxLength={20}
+                  inputMode="text"
                   placeholder="97006"
                 />
               </label>
@@ -521,6 +526,7 @@ function PostNeedPage() {
               postId={posted.id}
               city={city.trim()}
               zip={zip.trim()}
+              country={country}
               preferChurchId={search.church}
             />
           )}
@@ -529,7 +535,7 @@ function PostNeedPage() {
               type="button"
               onClick={() => {
                 if (!posted) return;
-                void navigate({ to: "/needs", search: { place: posted.place, new: posted.id } });
+                void navigate({ to: "/needs", search: { place: posted.place, country, new: posted.id } });
               }}
               className="inline-flex items-center justify-center gap-2 rounded-full bg-lemon px-6 py-3.5 text-lg font-semibold text-ink transition-transform hover:-translate-y-0.5"
             >

@@ -13,7 +13,7 @@ import { formatMiles, milesBetween, spread, type LatLng } from "@/lib/distance";
 export const DEFAULT_CENTER: LatLng = { lat: 45.5152, lng: -122.6784 };
 
 /** Turns a typed place into map coordinates, debounced while the user types. */
-export function usePlaceCenter(query: string): LatLng {
+export function usePlaceCenter(query: string, country = "US"): LatLng {
   const lookup = useServerFn(lookupPlace);
   const [debounced, setDebounced] = useState(query);
   useEffect(() => {
@@ -22,8 +22,8 @@ export function usePlaceCenter(query: string): LatLng {
   }, [query]);
 
   const { data } = useQuery({
-    queryKey: ["place", debounced],
-    queryFn: () => lookup({ data: { query: debounced } }),
+    queryKey: ["place", debounced, country],
+    queryFn: () => lookup({ data: { query: debounced, country } }),
     enabled: debounced.trim().length >= 2,
     staleTime: Infinity,
   });
@@ -47,8 +47,8 @@ export function useHomePoint(signedIn: boolean, fallback: LatLng) {
 
   const homeQuery = [place?.city, place?.zip].filter(Boolean).join(" ").trim();
   const { data: point } = useQuery({
-    queryKey: ["place", homeQuery],
-    queryFn: () => lookup({ data: { query: homeQuery } }),
+    queryKey: ["place", homeQuery, place?.country],
+    queryFn: () => lookup({ data: { query: homeQuery, country: place?.country ?? "US" } }),
     enabled: homeQuery.length >= 2,
     staleTime: Infinity,
   });

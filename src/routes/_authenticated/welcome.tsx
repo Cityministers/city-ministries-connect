@@ -3,6 +3,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { CountrySelect } from "@/components/CountrySelect";
+import { validLocation, placeLabel } from "@/lib/country";
 import { BrandLogo } from "@/components/BrandLogo";
 import { PhotoCropper } from "@/components/PhotoCropper";
 import { supabase } from "@/integrations/supabase/client";
@@ -50,6 +52,7 @@ function WelcomePage() {
   const [name, setName] = useState("");
   const [city, setCity] = useState("");
   const [zip, setZip] = useState("");
+  const [country, setCountry] = useState("US");
   const [photo, setPhoto] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [cropping, setCropping] = useState<File | null>(null);
@@ -91,8 +94,8 @@ function WelcomePage() {
       setError(t("Please add the name your neighbors will see."));
       return;
     }
-    if (city.trim().length < 2 && zip.trim().length < 4) {
-      setError(t("Add the city or ZIP where you live so your posts land in the right place."));
+    if (!validLocation(city, zip)) {
+      setError(t("Add the city or postal code where you live so your posts land in the right place."));
       return;
     }
     setBusy(true);
@@ -123,6 +126,7 @@ function WelcomePage() {
           displayName: name.trim(),
           city: city.trim(),
           zip: zip.trim(),
+          country,
           ...(avatarPath ? { avatarPath } : {}),
         },
       });
@@ -172,6 +176,7 @@ function WelcomePage() {
             />
           </label>
 
+          <CountrySelect value={country} onChange={setCountry} className="w-full rounded-xl bg-ink-soft px-4 py-3.5 text-base text-sand ring-1 ring-mist/20" />
           <div className="flex gap-3">
             <label className="flex flex-1 flex-col gap-1.5 text-base text-mist/80">
               {t("City")}
@@ -182,8 +187,8 @@ function WelcomePage() {
                 placeholder={t("Portland, OR")}
               />
             </label>
-            <label className="flex w-32 flex-col gap-1.5 text-base text-mist/80">
-              {t("ZIP")}
+            <label className="flex w-36 flex-col gap-1.5 text-base text-mist/80">
+              {t("Postal code / ZIP")}
               <input
                 className="rounded-xl bg-ink px-4 py-3 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
                 value={zip}

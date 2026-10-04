@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { countrySchema, postalSchema, validLocation } from "./country";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -66,13 +67,13 @@ export const getMyProfile = createServerFn({ method: "GET" })
 /** The city and ZIP saved on the profile, used as the "home" distances are measured from. */
 export const getMyPlace = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }): Promise<{ city: string; zip: string }> => {
+  .handler(async ({ context }): Promise<{ city: string; zip: string; country: string }> => {
     const { data } = await context.supabase
       .from("profiles")
-      .select("city, zip")
+      .select("city, zip, country_code")
       .eq("id", context.userId)
       .maybeSingle();
-    return { city: data?.city ?? "", zip: data?.zip ?? "" };
+    return { city: data?.city ?? "", zip: data?.zip ?? "", country: data?.country_code ?? "US" };
   });
 
 const updateInput = z.object({
@@ -100,7 +101,8 @@ export const updateMyProfile = createServerFn({ method: "POST" })
 const onboardingInput = z.object({
   displayName: z.string().trim().min(1).max(60),
   city: z.string().trim().max(80).default(""),
-  zip: z.string().trim().max(12).default(""),
+  zip: postalSchema.default(""),
+  country: countrySchema.default("US"),
   avatarPath: z.string().trim().max(300).optional(),
 });
 
@@ -120,11 +122,13 @@ export const completeOnboarding = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => onboardingInput.parse(data))
   .handler(async ({ data, context }) => {
+    if (!validLocation(data.city, data.zip)) throw new Error("Enter a city or postal code.");
     const patch: ProfileUpdate & { id: string } = {
       id: context.userId,
       display_name: data.displayName,
       city: data.city,
       zip: data.zip,
+      country_code: data.country,
       onboarded_at: new Date().toISOString(),
     };
     if (data.avatarPath) patch["avatar_url"] = data.avatarPath;

@@ -4,6 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, HandHelping, ImagePlus, Loader2, MapPin, PartyPopper, UserCircle, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { CountrySelect } from "@/components/CountrySelect";
+import { validLocation, placeLabel } from "@/lib/country";
 import {
   Dialog,
   DialogContent,
@@ -56,6 +58,7 @@ function PostPrayerPage() {
   const [body, setBody] = useState("");
   const [city, setCity] = useState("");
   const [zip, setZip] = useState("");
+  const [country, setCountry] = useState("US");
   const [anonymous, setAnonymous] = useState(false);
   const [photo, setPhoto] = useState<MediaPreview | null>(null);
   const [busy, setBusy] = useState(false);
@@ -76,8 +79,8 @@ function PostPrayerPage() {
     if (shortTitle.trim().length < 2) return setError(t("Add a short title."));
     if (body.trim().length < 5) return setError(t("Write your prayer."));
     if (place === "church" && !churchId) return setError(t("Choose the church for this prayer."));
-    if (place === "map" && city.trim().length < 2 && zip.trim().length < 4)
-      return setError(t("Enter the city or ZIP where this prayer belongs."));
+    if (place === "map" && !validLocation(city, zip))
+      return setError(t("Enter the city or postal code where this prayer belongs."));
 
     setBusy(true);
     try {
@@ -88,6 +91,7 @@ function PostPrayerPage() {
           body: body.trim(),
           city: place === "map" ? city.trim() : "",
           zip: place === "map" ? zip.trim() : "",
+          country,
           churchId: place === "church" ? churchId : null,
           anonymous,
           imagePath: uploaded[0]?.path ?? null,
@@ -242,15 +246,18 @@ function PostPrayerPage() {
           </div>
 
           {place === "map" && (
+            <div className="flex flex-col gap-3">
+            <CountrySelect value={country} onChange={setCountry} className={field} />
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <label className="flex flex-col gap-1.5">
                 <span className="text-base font-semibold text-sand">{t("City")}</span>
                 <input value={city} onChange={(e) => setCity(e.target.value)} className={field} />
               </label>
               <label className="flex flex-col gap-1.5">
-                <span className="text-base font-semibold text-sand">{t("ZIP")}</span>
+                <span className="text-base font-semibold text-sand">{t("Postal code / ZIP")}</span>
                 <input value={zip} onChange={(e) => setZip(e.target.value)} className={field} />
               </label>
+            </div>
             </div>
           )}
 
