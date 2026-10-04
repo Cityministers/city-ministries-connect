@@ -615,7 +615,8 @@ function AddChurchPage() {
                 void navigate({
                   to: "/map",
                   search: {
-                    place: [city.trim(), zip.trim()].filter(Boolean).join(" "),
+                    place: [city.trim(), zip.trim()].filter(Boolean).join(", "),
+                    country,
                     new: `church-${churchId}`,
                   },
                 });

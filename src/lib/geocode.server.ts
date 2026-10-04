@@ -34,6 +34,10 @@ async function callFallback(city: string, zip: string, country: string): Promise
       }
     } catch { /* Try a country-restricted place search next. */ }
   }
+  if (city.trim() && zip.trim()) {
+    const byCity = await nominatim(addressOf(city, "", country), country);
+    if (byCity) return byCity;
+  }
   return nominatim(addressOf(city, zip, country), country);
 }
 async function callGoogle(address: string, country: string): Promise<LatLng | null> {
@@ -66,7 +70,7 @@ export async function geocodePlaces(places: { city: string; zip: string; country
   for (const key of keys.filter((k) => !out.has(k)).slice(0, 25)) {
     const place = wanted.get(key);
     if (!place) continue;
-    const found = await callGoogle(addressOf(place.city, place.zip, place.country), place.country) ?? await callFallback(place.city, place.zip, place.country);
+    const found = await callFallback(place.city, place.zip, place.country) ?? await callGoogle(addressOf(place.city, place.zip, place.country), place.country);
     if (!found) continue;
     await supabaseAdmin.from("geo_cache").upsert({ place_key: key, city: place.city, zip: place.zip, country_code: place.country, lat: found.lat, lng: found.lng }, { onConflict: "place_key" });
     out.set(key, found);

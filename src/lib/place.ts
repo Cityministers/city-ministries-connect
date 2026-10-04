@@ -1,7 +1,7 @@
 import type { Ministry } from "@/data/ministries";
 import { countryName } from "./country";
 
-/** Extracts a 5-digit ZIP from a free-text place query, if present. */
+/** Extracts a numeric or Canadian postal code from a free-text place query, if present. */
 function zipOf(query: string): string | null {
   const match = query.match(/\b(?:\d{4,6}|[a-z]\d[a-z][ -]?\d[a-z]\d)\b/i);
   return match ? match[0] : null;
