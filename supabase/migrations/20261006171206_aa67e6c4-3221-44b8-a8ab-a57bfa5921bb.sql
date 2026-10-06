@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.notify_volunteers_on_project() FROM PUBLIC, anon, authenticated;
