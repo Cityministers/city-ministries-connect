@@ -3,7 +3,7 @@ import { countryCodes, defaultCountry } from "@/lib/country";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, HandHelping, List, Search, Video } from "lucide-react";
+import { ArrowLeft, HandHelping, List, Search, UsersRound, Video } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AccountMenu } from "@/components/AccountMenu";
@@ -355,6 +355,17 @@ function MapPage() {
             label={t("Ministry map. Drag to explore other neighborhoods.")}
             className="map-fade h-[64dvh] min-h-[340px] w-full sm:h-[74dvh] sm:min-h-[500px]"
           />
+          <Link
+            to="/volunteer"
+            search={{ city: (location.split(",")[0] || "Portland").replace(/\d+/g, "").trim() || "Portland", project: undefined }}
+            aria-label={t("Community Volunteer")}
+            className="absolute right-3 top-3 z-[500] flex flex-col items-center gap-1 rounded-2xl bg-ink/85 px-2.5 py-2 text-sand ring-2 ring-tone-emerald/70 shadow-lg backdrop-blur transition hover:ring-gold/80"
+          >
+            <span className="grid size-12 place-items-center rounded-xl bg-tone-emerald/30">
+              <UsersRound className="size-8" aria-hidden="true" />
+            </span>
+            <span className="text-[11px] font-bold leading-none">{t("Volunteer")}</span>
+          </Link>
         </div>
 
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
