@@ -274,6 +274,15 @@ export function PrayerPost({
             </button>
             <button
               type="button"
+              onClick={() => setCommentOpen((v) => !v)}
+              className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-mist/70 ring-1 ring-mist/20 transition hover:bg-ink"
+              aria-expanded={commentOpen}
+            >
+              <MessageCircle className="size-5" aria-hidden="true" />
+              {commentCount}
+            </button>
+            <button
+              type="button"
               onClick={() => void handleFavorite()}
               className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium ring-1 transition ${
                 favorited ? "bg-rose/15 text-rose ring-rose/50" : "text-mist/70 ring-mist/20 hover:bg-ink"
@@ -281,17 +290,8 @@ export function PrayerPost({
               aria-pressed={favorited}
               aria-label={favorited ? t("Remove from favorites") : t("Save to favorites")}
             >
-              <Heart className="size-5" aria-hidden="true" />
+              <Heart className={`size-5 ${favorited ? "fill-current" : ""}`} aria-hidden="true" />
               {favorited ? t("Saved") : t("Save")}
-            </button>
-            <button
-              type="button"
-              onClick={() => setCommentOpen((v) => !v)}
-              className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-mist/70 ring-1 ring-mist/20 transition hover:bg-ink"
-              aria-expanded={commentOpen}
-            >
-              <MessageCircle className="size-5" aria-hidden="true" />
-              {commentCount}
             </button>
           </div>
 
