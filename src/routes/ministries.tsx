@@ -1,10 +1,10 @@
 import { CountrySelect } from "@/components/CountrySelect";
-import { countryCodes } from "@/lib/country";
+import { countryCodes, defaultCountry } from "@/lib/country";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, Map, MapPin, MessageCircle, Search, ThumbsUp } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MinistryPost } from "@/components/MinistryPost";
 import { toneStyles } from "@/data/ministries";
@@ -47,6 +47,9 @@ function MinistriesPage() {
   const navigate = Route.useNavigate();
   const [placeQuery, setPlaceQuery] = useState(place ?? "Portland, OR 97209");
   const [country, setCountry] = useState(searchCountry ?? "US");
+  useEffect(() => {
+    if (!searchCountry) setCountry(defaultCountry());
+  }, [searchCountry]);
   const [query, setQuery] = useState("");
   const [activeId, setActiveId] = useState<string | null>(null);
 

@@ -1,10 +1,10 @@
 import { CountrySelect } from "@/components/CountrySelect";
-import { countryCodes } from "@/lib/country";
+import { countryCodes, defaultCountry } from "@/lib/country";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, HandHelping, List, Search, Video } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AccountMenu } from "@/components/AccountMenu";
 import { ChurchMenu } from "@/components/ChurchMenu";
@@ -72,6 +72,10 @@ function MapPage() {
   const navigate = Route.useNavigate();
   const [location, setLocation] = useState(place ?? "Portland, OR 97209");
   const [country, setCountry] = useState(searchCountry ?? "US");
+  // Visitor's own country applies after hydration so server and client markup match.
+  useEffect(() => {
+    if (!searchCountry) setCountry(defaultCountry());
+  }, [searchCountry]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [activePrayerId, setActivePrayerId] = useState<string | null>(null);
   const [activeVideoId, setActiveVideoId] = useState<string | null>(null);
