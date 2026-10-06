@@ -27,6 +27,7 @@ import {
   type CommentDTO,
 } from "@/lib/favorites.functions";
 import { startConversation } from "@/lib/messages.functions";
+import { PostShareButton } from "@/components/PostShareButton";
 import { createMeetupRequest } from "@/lib/meetups.functions";
 import { timeAgo } from "@/lib/time-ago";
 import { FollowButton } from "@/components/FollowButton";

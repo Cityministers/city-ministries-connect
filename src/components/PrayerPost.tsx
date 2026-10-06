@@ -24,6 +24,7 @@ import {
 import { startConversation } from "@/lib/messages.functions";
 import { deletePrayer, type PrayerDTO } from "@/lib/prayers.functions";
 import { timeAgo } from "@/lib/time-ago";
+import { PostShareButton } from "@/components/PostShareButton";
 
 /**
  * A prayer opens in the same card shape as a ministry or a need: the poster's
