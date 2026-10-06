@@ -353,7 +353,7 @@ function MapPage() {
             onSelect={selectPoint}
             onBoundsChange={setBounds}
             label={t("Ministry map. Drag to explore other neighborhoods.")}
-            className="map-fade h-[70dvh] min-h-[460px] w-full"
+            className="map-fade h-[60dvh] min-h-[320px] w-full sm:h-[70dvh] sm:min-h-[460px]"
           />
         </div>
 
