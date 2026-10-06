@@ -65,18 +65,18 @@ export function MinistryTypeFollowButton({ ministryType }: Props) {
         onClick={() => void handleFollow()}
         disabled={busy}
         aria-pressed={following}
-        className={`mt-2 inline-flex min-h-10 items-center justify-center gap-2 self-start rounded-full px-4 py-2 text-sm font-bold ring-2 transition active:scale-95 disabled:opacity-60 ${
+        className={`mt-1 inline-flex min-h-7 items-center justify-center gap-1.5 self-start rounded-full px-2.5 py-0.5 text-[11px] font-semibold tracking-wide ring-1 transition active:scale-95 disabled:opacity-60 ${
           following
-            ? "bg-lemon/20 text-lemon ring-lemon/60"
-            : "bg-ink-soft text-sand ring-gold/55 hover:bg-ink"
+            ? "bg-lemon/15 text-lemon ring-lemon/45"
+            : "bg-ink-soft text-mist/85 ring-gold/35 hover:bg-ink"
         }`}
       >
         {busy ? (
-          <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+          <Loader2 className="size-3 animate-spin" aria-hidden="true" />
         ) : following ? (
-          <BellRing className="size-4" aria-hidden="true" />
+          <BellRing className="size-3" aria-hidden="true" />
         ) : (
-          <Bell className="size-4" aria-hidden="true" />
+          <Bell className="size-3" aria-hidden="true" />
         )}
         {following ? t("Following near you") : t("Follow near you")}
       </button>

@@ -185,9 +185,9 @@ function HomePage() {
                     <DialogTitle className="font-display text-2xl font-semibold text-sand sm:text-3xl">
                       {t("Community Volunteer")}
                     </DialogTitle>
-                    <MinistryTypeFollowButton ministryType="community-volunteer" />
                   </div>
                 </div>
+                <MinistryTypeFollowButton ministryType="community-volunteer" />
               </DialogHeader>
               <p className="text-lg leading-relaxed text-mist/85 sm:text-xl">
                 {t(
@@ -270,9 +270,9 @@ function HomePage() {
                           <DialogTitle className="font-display text-2xl font-semibold text-sand sm:text-3xl">
                             {t(ministry.label)}
                           </DialogTitle>
-                          <MinistryTypeFollowButton ministryType={ministry.id} />
                         </div>
                       </div>
+                      <MinistryTypeFollowButton ministryType={ministry.id} />
                     </DialogHeader>
                     <p className="text-lg leading-relaxed text-mist/85 sm:text-xl">
                       {t(ministry.description)}
