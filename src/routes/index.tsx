@@ -224,13 +224,6 @@ function HomePage() {
               >
                 {t("Read in context on YouVersion")}
               </a>
-              <Link
-                to="/volunteer"
-                search={{ city: "Portland", project: undefined }}
-                className="inline-flex w-full items-center justify-center rounded-full bg-lemon px-6 py-3 text-xl font-bold text-ink transition-transform hover:-translate-y-0.5 sm:w-auto sm:self-start"
-              >
-                {t("See volunteer projects in your city")}
-              </Link>
             </DialogContent>
           </Dialog>
 
