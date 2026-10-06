@@ -610,6 +610,59 @@ export type Database = {
           },
         ]
       }
+      member_reviews: {
+        Row: {
+          communication: number
+          created_at: string
+          id: string
+          kindness: number
+          meetup_id: string
+          note: string
+          punctuality: number
+          reliability: number
+          reviewee_id: string
+          reviewer_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          communication: number
+          created_at?: string
+          id?: string
+          kindness: number
+          meetup_id: string
+          note?: string
+          punctuality: number
+          reliability: number
+          reviewee_id: string
+          reviewer_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          communication?: number
+          created_at?: string
+          id?: string
+          kindness?: number
+          meetup_id?: string
+          note?: string
+          punctuality?: number
+          reliability?: number
+          reviewee_id?: string
+          reviewer_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_reviews_meetup_id_fkey"
+            columns: ["meetup_id"]
+            isOneToOne: false
+            referencedRelation: "meetup_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           body: string
