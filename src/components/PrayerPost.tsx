@@ -293,21 +293,11 @@ export function PrayerPost({
               <Heart className={`size-5 ${favorited ? "fill-current" : ""}`} aria-hidden="true" />
               {favorited ? t("Saved") : t("Save")}
             </button>
-            {canMessage && (
-              <button
-                type="button"
-                onClick={() => {
-                  if (!guard()) return;
-                  setMessageOpen(true);
-                  setMessageText((prev) => prev || t("I'm praying for you."));
-                }}
-                className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-mist/70 ring-1 ring-mist/20 transition hover:bg-ink"
-                aria-label={t("Message")}
-              >
-                <Send className="size-5" aria-hidden="true" />
-                {t("Message")}
-              </button>
-            )}
+            <PostShareButton
+              title={prayer.shortTitle}
+              text={prayer.body}
+              path={`/map?mode=prayer&new=${encodeURIComponent(prayer.id)}`}
+            />
           </div>
 
           {needsAuth && (
