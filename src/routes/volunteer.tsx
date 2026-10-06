@@ -112,7 +112,7 @@ function VolunteerPage() {
       <header className="border-b border-ink-soft">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-4">
           <div className="flex items-center gap-2">
-            <Link to="/map" search={{ place: cityParam }} className="grid size-9 shrink-0 place-items-center rounded-full bg-ink text-sand ring-1 ring-mist/20 transition hover:bg-ink-soft" aria-label={t("Back to the map")}>
+            <Link to="/map" search={cityParam ? { place: cityParam } : {}} className="grid size-9 shrink-0 place-items-center rounded-full bg-ink text-sand ring-1 ring-mist/20 transition hover:bg-ink-soft" aria-label={t("Back to the map")}>
               <ArrowLeft className="size-4" aria-hidden="true" />
             </Link>
             <SiteNav />
