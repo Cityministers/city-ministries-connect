@@ -1323,6 +1323,129 @@ export type Database = {
         }
         Relationships: []
       }
+      volunteer_projects: {
+        Row: {
+          city: string
+          country_code: string
+          created_at: string
+          description: string
+          id: string
+          lat: number | null
+          lng: number | null
+          location: string
+          owner_id: string
+          starts_at: string
+          status: string
+          title: string
+          updated_at: string
+          zip: string
+        }
+        Insert: {
+          city?: string
+          country_code?: string
+          created_at?: string
+          description?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          location?: string
+          owner_id: string
+          starts_at: string
+          status?: string
+          title: string
+          updated_at?: string
+          zip?: string
+        }
+        Update: {
+          city?: string
+          country_code?: string
+          created_at?: string
+          description?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          location?: string
+          owner_id?: string
+          starts_at?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          zip?: string
+        }
+        Relationships: []
+      }
+      volunteer_rsvps: {
+        Row: {
+          created_at: string
+          id: string
+          project_id: string
+          signup_id: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          project_id: string
+          signup_id: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          project_id?: string
+          signup_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "volunteer_rsvps_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "volunteer_projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "volunteer_rsvps_signup_id_fkey"
+            columns: ["signup_id"]
+            isOneToOne: false
+            referencedRelation: "volunteer_signups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      volunteer_signups: {
+        Row: {
+          city: string
+          country_code: string
+          created_at: string
+          display_name: string
+          id: string
+          is_demo: boolean
+          user_id: string | null
+          zip: string
+        }
+        Insert: {
+          city?: string
+          country_code?: string
+          created_at?: string
+          display_name?: string
+          id?: string
+          is_demo?: boolean
+          user_id?: string | null
+          zip?: string
+        }
+        Update: {
+          city?: string
+          country_code?: string
+          created_at?: string
+          display_name?: string
+          id?: string
+          is_demo?: boolean
+          user_id?: string | null
+          zip?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
