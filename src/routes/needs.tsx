@@ -247,7 +247,7 @@ function NeedsPage() {
                 onSelect={selectPoint}
                 onBoundsChange={setBounds}
                 label={t("Needs map. Drag to explore other neighborhoods.")}
-                className="map-fade h-[60dvh] min-h-[320px] w-full"
+                className="map-fade h-[70dvh] min-h-[460px] w-full"
               />
             </div>
             <div className="mt-3 grid w-full grid-cols-3 gap-2" aria-label={t("Map layers")}>
