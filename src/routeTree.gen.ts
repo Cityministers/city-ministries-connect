@@ -29,6 +29,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ShapeRouteImport } from './routes/shape'
 import { Route as StartRouteImport } from './routes/start'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as VolunteerRouteImport } from './routes/volunteer'
 import { Route as AuthenticatedAddChurchRouteImport } from './routes/_authenticated/add-church'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedCmsRouteImport } from './routes/_authenticated/cms'
@@ -149,6 +150,11 @@ const StartRoute = StartRouteImport.update({
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VolunteerRoute = VolunteerRouteImport.update({
+  id: '/volunteer',
+  path: '/volunteer',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAddChurchRoute = AuthenticatedAddChurchRouteImport.update({
@@ -287,6 +293,7 @@ export interface FileRoutesByFullPath {
   '/shape': typeof ShapeRoute
   '/start': typeof StartRoute
   '/terms': typeof TermsRoute
+  '/volunteer': typeof VolunteerRoute
   '/add-church': typeof AuthenticatedAddChurchRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/cms': typeof AuthenticatedCmsRoute
@@ -330,6 +337,7 @@ export interface FileRoutesByTo {
   '/shape': typeof ShapeRoute
   '/start': typeof StartRoute
   '/terms': typeof TermsRoute
+  '/volunteer': typeof VolunteerRoute
   '/add-church': typeof AuthenticatedAddChurchRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/cms': typeof AuthenticatedCmsRoute
@@ -375,6 +383,7 @@ export interface FileRoutesById {
   '/shape': typeof ShapeRoute
   '/start': typeof StartRoute
   '/terms': typeof TermsRoute
+  '/volunteer': typeof VolunteerRoute
   '/_authenticated/add-church': typeof AuthenticatedAddChurchRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/cms': typeof AuthenticatedCmsRoute
@@ -420,6 +429,7 @@ export interface FileRouteTypes {
     | '/shape'
     | '/start'
     | '/terms'
+    | '/volunteer'
     | '/add-church'
     | '/admin'
     | '/cms'
@@ -463,6 +473,7 @@ export interface FileRouteTypes {
     | '/shape'
     | '/start'
     | '/terms'
+    | '/volunteer'
     | '/add-church'
     | '/admin'
     | '/cms'
@@ -507,6 +518,7 @@ export interface FileRouteTypes {
     | '/shape'
     | '/start'
     | '/terms'
+    | '/volunteer'
     | '/_authenticated/add-church'
     | '/_authenticated/admin'
     | '/_authenticated/cms'
@@ -552,6 +564,7 @@ export interface RootRouteChildren {
   ShapeRoute: typeof ShapeRoute
   StartRoute: typeof StartRoute
   TermsRoute: typeof TermsRoute
+  VolunteerRoute: typeof VolunteerRoute
   ChurchIdRoute: typeof ChurchIdRoute
   GiftReferenceCodeRoute: typeof GiftReferenceCodeRoute
   HowItWorksStepRoute: typeof HowItWorksStepRoute
@@ -701,6 +714,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/volunteer': {
+      id: '/volunteer'
+      path: '/volunteer'
+      fullPath: '/volunteer'
+      preLoaderRoute: typeof VolunteerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/add-church': {
@@ -921,6 +941,7 @@ const rootRouteChildren: RootRouteChildren = {
   ShapeRoute: ShapeRoute,
   StartRoute: StartRoute,
   TermsRoute: TermsRoute,
+  VolunteerRoute: VolunteerRoute,
   ChurchIdRoute: ChurchIdRoute,
   GiftReferenceCodeRoute: GiftReferenceCodeRoute,
   HowItWorksStepRoute: HowItWorksStepRoute,

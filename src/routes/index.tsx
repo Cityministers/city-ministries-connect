@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { HandHeart, HeartHandshake, MapPin, MessageCircle, Sparkles } from "lucide-react";
+import { HandHeart, HeartHandshake, MapPin, MessageCircle, Sparkles, UsersRound } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useSiteText } from "@/lib/site-text";
 import { AccountMenu } from "@/components/AccountMenu";
@@ -152,7 +152,23 @@ function HomePage() {
             {t("Ways to minister")}
           </h2>
 
-          <ul className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3">
+          <Link
+            to="/volunteer"
+            search={{ city: "Portland", project: undefined }}
+            className="mt-4 flex w-full items-center gap-4 rounded-2xl bg-tone-emerald/15 px-4 py-4 ring-1 ring-tone-emerald/55 transition hover:-translate-y-0.5 hover:ring-2 hover:ring-gold/75"
+          >
+            <span className="grid size-20 shrink-0 place-items-center rounded-2xl bg-tone-emerald/25 text-sand ring-1 ring-tone-emerald/60">
+              <UsersRound className="size-11" aria-hidden="true" />
+            </span>
+            <span className="flex min-w-0 flex-col gap-1">
+              <span className="text-2xl font-bold leading-tight text-sand">{t("Community Volunteer")}</span>
+              <span className="text-base leading-snug text-mist/85">
+                {t("Join group service projects in your city — get alerts and RSVP.")}
+              </span>
+            </span>
+          </Link>
+
+          <ul className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3">
             {ministries.map((ministry) => (
               <li key={ministry.id}>
                 <Dialog>
