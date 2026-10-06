@@ -137,7 +137,10 @@ export function LeaveReviewButton({ meetupId, meetAt, otherName }: { meetupId: s
   }
 
   async function submit() {
-    if (Object.values(r).some((v) => v === 0)) return toast.error(t("Please rate all four categories."));
+    if (Object.values(r).some((v) => v === 0)) {
+      toast.error(t("Please rate all four categories."));
+      return;
+    }
     setBusy(true);
     const payload = { ...r, note: note.trim().slice(0, 500) };
     const { error } = ctx!.existing
