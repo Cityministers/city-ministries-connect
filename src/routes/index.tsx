@@ -152,21 +152,87 @@ function HomePage() {
             {t("Ways to minister")}
           </h2>
 
-          <Link
-            to="/volunteer"
-            search={{ city: "Portland", project: undefined }}
-            className="mt-4 flex w-full items-center gap-4 rounded-2xl bg-tone-emerald/15 px-4 py-4 ring-1 ring-tone-emerald/55 transition hover:-translate-y-0.5 hover:ring-2 hover:ring-gold/75"
-          >
-            <span className="grid size-20 shrink-0 place-items-center rounded-2xl bg-tone-emerald/25 text-sand ring-1 ring-tone-emerald/60">
-              <UsersRound className="size-11" aria-hidden="true" />
-            </span>
-            <span className="flex min-w-0 flex-col gap-1">
-              <span className="text-2xl font-bold leading-tight text-sand">{t("Community Volunteer")}</span>
-              <span className="text-base leading-snug text-mist/85">
-                {t("Join group service projects in your city — get alerts and RSVP.")}
-              </span>
-            </span>
-          </Link>
+          <Dialog>
+            <DialogTrigger asChild>
+              <button
+                type="button"
+                className="mt-4 flex w-full items-center gap-4 rounded-2xl bg-tone-emerald/15 px-4 py-4 text-left ring-1 ring-tone-emerald/55 transition hover:-translate-y-0.5 hover:ring-2 hover:ring-gold/75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/85"
+                aria-label={t("Learn about Community Volunteer")}
+              >
+                <span className="grid size-20 shrink-0 place-items-center rounded-2xl bg-tone-emerald/25 text-sand ring-1 ring-tone-emerald/60">
+                  <UsersRound className="size-11" aria-hidden="true" />
+                </span>
+                <span className="flex min-w-0 flex-col gap-1">
+                  <span className="text-2xl font-bold leading-tight text-sand">
+                    {t("Community Volunteer")}
+                  </span>
+                  <span className="text-base leading-snug text-mist/85">
+                    {t(
+                      "Join group service projects in your city — get alerts and RSVP.",
+                    )}
+                  </span>
+                </span>
+              </button>
+            </DialogTrigger>
+            <DialogContent className="max-h-[85dvh] overflow-y-auto border-mist/20 bg-ink text-sand sm:rounded-2xl">
+              <DialogHeader>
+                <div className="flex items-center gap-3">
+                  <span className="grid size-14 shrink-0 place-items-center rounded-xl bg-tone-emerald/25 text-sand ring-1 ring-tone-emerald/60">
+                    <UsersRound className="size-8" aria-hidden="true" />
+                  </span>
+                  <DialogTitle className="font-display text-2xl font-semibold text-sand sm:text-3xl">
+                    {t("Community Volunteer")}
+                  </DialogTitle>
+                </div>
+              </DialogHeader>
+              <p className="text-lg leading-relaxed text-mist/85 sm:text-xl">
+                {t(
+                  "Join group service projects in your city — get alerts and RSVP.",
+                )}
+              </p>
+              <div className="mt-1 flex flex-col gap-3">
+                {(ministryReflections["community-volunteer"] ?? []).map((p) => (
+                  <p
+                    key={p.slice(0, 32)}
+                    className="text-base leading-relaxed text-mist/90 sm:text-lg"
+                  >
+                    {t(p)}
+                  </p>
+                ))}
+              </div>
+              <div className="flex flex-col gap-3 border-t border-mist/15 pt-4">
+                {(ministryScriptures["community-volunteer"] ?? []).map((s) => (
+                  <p
+                    key={s.reference}
+                    className="text-lg italic leading-relaxed text-mist/90 sm:text-xl"
+                  >
+                    “{t(s.text)}”
+                    <span className="ml-1.5 whitespace-nowrap font-medium not-italic text-mist/70">
+                      — {s.reference}, ESV
+                    </span>
+                  </p>
+                ))}
+              </div>
+              <a
+                href={youVersionUrl(
+                  ministryScriptures["community-volunteer"]?.[0]?.reference ??
+                    "Community Volunteer",
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-youversion px-5 py-3 text-base font-semibold text-white transition-transform hover:-translate-y-0.5 sm:w-auto sm:self-start sm:px-6 sm:text-lg"
+              >
+                {t("Read in context on YouVersion")}
+              </a>
+              <Link
+                to="/volunteer"
+                search={{ city: "Portland", project: undefined }}
+                className="inline-flex w-full items-center justify-center rounded-full bg-lemon px-6 py-3 text-xl font-bold text-ink transition-transform hover:-translate-y-0.5 sm:w-auto sm:self-start"
+              >
+                {t("See volunteer projects in your city")}
+              </Link>
+            </DialogContent>
+          </Dialog>
 
           <ul className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3">
             {ministries.map((ministry) => (
