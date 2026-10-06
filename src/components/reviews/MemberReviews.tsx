@@ -67,12 +67,14 @@ export function ReviewsSummary({ userId }: { userId: string }) {
         ? await supabase.from("profiles").select("id, display_name, avatar_url").in("id", ids)
         : { data: [] };
       const map = new Map((profs ?? []).map((p) => [p.id, p]));
-      return list.map((r) => ({ ...r, reviewer: map.get(r.reviewer_id) }));
+      return { reviews: list.map((r) => ({ ...r, reviewer: map.get(r.reviewer_id) })), isDemo: !!prof?.is_demo };
     },
   });
   if (!data) return null;
-  const n = data.length;
-  const avg = (k: CatKey) => (n ? data.reduce((s, r) => s + r[k], 0) / n : 0);
+  const list = data.reviews;
+  const mock = data.isDemo && list.length < 3 ? mockRatings(userId) : null;
+  const n = mock ? mock.count : list.length;
+  const avg = (k: CatKey) => (mock ? mock[k] : n ? list.reduce((s, r) => s + r[k], 0) / n : 0);
   const overall = n ? CATS.reduce((s, c) => s + avg(c.key), 0) / CATS.length : 0;
 
   return (
@@ -84,11 +86,11 @@ export function ReviewsSummary({ userId }: { userId: string }) {
         </p>
       ) : (
         <>
-          <p className="mt-2 flex items-center gap-2 text-2xl font-semibold text-lemon">
-            <Star className="size-6 fill-current" aria-hidden="true" />
-            {overall.toFixed(1)}
+          <div className="mt-2 flex items-center gap-3">
+            <span className="text-2xl font-semibold text-lemon">{overall.toFixed(1)}</span>
+            <StarRow value={overall} />
             <span className="text-base font-normal text-mist">({t("{{count}} reviews", { count: n })})</span>
-          </p>
+          </div>
           <div className="mt-4 space-y-2">
             {CATS.map((c) => (
               <div key={c.key} className="flex items-center gap-3 text-base">
