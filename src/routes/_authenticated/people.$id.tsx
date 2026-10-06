@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, UserRound } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { FollowButton } from "@/components/FollowButton";
+import { ReviewsSummary } from "@/components/reviews/MemberReviews";
 import { getMemberPosts, getMemberProfile, type MemberPostItem } from "@/lib/profile.functions";
 import { timeAgo } from "@/lib/time-ago";
 
@@ -65,6 +66,7 @@ function MemberProfilePage() {
             </div>
             <FollowButton targetType="user" targetId={id} />
             {profile.bio && <p className="text-lg leading-relaxed text-sand/85">{profile.bio}</p>}
+            <ReviewsSummary userId={id} />
             {posts && <PostSection title="Ministries" items={posts.ministries} tone="text-tone-cyan" />}
             {posts && <PostSection title="Needs" items={posts.needs} tone="text-tone-indigo" />}
             {posts && <PostSection title="Prayers" items={posts.prayers} tone="text-prayer" />}

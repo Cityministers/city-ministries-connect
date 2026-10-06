@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import type { MeetupDTO } from "@/lib/meetups.functions";
 import { MeetupDetailsSheet } from "@/components/meetup/MeetupDetailsSheet";
 import { MeetupRespondDialog, type RespondIntent } from "@/components/meetup/MeetupRespondDialog";
+import { LeaveReviewButton } from "@/components/reviews/MemberReviews";
 
 export function MeetupCard({
   meetup,
@@ -91,6 +92,9 @@ export function MeetupCard({
             {t("Decline")}
           </button>
         </div>
+      )}
+      {meetup.status === "accepted" && (
+        <LeaveReviewButton meetupId={meetup.id} meetAt={meetup.meetAt} otherName={otherName} />
       )}
       {intent && (
         <MeetupRespondDialog meetup={meetup} otherName={otherName} intent={intent} onClose={() => setIntent(null)} onDone={onChanged} />
