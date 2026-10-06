@@ -37,7 +37,7 @@ export const Route = createFileRoute("/volunteer")({
 function VolunteerPage() {
   const { t } = useTranslation();
   const { city: cityParam, project: focus } = Route.useSearch();
-  const city = cityParam || "Portland";
+  const city = (cityParam ?? "").split(",")[0]!.replace(/\d+/g, "").trim() || "Portland";
   const session = useSession();
   const userId = session?.user.id ?? null;
   const [signups, setSignups] = useState<Signup[]>([]);
