@@ -104,7 +104,7 @@ export function ReviewsSummary({ userId }: { userId: string }) {
           </div>
         </>
       )}
-      {data.filter((r) => r.note).slice(0, 5).map((r) => (
+      {list.filter((r) => r.note).slice(0, 5).map((r) => (
         <div key={r.id} className="mt-4 flex gap-3 border-t border-mist/15 pt-4">
           {r.reviewer?.avatar_url ? (
             <img src={r.reviewer.avatar_url} alt="" className="size-10 rounded-full object-cover" />
