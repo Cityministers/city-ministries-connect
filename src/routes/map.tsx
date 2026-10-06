@@ -355,6 +355,15 @@ function MapPage() {
             label={t("Ministry map. Drag to explore other neighborhoods.")}
             className="map-fade h-[64dvh] min-h-[340px] w-full sm:h-[74dvh] sm:min-h-[500px]"
           />
+          <Link
+            to="/volunteer"
+            search={{ city: location || undefined }}
+            aria-label={t("Community Volunteer")}
+            className="absolute right-3 top-3 z-10 flex flex-col items-center gap-1 rounded-xl bg-tone-emerald/20 px-3 py-2 text-[11px] font-semibold text-sand shadow-lg ring-1 ring-tone-emerald/50 backdrop-blur transition hover:bg-tone-emerald/30"
+          >
+            <UsersRound className="size-5" aria-hidden="true" />
+            {t("Volunteer")}
+          </Link>
         </div>
 
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
