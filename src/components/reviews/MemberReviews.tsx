@@ -18,11 +18,43 @@ type Ratings = Record<CatKey, number>;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const db = supabase as any;
 
+function StarRow({ value, size = "size-5" }: { value: number; size?: string }) {
+  const pct = Math.max(0, Math.min(100, (value / 5) * 100));
+  const row = (cls: string) => (
+    <div className={`flex gap-0.5 ${cls}`}>
+      {[1, 2, 3, 4, 5].map((i) => (
+        <Star key={i} className={`${size} shrink-0 ${cls ? "fill-lemon text-lemon" : "text-mist/40"}`} aria-hidden="true" />
+      ))}
+    </div>
+  );
+  return (
+    <div className="relative inline-flex" aria-label={`${value.toFixed(1)} out of 5`}>
+      {row("")}
+      <div className="absolute inset-0 overflow-hidden" style={{ width: `${pct}%` }}>
+        {row("fill")}
+      </div>
+    </div>
+  );
+}
+
+// Deterministic 4.0–5.0 sample rating for demo profiles so the UI can be previewed.
+function mockRatings(userId: string): Ratings & { count: number } {
+  let h = 0;
+  for (const ch of userId) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  const rnd = () => {
+    h = (h * 1103515245 + 12345) >>> 0;
+    return h / 4294967296;
+  };
+  const cat = () => Math.round((4 + rnd()) * 10) / 10;
+  return { punctuality: cat(), communication: cat(), kindness: cat(), reliability: cat(), count: 3 + Math.floor(rnd() * 6) };
+}
+
 export function ReviewsSummary({ userId }: { userId: string }) {
   const { t } = useTranslation();
   const { data } = useQuery({
     queryKey: ["member-reviews", userId],
     queryFn: async () => {
+      const { data: prof } = await supabase.from("profiles").select("is_demo").eq("id", userId).maybeSingle();
       const { data: rows } = await db
         .from("member_reviews")
         .select("id, reviewer_id, punctuality, communication, kindness, reliability, note, created_at")
