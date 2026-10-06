@@ -8,6 +8,7 @@ import { useSession } from "@/hooks/useSession";
 import { BrandLogo } from "@/components/BrandLogo";
 import { SiteNav } from "@/components/SiteNav";
 import { AccountMenu } from "@/components/AccountMenu";
+import { PostProjectForm } from "@/components/volunteer/PostProjectForm";
 
 type Signup = { id: string; user_id: string | null; display_name: string; city: string; zip: string };
 type Project = {
@@ -150,6 +151,11 @@ function VolunteerPage() {
         {/* Option 3 */}
         <section className="mt-6">
           <h2 className="flex items-center gap-2 font-display text-2xl font-semibold"><CalendarDays className="size-6 text-lemon" />{t("Upcoming group projects")}</h2>
+          {userId ? (
+            <PostProjectForm userId={userId} city={city} onPosted={() => void load()} />
+          ) : session !== undefined ? (
+            <Link to="/auth" className="mt-4 inline-flex rounded-full bg-tone-emerald/25 px-6 py-3 text-lg font-bold text-sand ring-1 ring-tone-emerald/60">{t("Sign in to post a group project")}</Link>
+          ) : null}
           <ul className="mt-3 flex flex-col gap-3">
             {projects.length === 0 && <li className="text-lg text-mist/80">{t("No projects posted yet.")}</li>}
             {projects.map((p) => {
