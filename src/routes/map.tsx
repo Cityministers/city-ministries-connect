@@ -357,7 +357,7 @@ function MapPage() {
           />
           <Link
             to="/volunteer"
-            search={{ city: location || undefined }}
+            search={{ city: location || undefined, project: undefined }}
             aria-label={t("Community Volunteer")}
             className="absolute right-3 top-3 z-10 flex flex-col items-center gap-1 rounded-xl bg-tone-emerald/20 px-3 py-2 text-[11px] font-semibold text-sand shadow-lg ring-1 ring-tone-emerald/50 backdrop-blur transition hover:bg-tone-emerald/30"
           >
