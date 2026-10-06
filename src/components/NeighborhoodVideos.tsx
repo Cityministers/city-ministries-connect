@@ -57,7 +57,7 @@ export function NeighborhoodVideoViewer({ video, onClose }: { video: Neighborhoo
     <DialogContent className="max-h-[90dvh] w-[calc(100%-1.5rem)] max-w-lg overflow-y-auto border-mist/30 bg-ink text-sand">
       <DialogHeader><DialogTitle className="pr-6 font-display text-xl">{video?.title}</DialogTitle></DialogHeader>
       {video && <>
-        {video.videoUrl ? <video key={video.id} src={video.videoUrl} poster={video.thumbnailUrl ?? undefined} controls playsInline preload="metadata" className="max-h-[55dvh] w-full bg-ink-soft object-contain" /> : <p className="text-mist">Video is temporarily unavailable.</p>}
+        {video.videoUrl ? <video key={video.id} src={video.thumbnailUrl ? video.videoUrl : `${video.videoUrl}#t=0.5`} poster={video.thumbnailUrl ?? undefined} controls playsInline preload="auto" className="max-h-[55dvh] w-full bg-ink-soft object-contain" /> : <p className="text-mist">Video is temporarily unavailable.</p>}
         <p className="text-sm text-lemon">{video.kind === "tour" ? "Neighborhood tour" : "Community concern"} · {video.city}{video.zip ? ` ${video.zip}` : ""}</p>
         <p className="text-sm text-mist">{video.author} · {timeAgo(video.createdAt)}</p>
         {video.description && <p className="whitespace-pre-wrap text-base leading-relaxed text-sand/90">{video.description}</p>}
