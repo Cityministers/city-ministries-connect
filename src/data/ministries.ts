@@ -726,6 +726,10 @@ export type Scripture = { text: string; reference: string };
  * keyed by ministry id. Shown above that ministry's scriptures.
  */
 export const ministryReflections: Record<string, string[]> = {
+  "community-volunteer": [
+    "Paul's strangest picture of a congregation is a body: “for just as the body is one and has many members, and all the members of the body, though many, are one body, so it is with Christ” (1 Corinthians 12:12). The point he presses hardest is that no member is self-sufficient — “the eye cannot say to the hand, ‘I have no need of you’” (12:21) — and that gifts are handed to individuals “for the common good” (12:7), never as private property. “We who are many are one body in Christ, and individually members one of another” (Romans 12:5), and the body grows only “when every joint supplies it… the body makes the increase of the body for the building up of itself in love” (Ephesians 4:16). A gift never exercised toward someone else has nowhere to go, which is why service in Scripture is almost always done in company: Aaron and Hur hold Moses' tired arms up until the sun goes down (Exodus 17:12), and seventy elders are appointed so the weight of the people rests on many shoulders instead of one (Numbers 11:16–17).",
+    "So the plainest shape for this ministry is a shared task with many hands in it. Nehemiah rebuilds Jerusalem's wall one family and one trade at a time, each crew labelling its own stretch “in front of his own house” (Nehemiah 3) — no single group could finish the wall, and no group was asked to. “Two are better than one, because they have a good reward for their toil. For if they fall, one will lift up his fellow” (Ecclesiastes 4:9–10), and Paul's closing command to the Galatians still reads like a description of a volunteer crew: “Bear one another's burdens, and so fulfill the law of Christ” (Galatians 6:2). A park cleaned up on a Saturday, a food-bank line packed for two hours, a mural repainted by people who met on the sidewalk — these are not a lesser kind of ministry than preaching or visiting the sick. They are the body doing what no single member can do alone, and nobody rakes a whole park by themselves. That is the design, not the drawback.",
+  ],
   "coffee-chat": [
     "Scripture hands revelation to friendship before it hands it to an office. Jesus stopped calling the twelve servants and called them friends (John 15:15), and the oldest name given to Abraham was “friend of God” (James 2:23). God walked in a garden, ate at Abraham’s table, and taught twelve men on a road; the earliest believers carried that pattern into ordinary homes, “breaking bread… with glad and generous hearts” (Acts 2:46). The New Testament word for Christian hospitality is philoxenia — love of the stranger — and it is commanded of every household, not of a paid office. A coffee chat is that same invitation at its cheapest: one person willing to say “come” and stay while someone else talks. Luke 14 sets the guest list — the poor, the crippled, the lame, the blind — anyone with nothing to trade back.",
     "Peter tells believers to “always be prepared to make a defense to anyone who asks you for a reason for the hope that is in you, yet with gentleness and respect” (1 Peter 3:15). Defense is the legal word apologia: a reasoned reply to a real question, not a speech, and it assumes someone is near enough to ask. The same letter weaves that answer into ordinary good conduct “among the Gentiles” (1 Peter 2:12) and ties it to humility — “clothe yourselves with humility toward one another” (1 Peter 5:5) — so witness is never a claim to be above anyone. Even Peter’s own restoration came over a charcoal-fire breakfast and a question asked three times (John 21:9–17). The light in Matthew 5 is not argued for; it is simply not hidden. Two people talking honestly over coffee is a small, unembarrassed light — and out of it the gospel is preached plainly: God is near, and he is worth meeting.",
@@ -850,6 +854,16 @@ export const ministryReflections: Record<string, string[]> = {
 
 /** Bible passages (ESV) that highlight each ministry type, keyed by ministry id. */
 export const ministryScriptures: Record<string, Scripture[]> = {
+  "community-volunteer": [
+    {
+      text: "Now you are the body of Christ and individually members of it.",
+      reference: "1 Corinthians 12:27",
+    },
+    {
+      text: "Two are better than one, because they have a good reward for their toil. For if they fall, one will lift up his fellow.",
+      reference: "Ecclesiastes 4:9",
+    },
+  ],
   "coffee-chat": [
     {
       text: "And let us consider how to stir up one another to love and good works, not neglecting to meet together, as is the habit of some, but encouraging one another…",
