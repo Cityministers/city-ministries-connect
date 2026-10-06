@@ -18,11 +18,43 @@ type Ratings = Record<CatKey, number>;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const db = supabase as any;
 
+function StarRow({ value, size = "size-5" }: { value: number; size?: string }) {
+  const pct = Math.max(0, Math.min(100, (value / 5) * 100));
+  const row = (cls: string) => (
+    <div className={`flex gap-0.5 ${cls}`}>
+      {[1, 2, 3, 4, 5].map((i) => (
+        <Star key={i} className={`${size} shrink-0 ${cls ? "fill-lemon text-lemon" : "text-mist/40"}`} aria-hidden="true" />
+      ))}
+    </div>
+  );
+  return (
+    <div className="relative inline-flex" aria-label={`${value.toFixed(1)} out of 5`}>
+      {row("")}
+      <div className="absolute inset-0 overflow-hidden" style={{ width: `${pct}%` }}>
+        {row("fill")}
+      </div>
+    </div>
+  );
+}
+
+// Deterministic 4.0–5.0 sample rating for demo profiles so the UI can be previewed.
+function mockRatings(userId: string): Ratings & { count: number } {
+  let h = 0;
+  for (const ch of userId) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  const rnd = () => {
+    h = (h * 1103515245 + 12345) >>> 0;
+    return h / 4294967296;
+  };
+  const cat = () => Math.round((4 + rnd()) * 10) / 10;
+  return { punctuality: cat(), communication: cat(), kindness: cat(), reliability: cat(), count: 3 + Math.floor(rnd() * 6) };
+}
+
 export function ReviewsSummary({ userId }: { userId: string }) {
   const { t } = useTranslation();
   const { data } = useQuery({
     queryKey: ["member-reviews", userId],
     queryFn: async () => {
+      const { data: prof } = await supabase.from("profiles").select("is_demo").eq("id", userId).maybeSingle();
       const { data: rows } = await db
         .from("member_reviews")
         .select("id, reviewer_id, punctuality, communication, kindness, reliability, note, created_at")
@@ -35,12 +67,14 @@ export function ReviewsSummary({ userId }: { userId: string }) {
         ? await supabase.from("profiles").select("id, display_name, avatar_url").in("id", ids)
         : { data: [] };
       const map = new Map((profs ?? []).map((p) => [p.id, p]));
-      return list.map((r) => ({ ...r, reviewer: map.get(r.reviewer_id) }));
+      return { reviews: list.map((r) => ({ ...r, reviewer: map.get(r.reviewer_id) })), isDemo: !!prof?.is_demo };
     },
   });
   if (!data) return null;
-  const n = data.length;
-  const avg = (k: CatKey) => (n ? data.reduce((s, r) => s + r[k], 0) / n : 0);
+  const list = data.reviews;
+  const mock = data.isDemo && list.length < 3 ? mockRatings(userId) : null;
+  const n = mock ? mock.count : list.length;
+  const avg = (k: CatKey) => (mock ? mock[k] : n ? list.reduce((s, r) => s + r[k], 0) / n : 0);
   const overall = n ? CATS.reduce((s, c) => s + avg(c.key), 0) / CATS.length : 0;
 
   return (
@@ -52,11 +86,11 @@ export function ReviewsSummary({ userId }: { userId: string }) {
         </p>
       ) : (
         <>
-          <p className="mt-2 flex items-center gap-2 text-2xl font-semibold text-lemon">
-            <Star className="size-6 fill-current" aria-hidden="true" />
-            {overall.toFixed(1)}
+          <div className="mt-2 flex items-center gap-3">
+            <span className="text-2xl font-semibold text-lemon">{overall.toFixed(1)}</span>
+            <StarRow value={overall} />
             <span className="text-base font-normal text-mist">({t("{{count}} reviews", { count: n })})</span>
-          </p>
+          </div>
           <div className="mt-4 space-y-2">
             {CATS.map((c) => (
               <div key={c.key} className="flex items-center gap-3 text-base">
@@ -70,7 +104,7 @@ export function ReviewsSummary({ userId }: { userId: string }) {
           </div>
         </>
       )}
-      {data.filter((r) => r.note).slice(0, 5).map((r) => (
+      {list.filter((r: { note: string }) => r.note).slice(0, 5).map((r: { id: string; created_at: string; note: string; reviewer?: { display_name?: string | null; avatar_url?: string | null } | undefined }) => (
         <div key={r.id} className="mt-4 flex gap-3 border-t border-mist/15 pt-4">
           {r.reviewer?.avatar_url ? (
             <img src={r.reviewer.avatar_url} alt="" className="size-10 rounded-full object-cover" />
