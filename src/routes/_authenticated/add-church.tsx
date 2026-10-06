@@ -15,7 +15,7 @@ import {
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CountrySelect } from "@/components/CountrySelect";
-import { validLocation, placeLabel } from "@/lib/country";
+import { validLocation, placeLabel, defaultCountry } from "@/lib/country";
 import {
   Dialog,
   DialogContent,
@@ -79,7 +79,7 @@ function AddChurchPage() {
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [zip, setZip] = useState("");
-  const [country, setCountry] = useState("US");
+  const [country, setCountry] = useState(defaultCountry);
   const [serviceTimes, setServiceTimes] = useState("");
   const [phone, setPhone] = useState("");
   const [website, setWebsite] = useState("");
