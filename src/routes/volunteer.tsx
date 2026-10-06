@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { BellRing, CalendarDays, MapPin, Users, UsersRound } from "lucide-react";
+import { ArrowLeft, BellRing, CalendarDays, MapPin, Users, UsersRound } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
@@ -110,7 +110,13 @@ function VolunteerPage() {
     <div className="min-h-dvh bg-ink font-body text-sand antialiased">
       <header className="border-b border-ink-soft">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-4">
-          <div className="flex items-center gap-3"><SiteNav /><BrandLogo /></div>
+          <div className="flex items-center gap-2">
+            <Link to="/" className="grid size-9 shrink-0 place-items-center rounded-full bg-ink text-sand ring-1 ring-mist/20 transition hover:bg-ink-soft" aria-label={t("Back to home")}>
+              <ArrowLeft className="size-4" aria-hidden="true" />
+            </Link>
+            <SiteNav />
+            <BrandLogo />
+          </div>
           <AccountMenu />
         </div>
       </header>
