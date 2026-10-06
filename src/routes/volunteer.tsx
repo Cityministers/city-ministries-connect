@@ -17,8 +17,8 @@ type Rsvp = { project_id: string; signup_id: string };
 
 export const Route = createFileRoute("/volunteer")({
   validateSearch: (s: Record<string, unknown>) => ({
-    city: typeof s.city === "string" ? s.city : undefined,
-    project: typeof s.project === "string" ? s.project : undefined,
+    city: typeof s["city"] === "string" ? s["city"] : undefined,
+    project: typeof s["project"] === "string" ? s["project"] : undefined,
   }),
   head: () => ({
     meta: [
@@ -82,7 +82,7 @@ function VolunteerPage() {
       user_id: userId, display_name: prof?.display_name || "Neighbor", city, zip: prof?.zip ?? "",
     });
     setBusy(false);
-    if (error) return toast.error(t("Could not join the list."));
+    if (error) { toast.error(t("Could not join the list.")); return; }
     toast.success(t("You're on the volunteer list! We'll alert you when a project is posted."));
     void load();
   }
@@ -99,7 +99,7 @@ function VolunteerPage() {
     const { error } = has
       ? await supabase.from("volunteer_rsvps").delete().eq("project_id", projectId).eq("signup_id", mine.id)
       : await supabase.from("volunteer_rsvps").insert({ project_id: projectId, signup_id: mine.id, user_id: userId });
-    if (error) return toast.error(t("Something went wrong."));
+    if (error) { toast.error(t("Something went wrong.")); return; }
     toast.success(has ? t("RSVP cancelled.") : t("You're going! See you there."));
     void load();
   }
