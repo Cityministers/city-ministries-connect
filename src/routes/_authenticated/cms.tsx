@@ -43,6 +43,7 @@ import {
 import { getSiteStats, type RecentItem } from "@/lib/admin-stats.functions";
 import { timeAgo } from "@/lib/time-ago";
 import { CmsChurchEdit, CmsPostsPanel, CmsRoomsPanel, CmsSiteTextPanel, CmsUsersPanel } from "@/components/cms/CmsPanels";
+import { CmsVolunteerPanel } from "@/components/cms/CmsVolunteerPanel";
 
 export const Route = createFileRoute("/_authenticated/cms")({
   head: () => ({
@@ -88,13 +89,14 @@ function Pill({ value }: { value: string }) {
   );
 }
 
-type CmsTab = "stats" | "users" | "posts" | "needs" | "rooms" | "videos" | "churches" | "content" | "reports" | "feedback";
-const CMS_TABS: CmsTab[] = ["stats", "users", "posts", "needs", "rooms", "videos", "churches", "content", "reports", "feedback"];
+type CmsTab = "stats" | "users" | "posts" | "needs" | "volunteer" | "rooms" | "videos" | "churches" | "content" | "reports" | "feedback";
+const CMS_TABS: CmsTab[] = ["stats", "users", "posts", "needs", "volunteer", "rooms", "videos", "churches", "content", "reports", "feedback"];
 const TAB_LABELS: Record<CmsTab, string> = {
   stats: "Dashboard",
   users: "Users & roles",
   posts: "All posts",
   needs: "Posted needs",
+  volunteer: "Volunteer projects",
   rooms: "Rooms",
   videos: "Videos",
   churches: "Churches",
@@ -226,6 +228,8 @@ function AdminPage() {
               <CmsUsersPanel />
             ) : tab === "posts" ? (
               <CmsPostsPanel />
+            ) : tab === "volunteer" ? (
+              <CmsVolunteerPanel />
             ) : tab === "content" ? (
               <CmsSiteTextPanel />
             ) : tab === "stats" ? (
