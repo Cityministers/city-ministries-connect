@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, Check, EyeOff, Heart, ImagePlus, Loader2, MessageCircle, MoreVertical, PartyPopper, Trash2, X } from "lucide-react";
+import { ArrowLeft, Check, EyeOff, Heart, ImagePlus, ThumbsUp, Loader2, MessageCircle, MoreVertical, PartyPopper, Trash2, X } from "lucide-react";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -271,8 +271,8 @@ function RoomPage() {
           </div>
         )}
         <div className="mt-2 flex items-center gap-4 text-sm text-mist">
-          <button type="button" onClick={() => toggleLike(p.id, liked)} className={`inline-flex items-center gap-1 ${liked ? "text-rose" : ""}`}>
-            <Heart className={`size-4 ${liked ? "fill-current" : ""}`} aria-hidden="true" />
+          <button type="button" onClick={() => toggleLike(p.id, liked)} className={`inline-flex items-center gap-1 ${liked ? "text-lemon" : ""}`} aria-pressed={liked}>
+            <ThumbsUp className={`size-4 ${liked ? "fill-current" : ""}`} aria-hidden="true" />
             {likes.length}
           </button>
           {!isReply && userId && p.status === "approved" && (
@@ -281,6 +281,7 @@ function RoomPage() {
               {t("Reply")}
             </button>
           )}
+          {!isReply && p.status === "approved" && <RoomSaveButton postId={p.id} userId={userId} />}
           {p.author_id === userId && !isAdmin && (
             <button type="button" onClick={() => remove(p.id)} className="inline-flex items-center gap-1" aria-label={t("Delete")}>
               <Trash2 className="size-4" aria-hidden="true" />
@@ -410,5 +411,34 @@ function RoomPage() {
         </DialogContent>
       </Dialog>
     </div>
+  );
+}
+
+function RoomSaveButton({ postId, userId }: { postId: string; userId?: string | undefined }) {
+  const { t } = useTranslation();
+  const qc = useQueryClient();
+  const { data: saved } = useQuery({
+    queryKey: ["room-save", postId, userId ?? "anon"],
+    enabled: !!userId,
+    queryFn: async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data } = await (supabase as any).from("room_post_saves").select("post_id").eq("post_id", postId).eq("user_id", userId).maybeSingle();
+      return !!data;
+    },
+  });
+  async function toggle() {
+    if (!userId) { toast(t("Sign in to save posts.")); return; }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const tbl = (supabase as any).from("room_post_saves");
+    if (saved) await tbl.delete().eq("post_id", postId).eq("user_id", userId);
+    else await tbl.insert({ post_id: postId, user_id: userId });
+    qc.invalidateQueries({ queryKey: ["room-save", postId] });
+    qc.invalidateQueries({ queryKey: ["my-favorites"] });
+  }
+  return (
+    <button type="button" onClick={() => void toggle()} className={`inline-flex items-center gap-1 ${saved ? "text-rose" : ""}`} aria-pressed={!!saved} aria-label={saved ? t("Remove from favorites") : t("Save to favorites")}>
+      <Heart className={`size-4 ${saved ? "fill-current" : ""}`} aria-hidden="true" />
+      {saved ? t("Saved") : t("Save")}
+    </button>
   );
 }

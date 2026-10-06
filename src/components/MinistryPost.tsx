@@ -449,6 +449,15 @@ export function MinistryPost({
             </button>
             <button
               type="button"
+              onClick={() => (live ? setCommentOpen((v) => !v) : undefined)}
+              className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-mist/70 ring-1 ring-mist/20 transition hover:bg-ink"
+              aria-expanded={commentOpen}
+            >
+              <MessageCircle className="size-5" aria-hidden="true" />
+              {commentCount}
+            </button>
+            <button
+              type="button"
               onClick={() => void handleFavorite()}
               className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium ring-1 transition ${
                 favorited
@@ -458,17 +467,8 @@ export function MinistryPost({
               aria-pressed={favorited}
               aria-label={favorited ? t("Remove from favorites") : t("Save to favorites")}
             >
-              <Heart className="size-5" aria-hidden="true" />
+              <Heart className={`size-5 ${favorited ? "fill-current" : ""}`} aria-hidden="true" />
               {live ? (favorited ? t("Saved") : t("Save")) : ministry.favorites + (favorited ? 1 : 0)}
-            </button>
-            <button
-              type="button"
-              onClick={() => (live ? setCommentOpen((v) => !v) : undefined)}
-              className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-mist/70 ring-1 ring-mist/20 transition hover:bg-ink"
-              aria-expanded={commentOpen}
-            >
-              <MessageCircle className="size-5" aria-hidden="true" />
-              {commentCount}
             </button>
           </div>
 
