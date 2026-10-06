@@ -72,11 +72,11 @@ export function MinistryTypeFollowButton({ ministryType }: Props) {
         }`}
       >
         {busy ? (
-          <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+          <Loader2 className="size-3 animate-spin" aria-hidden="true" />
         ) : following ? (
-          <BellRing className="size-4" aria-hidden="true" />
+          <BellRing className="size-3" aria-hidden="true" />
         ) : (
-          <Bell className="size-4" aria-hidden="true" />
+          <Bell className="size-3" aria-hidden="true" />
         )}
         {following ? t("Following near you") : t("Follow near you")}
       </button>
