@@ -167,7 +167,7 @@ const seed: Omit<Ministry, "city" | "zip" | "distanceMi">[] = [
     neighborhood: "Cedar Mill",
     poster: {
       name: "Dee W.",
-      bio: "All Scripture is breathed out by God and profitable for teaching, for reproof, for correction, and for training in righteousness.",
+      bio: "And they devoted themselves to the apostles' teaching and the fellowship.",
     },
     likes: 38,
     favorites: 21,
@@ -735,8 +735,8 @@ export const ministryReflections: Record<string, string[]> = {
     "The ladder in the church runs downward. “Whoever would be great among you must be your servant… the Son of Man came not to be served but to serve” (Mark 10:43–45), and the Lord of the story “rose from supper, laid aside his garments, and girded himself with a towel” (John 13:4–5). So the volunteer who sets chairs, counts offerings, or wipes down the nursery is doing the job Jesus did, in the same order of importance. “Whatever you do, work heartily, as for the Lord and not for men, knowing that from the Lord you will receive the inheritance as your reward; you serve the Lord Christ” (Colossians 3:23–24). Nobody sees the hands that keep a church open — which is precisely the humility the gospel asks for.",
   ],
   "lend-a-book": [
-    "The book that changed a nation is a borrowed one. “All Scripture is breathed out by God and profitable for teaching, for reproof, for correction, and for training in righteousness” (2 Timothy 3:16), and Isaiah says the written word “shall not return to me empty, but will accomplish what I desire” (Isaiah 55:11). The apostle who wrote most of the New Testament asked for reading material: “bring the book, especially the parchments” (2 Timothy 4:13) — Paul needed someone else’s scrolls. The earliest believers’ Bibles were manuscripts copied and carried hand to hand, and the faith travelled by lending.",
-    "The New Testament’s own picture of a converted town is a shared text. The Bereans “received the word with all eagerness, examining the Scriptures daily to see if these things were so” (Acts 17:11) — a model of honest reading that expects the reader to check. In Acts 8, a man reading Isaiah aloud in a chariot is asked, “Do you understand what you are reading?” and Philip “beginning at this Scripture, preached Jesus to him” (Acts 8:30–35). Lending a book is the first half of that conversation: it puts the words in someone’s hands without a sermon attached, and says, read this, then tell me what you think. The Spirit does the rest, and the loan is the instrument.",
+    "A book is the cheapest way to carry someone else's thinking home, and almost nobody buys every book they will ever read. A hardcover on grief, marriage, addiction, money, parenting, prayer, or a difficult chapter of Romans runs fifteen to thirty dollars and takes a month to get through — so one purchase, passed through six pairs of hands, does the reading of six. For a parent counting dollars at the end of the month, a borrowed book may be the only book they read this year. That is how the first believers handled teaching: “they devoted themselves to the apostles’ teaching and the fellowship, to the breaking of bread and the prayers” (Acts 2:42). Teaching was never a private possession — it was spoken, copied, and handed along, and Paul himself asked a friend to bring the books and scrolls he did not own (2 Timothy 4:13). Lending an ordinary book says the same thing without a program attached: I read it, it costs me nothing to hand it over, and you don’t have to buy it to find out whether it helps you.",
+    "So the wisest shape for this ministry is a shelf rather than a purchase. A church library needs almost nothing: a bookcase in the hallway, a shoebox of cards with names and phone numbers, and a note that says keep it as long as you like. Novels, memoirs, biographies, books on addiction or marriage or immigration, the commentary someone has already finished — all of them do more good loaned than stacked. The free church library is an old habit: parish and Sunday-school shelves lent books through the nineteenth century, and the public library movement grew out of people who pooled money for books no single family could buy. Trade one for one when you can — lend the book you finished, ask for the one your neighbour is halfway through. Nobody needs to own every good book, and a church that keeps a shelf is simply saying: this is ours, and it is yours.",
   ],
   "dine-out-in-public": [
     "Jesus drew his sharpest criticism at a table. “This man receives sinners and eats with them” (Luke 15:1–2), and his own opponents labelled him “a glutton and a drunkard, a friend of tax collectors and sinners” (Matthew 11:19). He answered by doing it more. The kingdom was announced at dinners — Zacchaeus’ house (Luke 19:5–9), Levi’s feast (Mark 2:15), an upstairs room before the cross — and Paul told believers that if an unbeliever invites you and you want to go, “eat whatever is set before you” (1 Corinthians 10:27). A public table is not a neutral place in Scripture; it is where reputations are spent on purpose. Dining out in public is simply refusing to let the church be the only room with food in it.",
@@ -872,8 +872,8 @@ export const ministryScriptures: Record<string, Scripture[]> = {
   ],
   "lend-a-book": [
     {
-      text: "All Scripture is breathed out by God and profitable for teaching, for reproof, for correction, and for training in righteousness.",
-      reference: "2 Timothy 3:16",
+      text: "And they devoted themselves to the apostles' teaching and the fellowship, to the breaking of bread and the prayers.",
+      reference: "Acts 2:42",
     },
     {
       text: "The beginning of wisdom is this: Get wisdom, and whatever you get, get insight.",
