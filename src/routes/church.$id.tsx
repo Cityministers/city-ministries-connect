@@ -483,18 +483,18 @@ function ChurchPage() {
                     {t("Post your need here")}
                   </Link>
                 </div>
-                <div className="mt-1 flex flex-wrap items-center gap-2">
+                <div className="mt-1 flex items-center gap-2">
                   <Link
                     to="/post-prayer"
                     search={{ church: church.id }}
-                    className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-prayer-deep px-5 py-3.5 text-lg font-bold text-parchment ring-1 ring-prayer/40 transition hover:opacity-90"
+                    className="inline-flex min-w-0 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-prayer-deep px-3 py-3.5 text-base font-bold text-parchment ring-1 ring-prayer/40 transition hover:opacity-90 sm:px-5 sm:text-lg"
                   >
-                    <HandHelping className="size-5" aria-hidden="true" />
+                    <HandHelping className="size-5 shrink-0" aria-hidden="true" />
                     {t("Post a prayer here")}
                   </Link>
                   <a
                     href="#prayer-wall"
-                    className="inline-flex items-center justify-center gap-1.5 rounded-full bg-prayer-deep px-5 py-3.5 text-lg font-bold text-parchment ring-1 ring-prayer/40 transition hover:opacity-90"
+                    className="inline-flex shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-prayer-deep px-4 py-3.5 text-base font-bold text-parchment ring-1 ring-prayer/40 transition hover:opacity-90 sm:px-5 sm:text-lg"
                   >
                     {t("View")}
                   </a>
@@ -945,7 +945,7 @@ function ChurchPage() {
               <Link
                 to="/post-prayer"
                 search={{ church: id }}
-                className="inline-flex w-fit items-center gap-2 rounded-full bg-prayer-deep px-5 py-2.5 text-base font-semibold text-parchment ring-1 ring-prayer/40 transition hover:opacity-90"
+                className="inline-flex w-fit items-center gap-2 whitespace-nowrap rounded-full bg-prayer-deep px-5 py-2.5 text-base font-semibold text-parchment ring-1 ring-prayer/40 transition hover:opacity-90"
               >
                 <HandHelping className="size-4" aria-hidden="true" />
                 {t("Post a prayer here")}
