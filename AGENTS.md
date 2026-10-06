@@ -14,3 +14,4 @@
 - Keep neighborhood video files private and expose approved videos through short-lived signed URLs; this prevents pending uploads from becoming public before review.
 - Scope each map layer's pins and its accompanying feed to live visible bounds, preserving a newly highlighted post; this keeps every map view uncluttered on entry and after navigation.
 - The owner CMS lives at /cms behind an admin-role check in every server function (privileged client loaded only after the check); /admin redirects there, and editable page wording is read from site_content with translated fallbacks.
+- Store ministry-category subscriptions separately from individual post follows and match category alerts to the member's city or postal code; this preserves neighborhood relevance without conflating a ministry type with one post.

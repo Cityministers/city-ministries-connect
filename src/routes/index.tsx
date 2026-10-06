@@ -6,6 +6,7 @@ import { AccountMenu } from "@/components/AccountMenu";
 import { ChurchMenu } from "@/components/ChurchMenu";
 import { LanguagePicker } from "@/components/LanguagePicker";
 import { BrandLogo } from "@/components/BrandLogo";
+import { MinistryTypeFollowButton } from "@/components/MinistryTypeFollowButton";
 import { SiteNav } from "@/components/SiteNav";
 import cityMap from "@/assets/city-map.jpg";
 import {
@@ -180,9 +181,12 @@ function HomePage() {
                   <span className="grid size-14 shrink-0 place-items-center rounded-xl bg-tone-emerald/25 text-sand ring-1 ring-tone-emerald/60">
                     <UsersRound className="size-8" aria-hidden="true" />
                   </span>
-                  <DialogTitle className="font-display text-2xl font-semibold text-sand sm:text-3xl">
-                    {t("Community Volunteer")}
-                  </DialogTitle>
+                  <div className="min-w-0">
+                    <DialogTitle className="font-display text-2xl font-semibold text-sand sm:text-3xl">
+                      {t("Community Volunteer")}
+                    </DialogTitle>
+                    <MinistryTypeFollowButton ministryType="community-volunteer" />
+                  </div>
                 </div>
               </DialogHeader>
               <p className="text-lg leading-relaxed text-mist/85 sm:text-xl">
@@ -262,9 +266,12 @@ function HomePage() {
                         >
                           <ministry.icon className="size-6" aria-hidden="true" />
                         </span>
-                        <DialogTitle className="font-display text-2xl font-semibold text-sand sm:text-3xl">
-                          {t(ministry.label)}
-                        </DialogTitle>
+                        <div className="min-w-0">
+                          <DialogTitle className="font-display text-2xl font-semibold text-sand sm:text-3xl">
+                            {t(ministry.label)}
+                          </DialogTitle>
+                          <MinistryTypeFollowButton ministryType={ministry.id} />
+                        </div>
                       </div>
                     </DialogHeader>
                     <p className="text-lg leading-relaxed text-mist/85 sm:text-xl">
