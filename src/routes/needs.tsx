@@ -14,7 +14,7 @@ import {
   ThumbsUp,
   Video,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LiveMap, type MapBounds } from "@/components/LiveMap";
 import { useHomePoint, useMapPosts, usePlaceCenter } from "@/lib/use-map-view";
@@ -67,7 +67,10 @@ function NeedsPage() {
   const { place, country: searchCountry, view, new: freshId } = Route.useSearch();
   const navigate = Route.useNavigate();
   const [placeQuery, setPlaceQuery] = useState(place ?? "Portland, OR 97209");
-  const [country, setCountry] = useState(searchCountry ?? defaultCountry());
+  const [country, setCountry] = useState(searchCountry ?? "US");
+  useEffect(() => {
+    if (!searchCountry) setCountry(defaultCountry());
+  }, [searchCountry]);
   const [query, setQuery] = useState("");
   const [activeId, setActiveId] = useState<string | null>(null);
   const [highlightId, setHighlightId] = useState<string | null>(

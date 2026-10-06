@@ -12,7 +12,7 @@ import {
   ShieldCheck,
   X,
 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CountrySelect } from "@/components/CountrySelect";
 import { validLocation, placeLabel, defaultCountry } from "@/lib/country";
@@ -79,7 +79,10 @@ function AddChurchPage() {
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [zip, setZip] = useState("");
-  const [country, setCountry] = useState(defaultCountry);
+  const [country, setCountry] = useState("US");
+  useEffect(() => {
+    setCountry(defaultCountry());
+  }, []);
   const [serviceTimes, setServiceTimes] = useState("");
   const [phone, setPhone] = useState("");
   const [website, setWebsite] = useState("");
