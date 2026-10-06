@@ -27,6 +27,7 @@ import {
   type CommentDTO,
 } from "@/lib/favorites.functions";
 import { startConversation } from "@/lib/messages.functions";
+import { PostShareButton } from "@/components/PostShareButton";
 import { createMeetupRequest } from "@/lib/meetups.functions";
 import { timeAgo } from "@/lib/time-ago";
 import { FollowButton } from "@/components/FollowButton";
@@ -470,19 +471,17 @@ export function MinistryPost({
               <Heart className={`size-5 ${favorited ? "fill-current" : ""}`} aria-hidden="true" />
               {live ? (favorited ? t("Saved") : t("Save")) : ministry.favorites + (favorited ? 1 : 0)}
             </button>
-            <button
-              type="button"
-              onClick={() => {
-                if (!guard()) return;
-                setMeetupMode(false);
-                setMessageOpen(true);
-              }}
-              className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-mist/70 ring-1 ring-mist/20 transition hover:bg-ink"
-              aria-label={t("Message")}
-            >
-              <Send className="size-5" aria-hidden="true" />
-              {t("Message")}
-            </button>
+            {live && ministry.postId && (
+              <PostShareButton
+                title={ministry.label}
+                text={ministry.description}
+                path={
+                  ministry.postType === "need"
+                    ? `/needs?new=${encodeURIComponent(ministry.postId)}`
+                    : `/map?new=${encodeURIComponent(ministry.postId)}`
+                }
+              />
+            )}
           </div>
 
           {needsAuth && (
