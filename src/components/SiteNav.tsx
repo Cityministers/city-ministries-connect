@@ -13,12 +13,21 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-const menuLinks = [
+type MenuLink = { label: string; to: string } | { label: string; href: string };
+
+const menuLinks: MenuLink[] = [
   { to: "/about", label: "About Us" },
+  {
+    href: "https://josephdraper-portfolio-showcase.lovable.app/",
+    label: "About the Builder",
+  },
   { to: "/contact", label: "Contact" },
   { to: "/report-abuse", label: "Report Abuse" },
   { to: "/terms", label: "User & Privacy Agreement" },
-] as const;
+];
+
+const rowClass =
+  "rounded-xl px-4 py-3 text-lg font-medium text-sand transition hover:bg-ink";
 
 export function SiteNav() {
   const { t } = useTranslation();
@@ -65,16 +74,29 @@ export function SiteNav() {
             <Heart className="relative z-10 size-5" aria-hidden="true" />
             <span className="relative z-10">{t("Donate")}</span>
           </Link>
-          {menuLinks.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              onClick={() => setOpen(false)}
-              className="rounded-xl px-4 py-3 text-lg font-medium text-sand transition hover:bg-ink"
-            >
-              {t(link.label)}
-            </Link>
-          ))}
+          {menuLinks.map((link) =>
+            "href" in link ? (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setOpen(false)}
+                className={rowClass}
+              >
+                {t(link.label)}
+              </a>
+            ) : (
+              <Link
+                key={link.to}
+                to={link.to}
+                onClick={() => setOpen(false)}
+                className={rowClass}
+              >
+                {t(link.label)}
+              </Link>
+            ),
+          )}
         </nav>
       </SheetContent>
     </Sheet>
