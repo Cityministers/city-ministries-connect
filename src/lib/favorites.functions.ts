@@ -8,7 +8,8 @@ const postRef = z.object({
 });
 
 export type SavedPostDTO = {
-  postType: "ministry" | "need" | "prayer";
+  postType: "ministry" | "need" | "prayer" | "room";
+  roomSlug?: string;
   postId: string;
   shortTitle: string;
   title: string;
@@ -23,13 +24,21 @@ export type SavedPostDTO = {
 export const listMyFavorites = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<SavedPostDTO[]> => {
-    const { data: favs } = await context.supabase
+    const { data: favsRaw } = await context.supabase
       .from("favorites")
       .select("post_type, post_id, created_at")
       .eq("user_id", context.userId)
       .order("created_at", { ascending: false })
       .limit(200);
-    if (!favs || favs.length === 0) return [];
+    const favs = favsRaw ?? [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: roomSaves } = await (context.supabase as any)
+      .from("room_post_saves")
+      .select("post_id, created_at")
+      .eq("user_id", context.userId)
+      .limit(200);
+    const rs = (roomSaves ?? []) as { post_id: string; created_at: string }[];
+    if ((!favs || favs.length === 0) && rs.length === 0) return [];
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const out: SavedPostDTO[] = [];
@@ -83,12 +92,37 @@ export const listMyFavorites = createServerFn({ method: "GET" })
       }
     }
 
+    if (rs.length > 0) {
+      const { data: rows } = await supabaseAdmin
+        .from("room_posts")
+        .select("id, title, body, image_url, status, rooms(slug, title)")
+        .in("id", rs.map((r) => r.post_id));
+      for (const row of rows ?? []) {
+        if (row.status !== "approved") continue;
+        const room = row.rooms as unknown as { slug: string; title: string } | null;
+        const t = row.title || row.body.slice(0, 80);
+        out.push({
+          postType: "room",
+          roomSlug: room?.slug,
+          postId: row.id,
+          shortTitle: t,
+          title: t,
+          description: row.body,
+          city: room?.title ?? "",
+          zip: "",
+          photoUrl: row.image_url,
+          savedAt: rs.find((r) => r.post_id === row.id)?.created_at ?? new Date().toISOString(),
+        });
+      }
+    }
+
     if (paths.length > 0) {
       const { data: signed } = await supabaseAdmin.storage
         .from("ministry-avatars")
         .createSignedUrls(paths, 60 * 60 * 24 * 7);
       const byPath = new Map((signed ?? []).map((s) => [s.path ?? "", s.signedUrl]));
       for (const item of out) {
+        if (item.postType === "room") continue;
         item.photoUrl = item.photoUrl ? (byPath.get(item.photoUrl) ?? null) : null;
       }
     }
