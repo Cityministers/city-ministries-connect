@@ -1,5 +1,5 @@
 import { CountrySelect } from "@/components/CountrySelect";
-import { countryCodes } from "@/lib/country";
+import { countryCodes, defaultCountry } from "@/lib/country";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
@@ -67,7 +67,7 @@ function NeedsPage() {
   const { place, country: searchCountry, view, new: freshId } = Route.useSearch();
   const navigate = Route.useNavigate();
   const [placeQuery, setPlaceQuery] = useState(place ?? "Portland, OR 97209");
-  const [country, setCountry] = useState(searchCountry ?? "US");
+  const [country, setCountry] = useState(searchCountry ?? defaultCountry());
   const [query, setQuery] = useState("");
   const [activeId, setActiveId] = useState<string | null>(null);
   const [highlightId, setHighlightId] = useState<string | null>(
