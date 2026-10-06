@@ -9,7 +9,7 @@ const postRef = z.object({
 
 export type SavedPostDTO = {
   postType: "ministry" | "need" | "prayer" | "room";
-  roomSlug?: string;
+  roomSlug?: string | undefined;
   postId: string;
   shortTitle: string;
   title: string;

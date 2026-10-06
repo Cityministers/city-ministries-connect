@@ -414,7 +414,7 @@ function RoomPage() {
   );
 }
 
-function RoomSaveButton({ postId, userId }: { postId: string; userId?: string }) {
+function RoomSaveButton({ postId, userId }: { postId: string; userId?: string | undefined }) {
   const { t } = useTranslation();
   const qc = useQueryClient();
   const { data: saved } = useQuery({
