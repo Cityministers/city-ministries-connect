@@ -574,9 +574,9 @@ export function MinistryPost({
                 setMeetupMode(true);
                 setMessageText((prev) => prev || t("Hi! When works for you to meet up?"));
               }}
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-lemon px-5 py-3 text-base font-semibold text-ink ring-1 ring-lemon/60 transition-transform hover:-translate-y-0.5 sm:text-lg"
+              className="inline-flex flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-lemon px-4 py-3 text-base font-semibold text-ink ring-1 ring-lemon/60 transition-transform hover:-translate-y-0.5 sm:text-lg"
             >
-              <CalendarClock className="size-5" aria-hidden="true" />
+              <CalendarClock className="size-5 shrink-0" aria-hidden="true" />
               {t("Let's set a time")}
             </button>
             <button
@@ -586,9 +586,9 @@ export function MinistryPost({
                 setMeetupMode(false);
                 setMessageOpen((v) => !v);
               }}
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-ink px-5 py-3 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft sm:text-lg"
+              className="inline-flex flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-ink px-4 py-3 text-base font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft sm:text-lg"
             >
-              <MessageCircle className="size-5" aria-hidden="true" />
+              <MessageCircle className="size-5 shrink-0" aria-hidden="true" />
               {t("Message")}
             </button>
           </div>
