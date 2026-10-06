@@ -344,16 +344,16 @@ function MapPage() {
       </header>
 
       {/* Map */}
-      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 pt-2 pb-5 sm:px-6 sm:pt-3 sm:pb-8">
+      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-2 pt-1 pb-4 sm:px-4 sm:pt-2 sm:pb-6">
         <div className="relative">
           <LiveMap
             points={allPoints}
             center={mapCenter}
-            zoom={spotlight ? 16 : 12}
+            zoom={spotlight ? 16 : 14}
             onSelect={selectPoint}
             onBoundsChange={setBounds}
             label={t("Ministry map. Drag to explore other neighborhoods.")}
-            className="map-fade h-[60dvh] min-h-[320px] w-full sm:h-[70dvh] sm:min-h-[460px]"
+            className="map-fade h-[64dvh] min-h-[340px] w-full sm:h-[74dvh] sm:min-h-[500px]"
           />
         </div>
 
