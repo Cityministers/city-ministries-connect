@@ -147,7 +147,7 @@ export function LeaveReviewButton({ meetupId, meetAt, otherName }: { meetupId: s
       ? await db.from("member_reviews").update(payload).eq("id", ctx!.existing.id)
       : await db.from("member_reviews").insert({ ...payload, meetup_id: meetupId, reviewer_id: ctx!.me, reviewee_id: ctx!.other });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(t("Thank you for your review!"));
     setOpen(false);
     qc.invalidateQueries({ queryKey: ["my-review", meetupId] });
