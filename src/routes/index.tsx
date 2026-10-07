@@ -8,6 +8,7 @@ import { LanguagePicker } from "@/components/LanguagePicker";
 import { BrandLogo } from "@/components/BrandLogo";
 import { MinistryTypeFollowButton } from "@/components/MinistryTypeFollowButton";
 import { SiteNav } from "@/components/SiteNav";
+import { VerseOfTheDay } from "@/components/VerseOfTheDay";
 import cityMap from "@/assets/city-map.jpg";
 import {
   Dialog,
@@ -144,6 +145,8 @@ function HomePage() {
             {t("View Needs")}
           </Link>
         </div>
+
+        <VerseOfTheDay />
 
         <section className="mt-8" aria-labelledby="ministry-preview-heading">
           <h2
