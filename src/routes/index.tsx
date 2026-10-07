@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { HandHeart, HeartHandshake, MapPin, MessageCircle, Sparkles, UsersRound } from "lucide-react";
+import { HandHeart, HeartHandshake, MapPin, MessageCircle, Mic, Sparkles, UsersRound } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useSiteText } from "@/lib/site-text";
 import { AccountMenu } from "@/components/AccountMenu";

@@ -16,6 +16,7 @@ import {
 type MenuLink = { label: string; to: string } | { label: string; href: string };
 
 const menuLinks: MenuLink[] = [
+  { to: "/rant", label: "Spiritual Rant" },
   { to: "/about", label: "About Us" },
   {
     href: "https://josephdraper-portfolio-showcase.lovable.app/",
