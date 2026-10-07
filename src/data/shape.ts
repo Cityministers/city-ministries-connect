@@ -216,7 +216,7 @@ export const BIBLICAL_GIFTS = [
   "Healing",
 ] as const;
 
-export const steps: Step[] = [
+const rawSteps: Step[] = [
   {
     id: "place",
     title: "Where will you serve?",
@@ -796,6 +796,68 @@ export const steps: Step[] = [
     fields: [],
   },
 ];
+
+
+/**
+ * The walkthrough shown to members: the raw question groups above merged into
+ * nine shorter screens. Name and city come from the member's profile, so the
+ * place step and first-name field are dropped. Answer keys are unchanged so
+ * previously saved answers keep working.
+ */
+function buildSteps(): Step[] {
+  const by = (id: string) => rawSteps.find((s) => s.id === id)!;
+  const pairs = (id: string, keep: number) =>
+    by(id).fields.filter((f) => f.kind === "pair").slice(0, keep);
+  const merged = (
+    id: string,
+    title: string,
+    prompt: string,
+    fields: Field[],
+    extra: Partial<Step> = {},
+  ): Step => ({ ...by(id), id, title, prompt, fields, ...extra });
+  return [
+    merged(
+      "about",
+      "A little about you",
+      "Tell us a bit about your life and your household.",
+      [
+        ...by("about").fields.filter((f) => !(f.kind === "text" && f.key === "firstName")),
+        ...by("family").fields,
+      ],
+      { blurb: "" },
+    ),
+    merged("gifts", "Spiritual gifts", "How has God gifted you?", [
+      ...by("gifts").fields,
+      ...pairs("gifts-lean", 3),
+    ]),
+    merged("heart", by("heart").title, "Who and what do you care about most?", by("heart").fields),
+    merged("abilities", "Abilities & what you can share", "What are you good at, and what could you share?", [
+      ...by("abilities").fields,
+      ...by("resources").fields,
+    ]),
+    merged("personality", "Personality & setting", "Which sounds more like you, and where are you most yourself?", [
+      ...pairs("personality", 4),
+      ...by("setting").fields,
+    ]),
+    merged(
+      "experiences",
+      "Experiences & past service",
+      "What have you walked through, and where have you served before?",
+      [...by("experiences").fields, ...by("service-history").fields],
+      { blurb: "Optional and private." },
+    ),
+    merged("scope", "Scope & serving together", "How, when, and with whom would you serve?", [
+      ...by("scope").fields,
+      ...by("family-serve").fields,
+    ], { blurb: "" }),
+    merged("dream", by("dream").title, "If nothing held you back, what would you do?", by("dream").fields, {
+      blurb: "Optional.",
+    }),
+    by("review"),
+  ];
+}
+
+export const steps: Step[] = buildSteps();
 
 export type MinistryIdea = {
   kind: "ministry" | "need";
