@@ -53,6 +53,7 @@ export function MinistryPost({
   const fetchComments = useServerFn(listComments);
   const postComment = useServerFn(addComment);
   const startChat = useServerFn(startConversation);
+  const fetchGiftFit = useServerFn(getPostGiftFit);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [reported, setReported] = useState(false);
@@ -133,6 +134,16 @@ export function MinistryPost({
         setLikeCount(state.likeCount);
       } catch {
         /* not signed in or post unavailable */
+      }
+      if (data.user.id !== ministry.ownerId) {
+        try {
+          const { fits } = await fetchGiftFit({
+            data: { text: `${ministry.label} ${ministry.description}` },
+          });
+          if (active) setGiftFits(fits);
+        } catch {
+          /* hint is optional */
+        }
       }
     })();
     return () => {
