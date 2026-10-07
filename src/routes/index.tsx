@@ -283,15 +283,7 @@ function HomePage() {
                     )}
                     <div className="flex flex-col gap-3 border-t border-mist/15 pt-4">
                       {(ministryScriptures[ministry.id] ?? []).map((s) => (
-                        <p
-                          key={s.reference}
-                          className="text-lg italic leading-relaxed text-mist/90 sm:text-xl"
-                        >
-                          “{t(s.text)}”
-                          <span className="ml-1.5 whitespace-nowrap font-medium not-italic text-mist/70">
-                            — {s.reference}, ESV
-                          </span>
-                        </p>
+                        <LiveVerse key={s.reference} reference={s.reference} fallbackText={s.text} />
                       ))}
                     </div>
                     <a
