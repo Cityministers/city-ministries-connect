@@ -33,9 +33,12 @@ export function useLiveVerseText(reference: string, fallbackText?: string) {
 export function ScriptureCard({
   reference,
   fallbackText,
+  compact = false,
 }: {
   reference: string;
   fallbackText?: string;
+  /** Smaller type, for a passage shown underneath a post's own text. */
+  compact?: boolean;
 }) {
   const usfm = referenceToUsfm(reference);
   const { passage } = usePassage({
@@ -53,21 +56,21 @@ export function ScriptureCard({
   const text = liveText ?? fallbackText;
 
   return (
-    <blockquote className="rounded-2xl bg-ink-soft/60 p-5 ring-1 ring-mist/15">
+    <blockquote className={`rounded-2xl bg-ink-soft/60 ring-1 ring-mist/15 ${compact ? "p-4" : "p-5"}`}>
       {text && (
-        <p className="text-lg italic leading-relaxed text-sand/90 sm:text-xl">
+        <p className={`italic leading-relaxed text-sand/90 ${compact ? "text-sm sm:text-base" : "text-lg sm:text-xl"}`}>
           “{text}”
         </p>
       )}
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
-        <cite className="text-base font-semibold not-italic text-lemon">
+        <cite className={`font-semibold not-italic text-lemon ${compact ? "text-sm" : "text-base"}`}>
           — {reference} · NIV
         </cite>
         <a
           href={youVersionUrl(reference)}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm font-semibold text-youversion underline-offset-2 hover:underline"
+          className={`font-semibold text-youversion underline-offset-2 hover:underline ${compact ? "text-xs" : "text-sm"}`}
         >
           Read in context
         </a>
