@@ -20,3 +20,5 @@
 - Admin stats page: DONE — "Site activity" tab in Review Center with counts and latest-activity feed.
 - [x] Restore the Needs map to the full width and height of the main map; keep its controls and list intact.
 - [x] Match the Needs map to the Ministries/Prayers map size exactly (60% of screen, at least 320px); no larger, no smaller.
+
+- [ ] Spiritual Rant: product/UX/safety/technical plan discussion (planning only, no build)
