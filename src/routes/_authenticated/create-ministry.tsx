@@ -383,7 +383,7 @@ function CreateMinistryPage() {
       </main>
 
       <Dialog open={!!posted} onOpenChange={() => {}}>
-        <DialogContent className="border-ink-soft bg-ink-soft text-sand sm:rounded-2xl">
+        <DialogContent className="max-h-[90dvh] overflow-y-auto overscroll-contain border-ink-soft bg-ink-soft text-sand sm:rounded-2xl">
           <DialogHeader className="text-center">
             <div className="mx-auto mb-3 grid size-14 place-items-center rounded-full bg-lemon/15 text-lemon">
               <PartyPopper className="size-7" aria-hidden="true" />
