@@ -8,6 +8,7 @@ Use the uploaded Spiritual Gifts + Practical Skills Matcher workbook to make the
 - The abilities step stays exactly as it is — members still pick broad abilities like cooking, driving, or music. No 136-item list, no 0–5 ratings.
 - The ministry-ideas results screen gets noticeably better: each idea card's "why this fits you" can name the specific gift + skill pairing behind it (e.g. "Your gift of Mercy and your caregiving experience fit hospital visitation"), and ideas that match strong gift-skill combinations rank higher.
 - A short responsible-use note appears on the results screen: suggestions are starting points for discernment, not proof of calling or qualification (mirroring the workbook's own caution).
+- **"Fits your gifts" hints on post pages** — yes, worth including, and cheap once the map exists. On ministry and need detail popups, a signed-in member with a completed walkthrough sees a small line like "Fits your gifts: Mercy + caregiving" when the post's wording matches their top affinities. No hint shows for signed-out visitors or members without a profile, and nothing changes for the post's owner.
 
 ## How it works behind the scenes
 
@@ -16,11 +17,11 @@ Use the uploaded Spiritual Gifts + Practical Skills Matcher workbook to make the
 3. **Richer AI prompt** — `generateMinistrySuggestions` in `src/lib/shape.functions.ts` now includes the member's top gift-skill affinities (computed from the weighted map, not raw keyword overlap) in the prompt, and asks the AI to cite the gift + skill pairing in each idea's "why it fits." The strict structured schema gains an optional `fitBasis` field for that explanation.
 4. **Deterministic pre-scoring** — before the AI call, a small scoring function ranks the member's gift-skill clusters so the prompt leads with their strongest combinations; the AI still writes the ideas, but anchored to the map instead of free-associating.
 5. **Fallback path** — when the AI is unavailable, the existing pre-made-ministry fallback uses the same affinity ranking to pick the closest matches instead of the current simpler matching.
+6. **Post fit hints** — a new lightweight server function (`getPostGiftFit` in `src/lib/shape.functions.ts`) takes a post's text and returns the member's top 1–2 matching gift+skill pairs, computed from the same weighted map (no AI call, so it's instant and free). `MinistryPost.tsx` and the need detail popup render it as a subtle one-line hint under the title area, only when a match exists.
 
 ## Out of scope (for now)
 
 - No changes to the People-you-should-meet / posts-you-should-view scoring in `recommend.functions.ts`.
-- No "fits your gifts" hints on post pages.
 - No 0–5 skill self-rating step in the walkthrough.
 
 ## Technical notes
