@@ -292,7 +292,15 @@ function PostPrayerPage() {
         </form>
       </main>
 
-      <Dialog open={!!posted} onOpenChange={() => {}}>
+      <Dialog
+        open={!!posted}
+        onOpenChange={(open) => {
+          if (open) return;
+          const place = [city.trim(), zip.trim()].filter(Boolean).join(", ");
+          setPosted(null);
+          void navigate({ to: "/map", search: { ...(place ? { place } : {}), country } });
+        }}
+      >
         <DialogContent className="border-ink-soft bg-ink-soft text-sand sm:rounded-2xl">
           <DialogHeader className="text-center">
             <div className="mx-auto mb-3 grid size-14 place-items-center rounded-full bg-lemon/15 text-lemon">

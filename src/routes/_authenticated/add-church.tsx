@@ -594,7 +594,15 @@ function AddChurchPage() {
         )}
       </main>
 
-      <Dialog open={live} onOpenChange={() => {}}>
+      <Dialog
+        open={live}
+        onOpenChange={(open) => {
+          if (open) return;
+          const place = [city.trim(), zip.trim()].filter(Boolean).join(", ");
+          setLive(false);
+          void navigate({ to: "/map", search: { ...(place ? { place } : {}), country } });
+        }}
+      >
         <DialogContent className="border-ink-soft bg-ink-soft text-sand sm:rounded-2xl">
           <DialogHeader className="text-center">
             <div className="mx-auto mb-3 grid size-14 place-items-center rounded-full bg-lemon/15 text-lemon">
