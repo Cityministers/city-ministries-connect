@@ -19,8 +19,8 @@ export function ScriptureDetectorPill({
 }: {
   text: string;
   onInsert: (next: string) => void;
-  onAttach?: (reference: string, verseText: string) => void;
-  maxLength?: number;
+  onAttach?: ((reference: string, verseText: string) => void) | undefined;
+  maxLength?: number | undefined;
 }) {
   const { t } = useTranslation();
   const [ref, setRef] = useState<string | null>(null);
