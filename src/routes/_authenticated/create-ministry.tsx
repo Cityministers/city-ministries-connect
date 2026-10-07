@@ -331,6 +331,15 @@ function CreateMinistryPage() {
               required
             />
           </label>
+          <ScriptureDetectorPill
+            text={description}
+            onInsert={setDescription}
+            maxLength={400}
+            onAttach={(r, v) => {
+              setMotivationRef(r);
+              if (v) setMotivationText(v.slice(0, 600));
+            }}
+          />
 
           <MotivationFields refValue={motivationRef} textValue={motivationText} onRef={setMotivationRef} onText={setMotivationText} />
 

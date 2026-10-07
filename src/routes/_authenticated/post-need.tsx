@@ -441,6 +441,7 @@ function PostNeedPage() {
                 required
               />
             </label>
+            <ScriptureDetectorPill text={description} onInsert={setDescription} maxLength={400} />
 
             <CountrySelect value={country} onChange={setCountry} className="w-full rounded-xl bg-ink-soft px-4 py-3.5 text-base text-sand ring-1 ring-mist/20" />
           <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-3">
