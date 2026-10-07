@@ -1,4 +1,4 @@
-import { ScriptureDetectorPill } from "@/components/ScriptureDetectorPill";
+import { ScriptureTextarea } from "@/components/ScriptureTextarea";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -433,16 +433,15 @@ function PostNeedPage() {
 
             <label className="flex flex-col gap-2 text-base text-mist/80 sm:text-lg">
               {t("Describe your need")}
-              <textarea
-                className="min-h-36 rounded-xl bg-ink-soft px-4 py-3.5 text-lg text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50 sm:text-xl"
+              <ScriptureTextarea
+                className="min-h-36 text-lg sm:text-xl"
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onValueChange={setDescription}
                 maxLength={400}
                 placeholder="What do you need, when do you need it, and anything a neighbor should know?"
                 required
               />
             </label>
-            <ScriptureDetectorPill text={description} onInsert={setDescription} maxLength={400} />
 
             <CountrySelect value={country} onChange={setCountry} className="w-full rounded-xl bg-ink-soft px-4 py-3.5 text-base text-sand ring-1 ring-mist/20" />
           <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-3">

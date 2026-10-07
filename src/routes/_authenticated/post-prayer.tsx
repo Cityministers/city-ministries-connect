@@ -1,4 +1,4 @@
-import { ScriptureDetectorPill } from "@/components/ScriptureDetectorPill";
+import { ScriptureTextarea } from "@/components/ScriptureTextarea";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -200,17 +200,15 @@ function PostPrayerPage() {
 
           <label className="flex flex-col gap-1.5">
             <span className="text-base font-semibold text-sand">{t("Your prayer")}</span>
-            <textarea
+            <ScriptureTextarea
               value={body}
-              onChange={(e) => setBody(e.target.value)}
+              onValueChange={setBody}
               maxLength={1000}
               rows={6}
-              className={field}
               placeholder={t("Share what you'd like prayer for.")}
             />
             <span className="self-end text-xs text-mist/60">{body.length}/1000</span>
           </label>
-          <ScriptureDetectorPill text={body} onInsert={setBody} maxLength={1000} />
 
           <div className="flex flex-col gap-2">
             <span className="text-base font-semibold text-sand">{t("Add a photo (optional)")}</span>
