@@ -29,6 +29,7 @@ import {
 import { startConversation } from "@/lib/messages.functions";
 import { PostShareButton } from "@/components/PostShareButton";
 import { createMeetupRequest } from "@/lib/meetups.functions";
+import { getPostGiftFit } from "@/lib/shape.functions";
 import { timeAgo } from "@/lib/time-ago";
 import { FollowButton } from "@/components/FollowButton";
 import { MeetupScheduler } from "@/components/meetup/MeetupScheduler";
@@ -53,6 +54,7 @@ export function MinistryPost({
   const fetchComments = useServerFn(listComments);
   const postComment = useServerFn(addComment);
   const startChat = useServerFn(startConversation);
+  const fetchGiftFit = useServerFn(getPostGiftFit);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [reported, setReported] = useState(false);
@@ -64,6 +66,7 @@ export function MinistryPost({
   const [viewerId, setViewerId] = useState<string | null>(null);
   const [closingNeed, setClosingNeed] = useState(false);
   const [needsAuth, setNeedsAuth] = useState(false);
+  const [giftFits, setGiftFits] = useState<string[]>([]);
   const [comments, setComments] = useState<CommentDTO[] | null>(null);
   const [commentOpen, setCommentOpen] = useState(false);
   const [commentText, setCommentText] = useState("");
@@ -107,6 +110,7 @@ export function MinistryPost({
     setClosingNeed(false);
     setComments(null);
     setCommentOpen(false);
+    setGiftFits([]);
     setCommentText("");
     setMessageOpen(false);
     setMessageText("");
@@ -133,6 +137,16 @@ export function MinistryPost({
         setLikeCount(state.likeCount);
       } catch {
         /* not signed in or post unavailable */
+      }
+      if (data.user.id !== ministry.ownerId) {
+        try {
+          const { fits } = await fetchGiftFit({
+            data: { text: `${ministry.label} ${ministry.description}` },
+          });
+          if (active) setGiftFits(fits);
+        } catch {
+          /* hint is optional */
+        }
       }
     })();
     return () => {
@@ -339,6 +353,11 @@ export function MinistryPost({
               <p className="text-sm font-medium uppercase tracking-[0.2em] text-mist/50 sm:text-base">
                 {translated.title} · {ministry.neighborhood}
               </p>
+              {giftFits.length > 0 && (
+                <p className="mt-1 text-sm italic text-lemon/80">
+                  {t("Fits your gifts:")} {giftFits.join(" · ")}
+                </p>
+              )}
               <h2 className="font-display text-3xl font-semibold text-sand sm:text-4xl">
                 {ministry.ownerId ? (
                   <Link to="/people/$id" params={{ id: ministry.ownerId }} className="hover:text-lemon hover:underline">

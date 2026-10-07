@@ -6,6 +6,7 @@ import { countrySchema, postalSchema, validLocation } from "./country";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
 import type { MinistryIdea, ShapeAnswers } from "@/data/shape";
+import { postGiftFit, topAffinities } from "@/data/gift-skill-map";
 import { LANGUAGES } from "@/lib/i18n";
 
 function languageName(code: string) {
@@ -171,9 +172,10 @@ const IDEA_SCHEMA = {
           title: { type: "string" },
           description: { type: "string" },
           whyItFits: { type: "string" },
+          fitBasis: { type: "string" },
           familyFriendly: { type: "boolean" },
         },
-        required: ["kind", "shortTitle", "title", "description", "whyItFits", "familyFriendly"],
+        required: ["kind", "shortTitle", "title", "description", "whyItFits", "fitBasis", "familyFriendly"],
       },
     },
   },
@@ -189,10 +191,18 @@ export const generateMinistrySuggestions = createServerFn({ method: "POST" })
 
     const hasKids = data.children.some((c) => c.name.trim() || c.age.trim());
 
+    const affinities = topAffinities(data, 8);
+    const affinityLines = affinities
+      .map((a) => `- ${a.gift} + ${a.skill} (e.g. ${a.example})`)
+      .join("\n");
+
     const prompt = `You help Christians in a city design a practical neighborhood ministry they can post on a local map.
 
 Here is one person's Rick Warren S.H.A.P.E. profile:
 ${describe(data)}
+
+Their strongest gift + skill combinations (from a spiritual-gifts-to-skills map, strongest first):
+${affinityLines || "- none mapped"}
 
 Write between 5 and 8 posts they can put straight on the local map. Rules:
 - kind: "ministry" when they are offering something to neighbors, "need" when they said they could use help themselves. Include a "need" only when their own words show a real need; most posts should be ministries.
@@ -201,6 +211,7 @@ Write between 5 and 8 posts they can put straight on the local map. Rules:
 - title: a warm full title, at most 70 characters.
 - description: 2-3 sentences addressed to neighbors, saying what is offered or needed, who it's for, and when.
 - whyItFits: one sentence to the person, naming their own answers back to them.
+- fitBasis: the gift + skill pairing behind the idea, taken from their combinations above, formatted "Gift + skill" (e.g. "Mercy + caregiving"). Use an empty string only if none apply.
 - familyFriendly: true when their children could take part.
 ${hasKids ? "- At least two ideas must be family ministries their children can join, referencing their kids by name where natural." : "- Set familyFriendly true only when it genuinely applies."}
 ${data.lang && data.lang !== "en" ? `- IMPORTANT: The reader reads ${languageName(data.lang)}, not English. Write every text value (shortTitle, title, description, whyItFits) in natural, warm ${languageName(data.lang)}. Keep shortTitle at most 24 characters even in ${languageName(data.lang)}.` : ""}
@@ -287,6 +298,7 @@ Return JSON only.`;
         title: String(i.title ?? "").slice(0, 90),
         description: String(i.description ?? "").slice(0, 800),
         whyItFits: String(i.whyItFits ?? "").slice(0, 400),
+        fitBasis: String(i.fitBasis ?? "").slice(0, 80),
         familyFriendly: Boolean(i.familyFriendly),
       }));
     } catch {
@@ -395,3 +407,25 @@ export const getShapeAccess = createServerFn({ method: "GET" }).handler(
     return { access: "full", userId: data.claims.sub };
   },
 );
+
+/**
+ * Returns the viewer's strongest gift + skill pairs that connect to a post's
+ * wording (at most 2), for the "Fits your gifts" hint. Empty when the member
+ * has no completed walkthrough or nothing matches.
+ */
+export const getPostGiftFit = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ text: z.string().max(2000) }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: profile } = await context.supabase
+      .from("shape_profiles")
+      .select("answers")
+      .eq("owner_id", context.userId)
+      .maybeSingle();
+    const answers = (profile?.answers ?? null) as ShapeAnswers | null;
+    if (!answers) return { fits: [] as string[] };
+    const fits = postGiftFit(data.text, answers, 2).map((a) => `${a.gift} + ${a.skill}`);
+    return { fits };
+  });
