@@ -824,7 +824,7 @@ function buildSteps(): Step[] {
         ...by("about").fields.filter((f) => !(f.kind === "text" && f.key === "firstName")),
         ...by("family").fields,
       ],
-      { blurb: undefined },
+      { blurb: "" },
     ),
     merged("gifts", "Spiritual gifts", "How has God gifted you?", [
       ...by("gifts").fields,
@@ -849,7 +849,7 @@ function buildSteps(): Step[] {
     merged("scope", "Scope & serving together", "How, when, and with whom would you serve?", [
       ...by("scope").fields,
       ...by("family-serve").fields,
-    ], { blurb: undefined }),
+    ], { blurb: "" }),
     merged("dream", by("dream").title, "If nothing held you back, what would you do?", by("dream").fields, {
       blurb: "Optional.",
     }),
