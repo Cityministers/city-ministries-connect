@@ -186,11 +186,13 @@ function RootComponent() {
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       {HAS_YOUVERSION_APP_KEY ? (
         <YouVersionProvider appKey={YOUVERSION_APP_KEY} theme="dark">
+          <VerseOfTheDay />
           <Outlet />
           <SiteFooter />
         </YouVersionProvider>
       ) : (
         <>
+          <VerseOfTheDay />
           <Outlet />
           <SiteFooter />
         </>
