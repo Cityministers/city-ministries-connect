@@ -17,11 +17,11 @@ Use the uploaded Spiritual Gifts + Practical Skills Matcher workbook to make the
 3. **Richer AI prompt** — `generateMinistrySuggestions` in `src/lib/shape.functions.ts` now includes the member's top gift-skill affinities (computed from the weighted map, not raw keyword overlap) in the prompt, and asks the AI to cite the gift + skill pairing in each idea's "why it fits." The strict structured schema gains an optional `fitBasis` field for that explanation.
 4. **Deterministic pre-scoring** — before the AI call, a small scoring function ranks the member's gift-skill clusters so the prompt leads with their strongest combinations; the AI still writes the ideas, but anchored to the map instead of free-associating.
 5. **Fallback path** — when the AI is unavailable, the existing pre-made-ministry fallback uses the same affinity ranking to pick the closest matches instead of the current simpler matching.
+6. **Post fit hints** — a new lightweight server function (`getPostGiftFit` in `src/lib/shape.functions.ts`) takes a post's text and returns the member's top 1–2 matching gift+skill pairs, computed from the same weighted map (no AI call, so it's instant and free). `MinistryPost.tsx` and the need detail popup render it as a subtle one-line hint under the title area, only when a match exists.
 
 ## Out of scope (for now)
 
 - No changes to the People-you-should-meet / posts-you-should-view scoring in `recommend.functions.ts`.
-- No "fits your gifts" hints on post pages.
 - No 0–5 skill self-rating step in the walkthrough.
 
 ## Technical notes
