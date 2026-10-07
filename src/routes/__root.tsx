@@ -1,3 +1,4 @@
+import { VerseOfTheDay } from "@/components/VerseOfTheDay";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { YouVersionProvider } from "@youversion/platform-react-hooks";
 import { HAS_YOUVERSION_APP_KEY, YOUVERSION_APP_KEY } from "@/lib/youversion";
