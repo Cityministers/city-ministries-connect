@@ -23,6 +23,27 @@ import {
   toneStyles,
 } from "@/data/ministries";
 import { youVersionUrl } from "@/lib/bible";
+import { useLiveVerseText } from "@/components/ScriptureCard";
+
+/** One scripture line that prefers live NIV text from the YouVersion API. */
+function LiveVerse({
+  reference,
+  fallbackText,
+}: {
+  reference: string;
+  fallbackText: string;
+}) {
+  const { t } = useTranslation();
+  const text = useLiveVerseText(reference, t(fallbackText));
+  return (
+    <p className="text-lg italic leading-relaxed text-mist/90 sm:text-xl">
+      “{text}”
+      <span className="ml-1.5 whitespace-nowrap font-medium not-italic text-mist/70">
+        — {reference}, NIV
+      </span>
+    </p>
+  );
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({
