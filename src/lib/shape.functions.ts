@@ -6,6 +6,7 @@ import { countrySchema, postalSchema, validLocation } from "./country";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
 import type { MinistryIdea, ShapeAnswers } from "@/data/shape";
+import { postGiftFit, topAffinities } from "@/data/gift-skill-map";
 import { LANGUAGES } from "@/lib/i18n";
 
 function languageName(code: string) {

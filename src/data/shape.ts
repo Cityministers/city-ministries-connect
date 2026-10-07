@@ -803,5 +803,7 @@ export type MinistryIdea = {
   title: string;
   description: string;
   whyItFits: string;
+  /** Gift + skill pairing behind the fit, e.g. "Mercy + caregiving". */
+  fitBasis?: string;
   familyFriendly: boolean;
 };
