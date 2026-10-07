@@ -29,6 +29,7 @@ import {
 import { startConversation } from "@/lib/messages.functions";
 import { PostShareButton } from "@/components/PostShareButton";
 import { createMeetupRequest } from "@/lib/meetups.functions";
+import { getPostGiftFit } from "@/lib/shape.functions";
 import { timeAgo } from "@/lib/time-ago";
 import { FollowButton } from "@/components/FollowButton";
 import { MeetupScheduler } from "@/components/meetup/MeetupScheduler";
@@ -65,6 +66,7 @@ export function MinistryPost({
   const [viewerId, setViewerId] = useState<string | null>(null);
   const [closingNeed, setClosingNeed] = useState(false);
   const [needsAuth, setNeedsAuth] = useState(false);
+  const [giftFits, setGiftFits] = useState<string[]>([]);
   const [comments, setComments] = useState<CommentDTO[] | null>(null);
   const [commentOpen, setCommentOpen] = useState(false);
   const [commentText, setCommentText] = useState("");
@@ -350,6 +352,11 @@ export function MinistryPost({
               <p className="text-sm font-medium uppercase tracking-[0.2em] text-mist/50 sm:text-base">
                 {translated.title} · {ministry.neighborhood}
               </p>
+              {giftFits.length > 0 && (
+                <p className="mt-1 text-sm italic text-lemon/80">
+                  {t("Fits your gifts:")} {giftFits.join(" · ")}
+                </p>
+              )}
               <h2 className="font-display text-3xl font-semibold text-sand sm:text-4xl">
                 {ministry.ownerId ? (
                   <Link to="/people/$id" params={{ id: ministry.ownerId }} className="hover:text-lemon hover:underline">
