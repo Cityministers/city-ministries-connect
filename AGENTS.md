@@ -20,3 +20,6 @@
 - Store ministry-category subscriptions separately from individual post follows and match category alerts to the member's city or postal code; this preserves neighborhood relevance without conflating a ministry type with one post.
 - The homepage verse-of-the-day popup opens automatically once per day for signed-in members only, picks from a local verse list by day of year, and fetches live text through the YouVersion SDK, falling back to the stored text; this way the verse never shows up blank.
 - Only call preventDefault on vite:preloadError when the handler actually reloads the page; a prevented preload error makes the lazy page import resolve to nothing and blanks the screen.
+
+## Gift-skill affinity map
+- Spiritual-gift → practical-skill weights live in `src/data/gift-skill-map.ts` (transcribed from the matcher workbook); `topAffinities()` ranks a member profile, `postGiftFit()` matches post text. App-only gifts map via `GIFT_ALIASES` (Hospitality → Service/Helps, Intercession → Healing/Miracles); broad abilities bridge via `ABILITY_BRIDGES`. Ministry suggestions cite the pairing as `fitBasis`; post cards show the "Fits your gifts" hint via `getPostGiftFit` only for signed-in non-owners with a walkthrough profile.
