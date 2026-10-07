@@ -1,4 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { YouVersionProvider } from "@youversion/platform-react-ui";
+import "@youversion/platform-react-ui/styles.css";
+import { HAS_YOUVERSION_APP_KEY, YOUVERSION_APP_KEY } from "@/lib/youversion";
 import {
   Outlet,
   Link,
@@ -182,8 +185,17 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
-      <SiteFooter />
+      {HAS_YOUVERSION_APP_KEY ? (
+        <YouVersionProvider appKey={YOUVERSION_APP_KEY} theme="dark">
+          <Outlet />
+          <SiteFooter />
+        </YouVersionProvider>
+      ) : (
+        <>
+          <Outlet />
+          <SiteFooter />
+        </>
+      )}
     </QueryClientProvider>
   );
 }

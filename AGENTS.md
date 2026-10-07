@@ -15,4 +15,4 @@
 - Scope each map layer's pins and its accompanying feed to live visible bounds, preserving a newly highlighted post; this keeps every map view uncluttered on entry and after navigation.
 - The owner CMS lives at /cms behind an admin-role check in every server function (privileged client loaded only after the check); /admin redirects there, and editable page wording is read from site_content with translated fallbacks.
 - Store ministry-category subscriptions separately from individual post follows and match category alerts to the member's city or postal code; this preserves neighborhood relevance without conflating a ministry type with one post.
-- The homepage daily verse popup uses a curated local scripture rotation selected on opening by local calendar day, not an external daily-verse feed; this avoids network failures and hydration date mismatches.
+- The homepage verse-of-the-day popup opens automatically once per day for signed-in members only, picks from a local verse list by day of year, and fetches live text through the YouVersion SDK, falling back to the stored text; this way the verse never shows up blank.
