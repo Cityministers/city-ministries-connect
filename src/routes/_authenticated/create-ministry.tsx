@@ -1,3 +1,4 @@
+import { ScriptureDetectorPill } from "@/components/ScriptureDetectorPill";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, Camera, ImagePlus, Loader2, MapPin, PartyPopper, UserCircle, X } from "lucide-react";
