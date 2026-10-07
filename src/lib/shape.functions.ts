@@ -407,3 +407,25 @@ export const getShapeAccess = createServerFn({ method: "GET" }).handler(
     return { access: "full", userId: data.claims.sub };
   },
 );
+
+/**
+ * Returns the viewer's strongest gift + skill pairs that connect to a post's
+ * wording (at most 2), for the "Fits your gifts" hint. Empty when the member
+ * has no completed walkthrough or nothing matches.
+ */
+export const getPostGiftFit = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ text: z.string().max(2000) }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: profile } = await context.supabase
+      .from("shape_profiles")
+      .select("answers")
+      .eq("owner_id", context.userId)
+      .maybeSingle();
+    const answers = (profile?.answers ?? null) as ShapeAnswers | null;
+    if (!answers) return { fits: [] as string[] };
+    const fits = postGiftFit(data.text, answers, 2).map((a) => `${a.gift} + ${a.skill}`);
+    return { fits };
+  });
