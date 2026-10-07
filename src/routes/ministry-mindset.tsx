@@ -4,6 +4,7 @@ import { BrandLogo } from "@/components/BrandLogo";
 import { SiteNav } from "@/components/SiteNav";
 import { AccountMenu } from "@/components/AccountMenu";
 import { youVersionUrl } from "@/lib/bible";
+import { useLiveVerseText } from "@/components/ScriptureCard";
 
 export const Route = createFileRoute("/ministry-mindset")({
   head: () => ({
@@ -133,13 +134,14 @@ const receivingCharacters = [
 ];
 
 function Passage({ verse }: { verse: { ref: string; text: string } }) {
+  const text = useLiveVerseText(verse.ref, verse.text);
   return (
     <blockquote className="rounded-2xl bg-ink-soft/60 p-5 ring-1 ring-mist/15">
       <p className="text-lg italic leading-relaxed text-sand/90 sm:text-xl">
-        “{verse.text}”
+        “{text}”
       </p>
       <cite className="mt-3 block text-base font-semibold not-italic text-lemon">
-        — {verse.ref}, ESV
+        — {verse.ref}, NIV
       </cite>
     </blockquote>
   );

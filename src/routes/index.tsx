@@ -23,6 +23,47 @@ import {
   toneStyles,
 } from "@/data/ministries";
 import { youVersionUrl } from "@/lib/bible";
+import { useLiveVerseText } from "@/components/ScriptureCard";
+
+/** Inline verse (no quotes) that prefers live NIV text from the YouVersion API. */
+function InlineLiveVerse({
+  reference,
+  fallbackText,
+  className = "",
+}: {
+  reference: string;
+  fallbackText: string;
+  className?: string;
+}) {
+  const { t } = useTranslation();
+  const text = useLiveVerseText(reference, t(fallbackText));
+  return (
+    <p className={`text-lg italic text-mist/80 sm:text-xl ${className}`}>
+      {text}
+      <span className="ml-1.5 font-medium not-italic text-mist/60">— {reference}, NIV</span>
+    </p>
+  );
+}
+
+/** One scripture line that prefers live NIV text from the YouVersion API. */
+function LiveVerse({
+  reference,
+  fallbackText,
+}: {
+  reference: string;
+  fallbackText: string;
+}) {
+  const { t } = useTranslation();
+  const text = useLiveVerseText(reference, t(fallbackText));
+  return (
+    <p className="text-lg italic leading-relaxed text-mist/90 sm:text-xl">
+      “{text}”
+      <span className="ml-1.5 whitespace-nowrap font-medium not-italic text-mist/70">
+        — {reference}, NIV
+      </span>
+    </p>
+  );
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -206,15 +247,7 @@ function HomePage() {
               </div>
               <div className="flex flex-col gap-3 border-t border-mist/15 pt-4">
                 {(ministryScriptures["community-volunteer"] ?? []).map((s) => (
-                  <p
-                    key={s.reference}
-                    className="text-lg italic leading-relaxed text-mist/90 sm:text-xl"
-                  >
-                    “{t(s.text)}”
-                    <span className="ml-1.5 whitespace-nowrap font-medium not-italic text-mist/70">
-                      — {s.reference}, ESV
-                    </span>
-                  </p>
+                  <LiveVerse key={s.reference} reference={s.reference} fallbackText={s.text} />
                 ))}
               </div>
               <a
@@ -291,15 +324,7 @@ function HomePage() {
                     )}
                     <div className="flex flex-col gap-3 border-t border-mist/15 pt-4">
                       {(ministryScriptures[ministry.id] ?? []).map((s) => (
-                        <p
-                          key={s.reference}
-                          className="text-lg italic leading-relaxed text-mist/90 sm:text-xl"
-                        >
-                          “{t(s.text)}”
-                          <span className="ml-1.5 whitespace-nowrap font-medium not-italic text-mist/70">
-                            — {s.reference}, ESV
-                          </span>
-                        </p>
+                        <LiveVerse key={s.reference} reference={s.reference} fallbackText={s.text} />
                       ))}
                     </div>
                     <a
@@ -408,10 +433,11 @@ function HomePage() {
                 </div>
               )}
               {s.title === "See ministries on your city's map" && (
-                <p className="text-center text-lg italic text-mist/80 sm:text-xl">
-                  {t("For this reason I remind you to fan into flame the gift of God, which is in you…")}
-                  <span className="ml-1.5 font-medium not-italic text-mist/60">— 2 Timothy 1:6, ESV</span>
-                </p>
+                <InlineLiveVerse
+                  reference="2 Timothy 1:6"
+                  fallbackText="For this reason I remind you to fan into flame the gift of God, which is in you…"
+                  className="text-center"
+                />
               )}
             </li>
           ))}
@@ -430,10 +456,11 @@ function HomePage() {
           >
             {t("Start Your Ministry")}
           </Link>
-          <p className="mt-4 text-lg italic text-mist/80 sm:text-xl">
-            {t("And they devoted themselves to the apostles' teaching and the fellowship, to the breaking of bread and the prayers.")}
-            <span className="ml-1.5 font-medium not-italic text-mist/60">— Acts 2:42, ESV</span>
-          </p>
+          <InlineLiveVerse
+            reference="Acts 2:42"
+            fallbackText="And they devoted themselves to the apostles' teaching and the fellowship, to the breaking of bread and the prayers."
+            className="mt-4"
+          />
         </div>
       </main>
     </div>
