@@ -25,6 +25,26 @@ import {
 import { youVersionUrl } from "@/lib/bible";
 import { useLiveVerseText } from "@/components/ScriptureCard";
 
+/** Inline verse (no quotes) that prefers live NIV text from the YouVersion API. */
+function InlineLiveVerse({
+  reference,
+  fallbackText,
+  className = "",
+}: {
+  reference: string;
+  fallbackText: string;
+  className?: string;
+}) {
+  const { t } = useTranslation();
+  const text = useLiveVerseText(reference, t(fallbackText));
+  return (
+    <p className={`text-lg italic text-mist/80 sm:text-xl ${className}`}>
+      {text}
+      <span className="ml-1.5 font-medium not-italic text-mist/60">— {reference}, NIV</span>
+    </p>
+  );
+}
+
 /** One scripture line that prefers live NIV text from the YouVersion API. */
 function LiveVerse({
   reference,
