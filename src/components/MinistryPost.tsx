@@ -428,7 +428,7 @@ export function MinistryPost({
           {ministry.motivationRef ? (
             <div className="flex flex-col gap-2">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-lemon/80">{t("My motivation")}</p>
-              <ScriptureCard reference={ministry.motivationRef} {...(ministry.motivationText ? { fallbackText: ministry.motivationText } : {})} />
+              <ScriptureCard compact reference={ministry.motivationRef} {...(ministry.motivationText ? { fallbackText: ministry.motivationText } : {})} />
             </div>
           ) : null}
           {translated.hasTranslation ? (
