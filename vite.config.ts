@@ -11,7 +11,7 @@ export default defineConfig({
     // CountrySelect is loaded only on some routes. Prebundle its country data at
     // startup so entering those routes cannot trigger a late dependency
     // re-optimization while React is mounted (stale React modules break hooks).
-    optimizeDeps: { include: ["world-countries"] },
+    optimizeDeps: { include: ["world-countries", "@youversion/platform-react-ui", "@youversion/platform-react-hooks"] },
   },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
