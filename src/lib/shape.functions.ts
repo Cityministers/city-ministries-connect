@@ -191,10 +191,18 @@ export const generateMinistrySuggestions = createServerFn({ method: "POST" })
 
     const hasKids = data.children.some((c) => c.name.trim() || c.age.trim());
 
+    const affinities = topAffinities(data, 8);
+    const affinityLines = affinities
+      .map((a) => `- ${a.gift} + ${a.skill} (e.g. ${a.example})`)
+      .join("\n");
+
     const prompt = `You help Christians in a city design a practical neighborhood ministry they can post on a local map.
 
 Here is one person's Rick Warren S.H.A.P.E. profile:
 ${describe(data)}
+
+Their strongest gift + skill combinations (from a spiritual-gifts-to-skills map, strongest first):
+${affinityLines || "- none mapped"}
 
 Write between 5 and 8 posts they can put straight on the local map. Rules:
 - kind: "ministry" when they are offering something to neighbors, "need" when they said they could use help themselves. Include a "need" only when their own words show a real need; most posts should be ministries.
