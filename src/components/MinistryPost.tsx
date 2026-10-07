@@ -110,6 +110,7 @@ export function MinistryPost({
     setClosingNeed(false);
     setComments(null);
     setCommentOpen(false);
+    setGiftFits([]);
     setCommentText("");
     setMessageOpen(false);
     setMessageText("");
