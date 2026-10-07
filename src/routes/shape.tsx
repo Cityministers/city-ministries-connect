@@ -34,7 +34,7 @@ function readerLang(): string {
 }
 import AskFriends from "@/components/AskFriends";
 
-import VoiceAnswer from "@/components/VoiceAnswer";
+import { supabase } from "@/integrations/supabase/client";
 import {
   emptyAnswers,
   OPTION_SYNONYMS,
@@ -276,13 +276,26 @@ function ShapeGate() {
   }
 
   if (data?.access !== "full") {
-    return <SignInPrompt />;
+    return <SignUpRedirect />;
   }
 
   return <ShapePage />;
 }
 
-function SignInPrompt() {
+/** The walkthrough needs an account first: send visitors to sign up, then back here. */
+function SignUpRedirect() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    void navigate({ to: "/auth", search: { mode: "signup", next: "/shape" }, replace: true });
+  }, [navigate]);
+  return (
+    <div className="flex min-h-dvh items-center justify-center bg-ink">
+      <Loader2 className="size-8 animate-spin text-lemon" aria-hidden="true" />
+    </div>
+  );
+}
+
+export function SignInPrompt() {
   const { t } = useTranslation();
   return (
     <div className="flex min-h-dvh flex-col bg-ink font-body text-sand antialiased">
@@ -376,10 +389,39 @@ function ShapePage() {
 
   useEffect(() => {
     let live = true;
+    // Name and location come from the member's profile; finish setup first if missing.
+    void supabase.auth.getUser().then(async ({ data: u }) => {
+      if (!u.user || !live) return;
+      const { data: prof } = await supabase
+        .from("profiles")
+        .select("display_name, city, zip, country_code, onboarded_at")
+        .eq("id", u.user.id)
+        .maybeSingle();
+      if (!live) return;
+      if (!prof?.onboarded_at) {
+        void navigate({ to: "/welcome", search: { next: "/shape" }, replace: true });
+        return;
+      }
+      setAnswers((prev) => ({
+        ...prev,
+        firstName: (prof.display_name ?? "").split(" ")[0] || prev.firstName,
+        city: prof.city || prev.city,
+        zip: prof.zip || prev.zip,
+        country: prof.country_code || prev.country,
+      }));
+    });
     void load()
       .then((res) => {
         if (!live) return;
-        if (res.answers) setAnswers({ ...emptyAnswers, ...res.answers });
+        if (res.answers)
+          setAnswers((prev) => ({
+            ...emptyAnswers,
+            ...res.answers,
+            firstName: prev.firstName || res.answers!.firstName,
+            city: prev.city || res.answers!.city,
+            zip: prev.zip || res.answers!.zip,
+            country: prev.country || res.answers!.country,
+          }));
         if (res.ideas && res.ideas.length > 0) setSavedIdeas(res.ideas);
       })
       .catch(() => {});
@@ -532,10 +574,6 @@ function ShapePage() {
   async function next() {
     setError(null);
     const latest = answersRef.current;
-    if (current.id === "place" && !validLocation(latest.city, latest.zip)) {
-      setError(t("Record where you'll serve — say your city or postal code code."));
-      return;
-    }
     void save({ data: latest }).catch(() => {});
     if (!isLast) {
       setStep((s) => s + 1);
@@ -966,37 +1004,9 @@ function ShapePage() {
             }
           }}
         />
-      ) : current.id === "place" ? (
-        <div className="flex flex-col gap-4">
-          <CountrySelect value={answers.country} onChange={(value) => set("country", value)} className={inputClass} />
-          <label className="flex flex-col gap-2 text-base text-mist/80">
-            {t("City")}
-            <input
-              className={inputClass}
-              value={answers.city}
-              onChange={(e) => set("city", e.target.value)}
-              placeholder={t("Beaverton")}
-            />
-          </label>
-          <label className="flex flex-col gap-2 text-base text-mist/80">
-            {t("Postal code / ZIP")}
-            <input
-              className={inputClass}
-              value={answers.zip}
-              onChange={(e) => set("zip", e.target.value)}
-              placeholder={t("97006")}
-              inputMode="text"
-            />
-          </label>
-        </div>
       ) : (
         <div className="flex flex-col gap-6">
-          <VoiceAnswer
-            value={answers.transcripts[current.id] ?? ""}
-            onText={applyTranscript}
-            {...(current.fields.length === 0 ? { onNext: next } : {})}
-            maxSeconds={current.id === "freetalk" ? 300 : 90}
-          />
+
 
 
 
@@ -1430,7 +1440,7 @@ function Review({
   const { t } = useTranslation();
   const kids = answers.children.filter((c) => c.name.trim() || c.age.trim());
   const rows: Array<[string, string, string]> = [
-    [t("Serving in"), [answers.city, answers.zip].filter(Boolean).join(" ") || "—", "place"],
+    [t("Serving in"), [answers.city, answers.zip].filter(Boolean).join(" ") || "—", ""],
     [
       t("You"),
       [answers.firstName, answers.ageRange, answers.marital].filter(Boolean).join(" · ") || "—",
@@ -1441,7 +1451,7 @@ function Review({
       kids.length > 0
         ? kids.map((c) => `${c.name || t("Child")}${c.age ? ` (${c.age})` : ""}`).join(", ")
         : t("No children listed"),
-      "family",
+      "about",
     ],
     [t("Spiritual gifts"), answers.gifts.join(", ") || "—", "gifts"],
     [t("Heart"), answers.heart.join(", ") || "—", "heart"],
@@ -1455,15 +1465,15 @@ function Review({
     [
       t("Resources"),
       [answers.resources.join(", "), answers.budget].filter(Boolean).join(" · ") || "—",
-      "resources",
+      "abilities",
     ],
-    [t("Served before"), answers.pastService.join(", ") || "—", "service-history"],
+    [t("Served before"), answers.pastService.join(", ") || "—", "experiences"],
     [
       t("Serving with"),
       [answers.familyServe.join(", "), answers.availableTimes.join(", ")]
         .filter(Boolean)
         .join(" · ") || "—",
-      "family-serve",
+      "scope",
     ],
     [
       t("Scope"),
