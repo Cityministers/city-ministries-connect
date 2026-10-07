@@ -96,17 +96,27 @@ export function VerseOfTheDay() {
     const today = new Date().toISOString().slice(0, 10);
     try {
       if (window.localStorage.getItem(STORAGE_KEY) === today) return;
-      window.localStorage.setItem(STORAGE_KEY, today);
     } catch {
       // storage unavailable — still show the verse
     }
     setOpen(true);
   }, [session]);
 
+  const handleOpenChange = (next: boolean) => {
+    setOpen(next);
+    if (!next) {
+      try {
+        window.localStorage.setItem(STORAGE_KEY, new Date().toISOString().slice(0, 10));
+      } catch {
+        // storage unavailable
+      }
+    }
+  };
+
   if (!session) return null;
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="border-mist/20 bg-ink text-sand sm:rounded-2xl">
         <DialogHeader>
           <div className="flex items-center gap-3">
@@ -121,7 +131,7 @@ export function VerseOfTheDay() {
         <ScriptureCard reference={verse.reference} fallbackText={t(verse.text)} />
         <button
           type="button"
-          onClick={() => setOpen(false)}
+          onClick={() => handleOpenChange(false)}
           className="inline-flex w-full items-center justify-center rounded-full bg-lemon px-6 py-3 text-xl font-bold text-ink transition-transform hover:-translate-y-0.5"
         >
           {t("Amen — start my day")}
