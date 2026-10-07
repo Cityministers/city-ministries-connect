@@ -89,6 +89,7 @@ function HomePage() {
   const st = useSiteText();
   return (
     <div className="flex min-h-dvh flex-col bg-ink font-body text-sand antialiased">
+      <VerseOfTheDay />
       <header className="border-b border-ink-soft bg-ink">
         <div className="mx-auto grid w-full max-w-6xl grid-cols-[auto_1fr_auto] items-center gap-2 px-4 py-4 sm:px-6">
           <div className="flex items-center gap-3">
@@ -145,8 +146,6 @@ function HomePage() {
             {t("View Needs")}
           </Link>
         </div>
-
-        <VerseOfTheDay />
 
         <section className="mt-8" aria-labelledby="ministry-preview-heading">
           <h2
