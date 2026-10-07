@@ -8,6 +8,7 @@ Use the uploaded Spiritual Gifts + Practical Skills Matcher workbook to make the
 - The abilities step stays exactly as it is — members still pick broad abilities like cooking, driving, or music. No 136-item list, no 0–5 ratings.
 - The ministry-ideas results screen gets noticeably better: each idea card's "why this fits you" can name the specific gift + skill pairing behind it (e.g. "Your gift of Mercy and your caregiving experience fit hospital visitation"), and ideas that match strong gift-skill combinations rank higher.
 - A short responsible-use note appears on the results screen: suggestions are starting points for discernment, not proof of calling or qualification (mirroring the workbook's own caution).
+- **"Fits your gifts" hints on post pages** — yes, worth including, and cheap once the map exists. On ministry and need detail popups, a signed-in member with a completed walkthrough sees a small line like "Fits your gifts: Mercy + caregiving" when the post's wording matches their top affinities. No hint shows for signed-out visitors or members without a profile, and nothing changes for the post's owner.
 
 ## How it works behind the scenes
 
