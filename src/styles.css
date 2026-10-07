@@ -192,6 +192,13 @@
     background-color: var(--color-ink);
     color: var(--color-foreground);
   }
+
+  /* Keep the background still while an open popup handles its own scrolling. */
+  html:has([aria-modal="true"]),
+  html:has([aria-modal="true"]) body {
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
 }
 
 @keyframes pin-drop {
