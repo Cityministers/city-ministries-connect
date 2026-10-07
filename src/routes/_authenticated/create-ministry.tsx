@@ -76,6 +76,8 @@ function CreateMinistryPage() {
   const [shortTitle, setShortTitle] = useState(prefill.short ?? "");
   const [title, setTitle] = useState(prefill.title ?? "");
   const [description, setDescription] = useState(prefill.desc ?? "");
+  const [motivationRef, setMotivationRef] = useState("");
+  const [motivationText, setMotivationText] = useState("");
   const [city, setCity] = useState(prefill.city ?? "");
   const [zip, setZip] = useState(prefill.zip ?? "");
   const [country, setCountry] = useState(prefill.country ?? "US");
@@ -169,6 +171,8 @@ function CreateMinistryPage() {
           avatarPath,
           iconId: preset?.id ?? "",
           gallery,
+          motivationRef: motivationRef.trim(),
+          motivationText: motivationText.trim(),
         },
       });
 
@@ -326,6 +330,8 @@ function CreateMinistryPage() {
               required
             />
           </label>
+
+          <MotivationFields refValue={motivationRef} textValue={motivationText} onRef={setMotivationRef} onText={setMotivationText} />
 
           <CountrySelect value={country} onChange={setCountry} className="w-full rounded-xl bg-ink-soft px-4 py-3.5 text-base text-sand ring-1 ring-mist/20" />
           <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-3">

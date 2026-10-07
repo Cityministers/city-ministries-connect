@@ -23,6 +23,8 @@ export type UserMinistryDTO = {
   posterName: string;
   posterPhotoUrl: string | null;
   posterBio: string;
+  motivationRef: string | null;
+  motivationText: string | null;
   likes: number;
   comments: number;
 };
@@ -50,7 +52,7 @@ export const listUserMinistries = createServerFn({ method: "GET" }).handler(
     const { data, error } = await supabase
       .from("user_ministries")
       .select(
-        "id, owner_id, short_title, title, description, city, zip, country_code, lat, lng, avatar_url, icon_id, gallery",
+        "id, owner_id, short_title, title, description, city, zip, country_code, lat, lng, avatar_url, icon_id, gallery, motivation_ref, motivation_text",
       )
       .order("updated_at", { ascending: false })
       .limit(200);
@@ -147,6 +149,8 @@ export const listUserMinistries = createServerFn({ method: "GET" }).handler(
         return p ? (urlByPath.get(p) ?? null) : null;
       })(),
       posterBio: profileById.get(r.owner_id)?.bio ?? "",
+      motivationRef: r.motivation_ref ?? null,
+      motivationText: r.motivation_text ?? null,
       likes: likeCount.get(r.id) ?? 0,
       comments: commentCount.get(r.id) ?? 0,
     }));
@@ -162,6 +166,8 @@ const createInput = z.object({
   country: countrySchema.default("US"),
   avatarPath: z.string().trim().max(300).optional().default(""),
   iconId: z.string().trim().max(80).optional().default(""),
+  motivationRef: z.string().trim().max(60).optional().default(""),
+  motivationText: z.string().trim().max(600).optional().default(""),
   gallery: z
     .array(
       z.object({
@@ -192,6 +198,8 @@ export const createUserMinistry = createServerFn({ method: "POST" })
         avatar_url: data.avatarPath || null,
         icon_id: data.iconId || null,
         gallery: data.gallery,
+        motivation_ref: data.motivationRef || null,
+        motivation_text: data.motivationRef ? data.motivationText || null : null,
       })
       .select("id")
       .single();
