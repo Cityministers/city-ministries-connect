@@ -1,6 +1,6 @@
 // Builds a real YouVersion (bible.com) Bible study URL from a scripture
-// reference like "Hebrews 10:24–25" -> https://www.bible.com/bible/59/HEB.10.24.ESV
-// Version 59 = ESV on YouVersion.
+// reference like "Hebrews 10:24–25" -> https://www.bible.com/bible/114/HEB.10.24.NIV
+// Version 114 = NIV on YouVersion.
 
 const BOOK_IDS: Record<string, string> = {
   genesis: "GEN",
@@ -72,6 +72,27 @@ const BOOK_IDS: Record<string, string> = {
   revelation: "REV",
 };
 
+/** NIV on the YouVersion Platform API (bible.com version 114). */
+// YouVersion Platform API id for NIV (NIV11). Note: bible.com web links use 114.
+export const NIV_VERSION_ID = 111;
+
+/**
+ * Converts a reference such as "Galatians 6:2" or "Hebrews 10:24–25" into a
+ * YouVersion Platform passage id like "GAL.6.2" or "HEB.10.24-HEB.10.25".
+ * Returns null when the reference can't be parsed.
+ */
+export function referenceToUsfm(reference: string): string | null {
+  const match = reference
+    .trim()
+    .match(/^([1-3]?\s?[A-Za-z]+(?:\s[A-Za-z]+)?)\s+(\d+):(\d+)(?:\s?[–—-]\s?(\d+))?/);
+  if (!match) return null;
+  const book = BOOK_IDS[match[1]!.toLowerCase()];
+  if (!book) return null;
+  const start = `${book}.${match[2]!}.${match[3]!}`;
+  if (match[4]) return `${start}-${book}.${match[2]!}.${match[4]}`;
+  return start;
+}
+
 /**
  * Returns a YouVersion URL for a reference such as "Galatians 6:2" or
  * "Luke 14:13–14". Falls back to a YouVersion search URL when the
@@ -88,5 +109,5 @@ export function youVersionUrl(reference: string): string {
   if (!book) {
     return `https://www.bible.com/search?q=${encodeURIComponent(reference)}`;
   }
-  return `https://www.bible.com/bible/59/${book}.${match[2]!}.${match[3]!}.ESV`;
+  return `https://www.bible.com/bible/114/${book}.${match[2]!}.${match[3]!}.NIV`;
 }
