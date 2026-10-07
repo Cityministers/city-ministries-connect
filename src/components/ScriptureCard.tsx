@@ -11,6 +11,25 @@ import { HAS_YOUVERSION_APP_KEY } from "@/lib/youversion";
  * NIV quote with a link to the same passage on bible.com, so the section
  * never goes blank.
  */
+/**
+ * Returns the live NIV text for a reference from the YouVersion API, falling
+ * back to the stored quote when the key lacks NIV access or the lookup fails.
+ */
+export function useLiveVerseText(reference: string, fallbackText?: string) {
+  const usfm = referenceToUsfm(reference);
+  const { passage } = usePassage({
+    versionId: NIV_VERSION_ID,
+    usfm: usfm ?? "",
+    format: "text",
+    options: { enabled: HAS_YOUVERSION_APP_KEY && Boolean(usfm) },
+  });
+  const liveText =
+    passage && typeof passage.content === "string" && passage.content.trim()
+      ? passage.content.trim()
+      : null;
+  return liveText ?? fallbackText;
+}
+
 export function ScriptureCard({
   reference,
   fallbackText,
