@@ -1,3 +1,4 @@
+import { ScriptureDetectorPill } from "@/components/ScriptureDetectorPill";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -209,6 +210,7 @@ function PostPrayerPage() {
             />
             <span className="self-end text-xs text-mist/60">{body.length}/1000</span>
           </label>
+          <ScriptureDetectorPill text={body} onInsert={setBody} maxLength={1000} />
 
           <div className="flex flex-col gap-2">
             <span className="text-base font-semibold text-sand">{t("Add a photo (optional)")}</span>

@@ -1,3 +1,4 @@
+import { ScriptureDetectorPill } from "@/components/ScriptureDetectorPill";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, Camera, ImagePlus, Loader2, MapPin, PartyPopper, UserCircle, X } from "lucide-react";
@@ -331,6 +332,15 @@ function CreateMinistryPage() {
               required
             />
           </label>
+          <ScriptureDetectorPill
+            text={description}
+            onInsert={setDescription}
+            maxLength={400}
+            onAttach={(r, v) => {
+              setMotivationRef(r);
+              if (v) setMotivationText(v.slice(0, 600));
+            }}
+          />
 
           <MotivationFields refValue={motivationRef} textValue={motivationText} onRef={setMotivationRef} onText={setMotivationText} />
 
