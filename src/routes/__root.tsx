@@ -1,3 +1,4 @@
+import { VerseOfTheDay } from "@/components/VerseOfTheDay";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { YouVersionProvider } from "@youversion/platform-react-hooks";
 import { HAS_YOUVERSION_APP_KEY, YOUVERSION_APP_KEY } from "@/lib/youversion";
@@ -186,11 +187,13 @@ function RootComponent() {
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       {HAS_YOUVERSION_APP_KEY ? (
         <YouVersionProvider appKey={YOUVERSION_APP_KEY} theme="dark">
+          <VerseOfTheDay />
           <Outlet />
           <SiteFooter />
         </YouVersionProvider>
       ) : (
         <>
+          <VerseOfTheDay />
           <Outlet />
           <SiteFooter />
         </>

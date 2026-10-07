@@ -8,7 +8,6 @@ import { LanguagePicker } from "@/components/LanguagePicker";
 import { BrandLogo } from "@/components/BrandLogo";
 import { MinistryTypeFollowButton } from "@/components/MinistryTypeFollowButton";
 import { SiteNav } from "@/components/SiteNav";
-import { VerseOfTheDay } from "@/components/VerseOfTheDay";
 import cityMap from "@/assets/city-map.jpg";
 import {
   Dialog,
@@ -89,7 +88,6 @@ function HomePage() {
   const st = useSiteText();
   return (
     <div className="flex min-h-dvh flex-col bg-ink font-body text-sand antialiased">
-      <VerseOfTheDay />
       <header className="border-b border-ink-soft bg-ink">
         <div className="mx-auto grid w-full max-w-6xl grid-cols-[auto_1fr_auto] items-center gap-2 px-4 py-4 sm:px-6">
           <div className="flex items-center gap-3">
