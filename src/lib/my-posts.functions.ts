@@ -122,9 +122,11 @@ export const updateMyPost = createServerFn({ method: "POST" })
     const motivation = data.postType === "ministry" && data.motivationRef !== undefined
       ? { motivation_ref: data.motivationRef || null, motivation_text: data.motivationRef ? data.motivationText || null : null }
       : {};
-    const { error } = await context.supabase
+    const { error } = data.postType === "ministry"
+      ? await context.supabase.from("user_ministries").update({ ...patch, ...motivation }).eq("id", data.id).eq("owner_id", context.userId)
+      : await context.supabase
       .from(tableFor(data.postType))
-      .update({ ...patch, ...motivation })
+      .update(patch)
       .eq("id", data.id)
       .eq("owner_id", context.userId);
     if (error) throw new Error(error.message);
