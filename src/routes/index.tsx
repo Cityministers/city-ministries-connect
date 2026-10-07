@@ -413,10 +413,11 @@ function HomePage() {
                 </div>
               )}
               {s.title === "See ministries on your city's map" && (
-                <p className="text-center text-lg italic text-mist/80 sm:text-xl">
-                  {t("For this reason I remind you to fan into flame the gift of God, which is in you…")}
-                  <span className="ml-1.5 font-medium not-italic text-mist/60">— 2 Timothy 1:6, ESV</span>
-                </p>
+                <InlineLiveVerse
+                  reference="2 Timothy 1:6"
+                  fallbackText="For this reason I remind you to fan into flame the gift of God, which is in you…"
+                  className="text-center"
+                />
               )}
             </li>
           ))}
@@ -435,10 +436,11 @@ function HomePage() {
           >
             {t("Start Your Ministry")}
           </Link>
-          <p className="mt-4 text-lg italic text-mist/80 sm:text-xl">
-            {t("And they devoted themselves to the apostles' teaching and the fellowship, to the breaking of bread and the prayers.")}
-            <span className="ml-1.5 font-medium not-italic text-mist/60">— Acts 2:42, ESV</span>
-          </p>
+          <InlineLiveVerse
+            reference="Acts 2:42"
+            fallbackText="And they devoted themselves to the apostles' teaching and the fellowship, to the breaking of bread and the prayers."
+            className="mt-4"
+          />
         </div>
       </main>
     </div>
