@@ -505,7 +505,15 @@ function PostNeedPage() {
         )}
       </main>
 
-      <Dialog open={!!posted} onOpenChange={(open) => { if (!open) setPosted(null); }}>
+      <Dialog
+        open={!!posted}
+        onOpenChange={(open) => {
+          if (open) return;
+          const place = posted?.place ?? [city.trim(), zip.trim()].filter(Boolean).join(", ");
+          setPosted(null);
+          void navigate({ to: "/map", search: { ...(place ? { place } : {}), country } });
+        }}
+      >
         <DialogContent className="max-h-[90dvh] w-[calc(100vw-1.5rem)] max-w-lg overflow-y-auto overscroll-contain border-ink-soft bg-ink-soft p-4 text-sand sm:rounded-2xl sm:p-6 [&>*]:min-w-0">
           <DialogHeader className="text-center">
             <div className="mx-auto mb-3 grid size-14 place-items-center rounded-full bg-lemon/15 text-lemon">
