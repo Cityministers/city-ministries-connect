@@ -38,7 +38,7 @@ export function ChurchPicker({ kind, postId, city, zip, country = "US", preferCh
     : churches;
 
   return (
-    <div className="mt-4 rounded-xl bg-ink p-4 text-left ring-1 ring-mist/15">
+    <div className="mt-4 w-full min-w-0 rounded-xl bg-ink p-3 text-left ring-1 ring-mist/15 sm:p-4">
       <p className="inline-flex items-center gap-2 font-semibold text-sand">
         <Church className="size-5 text-lemon" aria-hidden="true" />
         {t("Which church?")}
