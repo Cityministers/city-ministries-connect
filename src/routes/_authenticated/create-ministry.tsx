@@ -1,4 +1,4 @@
-import { ScriptureDetectorPill } from "@/components/ScriptureDetectorPill";
+import { ScriptureTextarea } from "@/components/ScriptureTextarea";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, Camera, ImagePlus, Loader2, MapPin, PartyPopper, UserCircle, X } from "lucide-react";
@@ -323,24 +323,20 @@ function CreateMinistryPage() {
 
           <label className="flex flex-col gap-2 text-sm text-mist/80 sm:text-base">
             {t("Description")}
-            <textarea
-              className="min-h-36 rounded-xl bg-ink-soft px-4 py-3.5 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
+            <ScriptureTextarea
+              className="min-h-36"
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onValueChange={setDescription}
+              onAttach={(r, v) => {
+                setMotivationRef(r);
+                if (v) setMotivationText(v.slice(0, 600));
+              }}
               maxLength={400}
               placeholder="What are you offering, who is it for, and when are you available?"
               required
             />
           </label>
-          <ScriptureDetectorPill
-            text={description}
-            onInsert={setDescription}
-            maxLength={400}
-            onAttach={(r, v) => {
-              setMotivationRef(r);
-              if (v) setMotivationText(v.slice(0, 600));
-            }}
-          />
+
 
           <MotivationFields refValue={motivationRef} textValue={motivationText} onRef={setMotivationRef} onText={setMotivationText} />
 
