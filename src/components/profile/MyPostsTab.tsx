@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { countryOptions } from "@/lib/country";
+import { MotivationFields } from "@/components/MotivationFields";
 import { NeedMetDialog } from "@/components/profile/NeedMetDialog";
 import { reopenNeed } from "@/lib/need-completion.functions";
 import {
@@ -32,6 +33,8 @@ export function MyPostsTab() {
   const [editing, setEditing] = useState<MyPostDTO | null>(null);
   const [confirmId, setConfirmId] = useState<string | null>(null);
   const [completing, setCompleting] = useState<MyPostDTO | null>(null);
+  const [motRef, setMotRef] = useState("");
+  const [motText, setMotText] = useState("");
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -53,6 +56,7 @@ export function MyPostsTab() {
           city: String(form.get("city") ?? ""),
           zip: String(form.get("zip") ?? ""),
           country: String(form.get("country") ?? "US"),
+          ...(editing.postType === "ministry" ? { motivationRef: motRef.trim(), motivationText: motText.trim() } : {}),
         },
       });
       setEditing(null);
@@ -202,6 +206,7 @@ export function MyPostsTab() {
                   className="rounded-xl bg-ink px-4 py-3 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50"
                   aria-label={t("Description")}
                 />
+                {post.postType === "ministry" && <MotivationFields refValue={motRef} textValue={motText} onRef={setMotRef} onText={setMotText} />}
                 <label className="flex flex-col gap-1 text-sm text-mist">{t("Country")}<select name="country" defaultValue={post.country} className="rounded-xl bg-ink px-4 py-3 text-base text-sand ring-1 ring-mist/20">{countryOptions.map((item) => <option key={item.code} value={item.code}>{item.name}</option>)}</select></label>
                 <div className="flex gap-2">
                   <input
@@ -248,7 +253,7 @@ export function MyPostsTab() {
                 ) : null)}
                 <button
                   type="button"
-                  onClick={() => setEditing(post)}
+                  onClick={() => { setEditing(post); setMotRef(post.motivationRef ?? ""); setMotText(post.motivationText ?? ""); }}
                   className="inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-2.5 text-base font-medium text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft"
                 >
                   <Pencil className="size-4" aria-hidden="true" />

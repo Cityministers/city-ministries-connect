@@ -4,6 +4,7 @@ import { ArrowLeft, Camera, ImagePlus, Loader2, MapPin, PartyPopper, UserCircle,
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CountrySelect } from "@/components/CountrySelect";
+import { MotivationFields } from "@/components/MotivationFields";
 import { validLocation, placeLabel } from "@/lib/country";
 import { ChurchPicker } from "@/components/ChurchPicker";
 import { createUserMinistry } from "@/lib/ministries.functions";
