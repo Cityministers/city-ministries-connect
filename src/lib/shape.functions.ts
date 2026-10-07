@@ -211,6 +211,7 @@ Write between 5 and 8 posts they can put straight on the local map. Rules:
 - title: a warm full title, at most 70 characters.
 - description: 2-3 sentences addressed to neighbors, saying what is offered or needed, who it's for, and when.
 - whyItFits: one sentence to the person, naming their own answers back to them.
+- fitBasis: the gift + skill pairing behind the idea, taken from their combinations above, formatted "Gift + skill" (e.g. "Mercy + caregiving"). Use an empty string only if none apply.
 - familyFriendly: true when their children could take part.
 ${hasKids ? "- At least two ideas must be family ministries their children can join, referencing their kids by name where natural." : "- Set familyFriendly true only when it genuinely applies."}
 ${data.lang && data.lang !== "en" ? `- IMPORTANT: The reader reads ${languageName(data.lang)}, not English. Write every text value (shortTitle, title, description, whyItFits) in natural, warm ${languageName(data.lang)}. Keep shortTitle at most 24 characters even in ${languageName(data.lang)}.` : ""}
@@ -297,6 +298,7 @@ Return JSON only.`;
         title: String(i.title ?? "").slice(0, 90),
         description: String(i.description ?? "").slice(0, 800),
         whyItFits: String(i.whyItFits ?? "").slice(0, 400),
+        fitBasis: String(i.fitBasis ?? "").slice(0, 80),
         familyFriendly: Boolean(i.familyFriendly),
       }));
     } catch {
