@@ -11,6 +11,7 @@
 
 - Keep post-follow actions on post details and person-follow actions on authenticated member profile pages; this distinguishes content updates from author updates without duplicating follow controls.
 - Use the shared ScriptureTextarea for scripture-enabled posting descriptions; it keeps insertion controls inside the writing field and restores editing focus after insertion.
+- Fetch writing-box insertions through the YouVersion SDK using its accessible license-free version and retain the translation label in inserted text and motivation references; this avoids blocked licensed content and mislabelled quotations.
 - Complete and reopen needs through authenticated owner-checked database functions; this keeps closure and selected conversation thank-you messages atomic and prevents unauthorized recipients.
 - Keep neighborhood video files private and expose approved videos through short-lived signed URLs; this prevents pending uploads from becoming public before review.
 - Lock document scrolling through the global aria-modal selector while a popup is open; this leaves only the popup scrollable and restores page scrolling when it closes.

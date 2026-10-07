@@ -1,6 +1,6 @@
 import { usePassage } from "@youversion/platform-react-hooks";
 import { NIV_VERSION_ID, referenceToUsfm, youVersionUrl } from "@/lib/bible";
-import { HAS_YOUVERSION_APP_KEY } from "@/lib/youversion";
+import { HAS_YOUVERSION_APP_KEY, INSERTION_BIBLE_VERSION_ID } from "@/lib/youversion";
 
 /**
  * Renders one scripture passage.
@@ -18,7 +18,7 @@ import { HAS_YOUVERSION_APP_KEY } from "@/lib/youversion";
 export function useLiveVerseText(reference: string, fallbackText?: string) {
   const usfm = referenceToUsfm(reference);
   const { passage } = usePassage({
-    versionId: NIV_VERSION_ID,
+    versionId: reference.endsWith("(BSB)") ? INSERTION_BIBLE_VERSION_ID : NIV_VERSION_ID,
     usfm: usfm ?? "",
     format: "text",
     options: { enabled: HAS_YOUVERSION_APP_KEY && Boolean(usfm) },
@@ -41,8 +41,9 @@ export function ScriptureCard({
   compact?: boolean;
 }) {
   const usfm = referenceToUsfm(reference);
+  const isBsb = reference.endsWith("(BSB)");
   const { passage } = usePassage({
-    versionId: NIV_VERSION_ID,
+    versionId: isBsb ? INSERTION_BIBLE_VERSION_ID : NIV_VERSION_ID,
     usfm: usfm ?? "",
     format: "text",
     options: { enabled: HAS_YOUVERSION_APP_KEY && Boolean(usfm) },
@@ -64,10 +65,10 @@ export function ScriptureCard({
       )}
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
         <cite className={`font-semibold not-italic text-lemon ${compact ? "text-sm" : "text-base"}`}>
-          — {reference} · NIV
+          — {reference.replace(/\s*\(BSB\)$/, "")} · {isBsb ? "BSB" : "NIV"}
         </cite>
         <a
-          href={youVersionUrl(reference)}
+          href={isBsb && usfm ? `https://www.bible.com/bible/${INSERTION_BIBLE_VERSION_ID}/${usfm}` : youVersionUrl(reference)}
           target="_blank"
           rel="noopener noreferrer"
           className={`font-semibold text-youversion underline-offset-2 hover:underline ${compact ? "text-xs" : "text-sm"}`}

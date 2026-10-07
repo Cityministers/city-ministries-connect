@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { BookOpen, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useLiveVerseText } from "@/components/ScriptureCard";
+import { usePassage } from "@youversion/platform-react-hooks";
 import { detectLastReference } from "@/lib/bible-detector";
-import { youVersionUrl } from "@/lib/bible";
+import { referenceToUsfm } from "@/lib/bible";
+import { HAS_YOUVERSION_APP_KEY, INSERTION_BIBLE_VERSION_ID, INSERTION_BIBLE_LABEL } from "@/lib/youversion";
 import { Button } from "@/components/ui/button";
 
 /**
@@ -31,10 +32,17 @@ export function ScriptureDetectorPill({
     return () => clearTimeout(id);
   }, [text]);
 
-  const verse = useLiveVerseText(ref ?? "");
+  const usfm = referenceToUsfm(ref ?? "");
+  const { passage, loading, refetch } = usePassage({
+    versionId: INSERTION_BIBLE_VERSION_ID,
+    usfm: usfm ?? "",
+    format: "text",
+    options: { enabled: HAS_YOUVERSION_APP_KEY && Boolean(usfm) },
+  });
+  const verse = passage?.id === usfm ? passage.content?.trim() : undefined;
   if (!ref || dismissed === ref) return null;
 
-  const quote = verse ? ` "${verse}" (${ref} NIV)` : "";
+  const quote = verse ? ` "${verse}" (${ref} ${INSERTION_BIBLE_LABEL})` : "";
   const alreadyIn = verse ? text.includes(verse) : false;
   const fits = !maxLength || text.length + quote.length <= maxLength;
 
@@ -48,11 +56,11 @@ export function ScriptureDetectorPill({
           size="sm"
           type="button"
           disabled={!verse || !fits}
-          title={!fits ? t("This verse exceeds the character limit.") : !verse ? t("Live NIV text is currently unavailable. You can copy it from YouVersion.") : undefined}
+          title={!fits ? t("This verse exceeds the character limit.") : undefined}
           onClick={() => onInsert(text.trimEnd() + quote)}
           className="h-7 rounded-full bg-lemon/15 px-3 py-1 font-semibold text-lemon hover:bg-lemon/25 hover:text-lemon"
         >
-          {t("Display verse")}
+          {loading ? t("Loading verse…") : t("Insert Verse")}
         </Button>
       )}
       {onAttach && (
@@ -60,8 +68,10 @@ export function ScriptureDetectorPill({
           variant="ghost"
           size="sm"
           type="button"
+          disabled={!verse}
           onClick={() => {
-            onAttach(ref, verse ?? "");
+            if (!verse) return;
+            onAttach(`${ref} (${INSERTION_BIBLE_LABEL})`, verse);
             setDismissed(ref);
           }}
           className="rounded-full bg-lemon/15 px-3 py-1 font-semibold text-lemon hover:bg-lemon/25"
@@ -70,7 +80,7 @@ export function ScriptureDetectorPill({
         </Button>
       )}
       <a
-        href={youVersionUrl(ref)}
+        href={`https://www.bible.com/bible/${INSERTION_BIBLE_VERSION_ID}/${usfm}`}
         target="_blank"
         rel="noopener noreferrer"
         className="font-semibold text-youversion underline-offset-2 hover:underline"
@@ -87,7 +97,8 @@ export function ScriptureDetectorPill({
       >
         <X className="size-4" />
       </Button>
-      {!verse && <span className="w-full text-xs text-mist/70">{t("Live NIV text is currently unavailable. You can copy it from YouVersion.")}</span>}
+      {verse && <span className="text-xs text-mist/70">{INSERTION_BIBLE_LABEL}</span>}
+      {!verse && !loading && <span className="w-full text-xs text-mist/70">{t("Could not load this verse.")} <Button type="button" variant="ghost" size="sm" onClick={refetch}>{t("Try again")}</Button></span>}
     </div>
   );
 }
