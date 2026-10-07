@@ -842,6 +842,11 @@ function ShapePage() {
                     <Sparkles className="mr-2 inline size-4 text-lemon" aria-hidden="true" />
                     {idea.whyItFits}
                   </p>
+                  {idea.fitBasis ? (
+                    <p className="mt-2 text-sm italic text-lemon/80">
+                      {t("Fits your gifts:")} {idea.fitBasis}
+                    </p>
+                  ) : null}
                 </>
               )}
 
@@ -871,6 +876,10 @@ function ShapePage() {
             </li>
           ))}
         </ul>
+
+        <p className="mt-4 text-sm italic text-mist/60">
+          {t("These ideas are starting points for prayerful discernment — a gift or skill match is not proof of calling or qualification.")}
+        </p>
 
         <div className="mt-6 flex flex-col gap-3">
           <button
