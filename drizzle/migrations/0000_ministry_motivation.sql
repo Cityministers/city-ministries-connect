@@ -1,0 +1,1 @@
+ALTER TABLE public.user_ministries ADD COLUMN IF NOT EXISTS motivation_ref text, ADD COLUMN IF NOT EXISTS motivation_text text;
