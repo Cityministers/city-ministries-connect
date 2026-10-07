@@ -4,6 +4,7 @@ import { ArrowLeft, Camera, ImagePlus, Loader2, MapPin, PartyPopper, UserCircle,
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CountrySelect } from "@/components/CountrySelect";
+import { MotivationFields } from "@/components/MotivationFields";
 import { validLocation, placeLabel } from "@/lib/country";
 import { ChurchPicker } from "@/components/ChurchPicker";
 import { createUserMinistry } from "@/lib/ministries.functions";
@@ -76,6 +77,8 @@ function CreateMinistryPage() {
   const [shortTitle, setShortTitle] = useState(prefill.short ?? "");
   const [title, setTitle] = useState(prefill.title ?? "");
   const [description, setDescription] = useState(prefill.desc ?? "");
+  const [motivationRef, setMotivationRef] = useState("");
+  const [motivationText, setMotivationText] = useState("");
   const [city, setCity] = useState(prefill.city ?? "");
   const [zip, setZip] = useState(prefill.zip ?? "");
   const [country, setCountry] = useState(prefill.country ?? "US");
@@ -169,6 +172,8 @@ function CreateMinistryPage() {
           avatarPath,
           iconId: preset?.id ?? "",
           gallery,
+          motivationRef: motivationRef.trim(),
+          motivationText: motivationText.trim(),
         },
       });
 
@@ -326,6 +331,8 @@ function CreateMinistryPage() {
               required
             />
           </label>
+
+          <MotivationFields refValue={motivationRef} textValue={motivationText} onRef={setMotivationRef} onText={setMotivationText} />
 
           <CountrySelect value={country} onChange={setCountry} className="w-full rounded-xl bg-ink-soft px-4 py-3.5 text-base text-sand ring-1 ring-mist/20" />
           <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-3">

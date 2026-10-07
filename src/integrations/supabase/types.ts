@@ -1294,6 +1294,8 @@ export type Database = {
           id: string
           lat: number | null
           lng: number | null
+          motivation_ref: string | null
+          motivation_text: string | null
           owner_id: string
           short_title: string
           status: string
@@ -1312,6 +1314,8 @@ export type Database = {
           id?: string
           lat?: number | null
           lng?: number | null
+          motivation_ref?: string | null
+          motivation_text?: string | null
           owner_id: string
           short_title: string
           status?: string
@@ -1330,6 +1334,8 @@ export type Database = {
           id?: string
           lat?: number | null
           lng?: number | null
+          motivation_ref?: string | null
+          motivation_text?: string | null
           owner_id?: string
           short_title?: string
           status?: string

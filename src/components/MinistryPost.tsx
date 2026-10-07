@@ -34,6 +34,7 @@ import { FollowButton } from "@/components/FollowButton";
 import { MeetupScheduler } from "@/components/meetup/MeetupScheduler";
 import { NeedMetDialog } from "@/components/profile/NeedMetDialog";
 import { Button } from "@/components/ui/button";
+import { ScriptureCard } from "@/components/ScriptureCard";
 
 export function MinistryPost({
   ministry,
@@ -423,6 +424,12 @@ export function MinistryPost({
           <p className="text-xl leading-relaxed text-sand/85 sm:text-2xl">{translated.description}</p>
           {translated.loading ? (
             <p className="text-sm text-mist/60">{t("Translating…")}</p>
+          ) : null}
+          {ministry.motivationRef ? (
+            <div className="flex flex-col gap-2">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-lemon/80">{t("My motivation")}</p>
+              <ScriptureCard reference={ministry.motivationRef} {...(ministry.motivationText ? { fallbackText: ministry.motivationText } : {})} />
+            </div>
           ) : null}
           {translated.hasTranslation ? (
             <button

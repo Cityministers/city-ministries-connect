@@ -35,6 +35,8 @@ export function toMinistry(dto: UserMinistryDTO, index: number): Ministry {
     ...(dto.gallery.length > 0 ? { gallery: dto.gallery } : {}),
     custom: true,
     fullTitle: dto.title,
+    ...(dto.motivationRef ? { motivationRef: dto.motivationRef } : {}),
+    ...(dto.motivationText ? { motivationText: dto.motivationText } : {}),
     postType: "ministry",
     postId: dto.id,
     ownerId: dto.ownerId,

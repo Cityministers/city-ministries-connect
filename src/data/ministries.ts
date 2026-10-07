@@ -97,6 +97,9 @@ export type Ministry = {
   isNeed?: boolean;
   /** Longer title for user-created ministries. */
   fullTitle?: string;
+  /** Scripture the poster chose as their motivation. */
+  motivationRef?: string;
+  motivationText?: string;
   /** Database identity for user-created posts, used for saving and messaging. */
   postType?: "ministry" | "need";
   postId?: string;

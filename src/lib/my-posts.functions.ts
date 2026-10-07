@@ -16,6 +16,8 @@ export type MyPostDTO = {
   updatedAt: string;
   status: string;
   metAt: string | null;
+  motivationRef?: string;
+  motivationText?: string;
 };
 
 const ref = z.object({
@@ -31,6 +33,8 @@ const editInput = ref.extend({
   zip: postalSchema.optional().default(""),
   country: countrySchema.default("US"),
   avatarPath: z.string().trim().max(300).optional(),
+  motivationRef: z.string().trim().max(60).optional(),
+  motivationText: z.string().trim().max(600).optional(),
 });
 
 function tableFor(postType: "ministry" | "need") {
@@ -65,6 +69,16 @@ export const listMyPosts = createServerFn({ method: "GET" })
           status: r.status,
           metAt: null,
         });
+      }
+    }
+
+    const minIds = out.filter((p) => p.postType === "ministry").map((p) => p.id);
+    if (minIds.length) {
+      const { data: mot } = await context.supabase.from("user_ministries").select("id, motivation_ref, motivation_text").in("id", minIds);
+      const byId = new Map((mot ?? []).map((r) => [r.id, r]));
+      for (const item of out) if (item.postType === "ministry") {
+        item.motivationRef = byId.get(item.id)?.motivation_ref ?? "";
+        item.motivationText = byId.get(item.id)?.motivation_text ?? "";
       }
     }
 
@@ -105,7 +119,12 @@ export const updateMyPost = createServerFn({ method: "POST" })
       lat: null, lng: null,
       ...(data.avatarPath ? { avatar_url: data.avatarPath } : {}),
     };
-    const { error } = await context.supabase
+    const motivation = data.postType === "ministry" && data.motivationRef !== undefined
+      ? { motivation_ref: data.motivationRef || null, motivation_text: data.motivationRef ? data.motivationText || null : null }
+      : {};
+    const { error } = data.postType === "ministry"
+      ? await context.supabase.from("user_ministries").update({ ...patch, ...motivation }).eq("id", data.id).eq("owner_id", context.userId)
+      : await context.supabase
       .from(tableFor(data.postType))
       .update(patch)
       .eq("id", data.id)
