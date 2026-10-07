@@ -20,8 +20,6 @@ import {
 import { Fragment, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { savedLanguage } from "@/lib/i18n";
-import { CountrySelect } from "@/components/CountrySelect";
-import { validLocation } from "@/lib/country";
 
 // The language the visitor is currently reading the app in; used so generated
 // ministry ideas and recommendation reasons come back in that language.
@@ -658,7 +656,7 @@ function ShapePage() {
     } finally {
       setBusy(false);
     }
-    setAnswers(emptyAnswers);
+    setAnswers((prev) => ({ ...emptyAnswers, firstName: prev.firstName, city: prev.city, zip: prev.zip, country: prev.country }));
     setIdeas(null);
     setSavedIdeas(null);
     setPosted({});
@@ -952,7 +950,7 @@ function ShapePage() {
             onClick={() => {
               setIdeas(null);
               setPosted({});
-              setAnswers(emptyAnswers);
+              setAnswers((prev) => ({ ...emptyAnswers, firstName: prev.firstName, city: prev.city, zip: prev.zip, country: prev.country }));
               setStep(0);
             }}
             className="inline-flex items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-lg font-semibold text-sand ring-1 ring-mist/25"
@@ -1495,7 +1493,7 @@ function Review({
         <div key={label} className="rounded-2xl bg-ink-soft/50 px-4 py-3 ring-1 ring-mist/15">
           <div className="flex items-start justify-between gap-3">
             <dt className="text-sm uppercase tracking-wider text-mist/60">{label}</dt>
-            {onEdit && (
+            {onEdit && stepId && (
               <button
                 type="button"
                 onClick={() => onEdit(stepId)}
