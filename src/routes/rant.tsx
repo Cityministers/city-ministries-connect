@@ -187,9 +187,22 @@ function RantPage() {
         return;
       }
       setBusy("analyze");
-      const res = await analyze({ data: { transcript: heard.text } });
+      const wantsPost = CREATE_POST_COMMAND.test(heard.text);
+      const transcript = wantsPost ? heard.text.replace(CREATE_POST_COMMAND, "") : heard.text;
+      const res = await analyze({ data: { transcript: transcript.trim().length >= 10 ? transcript : heard.text } });
       if (res.error) {
         setError(res.error);
+        return;
+      }
+      if (wantsPost && res.need) {
+        void navigate({
+          to: "/post-need",
+          search: {
+            short: res.need.shortTitle,
+            title: res.need.title,
+            description: res.need.description,
+          },
+        });
         return;
       }
       setNeedDismissed(false);
