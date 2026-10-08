@@ -199,6 +199,28 @@ function RantPage() {
 
   const mmss = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
 
+  /** Runs the same reflection on text the member typed instead of speaking. */
+  async function submitWritten() {
+    const text = written.trim();
+    if (text.length < 10 || busy) return;
+    setError(null);
+    setResult(null);
+    setBusy("analyze");
+    try {
+      const res = await analyze({ data: { transcript: text } });
+      if (res.error) {
+        setError(res.error);
+        return;
+      }
+      setNeedDismissed(false);
+      setResult(res);
+    } catch {
+      setError(t("We couldn't process that. Try again."));
+    } finally {
+      setBusy(null);
+    }
+  }
+
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col gap-6 px-4 pb-16 pt-6">
       <div className="flex items-center gap-3">
