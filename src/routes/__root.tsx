@@ -192,8 +192,20 @@ function RootComponent() {
     }
   }, []);
 
+  // Once the app has mounted, the page's reload budget is refreshed. Without
+  // this, a path that burned its retries during an earlier rebuild could never
+  // recover from a later stale-module failure in the same session.
+  useEffect(() => {
+    try {
+      sessionStorage.removeItem(`module-retry:${window.location.pathname}`);
+    } catch {
+      /* storage unavailable — nothing to reset */
+    }
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
+
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       {HAS_YOUVERSION_APP_KEY ? (
         <YouVersionProvider appKey={YOUVERSION_APP_KEY} theme="dark">
