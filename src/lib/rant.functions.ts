@@ -11,76 +11,30 @@ const RANT_SCHEMA = {
   properties: {
     summary: { type: "string" },
     themes: { type: "array", items: { type: "string" } },
-    verseRefs: { type: "array", items: { type: "string" } },
+    need: {
+      type: "object",
+      properties: {
+        found: { type: "boolean" },
+        shortTitle: { type: "string" },
+        title: { type: "string" },
+        description: { type: "string" },
+      },
+      required: ["found", "shortTitle", "title", "description"],
+      additionalProperties: false,
+    },
   },
-  required: ["summary", "themes", "verseRefs"],
+  required: ["summary", "themes", "need"],
   additionalProperties: false,
 } as const;
 
-export type RantPost = {
-  id: string;
-  kind: "ministry" | "need";
-  shortTitle: string;
-  title: string;
-  description: string;
-  city: string;
-};
+export type RantNeedDraft = { shortTitle: string; title: string; description: string };
 
 export type RantResult = {
   summary: string;
   themes: string[];
-  verseRefs: string[];
-  posts: RantPost[];
+  need: RantNeedDraft | null;
   error?: string;
 };
-
-function themeWords(themes: string[]): string[] {
-  return themes
-    .join(" ")
-    .toLowerCase()
-    .split(/[^a-z]+/)
-    .filter((w) => w.length > 3);
-}
-
-/** Matches rant themes against live ministry and need posts by word overlap. */
-async function matchPosts(
-  supabase: {
-    from: (table: string) => any;
-  },
-  themes: string[],
-): Promise<RantPost[]> {
-  const keys = themeWords(themes);
-  if (keys.length === 0) return [];
-
-  const select = "id, short_title, title, description, city";
-  const [ministries, needs] = await Promise.all([
-    supabase.from("user_ministries").select(select).order("created_at", { ascending: false }).limit(150),
-    supabase.from("user_needs").select(select).order("created_at", { ascending: false }).limit(150),
-  ]);
-
-  const score = (row: { short_title: string; title: string; description: string }) => {
-    const text = `${row.short_title} ${row.title} ${row.description}`.toLowerCase();
-    return keys.reduce((n, k) => (text.includes(k) ? n + 1 : n), 0);
-  };
-
-  const toPost = (kind: "ministry" | "need") => (row: any): RantPost => ({
-    id: String(row.id),
-    kind,
-    shortTitle: String(row.short_title ?? "").slice(0, 24),
-    title: String(row.title ?? row.short_title ?? "").slice(0, 90),
-    description: String(row.description ?? "").slice(0, 400),
-    city: String(row.city ?? "").slice(0, 80),
-  });
-
-  const ranked = [
-    ...((ministries.data ?? []) as any[]).map((r) => ({ s: score(r), p: toPost("ministry")(r) })),
-    ...((needs.data ?? []) as any[]).map((r) => ({ s: score(r), p: toPost("need")(r) })),
-  ]
-    .filter((r) => r.s > 0)
-    .sort((a, b) => b.s - a.s);
-
-  return ranked.slice(0, 4).map((r) => r.p);
-}
 
 /**
  * Analyzes one spoken "spiritual rant" transcript: pulls themes, picks fitting
@@ -91,10 +45,10 @@ async function matchPosts(
 export const analyzeRant = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => Input.parse(input))
-  .handler(async ({ data, context }): Promise<RantResult> => {
+  .handler(async ({ data }): Promise<RantResult> => {
     const apiKey = process.env["LOVABLE_API_KEY"];
     if (!apiKey) {
-      return { summary: "", themes: [], verseRefs: [], posts: [], error: "AI is not configured for this app yet." };
+      return { summary: "", themes: [], need: null, error: "AI is not configured for this app yet." };
     }
 
     const prompt = `A Christian member just spoke freely ("ranted") about what is on their heart. Here is the transcript:
@@ -106,7 +60,7 @@ ${data.transcript}
 Respond with JSON only:
 - summary: one warm, pastoral sentence (at most 40 words) reflecting back what they shared, addressed to them as "you". Never preachy, never judgmental.
 - themes: 3 to 6 short lowercase theme keywords (1-2 words each) such as "loneliness", "provision", "fear", "grief", "gratitude", "calling".
-- verseRefs: 2 to 4 well-known Bible references (format "Book chapter:verse", e.g. "Psalm 34:18") that speak directly to those themes. Use only real, widely known verses.`;
+- need: if the speaker mentioned a concrete need neighbors could help with (practical help, a ride, food, rent, a job, childcare, a repair, company, prayer for something specific), set found=true and draft a post IN THEIR OWN WORDS using only things they actually said — never invent details. shortTitle: 1-3 words (max 24 chars). title: one sentence (max 90 chars). description: 2-4 first-person sentences (max 600 chars). If no concrete need was mentioned, set found=false and leave the strings empty.`;
 
     let text = "";
     try {
@@ -135,7 +89,7 @@ Respond with JSON only:
         else if (res.status === 429) message = "Too many requests right now. Try again in a minute.";
         else if (res.status === 403) message = "AI is turned off for this app right now.";
         console.error("rant analysis gateway error", res.status, body.slice(0, 500));
-        return { summary: "", themes: [], verseRefs: [], posts: [], error: message };
+        return { summary: "", themes: [], need: null, error: message };
       }
 
       const reader = res.body?.getReader();
@@ -169,25 +123,34 @@ Respond with JSON only:
       }
     } catch (err) {
       console.error("rant analysis failed", err);
-      return { summary: "", themes: [], verseRefs: [], posts: [], error: "We couldn't reflect on that just now. Try again." };
+      return { summary: "", themes: [], need: null, error: "We couldn't reflect on that just now. Try again." };
     }
 
     let summary = "";
     let themes: string[] = [];
-    let verseRefs: string[] = [];
+    let need: RantNeedDraft | null = null;
     try {
-      const parsed = JSON.parse(text) as { summary?: string; themes?: string[]; verseRefs?: string[] };
+      const parsed = JSON.parse(text) as {
+        summary?: string;
+        themes?: string[];
+        need?: { found?: boolean; shortTitle?: string; title?: string; description?: string };
+      };
       summary = String(parsed.summary ?? "").slice(0, 300);
       themes = (parsed.themes ?? []).map((t) => String(t).slice(0, 40)).slice(0, 6);
-      verseRefs = (parsed.verseRefs ?? []).map((r) => String(r).slice(0, 40)).slice(0, 4);
+      const n = parsed.need;
+      if (n?.found && n.title && n.description) {
+        need = {
+          shortTitle: String(n.shortTitle ?? "").slice(0, 24),
+          title: String(n.title).slice(0, 90),
+          description: String(n.description).slice(0, 600),
+        };
+      }
     } catch {
-      return { summary: "", themes: [], verseRefs: [], posts: [], error: "The reflection came back garbled. Try again." };
+      return { summary: "", themes: [], need: null, error: "The reflection came back garbled. Try again." };
     }
 
     if (themes.length === 0) {
-      return { summary, themes, verseRefs, posts: [], error: "We couldn't pull themes from that. Try again." };
+      return { summary, themes, need, error: "We couldn't pull themes from that. Try again." };
     }
-
-    const posts = await matchPosts(context.supabase, themes).catch(() => [] as RantPost[]);
-    return { summary, themes, verseRefs, posts };
+    return { summary, themes, need };
   });

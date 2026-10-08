@@ -93,6 +93,16 @@ export function referenceToUsfm(reference: string): string | null {
   return start;
 }
 
+/** Converts a USFM id like "PHP.4.6" back into "Philippians 4:6"; null if unknown. */
+export function usfmToReference(usfm: string): string | null {
+  const m = usfm.match(/^([1-3A-Z]{3})\.(\d+)\.(\d+)/);
+  if (!m) return null;
+  const entry = Object.entries(BOOK_IDS).find(([, id]) => id === m[1]);
+  if (!entry) return null;
+  const name = entry[0].replace(/\b([a-z])/g, (c) => c.toUpperCase());
+  return `${name} ${m[2]}:${m[3]}`;
+}
+
 /**
  * Returns a YouVersion URL for a reference such as "Galatians 6:2" or
  * "Luke 14:13–14". Falls back to a YouVersion search URL when the

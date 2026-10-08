@@ -6,6 +6,8 @@ import { useTranslation } from "react-i18next";
 import { ScriptureCard } from "@/components/ScriptureCard";
 import { analyzeRant, type RantResult } from "@/lib/rant.functions";
 import { transcribeAnswer } from "@/lib/transcribe.functions";
+import { topicalVerses, topicsForKeywords, type YVTopic } from "@/lib/youversion-search";
+import { usfmToReference } from "@/lib/bible";
 
 export const Route = createFileRoute("/_authenticated/rant")({
   head: () => ({
@@ -14,12 +16,12 @@ export const Route = createFileRoute("/_authenticated/rant")({
       {
         name: "description",
         content:
-          "Speak freely about what's on your heart. City Ministers listens, finds matching Bible verses, and points you to ministries and needs nearby. Nothing is recorded or saved.",
+          "Speak freely about what's on your heart. City Ministers listens, finds matching Bible verses, and can post your need for you. Nothing is recorded or saved.",
       },
       { property: "og:title", content: "Spiritual Rant — City Ministers" },
       {
         property: "og:description",
-        content: "Talk it out. Get verses and ways to act on it. Your audio is never saved.",
+        content: "Talk it out. Get verses and let neighbors help. Your audio is never saved.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -90,6 +92,7 @@ function RantPage() {
   const [busy, setBusy] = useState<"transcribe" | "analyze" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<RantResult | null>(null);
+  const [needDismissed, setNeedDismissed] = useState(false);
 
   const streamRef = useRef<MediaStream | null>(null);
   const ctxRef = useRef<AudioContext | null>(null);
@@ -183,6 +186,7 @@ function RantPage() {
         setError(res.error);
         return;
       }
+      setNeedDismissed(false);
       setResult(res);
     } catch {
       setError(t("We couldn't process that. Try again."));
@@ -208,7 +212,7 @@ function RantPage() {
 
       <p className="text-base leading-relaxed text-mist/80">
         {t(
-          "Get it off your chest. Talk for up to 90 seconds — we'll listen, find verses that speak to it, and point you to ministries and needs nearby. Your audio is never saved.",
+          "Get it off your chest. Talk for up to 90 seconds — we'll listen, find verses that speak to it, and offer to post any need you mention. Your audio is never saved.",
         )}
       </p>
 
@@ -236,7 +240,7 @@ function RantPage() {
           {busy === "transcribe"
             ? t("Listening…")
             : busy === "analyze"
-              ? t("Finding verses and ministries…")
+              ? t("Finding verses…")
               : recording
                 ? t("Talking · {{time}} — tap to finish", { time: mmss })
                 : result
@@ -290,38 +294,42 @@ function RantPage() {
             </div>
           </section>
 
-          {result.verseRefs.length > 0 && (
-            <section className="flex flex-col gap-3">
-              <h2 className="font-display text-xl font-semibold text-sand">{t("Verses for you")}</h2>
-              {result.verseRefs.map((ref) => (
-                <ScriptureCard key={ref} reference={ref} compact />
-              ))}
+          {result.need && !needDismissed && (
+            <section className="flex flex-col gap-3 rounded-2xl bg-ink-soft/60 p-5 ring-1 ring-lemon/40">
+              <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-sand">
+                <HandHelping className="size-5 text-lemon" aria-hidden="true" />
+                {t("Would you like us to post this for you?")}
+              </h2>
+              <p className="text-sm text-mist/80">
+                {t("We heard a need in what you shared. Here's a post drafted from your own words — you can change anything before it goes up.")}
+              </p>
+              <div className="flex flex-col gap-1 rounded-xl bg-ink/60 p-4 ring-1 ring-mist/15">
+                {result.need.shortTitle && (
+                  <span className="text-xs font-semibold uppercase tracking-wide text-mist/60">{result.need.shortTitle}</span>
+                )}
+                <span className="text-base font-semibold text-sand">{result.need.title}</span>
+                <span className="text-sm text-mist/85">{result.need.description}</span>
+              </div>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <Link
+                  to="/post-need"
+                  search={{ short: result.need.shortTitle, title: result.need.title, description: result.need.description }}
+                  className="inline-flex flex-1 items-center justify-center rounded-full bg-lemon px-5 py-3 text-base font-semibold text-ink transition hover:-translate-y-0.5"
+                >
+                  {t("Yes, post this need")}
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setNeedDismissed(true)}
+                  className="inline-flex flex-1 items-center justify-center rounded-full px-5 py-3 text-base font-semibold text-mist ring-1 ring-mist/25 transition hover:text-sand"
+                >
+                  {t("Not right now")}
+                </button>
+              </div>
             </section>
           )}
 
-          {result.posts.length > 0 && (
-            <section className="flex flex-col gap-3">
-              <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-sand">
-                <HandHelping className="size-5 text-lemon" aria-hidden="true" />
-                {t("Ways to act on it")}
-              </h2>
-              {result.posts.map((post) => (
-                <Link
-                  key={post.id}
-                  to={post.kind === "need" ? "/needs" : "/map"}
-                  search={{ new: post.id }}
-                  className="flex flex-col gap-1 rounded-2xl bg-ink-soft/60 p-4 ring-1 ring-mist/15 transition hover:ring-lemon/50"
-                >
-                  <span className="text-xs font-semibold uppercase tracking-wide text-mist/60">
-                    {post.kind === "need" ? t("Need") : t("Ministry")}
-                    {post.city ? ` · ${post.city}` : ""}
-                  </span>
-                  <span className="text-base font-semibold text-sand">{post.title}</span>
-                  <span className="line-clamp-2 text-sm text-mist/80">{post.description}</span>
-                </Link>
-              ))}
-            </section>
-          )}
+          <TopicVerses keywords={result.themes} />
 
           <button
             type="button"
@@ -336,5 +344,102 @@ function RantPage() {
         </div>
       )}
     </div>
+  );
+}
+
+/** YouVersion topics for the rant's keywords, with the active topic's verses and pivots. */
+function TopicVerses({ keywords }: { keywords: string[] }) {
+  const { t } = useTranslation();
+  const [topics, setTopics] = useState<YVTopic[]>([]);
+  const [active, setActive] = useState<string | null>(null);
+  const [refs, setRefs] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    let off = false;
+    setLoading(true);
+    topicsForKeywords(keywords)
+      .then((list) => {
+        if (off) return;
+        setTopics(list);
+        setActive(list[0]?.text ?? keywords[0] ?? null);
+        if (list.length === 0 && keywords.length === 0) setLoading(false);
+      })
+      .catch(() => !off && (setFailed(true), setLoading(false)));
+    return () => {
+      off = true;
+    };
+  }, [keywords.join("|")]);
+
+  useEffect(() => {
+    if (!active) return;
+    let off = false;
+    setLoading(true);
+    topicalVerses(active)
+      .then((ids) => {
+        if (off) return;
+        setRefs(ids.map((id) => usfmToReference(id)).filter((r): r is string => Boolean(r)).map((r) => `${r} (BSB)`));
+        setFailed(false);
+      })
+      .catch(() => !off && setFailed(true))
+      .finally(() => !off && setLoading(false));
+    return () => {
+      off = true;
+    };
+  }, [active]);
+
+  const current = topics.find((tp) => tp.text === active);
+
+  return (
+    <section className="flex flex-col gap-3">
+      <h2 className="font-display text-xl font-semibold text-sand">{t("Verses for you")}</h2>
+      {topics.length > 0 && (
+        <div className="flex flex-wrap gap-2" role="group" aria-label={t("Topics")}>
+          {topics.map((tp) => (
+            <button
+              key={tp.text}
+              type="button"
+              onClick={() => setActive(tp.text)}
+              aria-pressed={active === tp.text}
+              className={`rounded-full px-3 py-1.5 text-sm font-semibold ring-1 transition ${
+                active === tp.text ? "bg-youversion text-sand ring-youversion" : "bg-ink-soft/70 text-sand ring-mist/20 hover:ring-youversion/60"
+              }`}
+            >
+              {tp.text}
+            </button>
+          ))}
+        </div>
+      )}
+      {loading ? (
+        <p className="flex items-center gap-2 text-sm text-mist/70">
+          <Loader2 className="size-4 animate-spin" aria-hidden="true" /> {t("Searching YouVersion…")}
+        </p>
+      ) : failed || refs.length === 0 ? (
+        <p className="text-sm text-mist/70">{t("We couldn't find verses for that topic right now.")}</p>
+      ) : (
+        refs.map((ref) => <ScriptureCard key={ref} reference={ref} compact />)
+      )}
+      {current && current.subtopics.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <span className="text-xs font-semibold uppercase tracking-wide text-mist/60">{t("More on this topic")}</span>
+          <div className="flex flex-wrap gap-2">
+            {current.subtopics.slice(0, 8).map((sub) => (
+              <button
+                key={sub}
+                type="button"
+                onClick={() => {
+                  setTopics((list) => (list.some((x) => x.text === sub) ? list : [...list, { id: null, text: sub, subtopics: [] }]));
+                  setActive(sub);
+                }}
+                className="rounded-full px-3 py-1 text-xs font-medium text-mist ring-1 ring-mist/25 transition hover:text-sand"
+              >
+                {sub}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </section>
   );
 }

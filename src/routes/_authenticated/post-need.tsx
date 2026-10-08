@@ -36,9 +36,17 @@ import {
 import { checkImageFile, friendlyUploadError, shrinkImage } from "@/lib/photo";
 
 export const Route = createFileRoute("/_authenticated/post-need")({
-  validateSearch: (search: Record<string, unknown>): { church?: string | undefined } => ({
-    church: typeof search["church"] === "string" ? search["church"] : undefined,
-  }),
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): {
+    church?: string | undefined;
+    short?: string | undefined;
+    title?: string | undefined;
+    description?: string | undefined;
+  } => {
+    const str = (k: string) => (typeof search[k] === "string" ? (search[k] as string) : undefined);
+    return { church: str("church"), short: str("short"), title: str("title"), description: str("description") };
+  },
   head: () => ({
     meta: [
       { title: "Post a need — City Ministers" },
@@ -70,9 +78,9 @@ function PostNeedPage() {
   const [email, setEmail] = useState("");
   const [resent, setResent] = useState(false);
 
-  const [shortTitle, setShortTitle] = useState("");
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [shortTitle, setShortTitle] = useState((search.short ?? "").slice(0, 24));
+  const [title, setTitle] = useState((search.title ?? "").slice(0, 90));
+  const [description, setDescription] = useState((search.description ?? "").slice(0, 1000));
   const [city, setCity] = useState("");
   const [zip, setZip] = useState("");
   const [country, setCountry] = useState("US");
