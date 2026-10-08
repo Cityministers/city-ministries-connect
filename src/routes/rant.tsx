@@ -5,11 +5,11 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScriptureCard } from "@/components/ScriptureCard";
 import { analyzeRant, type RantResult } from "@/lib/rant.functions";
-import { transcribeAnswer } from "@/lib/transcribe.functions";
+import { transcribeRant } from "@/lib/transcribe.functions";
 import { topicalVerses, topicsForKeywords, type YVTopic } from "@/lib/youversion-search";
 import { usfmToReference } from "@/lib/bible";
 
-export const Route = createFileRoute("/_authenticated/rant")({
+export const Route = createFileRoute("/rant")({
   head: () => ({
     meta: [
       { title: "Spiritual Rant — City Ministers" },
@@ -83,7 +83,7 @@ async function toBase64(blob: Blob): Promise<string> {
 
 function RantPage() {
   const { t } = useTranslation();
-  const transcribe = useServerFn(transcribeAnswer);
+  const transcribe = useServerFn(transcribeRant);
   const analyze = useServerFn(analyzeRant);
 
   const [recording, setRecording] = useState(false);
