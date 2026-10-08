@@ -38,6 +38,7 @@ import { Route as AuthenticatedMeetupsRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedPostNeedRouteImport } from './routes/_authenticated/post-need'
 import { Route as AuthenticatedPostPrayerRouteImport } from './routes/_authenticated/post-prayer'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedRantRouteImport } from './routes/_authenticated/rant'
 import { Route as AuthenticatedWelcomeRouteImport } from './routes/_authenticated/welcome'
 import { Route as ChurchIdRouteImport } from './routes/church.$id'
 import { Route as GiftReferenceCodeRouteImport } from './routes/gift-reference.$code'
@@ -198,6 +199,11 @@ const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedRantRoute = AuthenticatedRantRouteImport.update({
+  id: '/rant',
+  path: '/rant',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedWelcomeRoute = AuthenticatedWelcomeRouteImport.update({
   id: '/welcome',
   path: '/welcome',
@@ -302,6 +308,7 @@ export interface FileRoutesByFullPath {
   '/post-need': typeof AuthenticatedPostNeedRoute
   '/post-prayer': typeof AuthenticatedPostPrayerRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/rant': typeof AuthenticatedRantRoute
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/church/$id': typeof ChurchIdRoute
   '/gift-reference/$code': typeof GiftReferenceCodeRoute
@@ -346,6 +353,7 @@ export interface FileRoutesByTo {
   '/post-need': typeof AuthenticatedPostNeedRoute
   '/post-prayer': typeof AuthenticatedPostPrayerRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/rant': typeof AuthenticatedRantRoute
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/church/$id': typeof ChurchIdRoute
   '/gift-reference/$code': typeof GiftReferenceCodeRoute
@@ -392,6 +400,7 @@ export interface FileRoutesById {
   '/_authenticated/post-need': typeof AuthenticatedPostNeedRoute
   '/_authenticated/post-prayer': typeof AuthenticatedPostPrayerRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/_authenticated/rant': typeof AuthenticatedRantRoute
   '/_authenticated/welcome': typeof AuthenticatedWelcomeRoute
   '/church/$id': typeof ChurchIdRoute
   '/gift-reference/$code': typeof GiftReferenceCodeRoute
@@ -438,6 +447,7 @@ export interface FileRouteTypes {
     | '/post-need'
     | '/post-prayer'
     | '/profile'
+    | '/rant'
     | '/welcome'
     | '/church/$id'
     | '/gift-reference/$code'
@@ -482,6 +492,7 @@ export interface FileRouteTypes {
     | '/post-need'
     | '/post-prayer'
     | '/profile'
+    | '/rant'
     | '/welcome'
     | '/church/$id'
     | '/gift-reference/$code'
@@ -527,6 +538,7 @@ export interface FileRouteTypes {
     | '/_authenticated/post-need'
     | '/_authenticated/post-prayer'
     | '/_authenticated/profile'
+    | '/_authenticated/rant'
     | '/_authenticated/welcome'
     | '/church/$id'
     | '/gift-reference/$code'
@@ -779,6 +791,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/rant': {
+      id: '/_authenticated/rant'
+      path: '/rant'
+      fullPath: '/rant'
+      preLoaderRoute: typeof AuthenticatedRantRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/welcome': {
       id: '/_authenticated/welcome'
       path: '/welcome'
@@ -889,6 +908,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPostNeedRoute: typeof AuthenticatedPostNeedRoute
   AuthenticatedPostPrayerRoute: typeof AuthenticatedPostPrayerRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedRantRoute: typeof AuthenticatedRantRoute
   AuthenticatedWelcomeRoute: typeof AuthenticatedWelcomeRoute
   AuthenticatedChurchBoardIdRoute: typeof AuthenticatedChurchBoardIdRoute
   AuthenticatedGiftsInviteRoute: typeof AuthenticatedGiftsInviteRoute
@@ -907,6 +927,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPostNeedRoute: AuthenticatedPostNeedRoute,
   AuthenticatedPostPrayerRoute: AuthenticatedPostPrayerRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedRantRoute: AuthenticatedRantRoute,
   AuthenticatedWelcomeRoute: AuthenticatedWelcomeRoute,
   AuthenticatedChurchBoardIdRoute: AuthenticatedChurchBoardIdRoute,
   AuthenticatedGiftsInviteRoute: AuthenticatedGiftsInviteRoute,

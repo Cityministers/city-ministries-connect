@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { HandHeart, HeartHandshake, MapPin, MessageCircle, Sparkles, UsersRound } from "lucide-react";
+import { HandHeart, HeartHandshake, MapPin, MessageCircle, Mic, Sparkles, UsersRound } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useSiteText } from "@/lib/site-text";
 import { AccountMenu } from "@/components/AccountMenu";
@@ -263,6 +263,24 @@ function HomePage() {
               </a>
             </DialogContent>
           </Dialog>
+
+          <Link
+            to="/rant"
+            className="mt-3 flex w-full items-center gap-4 rounded-2xl bg-tone-indigo/15 px-4 py-4 text-left ring-1 ring-tone-indigo/55 transition hover:-translate-y-0.5 hover:ring-2 hover:ring-gold/75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/85"
+            aria-label={t("Open Spiritual Rant")}
+          >
+            <span className="grid size-20 shrink-0 place-items-center rounded-2xl bg-tone-indigo/25 text-sand ring-1 ring-tone-indigo/60">
+              <Mic className="size-11" aria-hidden="true" />
+            </span>
+            <span className="flex min-w-0 flex-col gap-1">
+              <span className="text-2xl font-bold leading-tight text-sand">
+                {t("Spiritual Rant")}
+              </span>
+              <span className="text-base leading-snug text-mist/85">
+                {t("Talk it out — get verses and ways to act. Nothing is saved.")}
+              </span>
+            </span>
+          </Link>
 
           <ul className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3">
             {ministries.map((ministry) => (
