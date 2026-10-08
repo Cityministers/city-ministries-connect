@@ -147,7 +147,7 @@ function TutorialPage() {
               to="/"
               className="group inline-flex items-center gap-2 rounded-full bg-tone-cyan/25 px-8 py-3.5 text-sm font-semibold text-sand ring-1 ring-tone-cyan/55 transition hover:bg-tone-cyan/35"
             >
-              Start Your Ministry
+              Start Ministering
               <ArrowRight
                 className="size-4 transition-transform group-hover:translate-x-0.5"
                 aria-hidden="true"

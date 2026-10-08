@@ -347,7 +347,7 @@ export function SignInPrompt() {
             className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-ink-soft px-6 py-3.5 text-lg font-semibold text-sand ring-1 ring-mist/25 transition hover:bg-ink-soft/70 sm:flex-initial"
           >
             <MapPin className="size-5" aria-hidden="true" />
-            {t("See the map")}
+            {t("View Ministry Map")}
           </Link>
         </div>
       </main>
@@ -1227,7 +1227,7 @@ function EmptyMatches({ text }: { text: string }) {
         className="mt-4 inline-flex items-center justify-center gap-2 rounded-full bg-ink px-5 py-3 text-sm font-semibold text-sand ring-1 ring-mist/25"
       >
         <MapPin className="size-4" aria-hidden="true" />
-        See the map
+        View Ministry Map
       </Link>
     </div>
   );

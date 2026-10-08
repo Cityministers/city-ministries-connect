@@ -607,7 +607,7 @@ function MapPage() {
             to="/start"
             className="inline-flex w-full items-center justify-center rounded-full bg-tone-cyan/25 px-8 py-3.5 text-lg font-bold text-sand ring-1 ring-tone-cyan/55 transition hover:bg-tone-cyan/35 sm:w-auto sm:text-xl"
           >
-            {t("Start Your Ministry")}
+            {t("Start Ministering")}
           </Link>
           {!session && (
             <p className="text-xs text-mist/70">
