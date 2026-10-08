@@ -58,10 +58,12 @@ function ErrorComponent({ error, reset }: { error: unknown; reset: () => void })
       const state = JSON.parse(
         sessionStorage.getItem(retryKey) || '{"n":0,"t":0}',
       ) as { n: number; t: number };
-      if (state.n >= 5 || Date.now() - state.t < 3_000) return;
+      // A spent budget is forgotten after 30s so a later failure can recover.
+      if (state.n >= 5 && Date.now() - state.t < 30_000) return;
+      const fresh = Date.now() - state.t >= 30_000 ? { n: 0, t: 0 } : state;
       sessionStorage.setItem(
         retryKey,
-        JSON.stringify({ n: state.n + 1, t: Date.now() }),
+        JSON.stringify({ n: fresh.n + 1, t: Date.now() }),
       );
     } catch {
       return;
@@ -84,6 +86,12 @@ function ErrorComponent({ error, reset }: { error: unknown; reset: () => void })
           <button
             onClick={() => {
               if (isModuleLoadError) {
+                // An explicit retry always gets a fresh budget.
+                try {
+                  sessionStorage.removeItem(`module-retry:${window.location.pathname}`);
+                } catch {
+                  /* storage unavailable */
+                }
                 window.location.reload();
                 return;
               }
@@ -162,10 +170,12 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <script
           // Recover from stale/failed module loads that happen before React's
-          // error boundary can mount. Up to 5 reloads per path, at least 3s
-          // apart, so a reload that lands mid-rebuild can try again.
+          // error boundary can mount. Up to 5 reloads per path, spaced by a
+          // short backoff so a reload can land after a rebuild finishes. A
+          // spent budget is forgotten after 30s, and when it runs out the
+          // visitor gets a visible "Try again" button instead of a blank page.
           dangerouslySetInnerHTML={{
-            __html: `(function(){var re=/importing a module script failed|failed to fetch dynamically imported module|error loading dynamically imported module|unable to preload/i;function retry(){try{var k='module-retry:'+location.pathname;var s=JSON.parse(sessionStorage.getItem(k)||'{"n":0,"t":0}');if(s.n>=5||Date.now()-s.t<3000)return false;sessionStorage.setItem(k,JSON.stringify({n:s.n+1,t:Date.now()}));location.reload();return true;}catch(e){return false;}}window.addEventListener('vite:preloadError',function(){retry();});window.addEventListener('unhandledrejection',function(e){var m=e&&e.reason&&(e.reason.message||String(e.reason));if(m&&re.test(m))retry();});window.addEventListener('error',function(e){if(e&&e.message&&re.test(e.message))retry();else if(e&&e.target&&e.target.tagName==='SCRIPT')retry();},true);})();`,
+            __html: `(function(){var re=/importing a module script failed|failed to fetch dynamically imported module|error loading dynamically imported module|unable to preload/i;var MAX=5;function key(){return 'module-retry:'+location.pathname;}function state(){try{var s=JSON.parse(sessionStorage.getItem(key())||'{"n":0,"t":0}');if(Date.now()-s.t>30000)s={n:0,t:0};return s;}catch(e){return null;}}function fallback(){if(document.getElementById('module-fallback'))return;var d=document.createElement('div');d.id='module-fallback';d.setAttribute('role','alert');d.style.cssText='position:fixed;inset:0;z-index:2147483647;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:28px;text-align:center;background:#111018;color:#efe9dd;font-family:system-ui,sans-serif';var p=document.createElement('p');p.textContent="This page didn't load.";p.style.cssText='margin:0;font-size:18px;font-weight:600';var b=document.createElement('button');b.textContent='Try again';b.style.cssText='border:0;border-radius:999px;padding:12px 24px;background:#f2c94c;color:#111018;font-size:16px;font-weight:700;cursor:pointer';b.onclick=function(){try{sessionStorage.removeItem(key());}catch(e){}location.reload();};d.appendChild(p);d.appendChild(b);if(document.body)document.body.appendChild(d);else document.addEventListener('DOMContentLoaded',function(){document.body.appendChild(d);});}function retry(){var s=state();if(!s)return false;if(s.n>=MAX){fallback();return false;}try{sessionStorage.setItem(key(),JSON.stringify({n:s.n+1,t:Date.now()}));}catch(e){return false;}setTimeout(function(){location.reload();},s.n*350);return true;}window.addEventListener('vite:preloadError',function(){retry();});window.addEventListener('unhandledrejection',function(e){var r=e&&e.reason;var m=r&&(r.message||String(r));if(m&&re.test(m))retry();});window.addEventListener('error',function(e){if(e&&e.message&&re.test(e.message))retry();else if(e&&e.target&&e.target.tagName==='SCRIPT')retry();},true);})();`,
           }}
         />
         <HeadContent />

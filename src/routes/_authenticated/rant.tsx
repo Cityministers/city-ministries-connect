@@ -30,7 +30,7 @@ export const Route = createFileRoute("/_authenticated/rant")({
   component: RantPage,
 });
 
-const MAX_SECONDS = 90;
+const MAX_SECONDS = 180;
 
 /** Encodes captured PCM chunks as a complete 16 kHz mono WAV file. */
 function encodeWav(chunks: Float32Array[], sampleRate: number): Blob {
@@ -212,7 +212,7 @@ function RantPage() {
 
       <p className="text-base leading-relaxed text-mist/80">
         {t(
-          "Get it off your chest. Talk for up to 90 seconds — we'll listen, find verses that speak to it, and offer to post any need you mention. Your audio is never saved.",
+          "Get it off your chest. Talk for two or three minutes — we'll listen, find verses that speak to it, and offer to post any need you mention. Your audio is never saved.",
         )}
       </p>
 
@@ -247,6 +247,12 @@ function RantPage() {
                   ? t("Rant again")
                   : t("Tap and just talk")}
         </span>
+
+        <p className="text-center text-base leading-relaxed text-mist/85">
+          {t("Tell me about your problems — big or small — practical or super spiritual.")}
+        </p>
+        <p className="-mt-2 text-center text-sm text-mist/60">{t("2–3 min is best.")}</p>
+
 
         {recording && (
           <div className="flex h-6 items-end justify-center gap-1" aria-hidden="true">
