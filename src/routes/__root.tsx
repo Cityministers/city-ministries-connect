@@ -86,6 +86,12 @@ function ErrorComponent({ error, reset }: { error: unknown; reset: () => void })
           <button
             onClick={() => {
               if (isModuleLoadError) {
+                // An explicit retry always gets a fresh budget.
+                try {
+                  sessionStorage.removeItem(`module-retry:${window.location.pathname}`);
+                } catch {
+                  /* storage unavailable */
+                }
                 window.location.reload();
                 return;
               }
