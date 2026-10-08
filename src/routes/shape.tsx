@@ -1395,6 +1395,10 @@ function FieldView({
     );
   }
 
+  if (field.key === "gifts") {
+    return <GiftGroupPicker value={answers.gifts} onChange={(next) => set("gifts", next)} />;
+  }
+
   const key = field.key as "gifts" | "heart" | "abilities" | "settings" | "experiences" | "resources" | "pastService" | "familyServe" | "availableTimes";
   const list = answers[key];
   return (
