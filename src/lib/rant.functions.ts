@@ -40,10 +40,10 @@ export type RantResult = {
  * Analyzes one spoken "spiritual rant" transcript: pulls themes, picks fitting
  * well-known Bible references, and matches live posts. The audio itself was
  * already transcribed and discarded; only this text is processed, and nothing
- * is stored.
+ * is stored. Public on purpose — signed-out visitors can rant too — and safe
+ * because nothing user-scoped is read or written and inputs are length-capped.
  */
 export const analyzeRant = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => Input.parse(input))
   .handler(async ({ data }): Promise<RantResult> => {
     const apiKey = process.env["LOVABLE_API_KEY"];
