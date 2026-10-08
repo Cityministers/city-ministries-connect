@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, HandHelping, Loader2, Mic, RotateCcw, Sparkles, Square } from "lucide-react";
+import { ArrowLeft, HandHelping, Loader2, Mic, Pencil, RotateCcw, Sparkles, Square } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScriptureCard } from "@/components/ScriptureCard";
@@ -93,6 +93,8 @@ function RantPage() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<RantResult | null>(null);
   const [needDismissed, setNeedDismissed] = useState(false);
+  const [mode, setMode] = useState<"voice" | "write">("voice");
+  const [written, setWritten] = useState("");
 
   const streamRef = useRef<MediaStream | null>(null);
   const ctxRef = useRef<AudioContext | null>(null);
@@ -197,6 +199,28 @@ function RantPage() {
 
   const mmss = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
 
+  /** Runs the same reflection on text the member typed instead of speaking. */
+  async function submitWritten() {
+    const text = written.trim();
+    if (text.length < 10 || busy) return;
+    setError(null);
+    setResult(null);
+    setBusy("analyze");
+    try {
+      const res = await analyze({ data: { transcript: text } });
+      if (res.error) {
+        setError(res.error);
+        return;
+      }
+      setNeedDismissed(false);
+      setResult(res);
+    } catch {
+      setError(t("We couldn't process that. Try again."));
+    } finally {
+      setBusy(null);
+    }
+  }
+
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col gap-6 px-4 pb-16 pt-6">
       <div className="flex items-center gap-3">
@@ -217,55 +241,104 @@ function RantPage() {
       </p>
 
       <div className="flex flex-col items-center gap-4 rounded-2xl bg-ink-soft/40 p-6 ring-1 ring-mist/15">
-        <button
-          type="button"
-          onClick={() => void (recording ? stop() : start())}
-          disabled={busy !== null}
-          aria-pressed={recording}
-          className={`grid size-24 place-items-center rounded-full transition hover:-translate-y-0.5 disabled:opacity-60 ${
-            recording ? "bg-emerald-light text-ink" : "bg-lemon text-ink"
-          }`}
-          aria-label={recording ? t("Stop and reflect") : t("Start talking")}
-        >
-          {busy ? (
-            <Loader2 className="size-10 animate-spin" aria-hidden="true" />
-          ) : recording ? (
-            <Square className="size-10" aria-hidden="true" />
-          ) : (
-            <Mic className="size-10" aria-hidden="true" />
-          )}
-        </button>
+        {mode === "voice" ? (
+          <>
+            <button
+              type="button"
+              onClick={() => void (recording ? stop() : start())}
+              disabled={busy !== null}
+              aria-pressed={recording}
+              className={`grid size-24 place-items-center rounded-full transition hover:-translate-y-0.5 disabled:opacity-60 ${
+                recording ? "bg-emerald-light text-ink" : "bg-lemon text-ink"
+              }`}
+              aria-label={recording ? t("Stop and reflect") : t("Start talking")}
+            >
+              {busy ? (
+                <Loader2 className="size-10 animate-spin" aria-hidden="true" />
+              ) : recording ? (
+                <Square className="size-10" aria-hidden="true" />
+              ) : (
+                <Mic className="size-10" aria-hidden="true" />
+              )}
+            </button>
 
-        <span className="text-base font-semibold text-sand">
-          {busy === "transcribe"
-            ? t("Listening…")
-            : busy === "analyze"
-              ? t("Finding verses…")
-              : recording
-                ? t("Talking · {{time}} — tap to finish", { time: mmss })
-                : result
-                  ? t("Rant again")
-                  : t("Tap and just talk")}
-        </span>
+            <span className="text-base font-semibold text-sand">
+              {busy === "transcribe"
+                ? t("Listening…")
+                : busy === "analyze"
+                  ? t("Finding verses…")
+                  : recording
+                    ? t("Talking · {{time}} — tap to finish", { time: mmss })
+                    : result
+                      ? t("Rant again")
+                      : t("Tap and just talk")}
+            </span>
 
-        <p className="text-center text-base leading-relaxed text-mist/85">
-          {t("Tell me about your problems — big or small — practical or super spiritual.")}
-        </p>
-        <p className="-mt-2 text-center text-sm text-mist/60">{t("2–3 min is best.")}</p>
+            <p className="text-center text-base leading-relaxed text-mist/85">
+              {t("Tell me about your problems — big or small — practical or super spiritual.")}
+            </p>
+            <p className="-mt-2 text-center text-sm text-mist/60">{t("2–3 min is best.")}</p>
 
+            {recording && (
+              <div className="flex h-6 items-end justify-center gap-1" aria-hidden="true">
+                {Array.from({ length: 9 }).map((_, i) => (
+                  <span
+                    key={i}
+                    className="w-1.5 rounded-full bg-emerald-light/80 transition-all"
+                    style={{
+                      height: `${Math.max(4, Math.min(24, level * 90 * (1 - Math.abs(i - 4) / 7)))}px`,
+                    }}
+                  />
+                ))}
+              </div>
+            )}
 
-        {recording && (
-          <div className="flex h-6 items-end justify-center gap-1" aria-hidden="true">
-            {Array.from({ length: 9 }).map((_, i) => (
-              <span
-                key={i}
-                className="w-1.5 rounded-full bg-emerald-light/80 transition-all"
-                style={{
-                  height: `${Math.max(4, Math.min(24, level * 90 * (1 - Math.abs(i - 4) / 7)))}px`,
-                }}
-              />
-            ))}
-          </div>
+            {!recording && (
+              <button
+                type="button"
+                onClick={() => setMode("write")}
+                className="inline-flex items-center gap-2 text-sm font-semibold text-mist/80 underline-offset-4 transition hover:text-sand hover:underline"
+              >
+                <Pencil className="size-4" aria-hidden="true" />
+                {t("Rather not talk? Type your need instead")}
+              </button>
+            )}
+          </>
+        ) : (
+          <>
+            <span className="text-base font-semibold text-sand">
+              {t("Write down what's on your heart")}
+            </span>
+            <textarea
+              value={written}
+              onChange={(e) => setWritten(e.target.value)}
+              rows={5}
+              placeholder={t("Type your need or what's weighing on you — we'll find verses and can draft a post from your words…")}
+              className="min-h-32 w-full rounded-2xl bg-ink/60 px-4 py-3 text-base leading-relaxed text-sand ring-1 ring-mist/20 outline-none placeholder:text-mist/50 focus:ring-lemon/60"
+            />
+            <button
+              type="button"
+              onClick={() => void submitWritten()}
+              disabled={busy !== null || written.trim().length < 10}
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-lemon px-6 py-3 text-base font-semibold text-ink transition hover:-translate-y-0.5 disabled:opacity-60"
+            >
+              {busy === "analyze" ? (
+                <>
+                  <Loader2 className="size-5 animate-spin" aria-hidden="true" /> {t("Finding verses…")}
+                </>
+              ) : (
+                t("Reflect on this")
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode("voice")}
+              className="inline-flex items-center gap-2 text-sm font-semibold text-mist/80 underline-offset-4 transition hover:text-sand hover:underline"
+            >
+              <Mic className="size-4" aria-hidden="true" />
+              {t("Talk instead")}
+            </button>
+          </>
         )}
       </div>
 
