@@ -253,7 +253,7 @@ function RantPage() {
 
       <p className="text-base leading-relaxed text-mist/80">
         {t(
-          "Get it off your chest. Talk for two or three minutes — we'll listen, find verses that speak to it, and offer to post any need you mention. Your audio is never saved.",
+          "Get it off your chest. About 90 seconds is ideal — we'll listen, find verses that speak to it, and offer to post any need you mention. Your audio is never saved.",
         )}
       </p>
 
@@ -294,7 +294,10 @@ function RantPage() {
             <p className="text-center text-base leading-relaxed text-mist/85">
               {t("Tell me about your problems — big or small — practical or super spiritual.")}
             </p>
-            <p className="-mt-2 text-center text-sm text-mist/60">{t("2–3 min is best.")}</p>
+            <p className="-mt-2 text-center text-sm text-mist/60">{t("90 seconds is an ideal rant.")}</p>
+            <p className="-mt-2 text-center text-sm text-mist/60">
+              {t('Tip: start by saying "Create a post" and we\'ll draft your post right away — nothing else needed.')}
+            </p>
 
             {recording && (
               <div className="flex h-6 items-end justify-center gap-1" aria-hidden="true">
