@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, HandHelping, Loader2, Mic, Pencil, RotateCcw, Sparkles, Square } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -30,7 +30,10 @@ export const Route = createFileRoute("/rant")({
   component: RantPage,
 });
 
-const MAX_SECONDS = 180;
+const MAX_SECONDS = 90;
+
+/** Spoken command that skips the reflection and goes straight to drafting a post. */
+const CREATE_POST_COMMAND = /^create a post[,.!]?\s*/i;
 
 /** Encodes captured PCM chunks as a complete 16 kHz mono WAV file. */
 function encodeWav(chunks: Float32Array[], sampleRate: number): Blob {
@@ -83,6 +86,7 @@ async function toBase64(blob: Blob): Promise<string> {
 
 function RantPage() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const transcribe = useServerFn(transcribeRant);
   const analyze = useServerFn(analyzeRant);
 
@@ -183,9 +187,22 @@ function RantPage() {
         return;
       }
       setBusy("analyze");
-      const res = await analyze({ data: { transcript: heard.text } });
+      const wantsPost = CREATE_POST_COMMAND.test(heard.text);
+      const transcript = wantsPost ? heard.text.replace(CREATE_POST_COMMAND, "") : heard.text;
+      const res = await analyze({ data: { transcript: transcript.trim().length >= 10 ? transcript : heard.text } });
       if (res.error) {
         setError(res.error);
+        return;
+      }
+      if (wantsPost && res.need) {
+        void navigate({
+          to: "/post-need",
+          search: {
+            short: res.need.shortTitle,
+            title: res.need.title,
+            description: res.need.description,
+          },
+        });
         return;
       }
       setNeedDismissed(false);
@@ -236,7 +253,7 @@ function RantPage() {
 
       <p className="text-base leading-relaxed text-mist/80">
         {t(
-          "Get it off your chest. Talk for two or three minutes — we'll listen, find verses that speak to it, and offer to post any need you mention. Your audio is never saved.",
+          "Get it off your chest. About 90 seconds is ideal — we'll listen, find verses that speak to it, and offer to post any need you mention. Your audio is never saved.",
         )}
       </p>
 
@@ -277,7 +294,10 @@ function RantPage() {
             <p className="text-center text-base leading-relaxed text-mist/85">
               {t("Tell me about your problems — big or small — practical or super spiritual.")}
             </p>
-            <p className="-mt-2 text-center text-sm text-mist/60">{t("2–3 min is best.")}</p>
+            <p className="-mt-2 text-center text-sm text-mist/60">{t("90 seconds is an ideal rant.")}</p>
+            <p className="-mt-2 text-center text-sm text-mist/60">
+              {t('Tip: start by saying "Create a post" and we\'ll draft your post right away — nothing else needed.')}
+            </p>
 
             {recording && (
               <div className="flex h-6 items-end justify-center gap-1" aria-hidden="true">
