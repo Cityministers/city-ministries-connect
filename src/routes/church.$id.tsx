@@ -11,6 +11,7 @@ import {
   HandHelping,
   Loader2,
   MapPin,
+  Paperclip,
   Phone,
   QrCode,
   Settings2,
@@ -27,6 +28,7 @@ import { BrandLogo } from "@/components/BrandLogo";
 import { PrayerPost } from "@/components/PrayerPost";
 import { useSession } from "@/hooks/useSession";
 import { CHURCH_ICONS, churchIcon } from "@/lib/church-icons";
+import pearlInvitationAsset from "@/assets/pearl-church-invitation.png.asset.json";
 import {
   approveChurchPrayer,
   declineChurchPrayer,
@@ -68,6 +70,14 @@ export const Route = createFileRoute("/church/$id")({
   }),
   component: ChurchPage,
 });
+
+/** Extra images opened via the paperclip button at the end of a church's title. */
+const CHURCH_ATTACHMENTS: Record<string, { url: string; label: string }> = {
+  "488e7073-7acd-4192-bf71-31419e3dcfaf": {
+    url: pearlInvitationAsset.url,
+    label: "Pearl Church invitation",
+  },
+};
 
 const inputClass =
   "w-full min-w-0 rounded-xl bg-ink-soft px-4 py-3 text-base text-sand ring-1 ring-mist/20 focus:outline-none focus:ring-lemon/50";
@@ -114,6 +124,9 @@ function ChurchPage() {
   const { t } = useTranslation();
   const session = useSession();
   const queryClient = useQueryClient();
+
+  const [attachmentOpen, setAttachmentOpen] = useState(false);
+  const attachment = CHURCH_ATTACHMENTS[id];
 
   const fetchChurch = useServerFn(getChurch);
   const fetchRequests = useServerFn(listChurchRequests);
@@ -419,9 +432,21 @@ function ChurchPage() {
                     <Icon className="size-6" aria-hidden="true" />
                   </span>
                   <div className="min-w-0">
-                    <h1 className="font-display text-2xl font-semibold leading-tight sm:text-3xl">
-                      {church.name}
-                    </h1>
+                    <div className="flex items-center gap-2">
+                      <h1 className="min-w-0 font-display text-2xl font-semibold leading-tight sm:text-3xl">
+                        {church.name}
+                      </h1>
+                      {attachment && (
+                        <button
+                          type="button"
+                          onClick={() => setAttachmentOpen(true)}
+                          aria-label={t("Open the attached image")}
+                          className="grid size-9 shrink-0 place-items-center rounded-full bg-lemon/12 text-lemon ring-1 ring-lemon/35 transition hover:bg-lemon/20"
+                        >
+                          <Paperclip className="size-5" aria-hidden="true" />
+                        </button>
+                      )}
+                    </div>
                     {church.status !== "active" && (
                       <p className="mt-1 text-base font-semibold text-rose">
                         {t("Not on the map right now")}
@@ -998,6 +1023,31 @@ function ChurchPage() {
                 </ul>
               )}
             </section>
+          </div>
+        )}
+
+        {attachmentOpen && attachment && (
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label={attachment.label}
+            className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-ink/95 p-4"
+          >
+            <button
+              type="button"
+              onClick={() => setAttachmentOpen(false)}
+              aria-label={t("Close")}
+              className="fixed right-4 top-4 z-10 grid size-11 place-items-center rounded-full bg-ink-soft text-sand ring-1 ring-mist/25 transition hover:bg-ink hover:text-lemon"
+            >
+              <X className="size-5" aria-hidden="true" />
+            </button>
+            <div className="flex min-h-full items-center justify-center">
+              <img
+                src={attachment.url}
+                alt={attachment.label}
+                className="max-h-[90dvh] w-auto max-w-full rounded-2xl ring-1 ring-mist/25"
+              />
+            </div>
           </div>
         )}
       </main>
