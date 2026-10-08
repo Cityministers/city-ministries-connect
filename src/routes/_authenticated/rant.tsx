@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, HandHelping, Loader2, Mic, RotateCcw, Sparkles, Square } from "lucide-react";
+import { ArrowLeft, HandHelping, Loader2, Mic, Pencil, RotateCcw, Sparkles, Square } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScriptureCard } from "@/components/ScriptureCard";
@@ -93,6 +93,8 @@ function RantPage() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<RantResult | null>(null);
   const [needDismissed, setNeedDismissed] = useState(false);
+  const [mode, setMode] = useState<"voice" | "write">("voice");
+  const [written, setWritten] = useState("");
 
   const streamRef = useRef<MediaStream | null>(null);
   const ctxRef = useRef<AudioContext | null>(null);
