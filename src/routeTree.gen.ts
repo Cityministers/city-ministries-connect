@@ -23,6 +23,7 @@ import { Route as MapRouteImport } from './routes/map'
 import { Route as MinistriesRouteImport } from './routes/ministries'
 import { Route as MinistryMindsetRouteImport } from './routes/ministry-mindset'
 import { Route as NeedsRouteImport } from './routes/needs'
+import { Route as RantRouteImport } from './routes/rant'
 import { Route as RecommendationsDemoRouteImport } from './routes/recommendations-demo'
 import { Route as ReportAbuseRouteImport } from './routes/report-abuse'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -38,7 +39,6 @@ import { Route as AuthenticatedMeetupsRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedPostNeedRouteImport } from './routes/_authenticated/post-need'
 import { Route as AuthenticatedPostPrayerRouteImport } from './routes/_authenticated/post-prayer'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
-import { Route as AuthenticatedRantRouteImport } from './routes/_authenticated/rant'
 import { Route as AuthenticatedWelcomeRouteImport } from './routes/_authenticated/welcome'
 import { Route as ChurchIdRouteImport } from './routes/church.$id'
 import { Route as GiftReferenceCodeRouteImport } from './routes/gift-reference.$code'
@@ -123,6 +123,11 @@ const NeedsRoute = NeedsRouteImport.update({
   path: '/needs',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RantRoute = RantRouteImport.update({
+  id: '/rant',
+  path: '/rant',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RecommendationsDemoRoute = RecommendationsDemoRouteImport.update({
   id: '/recommendations-demo',
   path: '/recommendations-demo',
@@ -197,11 +202,6 @@ const AuthenticatedPostPrayerRoute = AuthenticatedPostPrayerRouteImport.update({
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedRantRoute = AuthenticatedRantRouteImport.update({
-  id: '/rant',
-  path: '/rant',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedWelcomeRoute = AuthenticatedWelcomeRouteImport.update({
@@ -293,6 +293,7 @@ export interface FileRoutesByFullPath {
   '/ministries': typeof MinistriesRoute
   '/ministry-mindset': typeof MinistryMindsetRoute
   '/needs': typeof NeedsRoute
+  '/rant': typeof RantRoute
   '/recommendations-demo': typeof RecommendationsDemoRoute
   '/report-abuse': typeof ReportAbuseRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -308,7 +309,6 @@ export interface FileRoutesByFullPath {
   '/post-need': typeof AuthenticatedPostNeedRoute
   '/post-prayer': typeof AuthenticatedPostPrayerRoute
   '/profile': typeof AuthenticatedProfileRoute
-  '/rant': typeof AuthenticatedRantRoute
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/church/$id': typeof ChurchIdRoute
   '/gift-reference/$code': typeof GiftReferenceCodeRoute
@@ -338,6 +338,7 @@ export interface FileRoutesByTo {
   '/ministries': typeof MinistriesRoute
   '/ministry-mindset': typeof MinistryMindsetRoute
   '/needs': typeof NeedsRoute
+  '/rant': typeof RantRoute
   '/recommendations-demo': typeof RecommendationsDemoRoute
   '/report-abuse': typeof ReportAbuseRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -353,7 +354,6 @@ export interface FileRoutesByTo {
   '/post-need': typeof AuthenticatedPostNeedRoute
   '/post-prayer': typeof AuthenticatedPostPrayerRoute
   '/profile': typeof AuthenticatedProfileRoute
-  '/rant': typeof AuthenticatedRantRoute
   '/welcome': typeof AuthenticatedWelcomeRoute
   '/church/$id': typeof ChurchIdRoute
   '/gift-reference/$code': typeof GiftReferenceCodeRoute
@@ -385,6 +385,7 @@ export interface FileRoutesById {
   '/ministries': typeof MinistriesRoute
   '/ministry-mindset': typeof MinistryMindsetRoute
   '/needs': typeof NeedsRoute
+  '/rant': typeof RantRoute
   '/recommendations-demo': typeof RecommendationsDemoRoute
   '/report-abuse': typeof ReportAbuseRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -400,7 +401,6 @@ export interface FileRoutesById {
   '/_authenticated/post-need': typeof AuthenticatedPostNeedRoute
   '/_authenticated/post-prayer': typeof AuthenticatedPostPrayerRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
-  '/_authenticated/rant': typeof AuthenticatedRantRoute
   '/_authenticated/welcome': typeof AuthenticatedWelcomeRoute
   '/church/$id': typeof ChurchIdRoute
   '/gift-reference/$code': typeof GiftReferenceCodeRoute
@@ -432,6 +432,7 @@ export interface FileRouteTypes {
     | '/ministries'
     | '/ministry-mindset'
     | '/needs'
+    | '/rant'
     | '/recommendations-demo'
     | '/report-abuse'
     | '/reset-password'
@@ -447,7 +448,6 @@ export interface FileRouteTypes {
     | '/post-need'
     | '/post-prayer'
     | '/profile'
-    | '/rant'
     | '/welcome'
     | '/church/$id'
     | '/gift-reference/$code'
@@ -477,6 +477,7 @@ export interface FileRouteTypes {
     | '/ministries'
     | '/ministry-mindset'
     | '/needs'
+    | '/rant'
     | '/recommendations-demo'
     | '/report-abuse'
     | '/reset-password'
@@ -492,7 +493,6 @@ export interface FileRouteTypes {
     | '/post-need'
     | '/post-prayer'
     | '/profile'
-    | '/rant'
     | '/welcome'
     | '/church/$id'
     | '/gift-reference/$code'
@@ -523,6 +523,7 @@ export interface FileRouteTypes {
     | '/ministries'
     | '/ministry-mindset'
     | '/needs'
+    | '/rant'
     | '/recommendations-demo'
     | '/report-abuse'
     | '/reset-password'
@@ -538,7 +539,6 @@ export interface FileRouteTypes {
     | '/_authenticated/post-need'
     | '/_authenticated/post-prayer'
     | '/_authenticated/profile'
-    | '/_authenticated/rant'
     | '/_authenticated/welcome'
     | '/church/$id'
     | '/gift-reference/$code'
@@ -570,6 +570,7 @@ export interface RootRouteChildren {
   MinistriesRoute: typeof MinistriesRoute
   MinistryMindsetRoute: typeof MinistryMindsetRoute
   NeedsRoute: typeof NeedsRoute
+  RantRoute: typeof RantRoute
   RecommendationsDemoRoute: typeof RecommendationsDemoRoute
   ReportAbuseRoute: typeof ReportAbuseRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -686,6 +687,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NeedsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/rant': {
+      id: '/rant'
+      path: '/rant'
+      fullPath: '/rant'
+      preLoaderRoute: typeof RantRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/recommendations-demo': {
       id: '/recommendations-demo'
       path: '/recommendations-demo'
@@ -789,13 +797,6 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof AuthenticatedProfileRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/rant': {
-      id: '/_authenticated/rant'
-      path: '/rant'
-      fullPath: '/rant'
-      preLoaderRoute: typeof AuthenticatedRantRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/welcome': {
@@ -908,7 +909,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPostNeedRoute: typeof AuthenticatedPostNeedRoute
   AuthenticatedPostPrayerRoute: typeof AuthenticatedPostPrayerRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
-  AuthenticatedRantRoute: typeof AuthenticatedRantRoute
   AuthenticatedWelcomeRoute: typeof AuthenticatedWelcomeRoute
   AuthenticatedChurchBoardIdRoute: typeof AuthenticatedChurchBoardIdRoute
   AuthenticatedGiftsInviteRoute: typeof AuthenticatedGiftsInviteRoute
@@ -927,7 +927,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPostNeedRoute: AuthenticatedPostNeedRoute,
   AuthenticatedPostPrayerRoute: AuthenticatedPostPrayerRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
-  AuthenticatedRantRoute: AuthenticatedRantRoute,
   AuthenticatedWelcomeRoute: AuthenticatedWelcomeRoute,
   AuthenticatedChurchBoardIdRoute: AuthenticatedChurchBoardIdRoute,
   AuthenticatedGiftsInviteRoute: AuthenticatedGiftsInviteRoute,
@@ -956,6 +955,7 @@ const rootRouteChildren: RootRouteChildren = {
   MinistriesRoute: MinistriesRoute,
   MinistryMindsetRoute: MinistryMindsetRoute,
   NeedsRoute: NeedsRoute,
+  RantRoute: RantRoute,
   RecommendationsDemoRoute: RecommendationsDemoRoute,
   ReportAbuseRoute: ReportAbuseRoute,
   ResetPasswordRoute: ResetPasswordRoute,

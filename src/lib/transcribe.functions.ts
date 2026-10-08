@@ -23,11 +23,7 @@ function decode(base64: string): Uint8Array {
   return bytes;
 }
 
-/** Turns one spoken answer into text. The audio itself is never stored. */
-export const transcribeAnswer = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => Input.parse(input))
-  .handler(async ({ data }): Promise<{ text: string; error?: string }> => {
+async function transcribeHandler({ data }: { data: { audio: string; mimeType: string } }): Promise<{ text: string; error?: string }> {
     const apiKey = process.env["LOVABLE_API_KEY"];
     if (!apiKey) return { text: "", error: "Voice answers aren't set up for this app yet." };
 
@@ -73,4 +69,15 @@ export const transcribeAnswer = createServerFn({ method: "POST" })
     const text = (json?.text ?? "").trim();
     if (!text) return { text: "", error: "We didn't catch any words. Try recording again." };
     return { text };
-  });
+}
+
+/** Turns one spoken answer into text. The audio itself is never stored. */
+export const transcribeAnswer = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => Input.parse(input))
+  .handler(transcribeHandler);
+
+/** Same transcription, open to signed-out visitors (used by the public Spiritual Rant). */
+export const transcribeRant = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => Input.parse(input))
+  .handler(transcribeHandler);
