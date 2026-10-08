@@ -3,7 +3,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, ArrowRight, BookOpen, Check, Loader2, Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { BIBLICAL_GIFTS, emptyAnswers, type ShapeAnswers } from "@/data/shape";
+import { emptyAnswers, type ShapeAnswers } from "@/data/shape";
+import { GiftGroupPicker } from "@/components/GiftGroupPicker";
 import { getShapeProfile, saveShapeProfile } from "@/lib/shape.functions";
 
 export const Route = createFileRoute("/_authenticated/gifts/list")({
@@ -136,27 +137,10 @@ function GiftsListPage() {
           </p>
         ) : (
           <>
-            <div className="mt-6 flex flex-wrap gap-2.5">
-              {BIBLICAL_GIFTS.map((gift) => {
-                const on = gifts.includes(gift);
-                return (
-                  <button
-                    key={gift}
-                    type="button"
-                    aria-pressed={on}
-                    onClick={() => toggle(gift)}
-                    className={`inline-flex items-center gap-2 rounded-full px-4 py-3 text-lg font-semibold transition ${
-                      on
-                        ? "bg-lemon text-ink"
-                        : "bg-ink-soft text-sand ring-1 ring-mist/20 hover:bg-ink-soft/70"
-                    }`}
-                  >
-                    {on && <Check className="size-4" aria-hidden="true" />}
-                    {t(gift)}
-                  </button>
-                );
-              })}
+            <div className="mt-6">
+              <GiftGroupPicker value={gifts} onChange={setGifts} />
             </div>
+
 
             <div className="mt-8">
               <h2 className="font-display text-lg font-semibold text-sand">

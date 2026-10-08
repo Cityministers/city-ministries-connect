@@ -23,3 +23,4 @@
 
 ## Gift-skill affinity map
 - Spiritual-gift → practical-skill weights live in `src/data/gift-skill-map.ts` (transcribed from the matcher workbook); `topAffinities()` ranks a member profile, `postGiftFit()` matches post text. App-only gifts map via `GIFT_ALIASES` (Hospitality → Service/Helps, Intercession → Healing/Miracles); broad abilities bridge via `ABILITY_BRIDGES`. Ministry suggestions cite the pairing as `fitBasis`; post cards show the "Fits your gifts" hint via `getPostGiftFit` only for signed-in non-owners with a walkthrough profile.
+- Spiritual gifts render through GiftGroupPicker using GIFT_GROUPS (src/data/gift-groups.ts); merged cards map to multiple stored gift names so saved answers and the gift-skill matcher keep working.
