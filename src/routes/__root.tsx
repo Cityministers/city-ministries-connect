@@ -53,10 +53,19 @@ function ErrorComponent({ error, reset }: { error: unknown; reset: () => void })
   }, [error]);
   useEffect(() => {
     if (!isModuleLoadError) return;
-    const retryKey = `module-retry:${window.location.pathname}`;
-    const lastRetry = Number(sessionStorage.getItem(retryKey) || 0);
-    if (Date.now() - lastRetry < 30_000) return;
-    sessionStorage.setItem(retryKey, String(Date.now()));
+    try {
+      const retryKey = `module-retry:${window.location.pathname}`;
+      const state = JSON.parse(
+        sessionStorage.getItem(retryKey) || '{"n":0,"t":0}',
+      ) as { n: number; t: number };
+      if (state.n >= 5 || Date.now() - state.t < 3_000) return;
+      sessionStorage.setItem(
+        retryKey,
+        JSON.stringify({ n: state.n + 1, t: Date.now() }),
+      );
+    } catch {
+      return;
+    }
     // A rejected dynamic import stays cached by the browser; router.invalidate()
     // cannot retry it. A fresh document fetches the current page bundle.
     window.location.reload();
@@ -153,9 +162,10 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <script
           // Recover from stale/failed module loads that happen before React's
-          // error boundary can mount (one reload per path per 30s).
+          // error boundary can mount. Up to 5 reloads per path, at least 3s
+          // apart, so a reload that lands mid-rebuild can try again.
           dangerouslySetInnerHTML={{
-            __html: `(function(){var re=/importing a module script failed|failed to fetch dynamically imported module|error loading dynamically imported module|unable to preload/i;function retry(){try{var k='module-retry:'+location.pathname;var l=Number(sessionStorage.getItem(k)||0);if(Date.now()-l<30000)return false;sessionStorage.setItem(k,String(Date.now()));location.reload();return true;}catch(e){return false;}}window.addEventListener('vite:preloadError',function(){retry();});window.addEventListener('unhandledrejection',function(e){var m=e&&e.reason&&(e.reason.message||String(e.reason));if(m&&re.test(m))retry();});window.addEventListener('error',function(e){if(e&&e.message&&re.test(e.message))retry();});})();`,
+            __html: `(function(){var re=/importing a module script failed|failed to fetch dynamically imported module|error loading dynamically imported module|unable to preload/i;function retry(){try{var k='module-retry:'+location.pathname;var s=JSON.parse(sessionStorage.getItem(k)||'{"n":0,"t":0}');if(s.n>=5||Date.now()-s.t<3000)return false;sessionStorage.setItem(k,JSON.stringify({n:s.n+1,t:Date.now()}));location.reload();return true;}catch(e){return false;}}window.addEventListener('vite:preloadError',function(){retry();});window.addEventListener('unhandledrejection',function(e){var m=e&&e.reason&&(e.reason.message||String(e.reason));if(m&&re.test(m))retry();});window.addEventListener('error',function(e){if(e&&e.message&&re.test(e.message))retry();else if(e&&e.target&&e.target.tagName==='SCRIPT')retry();},true);})();`,
           }}
         />
         <HeadContent />
