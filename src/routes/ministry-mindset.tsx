@@ -330,7 +330,7 @@ function MinistryMindsetPage() {
               to="/start"
               className="inline-flex items-center justify-center rounded-full bg-lemon px-8 py-3.5 text-lg font-bold text-ink transition-transform hover:-translate-y-0.5"
             >
-              Start Your Ministry
+              Start Ministering
             </Link>
             <Link
               to="/post-need"

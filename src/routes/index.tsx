@@ -153,34 +153,34 @@ function HomePage() {
           {st("home.tagline")}
         </p>
 
-        <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+        <div className="mt-7 grid grid-cols-2 gap-3">
           <Link
             to="/map"
-            className="inline-flex flex-1 items-center justify-center rounded-full bg-lemon px-8 py-3.5 text-2xl font-bold text-ink transition-transform hover:-translate-y-0.5 sm:flex-initial"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-lemon px-4 py-3 text-base font-semibold text-ink transition-transform hover:-translate-y-0.5 sm:text-lg"
           >
-            {t("See the map")}
+            {t("View Ministry Map")}
           </Link>
           <Link
             to="/post-prayer"
-            className="inline-flex flex-1 items-center justify-center rounded-full bg-prayer-deep px-8 py-3.5 text-2xl font-bold text-parchment ring-1 ring-prayer/40 transition-transform hover:-translate-y-0.5 sm:flex-initial"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-prayer-deep px-4 py-3 text-base font-semibold text-parchment ring-1 ring-prayer/40 transition-transform hover:-translate-y-0.5 sm:text-lg"
           >
             {t("Post a Prayer")}
           </Link>
           <Link
             to="/start"
-            className="inline-flex flex-1 items-center justify-center rounded-full bg-tone-cyan/25 px-6 py-3.5 text-xl font-semibold text-sand shadow-none ring-1 ring-tone-cyan/55 transition hover:bg-tone-cyan/35 sm:flex-initial"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-tone-cyan/25 px-4 py-3 text-base font-semibold text-sand ring-1 ring-tone-cyan/55 transition hover:bg-tone-cyan/35 sm:text-lg"
           >
-            {t("Start Your Ministry")}
+            {t("Start Ministering")}
           </Link>
           <Link
             to="/post-need"
-            className="inline-flex flex-1 items-center justify-center rounded-full bg-tone-indigo/15 px-6 py-3.5 text-xl font-semibold text-sand shadow-none ring-1 ring-tone-indigo/45 transition hover:bg-tone-indigo/25 sm:flex-initial"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-tone-indigo/15 px-4 py-3 text-base font-semibold text-sand ring-1 ring-tone-indigo/45 transition hover:bg-tone-indigo/25 sm:text-lg"
           >
             {t("Post a Need")}
           </Link>
           <Link
             to="/needs"
-            className="inline-flex flex-1 items-center justify-center rounded-full bg-tone-emerald/15 px-6 py-3.5 text-xl font-semibold text-sand shadow-none ring-1 ring-tone-emerald/45 transition hover:bg-tone-emerald/25 sm:flex-initial"
+            className="col-span-2 inline-flex items-center justify-center whitespace-nowrap rounded-full bg-tone-emerald/15 px-4 py-3 text-base font-semibold text-sand ring-1 ring-tone-emerald/45 transition hover:bg-tone-emerald/25 sm:text-lg"
           >
             {t("View Needs")}
           </Link>
@@ -396,7 +396,7 @@ function HomePage() {
                   to="/start"
                   className="inline-flex w-full items-center justify-center rounded-full bg-tone-cyan/25 px-5 py-2.5 text-lg font-semibold text-sand ring-1 ring-tone-cyan/55 transition hover:bg-tone-cyan/35 active:translate-y-0.5 sm:w-auto sm:self-start"
                 >
-                  {t("Start your ministry")}
+                  {t("Start Ministering")}
                 </Link>
               )}
               {s.title === "Post a need, or answer one" && (
@@ -472,7 +472,7 @@ function HomePage() {
             to="/start"
             className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-tone-cyan/25 px-8 py-3.5 text-2xl font-bold text-sand ring-1 ring-tone-cyan/55 transition hover:bg-tone-cyan/35 sm:w-auto"
           >
-            {t("Start Your Ministry")}
+            {t("Start Ministering")}
           </Link>
           <InlineLiveVerse
             reference="Acts 2:42"
