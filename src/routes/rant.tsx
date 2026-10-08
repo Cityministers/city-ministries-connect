@@ -86,6 +86,7 @@ async function toBase64(blob: Blob): Promise<string> {
 
 function RantPage() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const transcribe = useServerFn(transcribeRant);
   const analyze = useServerFn(analyzeRant);
 
