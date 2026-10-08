@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, HandHelping, Loader2, Mic, Pencil, RotateCcw, Sparkles, Square } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -30,7 +30,10 @@ export const Route = createFileRoute("/rant")({
   component: RantPage,
 });
 
-const MAX_SECONDS = 180;
+const MAX_SECONDS = 90;
+
+/** Spoken command that skips the reflection and goes straight to drafting a post. */
+const CREATE_POST_COMMAND = /^create a post[,.!]?\s*/i;
 
 /** Encodes captured PCM chunks as a complete 16 kHz mono WAV file. */
 function encodeWav(chunks: Float32Array[], sampleRate: number): Blob {
